@@ -33,5 +33,5 @@ export default async function NewMaterialSessionPage({
 
   const session = createDraftSession(material)
 
-  return <ChatWorkspace session={session} />
+  return <ChatWorkspace key={session.id} session={session} />
 }

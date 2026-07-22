@@ -90,12 +90,15 @@ export const QUICK_ACTIONS: {
     label: "Pending approvals",
     icon: "clipboard-check",
     href: "/approvals",
-    badge: 4,
+    badge: 3,
   },
   { label: "Audit trail", icon: "history", href: "/audit" },
 ]
 
 export const DEFAULT_SESSION_ID = "SPR-2847"
+
+/** Hardcoded blank chat opened by the sidebar "New session" button (mock). */
+export const NEW_SESSION_ID = "SPR-2900"
 
 export const WORKFLOW_STEP_LABELS = [
   "Material identified",

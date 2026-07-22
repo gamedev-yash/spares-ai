@@ -45,8 +45,11 @@ export function OptionCard({
         // Only fade out cards that were NOT chosen — the selected option in a
         // locked group should stay fully legible, not dim along with the rest.
         disabled && !selected && "opacity-50",
+        selected && "focus-visible:ring-0",
         isSuccess
-          ? "border-success/40 bg-success/5 hover:bg-success/10"
+          ? selected
+            ? "border-success bg-success/15"
+            : "border-success/40 bg-success/5 hover:bg-success/10"
           : selected
             ? "border-primary bg-accent"
             : "border-border bg-muted/40 hover:border-primary/50 hover:bg-accent/60"
@@ -75,12 +78,17 @@ export function OptionCard({
         <span
           className={cn(
             "flex size-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-150",
-            selected ? "border-primary" : "border-muted-foreground/40"
+            selected
+              ? isSuccess
+                ? "border-success"
+                : "border-primary"
+              : "border-muted-foreground/40"
           )}
         >
           <span
             className={cn(
-              "size-2 rounded-full bg-primary transition-transform duration-150",
+              "size-2 rounded-full transition-transform duration-150",
+              isSuccess ? "bg-success" : "bg-primary",
               selected ? "scale-100" : "scale-0"
             )}
           />

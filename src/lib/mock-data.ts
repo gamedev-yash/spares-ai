@@ -9,6 +9,7 @@ import type {
   SavingsTrendPoint,
   Supplier,
 } from "@/lib/types"
+import { NEW_SESSION_ID } from "@/lib/constants"
 import { formatZAR } from "@/lib/utils"
 
 // ---------------------------------------------------------------------------
@@ -1042,15 +1043,15 @@ export const CHAT_SESSIONS: ChatSession[] = [
     },
   },
 
-  // 2. Conveyor bearing — Conveyance — pending procurement approval
+  // 2. Conveyor bearing — Conveyance — awaiting alternate decision
   {
     id: "SPR-2851",
     title: "Conveyor bearing — CV-14 stacker",
     navLabel: "Conveyor bearing",
-    navSubtitle: "Pending approval",
+    navSubtitle: "Awaiting decision",
     navBadge: { type: "count", value: 1 },
     category: "Conveyance",
-    status: "pending_approval",
+    status: "in_progress",
     materialId: "500-22140",
     requester: "T. Mokoena",
     date: "21 Jul 2026",
@@ -1129,7 +1130,8 @@ export const CHAT_SESSIONS: ChatSession[] = [
         actions: {
           id: "brg-actions",
           accentId: "proceed",
-          resolvedActionId: "proceed",
+          // Left unresolved so the user can still pick an action and Continue
+          // — this session is the live "pending approval" demo path.
           actions: [
             {
               id: "proceed",
@@ -1169,13 +1171,13 @@ export const CHAT_SESSIONS: ChatSession[] = [
       {
         id: "alternate-selection",
         label: "Alternate selection",
-        status: "done",
-        meta: "User · 08:15",
+        status: "active",
+        meta: "Awaiting selection",
       },
       {
         id: "procurement-approval",
         label: "Procurement approval",
-        status: "active",
+        status: "pending",
         meta: "Awaiting R. Patel",
       },
       { id: "engineering-signoff", label: "Engineering sign-off", status: "pending" },
@@ -1205,13 +1207,13 @@ export const CHAT_SESSIONS: ChatSession[] = [
       tags: [
         { label: "Conveyance", kind: "cat" },
         { label: "Direct equiv.", kind: "tier" },
-        { label: "Pending", kind: "status" },
+        { label: "In progress", kind: "status" },
       ],
       material: "500-22140",
       equipment: "CV-14 stacker conveyor",
       requester: "T. Mokoena",
       specMatch: "60mm / Labyrinth / 95kN",
-      selectionsDone: 3,
+      selectionsDone: 2,
       selectionsTotal: 6,
     },
   },
@@ -1814,6 +1816,47 @@ export const CHAT_SESSIONS: ChatSession[] = [
       selectionsTotal: 6,
     },
   },
+
+  // 6. Blank draft — opened by sidebar "New session" (mock: type freely, no AI replies)
+  {
+    id: NEW_SESSION_ID,
+    title: "New session",
+    navLabel: "New session",
+    navSubtitle: "Draft",
+    category: "Milling",
+    status: "new",
+    materialId: "—",
+    requester: "You",
+    date: "22 Jul 2026",
+    messages: [],
+    workflow: [
+      {
+        id: "material-identified",
+        label: "Material identified",
+        status: "active",
+        meta: "Awaiting input",
+      },
+      {
+        id: "application-confirmed",
+        label: "Application confirmed",
+        status: "pending",
+      },
+      { id: "alternate-selection", label: "Alternate selection", status: "pending" },
+      { id: "procurement-approval", label: "Procurement approval", status: "pending" },
+      { id: "engineering-signoff", label: "Engineering sign-off", status: "pending" },
+      { id: "po-generation", label: "PO generation", status: "pending" },
+    ],
+    emails: [],
+    trace: {
+      tags: [{ label: "Draft", kind: "status" }],
+      material: "—",
+      equipment: "—",
+      requester: "You",
+      specMatch: "—",
+      selectionsDone: 0,
+      selectionsTotal: 6,
+    },
+  },
 ]
 
 export function getSessionById(id: string): ChatSession | undefined {
@@ -1990,19 +2033,6 @@ export const PENDING_APPROVALS: PendingApproval[] = [
   },
   {
     id: "appr-2",
-    sessionId: "SPR-2851",
-    materialId: "500-22140",
-    materialDescription: "Bearing, Spherical Roller, Conveyor Idler",
-    requester: "T. Mokoena",
-    matchTier: "Direct equivalent",
-    savingsPct: 15,
-    waitingSince: "21 Jul 2026 · 08:15 AM",
-    approver: "R. Patel",
-    category: "Conveyance",
-    urgency: "High",
-  },
-  {
-    id: "appr-3",
     sessionId: "SPR-2839",
     materialId: "500-31005",
     materialDescription: "Pressure Transmitter, Cerabar PMC21",
@@ -2015,7 +2045,7 @@ export const PENDING_APPROVALS: PendingApproval[] = [
     urgency: "Critical",
   },
   {
-    id: "appr-4",
+    id: "appr-3",
     sessionId: "SPR-2871",
     materialId: "500-19602",
     materialDescription: "Control Valve, Rotary, Neldisc",

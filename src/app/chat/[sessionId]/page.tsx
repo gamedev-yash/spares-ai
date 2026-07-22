@@ -31,5 +31,5 @@ export default async function ChatSessionPage({
     notFound()
   }
 
-  return <ChatWorkspace session={session} />
+  return <ChatWorkspace key={session.id} session={session} />
 }
