@@ -198,8 +198,55 @@ export interface ChatSession {
   status: SessionStatus
   materialId: string
   requester: string
+  date: string // pre-formatted "DD MMM YYYY" — when the session was opened
   messages: ChatMessage[]
   workflow: WorkflowStepData[]
   emails: EmailNotificationData[]
   trace: TraceInfo
+}
+
+// ---- Secondary pages ----
+
+export interface PendingApproval {
+  id: string
+  sessionId: string
+  materialId: string
+  materialDescription: string
+  requester: string
+  matchTier: MatchTier
+  savingsPct: number
+  waitingSince: string
+  approver: string
+  category: Category
+  urgency: "Normal" | "High" | "Critical"
+}
+
+export type ApprovalDecision = "approved" | "rejected" | "escalated"
+
+export interface AuditEntry {
+  id: string
+  timestamp: string
+  sessionId: string
+  action: string
+  actor: "User" | "AI" | "System"
+  material: string
+  detail: string
+  fullDetail: string
+}
+
+export interface DashboardSummary {
+  activeSessions: number
+  alternatesFoundThisMonth: number
+  costSavingsZAR: number
+  pendingApprovals: number
+}
+
+export interface SavingsTrendPoint {
+  month: string
+  savings: number
+}
+
+export interface CategoryBreakdownPoint {
+  category: Category
+  value: number
 }

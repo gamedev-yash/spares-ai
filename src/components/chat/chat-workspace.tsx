@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { toast } from "sonner"
 
 import { ChatBody } from "@/components/chat/chat-body"
 import { ChatHeader } from "@/components/chat/chat-header"
@@ -62,6 +63,17 @@ export function ChatWorkspace({ session }: { session: ChatSession }) {
             : email
         )
       )
+      toast.success("Approval workflow triggered", {
+        description: "Stakeholders have been notified.",
+      })
+    } else if (actionId === "export") {
+      toast.success("Comparison report exported", {
+        description: "PDF queued for engineering review.",
+      })
+    } else if (actionId === "view-technical") {
+      toast("Showing technical equivalents", {
+        description: "Filtered to alternates from other manufacturers.",
+      })
     }
   }
 

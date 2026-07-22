@@ -1,9 +1,15 @@
 import type {
   AlternateRecommendation,
+  AuditEntry,
+  CategoryBreakdownPoint,
   ChatSession,
+  DashboardSummary,
   Material,
+  PendingApproval,
+  SavingsTrendPoint,
   Supplier,
 } from "@/lib/types"
+import { formatZAR } from "@/lib/utils"
 
 // ---------------------------------------------------------------------------
 // Suppliers
@@ -846,6 +852,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
     status: "in_progress",
     materialId: "500-14892",
     requester: "M. Naidoo",
+    date: "22 Jul 2026",
     messages: [
       {
         id: "seal-1",
@@ -1051,6 +1058,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
     status: "pending_approval",
     materialId: "500-22140",
     requester: "T. Mokoena",
+    date: "21 Jul 2026",
     messages: [
       {
         id: "brg-1",
@@ -1229,6 +1237,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
     status: "escalated",
     materialId: "500-31005",
     requester: "S. van Wyk",
+    date: "18 Jul 2026",
     messages: [
       {
         id: "pt-1",
@@ -1451,6 +1460,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
     status: "completed",
     materialId: "500-08823",
     requester: "K. Dlamini",
+    date: "15 Jul 2026",
     messages: [
       {
         id: "imp-1",
@@ -1676,6 +1686,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
     status: "new",
     materialId: "500-19560",
     requester: "R. Abrahams",
+    date: "22 Jul 2026",
     messages: [
       {
         id: "valve-1",
@@ -1777,4 +1788,273 @@ export function getSessionById(id: string): ChatSession | undefined {
 /** Sessions surfaced in the sidebar — completed sessions roll off the active list. */
 export function getActiveSessions(): ChatSession[] {
   return CHAT_SESSIONS.filter((s) => s.status !== "completed")
+}
+
+/** Synthesizes a fresh "material identification" session for any catalog material — used by /materials row clicks. */
+export function createDraftSession(material: Material): ChatSession {
+  const categoryLabel = material.category.toLowerCase()
+
+  return {
+    id: `NEW-${material.id}`,
+    title: `${material.description} — ${material.category}`,
+    navLabel: material.description,
+    navSubtitle: "New session",
+    category: material.category,
+    status: "new",
+    materialId: material.id,
+    requester: "You",
+    date: "22 Jul 2026",
+    messages: [
+      {
+        id: "draft-1",
+        role: "user",
+        authorLabel: "You",
+        timestamp: "Just now",
+        text: `I need an alternate supplier for material ${material.id} — ${material.description}`,
+      },
+      {
+        id: "draft-2",
+        role: "ai",
+        authorLabel: "Spares AI",
+        timestamp: "Just now",
+        text: `Found material **${material.id}** — currently described as "${material.description}", ${material.manufacturer}, sourced through ${material.lastVendor}. Let me confirm the application context so I can find the right alternates.\n\n**Which equipment is this installed on?**`,
+        options: {
+          id: "draft-equipment",
+          defaultSelectedId: "primary",
+          options: [
+            {
+              id: "primary",
+              icon: "settings",
+              label: `Primary ${categoryLabel} application`,
+              description: "Most common installation for this material",
+            },
+            {
+              id: "secondary",
+              icon: "settings",
+              label: "Secondary / standby unit",
+              description: "Redundant or backup equipment",
+            },
+            {
+              id: "other",
+              icon: "help",
+              label: "Not sure / other equipment",
+              description: "I'll describe the application manually",
+            },
+          ],
+        },
+        footerNote: "Selection logged for traceability",
+      },
+    ],
+    workflow: [
+      {
+        id: "material-identified",
+        label: "Material identified",
+        status: "done",
+        meta: "Auto · just now",
+      },
+      {
+        id: "application-confirmed",
+        label: "Application confirmed",
+        status: "active",
+        meta: "Awaiting user",
+      },
+      { id: "alternate-selection", label: "Alternate selection", status: "pending" },
+      { id: "procurement-approval", label: "Procurement approval", status: "pending" },
+      { id: "engineering-signoff", label: "Engineering sign-off", status: "pending" },
+      { id: "po-generation", label: "PO generation", status: "pending" },
+    ],
+    emails: [
+      {
+        id: "draft-email-1",
+        status: "sent",
+        text: "Session started alert sent to procurement team",
+        time: "Just now",
+      },
+      {
+        id: "draft-email-2",
+        status: "pending",
+        text: "Approval reminder queued for R. Patel (Procurement head)",
+        time: "Triggers on selection",
+      },
+      {
+        id: "draft-email-3",
+        status: "escalated",
+        text: "Auto-escalation to VP Supply Chain if no response in 24h",
+        time: "Configured",
+      },
+    ],
+    trace: {
+      tags: [
+        { label: material.category, kind: "cat" },
+        { label: "New", kind: "status" },
+      ],
+      material: material.id,
+      equipment: "Pending confirmation",
+      requester: "You",
+      specMatch: "Pending",
+      selectionsDone: 1,
+      selectionsTotal: 6,
+    },
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Dashboard
+// ---------------------------------------------------------------------------
+
+export const SAVINGS_TREND: SavingsTrendPoint[] = [
+  { month: "Feb", savings: 148000 },
+  { month: "Mar", savings: 176500 },
+  { month: "Apr", savings: 205000 },
+  { month: "May", savings: 231000 },
+  { month: "Jun", savings: 268000 },
+  { month: "Jul", savings: 296000 },
+]
+
+export const CATEGORY_BREAKDOWN: CategoryBreakdownPoint[] = [
+  { category: "Milling", value: 14 },
+  { category: "Conveyance", value: 9 },
+  { category: "Flotation", value: 7 },
+  { category: "Instrumentation", value: 5 },
+]
+
+export function getDashboardSummary(): DashboardSummary {
+  return {
+    activeSessions: getActiveSessions().length,
+    alternatesFoundThisMonth: CATEGORY_BREAKDOWN.reduce((sum, c) => sum + c.value, 0),
+    costSavingsZAR: SAVINGS_TREND.reduce((sum, p) => sum + p.savings, 0),
+    pendingApprovals: PENDING_APPROVALS.length,
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Approvals queue
+// ---------------------------------------------------------------------------
+
+export const PENDING_APPROVALS: PendingApproval[] = [
+  {
+    id: "appr-1",
+    sessionId: "SPR-2847",
+    materialId: "500-14892",
+    materialDescription: "Seal Assy, Mech Type XR-200",
+    requester: "M. Naidoo",
+    matchTier: "Direct equivalent",
+    savingsPct: 20,
+    waitingSince: "22 Jul 2026 · 10:25 AM",
+    approver: "R. Patel",
+    category: "Milling",
+    urgency: "Normal",
+  },
+  {
+    id: "appr-2",
+    sessionId: "SPR-2851",
+    materialId: "500-22140",
+    materialDescription: "Bearing, Spherical Roller, Conveyor Idler",
+    requester: "T. Mokoena",
+    matchTier: "Direct equivalent",
+    savingsPct: 15,
+    waitingSince: "21 Jul 2026 · 08:15 AM",
+    approver: "R. Patel",
+    category: "Conveyance",
+    urgency: "High",
+  },
+  {
+    id: "appr-3",
+    sessionId: "SPR-2839",
+    materialId: "500-31005",
+    materialDescription: "Pressure Transmitter, Cerabar PMC21",
+    requester: "S. van Wyk",
+    matchTier: "Technical equivalent",
+    savingsPct: 14,
+    waitingSince: "18 Jul 2026 · 07:44 AM",
+    approver: "P. Govender",
+    category: "Instrumentation",
+    urgency: "Critical",
+  },
+  {
+    id: "appr-4",
+    sessionId: "SPR-2871",
+    materialId: "500-19602",
+    materialDescription: "Control Valve, Rotary, Neldisc",
+    requester: "L. Ndlovu",
+    matchTier: "Direct equivalent",
+    savingsPct: 11,
+    waitingSince: "20 Jul 2026 · 2:30 PM",
+    approver: "R. Patel",
+    category: "Milling",
+    urgency: "Normal",
+  },
+]
+
+// ---------------------------------------------------------------------------
+// Audit trail — derived from the chat sessions above, so it can never drift
+// from what actually happened in a conversation.
+// ---------------------------------------------------------------------------
+
+export function getAuditLog(): AuditEntry[] {
+  const entries: AuditEntry[] = []
+
+  for (const session of CHAT_SESSIONS) {
+    for (const message of session.messages) {
+      const actor = message.role === "user" ? "User" : "AI"
+      const plainText = (message.text ?? "")
+        .replace(/\*\*/g, "")
+        .replace(/\n+/g, " ")
+        .trim()
+
+      if (message.comparison) {
+        const c = message.comparison
+        entries.push({
+          id: `${message.id}-msg`,
+          timestamp: message.timestamp,
+          sessionId: session.id,
+          action: "Alternate comparison shown",
+          actor: "AI",
+          material: session.materialId,
+          detail: `${c.heading}: ${c.alternate.supplierName} vs ${c.current.supplierName}`,
+          fullDetail: `${c.heading}. Current: ${c.current.supplierName} (${c.current.partNumber}) at ${formatZAR(c.current.price)}. Alternate: ${c.alternate.supplierName} (${c.alternate.partNumber}) at ${formatZAR(c.alternate.price)}${c.alternate.savingsPct !== undefined ? `, ${c.alternate.savingsPct}% below current` : ""}. Market benchmark ${formatZAR(c.benchmark.low)}–${formatZAR(c.benchmark.high)}.`,
+        })
+      } else if (message.options) {
+        entries.push({
+          id: `${message.id}-msg`,
+          timestamp: message.timestamp,
+          sessionId: session.id,
+          action: message.role === "user" ? "User request" : "Options presented",
+          actor,
+          material: session.materialId,
+          detail: plainText.slice(0, 140) || "—",
+          fullDetail: `${plainText} — Options: ${message.options.options.map((o) => o.label).join(", ")}`,
+        })
+      } else {
+        entries.push({
+          id: `${message.id}-msg`,
+          timestamp: message.timestamp,
+          sessionId: session.id,
+          action: message.role === "user" ? "User message" : "AI response",
+          actor,
+          material: session.materialId,
+          detail: plainText.slice(0, 140) || "—",
+          fullDetail: plainText,
+        })
+      }
+
+      if (message.actions?.resolvedActionId) {
+        const chosen = message.actions.actions.find(
+          (a) => a.id === message.actions?.resolvedActionId
+        )
+        entries.push({
+          id: `${message.id}-action`,
+          timestamp: message.timestamp,
+          sessionId: session.id,
+          action: "Action taken",
+          actor: "User",
+          material: session.materialId,
+          detail: `Selected: ${chosen?.label ?? message.actions.resolvedActionId}`,
+          fullDetail: `User selected "${chosen?.label ?? message.actions.resolvedActionId}" — ${chosen?.description ?? "no further detail"}.`,
+        })
+      }
+    }
+  }
+
+  return entries
 }

@@ -32,9 +32,15 @@ export function OptionCard({
       role={showRadio ? "radio" : undefined}
       aria-checked={showRadio ? selected : undefined}
       disabled={disabled}
-      onClick={onSelect}
+      onClick={(e) => {
+        // This card can sit inside a chat message that has its own click
+        // affordances (dropdown triggers, links); keep selection self-contained.
+        e.stopPropagation()
+        onSelect?.()
+      }}
       className={cn(
-        "flex w-full items-center gap-2.5 rounded-lg border px-3.5 py-2.5 text-left transition-all",
+        "flex w-full items-center gap-2.5 rounded-lg border px-3.5 py-2.5 text-left transition-colors duration-150",
+        "outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
         "disabled:pointer-events-none disabled:opacity-50",
         isSuccess
           ? "border-success/40 bg-success/5 hover:bg-success/10"
@@ -65,11 +71,16 @@ export function OptionCard({
       {showRadio && (
         <span
           className={cn(
-            "flex size-4 shrink-0 items-center justify-center rounded-full border-2",
+            "flex size-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-150",
             selected ? "border-primary" : "border-muted-foreground/40"
           )}
         >
-          {selected && <span className="size-2 rounded-full bg-primary" />}
+          <span
+            className={cn(
+              "size-2 rounded-full bg-primary transition-transform duration-150",
+              selected ? "scale-100" : "scale-0"
+            )}
+          />
         </span>
       )}
     </button>

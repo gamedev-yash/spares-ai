@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
+import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { CATEGORIES, ICONS, QUICK_ACTIONS } from "@/lib/constants"
 import { getActiveSessions } from "@/lib/mock-data"
 import { cn } from "@/lib/utils"
@@ -127,6 +128,10 @@ export function Sidebar() {
           )
         })}
       </NavSection>
+
+      <div className="mt-auto border-t border-border py-1">
+        <ThemeToggle />
+      </div>
     </aside>
   )
 }

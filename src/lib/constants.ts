@@ -66,6 +66,18 @@ export const CATEGORIES: { label: Category; icon: IconKey }[] = [
   { label: "Instrumentation", icon: "gauge" },
 ]
 
+/**
+ * Fixed categorical identity color per plant area — validated for CVD/contrast
+ * (dataviz skill, 4-slot categorical palette). Assigned by entity, never by
+ * rank, so a filtered view can't repaint the survivors.
+ */
+export const CATEGORY_COLORS: Record<Category, string> = {
+  Milling: "var(--chart-1)",
+  Conveyance: "var(--chart-2)",
+  Flotation: "var(--chart-3)",
+  Instrumentation: "var(--chart-4)",
+}
+
 export const QUICK_ACTIONS: {
   label: string
   icon: IconKey
