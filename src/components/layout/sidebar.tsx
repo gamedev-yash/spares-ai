@@ -178,13 +178,14 @@ export function Sidebar() {
         {CATEGORIES.map((category) => {
           const Icon = ICONS[category.icon]
           return (
-            <div
+            <Link
               key={category.label}
-              className="mx-2 my-0.5 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] text-muted-foreground"
+              href={`/materials?category=${encodeURIComponent(category.label)}`}
+              className="mx-2 my-0.5 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               <Icon className="size-4 shrink-0" />
               {category.label}
-            </div>
+            </Link>
           )
         })}
       </NavSection>

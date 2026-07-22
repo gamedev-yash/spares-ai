@@ -90,7 +90,7 @@ export const QUICK_ACTIONS: {
     label: "Pending approvals",
     icon: "clipboard-check",
     href: "/approvals",
-    badge: 3,
+    badge: 4,
   },
   { label: "Audit trail", icon: "history", href: "/audit" },
 ]

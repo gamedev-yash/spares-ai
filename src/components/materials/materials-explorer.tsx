@@ -1,18 +1,38 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
+import { useSearchParams } from "next/navigation"
 
 import { ALL_FILTER, MaterialSearch } from "@/components/materials/material-search"
 import { MaterialTable } from "@/components/materials/material-table"
 import type { Category, LifecycleStatus, Material } from "@/lib/types"
 
+const CATEGORY_VALUES: Category[] = [
+  "Flotation",
+  "Conveyance",
+  "Milling",
+  "Instrumentation",
+]
+
 export function MaterialsExplorer({ materials }: { materials: Material[] }) {
+  const searchParams = useSearchParams()
+  const categoryParam = searchParams.get("category")
+
   const [query, setQuery] = useState("")
   const [category, setCategory] = useState<Category | typeof ALL_FILTER>(ALL_FILTER)
   const [manufacturer, setManufacturer] = useState(ALL_FILTER)
   const [lifecycle, setLifecycle] = useState<LifecycleStatus | typeof ALL_FILTER>(
     ALL_FILTER
   )
+
+  useEffect(() => {
+    if (
+      categoryParam &&
+      CATEGORY_VALUES.includes(categoryParam as Category)
+    ) {
+      setCategory(categoryParam as Category)
+    }
+  }, [categoryParam])
 
   const manufacturers = useMemo(
     () => Array.from(new Set(materials.map((m) => m.manufacturer))).sort(),

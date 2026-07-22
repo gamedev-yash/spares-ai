@@ -1130,8 +1130,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
         actions: {
           id: "brg-actions",
           accentId: "proceed",
-          // Left unresolved so the user can still pick an action and Continue
-          // — this session is the live "pending approval" demo path.
+          // Left unresolved so the user can still pick an action and Continue.
           actions: [
             {
               id: "proceed",
@@ -2033,6 +2032,19 @@ export const PENDING_APPROVALS: PendingApproval[] = [
   },
   {
     id: "appr-2",
+    sessionId: "SPR-2851",
+    materialId: "500-22140",
+    materialDescription: "Bearing, Spherical Roller, Conveyor Idler",
+    requester: "T. Mokoena",
+    matchTier: "Direct equivalent",
+    savingsPct: 15,
+    waitingSince: "21 Jul 2026 · 08:15 AM",
+    approver: "R. Patel",
+    category: "Conveyance",
+    urgency: "High",
+  },
+  {
+    id: "appr-3",
     sessionId: "SPR-2839",
     materialId: "500-31005",
     materialDescription: "Pressure Transmitter, Cerabar PMC21",
@@ -2045,7 +2057,7 @@ export const PENDING_APPROVALS: PendingApproval[] = [
     urgency: "Critical",
   },
   {
-    id: "appr-3",
+    id: "appr-4",
     sessionId: "SPR-2871",
     materialId: "500-19602",
     materialDescription: "Control Valve, Rotary, Neldisc",
