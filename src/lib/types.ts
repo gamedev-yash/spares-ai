@@ -100,7 +100,14 @@ export interface ChatOption {
 export interface OptionGroupData {
   id: string
   options: ChatOption[]
+  /** the suggested default (live groups) or the final answer (locked groups) */
   defaultSelectedId?: string
+  /** true = already answered when the session was authored; always disabled */
+  locked?: boolean
+  /** historical confirmation timestamp, used only when locked */
+  resolvedAt?: string
+  /** if true, resolving this (via a live click) advances the workflow stepper */
+  advancesWorkflow?: boolean
 }
 
 export interface ActionOptionsData {

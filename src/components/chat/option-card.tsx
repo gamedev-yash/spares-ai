@@ -41,7 +41,10 @@ export function OptionCard({
       className={cn(
         "flex w-full items-center gap-2.5 rounded-lg border px-3.5 py-2.5 text-left transition-colors duration-150",
         "outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
-        "disabled:pointer-events-none disabled:opacity-50",
+        "disabled:pointer-events-none",
+        // Only fade out cards that were NOT chosen — the selected option in a
+        // locked group should stay fully legible, not dim along with the rest.
+        disabled && !selected && "opacity-50",
         isSuccess
           ? "border-success/40 bg-success/5 hover:bg-success/10"
           : selected

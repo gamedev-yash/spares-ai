@@ -870,6 +870,8 @@ export const CHAT_SESSIONS: ChatSession[] = [
         options: {
           id: "seal-equipment",
           defaultSelectedId: "warman",
+          locked: true,
+          resolvedAt: "10:24 AM",
           options: [
             {
               id: "warman",
@@ -892,13 +894,6 @@ export const CHAT_SESSIONS: ChatSession[] = [
           ],
         },
         footerNote: "Selection logged for traceability",
-      },
-      {
-        id: "seal-3",
-        role: "user",
-        authorLabel: "You",
-        timestamp: "10:24 AM",
-        text: "Warman 8/6 AH slurry pump",
       },
       {
         id: "seal-4",
@@ -1076,6 +1071,8 @@ export const CHAT_SESSIONS: ChatSession[] = [
         options: {
           id: "brg-conveyor",
           defaultSelectedId: "cv14",
+          locked: true,
+          resolvedAt: "8:14 AM",
           options: [
             {
               id: "cv14",
@@ -1098,13 +1095,6 @@ export const CHAT_SESSIONS: ChatSession[] = [
           ],
         },
         footerNote: "Selection logged for traceability",
-      },
-      {
-        id: "brg-3",
-        role: "user",
-        authorLabel: "You",
-        timestamp: "8:14 AM",
-        text: "CV-14 stacker conveyor",
       },
       {
         id: "brg-4",
@@ -1255,6 +1245,8 @@ export const CHAT_SESSIONS: ChatSession[] = [
         options: {
           id: "pt-loop",
           defaultSelectedId: "dosing",
+          locked: true,
+          resolvedAt: "7:42 AM",
           options: [
             {
               id: "dosing",
@@ -1279,13 +1271,6 @@ export const CHAT_SESSIONS: ChatSession[] = [
         footerNote: "Selection logged for traceability",
       },
       {
-        id: "pt-3",
-        role: "user",
-        authorLabel: "You",
-        timestamp: "7:42 AM",
-        text: "Reagent dosing skid — flotation bank 2",
-      },
-      {
         id: "pt-4",
         role: "ai",
         authorLabel: "Spares AI",
@@ -1294,6 +1279,8 @@ export const CHAT_SESSIONS: ChatSession[] = [
         options: {
           id: "pt-tier",
           defaultSelectedId: "technical",
+          locked: true,
+          resolvedAt: "7:44 AM",
           options: [
             {
               id: "direct",
@@ -1478,6 +1465,8 @@ export const CHAT_SESSIONS: ChatSession[] = [
         options: {
           id: "imp-pump",
           defaultSelectedId: "fp2",
+          locked: true,
+          resolvedAt: "9:05 AM",
           options: [
             {
               id: "fp2",
@@ -1502,13 +1491,6 @@ export const CHAT_SESSIONS: ChatSession[] = [
         footerNote: "Selection logged for traceability",
       },
       {
-        id: "imp-3",
-        role: "user",
-        authorLabel: "You",
-        timestamp: "9:05 AM",
-        text: "FP-2 flotation feed pump",
-      },
-      {
         id: "imp-4",
         role: "ai",
         authorLabel: "Spares AI",
@@ -1517,6 +1499,8 @@ export const CHAT_SESSIONS: ChatSession[] = [
         options: {
           id: "imp-tier",
           defaultSelectedId: "direct",
+          locked: true,
+          resolvedAt: "9:07 AM",
           options: [
             {
               id: "direct",
@@ -1676,17 +1660,20 @@ export const CHAT_SESSIONS: ChatSession[] = [
     },
   },
 
-  // 5. Control valve — Milling — brand new session, material identification step
+  // 5. Control valve — Milling — escalated: requester never picked a match
+  // tier, so the request timed out and auto-escalated (a distinct trigger
+  // from SPR-2839, which stalled on an approver instead of the requester).
   {
     id: "SPR-2860",
     title: "Control valve — Reagent dosing line",
     navLabel: "Control valve",
-    navSubtitle: "New session",
+    navSubtitle: "Escalated",
+    navBadge: { type: "alert" },
     category: "Milling",
-    status: "new",
+    status: "escalated",
     materialId: "500-19560",
     requester: "R. Abrahams",
-    date: "22 Jul 2026",
+    date: "21 Jul 2026",
     messages: [
       {
         id: "valve-1",
@@ -1704,6 +1691,8 @@ export const CHAT_SESSIONS: ChatSession[] = [
         options: {
           id: "valve-line",
           defaultSelectedId: "reagent",
+          locked: true,
+          resolvedAt: "2:04 PM",
           options: [
             {
               id: "reagent",
@@ -1727,6 +1716,46 @@ export const CHAT_SESSIONS: ChatSession[] = [
         },
         footerNote: "Selection logged for traceability",
       },
+      {
+        id: "valve-3",
+        role: "ai",
+        authorLabel: "Spares AI",
+        timestamp: "2:05 PM",
+        text: "Got it — reagent dosing line, milling circuit. Matched specs: **3in, equal % trim, 667 spring-diaphragm actuator**. Found 2 alternate options. What match tier are you looking for?",
+        options: {
+          id: "valve-tier",
+          // No defaultSelectedId — this one was asked and never answered.
+          locked: true,
+          options: [
+            {
+              id: "direct",
+              icon: "copy",
+              label: "Direct equivalent",
+              description: "Same OEM part from different distributor — light approval",
+            },
+            {
+              id: "technical",
+              icon: "sliders",
+              label: "Technical equivalent",
+              description: "Different manufacturer, same specs — engineering sign-off",
+            },
+            {
+              id: "all",
+              icon: "lightbulb",
+              label: "Show all tiers",
+              description: "See all options with price comparison",
+            },
+          ],
+        },
+        footerNote: "Tier selection determines approval workflow",
+      },
+      {
+        id: "valve-4",
+        role: "ai",
+        authorLabel: "Spares AI",
+        timestamp: "Next day · 2:10 PM",
+        text: "We haven't heard back on the match tier for this request in 24 hours. It has been **auto-escalated to L. Naidoo (VP Supply Chain)** for review.",
+      },
     ],
     workflow: [
       {
@@ -1738,10 +1767,16 @@ export const CHAT_SESSIONS: ChatSession[] = [
       {
         id: "application-confirmed",
         label: "Application confirmed",
-        status: "active",
-        meta: "Awaiting user",
+        status: "done",
+        meta: "User · 14:04",
       },
-      { id: "alternate-selection", label: "Alternate selection", status: "pending" },
+      {
+        id: "alternate-selection",
+        label: "Alternate selection",
+        status: "active",
+        meta: "Overdue — no response, escalated",
+        tone: "danger",
+      },
       { id: "procurement-approval", label: "Procurement approval", status: "pending" },
       { id: "engineering-signoff", label: "Engineering sign-off", status: "pending" },
       { id: "po-generation", label: "PO generation", status: "pending" },
@@ -1755,27 +1790,27 @@ export const CHAT_SESSIONS: ChatSession[] = [
       },
       {
         id: "valve-email-2",
-        status: "pending",
-        text: "Approval reminder queued for R. Patel (Procurement head)",
-        time: "Triggers on selection",
+        status: "sent",
+        text: "Reminder sent to R. Abrahams — match tier decision pending",
+        time: "2:05 PM",
       },
       {
         id: "valve-email-3",
         status: "escalated",
-        text: "Auto-escalation to VP Supply Chain if no response in 24h",
-        time: "Configured",
+        text: "Escalated to L. Naidoo (VP Supply Chain) — no response from requester in 24h",
+        time: "Next day · 2:10 PM",
       },
     ],
     trace: {
       tags: [
         { label: "Milling", kind: "cat" },
-        { label: "New", kind: "status" },
+        { label: "Escalated", kind: "status" },
       ],
       material: "500-19560",
-      equipment: "Pending confirmation",
+      equipment: "Reagent dosing line",
       requester: "R. Abrahams",
-      specMatch: "Pending",
-      selectionsDone: 1,
+      specMatch: "3in / Equal% / 667 actuator",
+      selectionsDone: 2,
       selectionsTotal: 6,
     },
   },
@@ -1821,6 +1856,7 @@ export function createDraftSession(material: Material): ChatSession {
         options: {
           id: "draft-equipment",
           defaultSelectedId: "primary",
+          advancesWorkflow: true,
           options: [
             {
               id: "primary",
@@ -1843,6 +1879,13 @@ export function createDraftSession(material: Material): ChatSession {
           ],
         },
         footerNote: "Selection logged for traceability",
+      },
+      {
+        id: "draft-3",
+        role: "ai",
+        authorLabel: "Spares AI",
+        timestamp: "Just now",
+        text: `Thanks — matching specs for that application now. I'll have alternate options for **${material.id}** ready shortly.`,
       },
     ],
     workflow: [
@@ -2025,6 +2068,22 @@ export function getAuditLog(): AuditEntry[] {
           detail: plainText.slice(0, 140) || "—",
           fullDetail: `${plainText} — Options: ${message.options.options.map((o) => o.label).join(", ")}`,
         })
+
+        if (message.options.locked && message.options.defaultSelectedId) {
+          const chosen = message.options.options.find(
+            (o) => o.id === message.options?.defaultSelectedId
+          )
+          entries.push({
+            id: `${message.id}-selection`,
+            timestamp: message.options.resolvedAt ?? message.timestamp,
+            sessionId: session.id,
+            action: "User selection",
+            actor: "User",
+            material: session.materialId,
+            detail: `Selected: ${chosen?.label ?? message.options.defaultSelectedId}`,
+            fullDetail: `User selected "${chosen?.label ?? message.options.defaultSelectedId}" in response to: ${plainText}`,
+          })
+        }
       } else {
         entries.push({
           id: `${message.id}-msg`,

@@ -32,10 +32,14 @@ export function ChatMessage({
   message,
   resolvedActionId,
   onAction,
+  resolvedOptionId,
+  onOptionSelect,
 }: {
   message: ChatMessageData
   resolvedActionId?: string
   onAction?: (messageId: string, actionId: string) => void
+  resolvedOptionId?: string | null
+  onOptionSelect?: (groupId: string, optionId: string) => void
 }) {
   const isUser = message.role === "user"
 
@@ -60,7 +64,15 @@ export function ChatMessage({
       )}
 
       {message.comparison && <ComparisonCard data={message.comparison} />}
-      {message.options && <OptionGroup group={message.options} />}
+      {message.options && (
+        <OptionGroup
+          group={message.options}
+          resolvedOptionId={resolvedOptionId}
+          onConfirm={(optionId) =>
+            onOptionSelect?.(message.options!.id, optionId)
+          }
+        />
+      )}
       {message.actions && (
         <ActionOptions
           data={message.actions}

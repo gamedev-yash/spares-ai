@@ -9,15 +9,19 @@ export function ChatBody({
   messages,
   resolvedActions,
   onAction,
+  resolvedOptions,
+  onOptionSelect,
 }: {
   messages: ChatMessageData[]
   resolvedActions: Record<string, string>
   onAction: (messageId: string, actionId: string) => void
+  resolvedOptions: Record<string, string | null>
+  onOptionSelect: (groupId: string, optionId: string) => void
 }) {
   const endRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ block: "end" })
+    endRef.current?.scrollIntoView({ block: "end", behavior: "smooth" })
   }, [messages.length])
 
   return (
@@ -28,6 +32,10 @@ export function ChatBody({
           message={message}
           resolvedActionId={resolvedActions[message.id]}
           onAction={onAction}
+          resolvedOptionId={
+            message.options ? resolvedOptions[message.options.id] : undefined
+          }
+          onOptionSelect={onOptionSelect}
         />
       ))}
       <div ref={endRef} />
