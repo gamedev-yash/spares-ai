@@ -1,6 +1,10 @@
 "use client"
 
+import { useState } from "react"
+import { Check } from "lucide-react"
+
 import { OptionCard } from "@/components/chat/option-card"
+import { Button } from "@/components/ui/button"
 import type { ActionOptionsData } from "@/lib/types"
 
 export function ActionOptions({
@@ -13,6 +17,8 @@ export function ActionOptions({
   onAction?: (actionId: string) => void
 }) {
   const isResolved = Boolean(resolvedId)
+  const [pendingId, setPendingId] = useState<string | undefined>(undefined)
+  const selectedId = isResolved ? resolvedId : pendingId
 
   return (
     <div className="mt-2 flex flex-col gap-1.5">
@@ -28,11 +34,25 @@ export function ActionOptions({
             description={action.description}
             showRadio={false}
             tone={isAccent ? "success" : "default"}
+            selected={action.id === selectedId}
             disabled={isResolved && !isChosen}
-            onSelect={isResolved ? undefined : () => onAction?.(action.id)}
+            onSelect={isResolved ? undefined : () => setPendingId(action.id)}
           />
         )
       })}
+      {!isResolved && (
+        <div className="flex justify-end">
+          <Button
+            type="button"
+            size="xs"
+            disabled={!pendingId}
+            onClick={() => pendingId && onAction?.(pendingId)}
+          >
+            <Check className="size-3" />
+            Continue
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
