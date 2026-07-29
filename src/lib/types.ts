@@ -252,21 +252,93 @@ export interface AuditEntry {
   fullDetail: string
 }
 
-export interface DashboardSummary {
-  activeSessions: number
-  alternatesFoundThisMonth: number
-  costSavingsZAR: number
-  pendingApprovals: number
+// ---- VZI Open PR & PO Position dashboard (/dashboard) ----
+// Ported from Anish's Dash app — figures are transcribed from the VZI review
+// slides workbook and must not be re-derived or "corrected" here either.
+
+export type VziUnit = "Gamsberg" | "BMM"
+
+export interface VziPrSummaryRow {
+  unit: VziUnit
+  material: number
+  service: number
 }
 
-export interface SavingsTrendPoint {
-  month: string
-  savings: number
+export interface VziAgingBucket {
+  bucket: string
+  count: number
 }
 
-export interface CategoryBreakdownPoint {
-  category: Category
+export interface VziOarVbRow {
+  unit: VziUnit
+  area: string
+  oar: number
+  vb: number
+}
+
+export interface VziCategoryRow {
+  unit: VziUnit
+  area: string
+  category: string
+  count: number
+}
+
+export interface VziPoDetailRow {
+  unit: VziUnit
+  area: string
+  matCount: number
+  matValue: number // ZAR millions
+  svcCount: number
+  svcValue: number // ZAR millions
+}
+
+export interface VziFlag {
+  title: string
+  body: string
+}
+
+export interface VziTotals {
+  material: number
+  service: number
+  total: number
+}
+
+export interface VziUnitAggregate {
+  matCount: number
+  matValue: number
+  svcCount: number
+  svcValue: number
+  count: number
   value: number
+}
+
+export interface VziOarVbAggregate {
+  oar: number
+  vb: number
+  total: number
+}
+
+export interface VziCategoryPivotRow {
+  category: string
+  Gamsberg: number
+  BMM: number
+  total: number
+}
+
+export interface VziPoAreaRow extends VziPoDetailRow {
+  label: string
+  total: number
+}
+
+export interface VziKpiSummary {
+  openPr: VziTotals
+  openPo: VziTotals
+  openPoValue: VziTotals // ZAR millions
+  servicePct: number
+  agingTotal: number
+  prOver30: number
+  prOver30Pct: number
+  careMaintenance: VziTotals
 }
 
 // ---- Situation Analysis (Open PR/PO monitor — Initiative 9) ----

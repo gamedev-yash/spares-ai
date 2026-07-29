@@ -1,17 +1,26 @@
 import type {
   AlternateRecommendation,
   AuditEntry,
-  CategoryBreakdownPoint,
   ChatSession,
-  DashboardSummary,
   Material,
   PendingApproval,
   PrPoSituation,
   RootCauseDelayPoint,
-  SavingsTrendPoint,
   SituationAnalysisSummary,
   StagePipelinePoint,
   Supplier,
+  VziAgingBucket,
+  VziCategoryPivotRow,
+  VziCategoryRow,
+  VziFlag,
+  VziKpiSummary,
+  VziOarVbAggregate,
+  VziOarVbRow,
+  VziPoAreaRow,
+  VziPoDetailRow,
+  VziPrSummaryRow,
+  VziTotals,
+  VziUnitAggregate,
 } from "@/lib/types"
 import { NEW_SESSION_ID, PROCESS_STAGES, ROOT_CAUSE_CATEGORIES } from "@/lib/constants"
 import { formatZAR } from "@/lib/utils"
@@ -2012,31 +2021,212 @@ export function createDraftSession(material: Material): ChatSession {
 }
 
 // ---------------------------------------------------------------------------
-// Dashboard
+// Dashboard — VZI Open PR & PO Position (Gamsberg & Black Mountain Mining).
+//
+// Ported from Anish's Dash app (`data.py`). Figures are transcribed as-is from
+// the VZI review slides workbook — they are not re-derived or "corrected"
+// here either, including the data-quality flags in VZI_FLAGS.
 // ---------------------------------------------------------------------------
 
-export const SAVINGS_TREND: SavingsTrendPoint[] = [
-  { month: "Feb", savings: 148000 },
-  { month: "Mar", savings: 176500 },
-  { month: "Apr", savings: 205000 },
-  { month: "May", savings: 231000 },
-  { month: "Jun", savings: 268000 },
-  { month: "Jul", savings: 296000 },
+const round2 = (n: number) => Math.round(n * 100) / 100
+const round1 = (n: number) => Math.round(n * 10) / 10
+
+export const VZI_PR_SUMMARY: VziPrSummaryRow[] = [
+  { unit: "Gamsberg", material: 307, service: 39 },
+  { unit: "BMM", material: 202, service: 71 },
 ]
 
-export const CATEGORY_BREAKDOWN: CategoryBreakdownPoint[] = [
-  { category: "Milling", value: 14 },
-  { category: "Conveyance", value: 9 },
-  { category: "Flotation", value: 7 },
-  { category: "Instrumentation", value: 5 },
+export const VZI_AGING: VziAgingBucket[] = [
+  { bucket: "0–7 days", count: 49 },
+  { bucket: "7–15 days", count: 56 },
+  { bucket: "15–30 days", count: 96 },
+  { bucket: "30–60 days", count: 150 },
+  { bucket: "60–90 days", count: 85 },
+  { bucket: "90–120 days", count: 90 },
+  { bucket: "More than 120 days", count: 93 },
 ]
 
-export function getDashboardSummary(): DashboardSummary {
+export const VZI_OAR_VB: VziOarVbRow[] = [
+  { unit: "Gamsberg", area: "Plant", oar: 122, vb: 167 },
+  { unit: "Gamsberg", area: "Mining", oar: 0, vb: 0 },
+  { unit: "Gamsberg", area: "Other", oar: 7, vb: 0 },
+  { unit: "BMM", area: "Plant", oar: 135, vb: 67 },
+  { unit: "BMM", area: "Mining", oar: 0, vb: 0 },
+  { unit: "BMM", area: "Other", oar: 11, vb: 0 },
+]
+
+export const VZI_CATEGORIES: VziCategoryRow[] = [
+  { unit: "BMM", area: "Plant", category: "Repair", count: 76 },
+  { unit: "BMM", area: "Plant", category: "General Consumables", count: 63 },
+  { unit: "BMM", area: "Plant", category: "Dewatering", count: 55 },
+  { unit: "BMM", area: "Plant", category: "Filtration", count: 5 },
+  { unit: "BMM", area: "Plant", category: "Reagent", count: 3 },
+  { unit: "BMM", area: "Other", category: "Township (OAR)", count: 11 },
+  { unit: "Gamsberg", area: "Plant", category: "Repair", count: 99 },
+  { unit: "Gamsberg", area: "Plant", category: "Filtration", count: 55 },
+  { unit: "Gamsberg", area: "Plant", category: "General Consumables", count: 44 },
+  { unit: "Gamsberg", area: "Plant", category: "Milling", count: 38 },
+  { unit: "Gamsberg", area: "Plant", category: "Crushing", count: 20 },
+  { unit: "Gamsberg", area: "Plant", category: "Dewatering", count: 16 },
+  { unit: "Gamsberg", area: "Plant", category: "Electrical Spares", count: 11 },
+  { unit: "Gamsberg", area: "Plant", category: "Phase-2", count: 5 },
+  { unit: "Gamsberg", area: "Plant", category: "Reagent", count: 1 },
+  { unit: "Gamsberg", area: "Other", category: "General Consumables", count: 7 },
+]
+
+export const VZI_PO_SUMMARY: VziPrSummaryRow[] = [
+  { unit: "Gamsberg", material: 115, service: 142 },
+  { unit: "BMM", material: 77, service: 145 },
+]
+
+export const VZI_PO_DETAIL: VziPoDetailRow[] = [
+  { unit: "Gamsberg", area: "Plant", matCount: 106, matValue: 147.02, svcCount: 73, svcValue: 378.8 },
+  { unit: "Gamsberg", area: "Plant Ph2", matCount: 2, matValue: 0.01, svcCount: 1, svcValue: 21.18 },
+  { unit: "Gamsberg", area: "Mining", matCount: 6, matValue: 150.04, svcCount: 38, svcValue: 1501.0 },
+  { unit: "Gamsberg", area: "Other", matCount: 1, matValue: 0.01, svcCount: 30, svcValue: 254.42 },
+  { unit: "BMM", area: "Plant", matCount: 57, matValue: 20.9, svcCount: 30, svcValue: 184.82 },
+  { unit: "BMM", area: "Mining", matCount: 5, matValue: 7.58, svcCount: 20, svcValue: 1037.29 },
+  { unit: "BMM", area: "Swartberg", matCount: 0, matValue: 0.0, svcCount: 2, svcValue: 5.06 },
+  { unit: "BMM", area: "Other", matCount: 15, matValue: 0.33, svcCount: 93, svcValue: 0.0 },
+]
+
+/** Verbatim slide commentary — not re-derived. */
+export const VZI_SLIDE_NOTES: string[] = [
+  "Of the 509 open material PRs, 275 were triggered automatically from Min–Max levels; these Min–Max settings are to be reviewed to avoid duplicate / unnecessary PRs.",
+  "Of the 509 open material PRs, 234 are OAR items requiring critical review.",
+  "Of the 479 open POs, 192 are material POs and 287 are service POs.",
+  "11 mining material and 58 mining service POs relate to care-and-maintenance items.",
+  "'Other' consists of enabling-function services (finance, safety, admin, etc.).",
+]
+
+/** Computed from the authoritative data above — not new numbers, just restated. */
+export const VZI_DERIVED_NOTES: string[] = [
+  "PRs older than 30 days: 418 of 619 (67.5%); older than 90 days: 183 (29.6%).",
+  "Service POs carry 91.2% of open PO value (ZAR 3 382.57 Mn of 3 708.46 Mn).",
+  "Mining areas account for 72.7% of open PO value (ZAR 2 695.91 Mn across Gamsberg and BMM mining).",
+  "Care-and-maintenance items: 69 POs (11 material + 58 service).",
+]
+
+/** From the "care-and-maintenance" slide bullet — 11 mining material + 58 mining service POs. */
+export const VZI_CARE_MAINTENANCE: VziTotals = { material: 11, service: 58, total: 69 }
+
+export const VZI_FLAGS: VziFlag[] = [
+  {
+    title: "OAR vs VB labels",
+    body: "the table shows OAR = 275 and VB = 234, while the narrative bullets attribute 275 to Min–Max (auto) triggers and 234 to OAR. The two counts appear swapped between table and text; worth confirming which label maps to which trigger type before publishing.",
+  },
+  {
+    title: "Unit split of material PRs",
+    body: "the unit summary shows Gamsberg 307 / BMM 202, while the OAR–VB table shows Gamsberg 296 / BMM 213. Both total 509; the difference of 11 each way equals the 11 Township PRs under BMM 'Other', suggesting a classification difference between the two views.",
+  },
+  {
+    title: "BMM 'Other' service PO value",
+    body: "blank on the slide; it back-calculates to 0.00 from the BMM subtotal and is entered as such.",
+  },
+]
+
+export function vziPrTotals(): VziTotals {
+  const material = VZI_PR_SUMMARY.reduce((sum, r) => sum + r.material, 0)
+  const service = VZI_PR_SUMMARY.reduce((sum, r) => sum + r.service, 0)
+  return { material, service, total: material + service }
+}
+
+export function vziPoTotals(): VziTotals {
+  const material = VZI_PO_SUMMARY.reduce((sum, r) => sum + r.material, 0)
+  const service = VZI_PO_SUMMARY.reduce((sum, r) => sum + r.service, 0)
+  return { material, service, total: material + service }
+}
+
+export function vziPoValueTotals(): VziTotals {
+  const material = round2(VZI_PO_DETAIL.reduce((sum, p) => sum + p.matValue, 0))
+  const service = round2(VZI_PO_DETAIL.reduce((sum, p) => sum + p.svcValue, 0))
+  return { material, service, total: round2(material + service) }
+}
+
+export function vziAgingTotal(): number {
+  return VZI_AGING.reduce((sum, a) => sum + a.count, 0)
+}
+
+export function vziAgingOver30(): number {
+  return VZI_AGING.slice(3).reduce((sum, a) => sum + a.count, 0)
+}
+
+export function vziPrSummaryByUnit(): Record<string, number> {
+  const out: Record<string, number> = {}
+  for (const r of VZI_PR_SUMMARY) out[r.unit] = r.material + r.service
+  return out
+}
+
+export function vziOarVbByUnit(): Record<string, VziOarVbAggregate> {
+  const out: Record<string, VziOarVbAggregate> = {}
+  for (const r of VZI_OAR_VB) {
+    const u = (out[r.unit] ??= { oar: 0, vb: 0, total: 0 })
+    u.oar += r.oar
+    u.vb += r.vb
+  }
+  for (const u of Object.values(out)) u.total = u.oar + u.vb
+  return out
+}
+
+export function vziPoByUnit(): Record<string, VziUnitAggregate> {
+  const out: Record<string, VziUnitAggregate> = {}
+  for (const p of VZI_PO_DETAIL) {
+    const u = (out[p.unit] ??= { matCount: 0, matValue: 0, svcCount: 0, svcValue: 0, count: 0, value: 0 })
+    u.matCount += p.matCount
+    u.matValue += p.matValue
+    u.svcCount += p.svcCount
+    u.svcValue += p.svcValue
+  }
+  for (const u of Object.values(out)) {
+    u.matValue = round2(u.matValue)
+    u.svcValue = round2(u.svcValue)
+    u.count = u.matCount + u.svcCount
+    u.value = round2(u.matValue + u.svcValue)
+  }
+  return out
+}
+
+export function vziCategoryPivot(): VziCategoryPivotRow[] {
+  const agg = new Map<string, { category: string; Gamsberg: number; BMM: number }>()
+  const order: string[] = []
+  for (const row of VZI_CATEGORIES) {
+    if (!agg.has(row.category)) {
+      agg.set(row.category, { category: row.category, Gamsberg: 0, BMM: 0 })
+      order.push(row.category)
+    }
+    agg.get(row.category)![row.unit] += row.count
+  }
+  return order
+    .map((c) => {
+      const e = agg.get(c)!
+      return { ...e, total: e.Gamsberg + e.BMM }
+    })
+    .sort((a, b) => b.total - a.total)
+}
+
+export function vziPoAreaSorted(): VziPoAreaRow[] {
+  return VZI_PO_DETAIL.map((p) => ({
+    ...p,
+    label: `${p.unit} — ${p.area}`,
+    total: round2(p.matValue + p.svcValue),
+  })).sort((a, b) => b.total - a.total)
+}
+
+export function getVziKpiSummary(): VziKpiSummary {
+  const openPr = vziPrTotals()
+  const openPo = vziPoTotals()
+  const openPoValue = vziPoValueTotals()
+  const agingTotal = vziAgingTotal()
+  const prOver30 = vziAgingOver30()
   return {
-    activeSessions: getActiveSessions().length,
-    alternatesFoundThisMonth: CATEGORY_BREAKDOWN.reduce((sum, c) => sum + c.value, 0),
-    costSavingsZAR: SAVINGS_TREND.reduce((sum, p) => sum + p.savings, 0),
-    pendingApprovals: PENDING_APPROVALS.length,
+    openPr,
+    openPo,
+    openPoValue,
+    servicePct: round1((openPoValue.service / openPoValue.total) * 100),
+    agingTotal,
+    prOver30,
+    prOver30Pct: round1((prOver30 / agingTotal) * 100),
+    careMaintenance: VZI_CARE_MAINTENANCE,
   }
 }
 

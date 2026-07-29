@@ -87,6 +87,20 @@ export const CATEGORY_COLORS: Record<Category, string> = {
   Instrumentation: "var(--chart-4)",
 }
 
+/**
+ * Seven-step "good -> critical" aging gradient, mixed from our own status
+ * tokens (not hardcoded hex) so it stays correct in dark mode too.
+ */
+export const VZI_AGING_COLORS = [
+  "var(--success)",
+  "color-mix(in oklch, var(--success) 66%, var(--warning) 34%)",
+  "color-mix(in oklch, var(--success) 33%, var(--warning) 67%)",
+  "var(--warning)",
+  "color-mix(in oklch, var(--warning) 66%, var(--destructive) 34%)",
+  "color-mix(in oklch, var(--warning) 33%, var(--destructive) 67%)",
+  "var(--destructive)",
+] as const
+
 export const DASHBOARD_LINKS: { label: string; icon: IconKey; href: string }[] = [
   { label: "Overview", icon: "chart-bar", href: "/dashboard" },
   {

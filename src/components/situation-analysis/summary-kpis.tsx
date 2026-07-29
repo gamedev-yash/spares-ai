@@ -58,7 +58,7 @@ export function SummaryKpis({
           {summary.highRiskCount}
         </div>
         <div className="mt-0.5 text-xs text-muted-foreground">
-          of {summary.totalCount} stuck &gt; 10 days
+          {`of ${summary.totalCount} stuck > 10 days`}
         </div>
       </div>
     </div>

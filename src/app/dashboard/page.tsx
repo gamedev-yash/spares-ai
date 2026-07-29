@@ -1,62 +1,48 @@
 import type { Metadata } from "next"
 
-import { CategoryChart } from "@/components/dashboard/category-chart"
-import { SavingsChart } from "@/components/dashboard/savings-chart"
-import { SessionsTable } from "@/components/dashboard/sessions-table"
-import { SummaryCards } from "@/components/dashboard/summary-cards"
-import {
-  CATEGORY_BREAKDOWN,
-  CHAT_SESSIONS,
-  SAVINGS_TREND,
-  getDashboardSummary,
-} from "@/lib/mock-data"
+import { AgingStrip } from "@/components/dashboard/aging-strip"
+import { KpiRow } from "@/components/dashboard/kpi-row"
+import { PrPoTabs } from "@/components/dashboard/pr-po-tabs"
+import { StatusBadge } from "@/components/shared/status-badge"
+import { VZI_AGING, getVziKpiSummary } from "@/lib/mock-data"
 
 export const metadata: Metadata = {
-  title: "Dashboard — Spares AI",
+  title: "Open PR & PO position — Spares AI",
 }
 
 export default function DashboardPage() {
-  const summary = getDashboardSummary()
+  const summary = getVziKpiSummary()
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto p-6">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6">
-        <div>
-          <h1 className="text-xl font-semibold text-foreground">Overview</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Procurement activity across all active sessions.
-          </p>
-        </div>
-
-        <SummaryCards summary={summary} />
-
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <div className="rounded-xl border border-border bg-card p-4 lg:col-span-2">
-            <h2 className="text-sm font-medium text-foreground">
-              Cost savings trend
-            </h2>
-            <p className="text-xs text-muted-foreground">Last 6 months, ZAR</p>
-            <div className="mt-2">
-              <SavingsChart data={SAVINGS_TREND} />
+      <div className="mx-auto flex max-w-7xl flex-col gap-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div className="text-[11px] font-medium tracking-[0.5px] text-muted-foreground uppercase">
+              Vedanta Zinc International · Procurement Review
             </div>
+            <h1 className="mt-1 text-xl font-semibold text-foreground">
+              Open PR &amp; PO position
+            </h1>
+            <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+              Gamsberg &amp; Black Mountain Mining (BMM) — counts and value of
+              open purchase requisitions and orders.
+            </p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-4">
-            <h2 className="text-sm font-medium text-foreground">
-              Alternates by category
-            </h2>
-            <p className="text-xs text-muted-foreground">This month</p>
-            <div className="mt-2">
-              <CategoryChart data={CATEGORY_BREAKDOWN} />
-            </div>
-          </div>
+          <StatusBadge tone="default" className="shrink-0">
+            Snapshot per review slides
+          </StatusBadge>
         </div>
 
-        <div className="rounded-xl border border-border bg-card p-4">
-          <h2 className="mb-3 text-sm font-medium text-foreground">
-            Recent sessions
-          </h2>
-          <SessionsTable sessions={CHAT_SESSIONS} />
-        </div>
+        <KpiRow summary={summary} />
+        <AgingStrip buckets={VZI_AGING} over30={summary.prOver30} />
+        <PrPoTabs />
+
+        <p className="mt-2 border-t border-border pt-3 text-xs text-muted-foreground">
+          Source: VZI review slides &quot;Open PR analysis&quot; and &quot;Open
+          PO breakdown&quot; (snapshot date not stated on slides). Values in
+          ZAR Mn.
+        </p>
       </div>
     </div>
   )

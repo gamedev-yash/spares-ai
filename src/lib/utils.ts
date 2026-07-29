@@ -61,6 +61,19 @@ export function formatZARCompact(amount: number): string {
   return `R${amount}`
 }
 
+/** Formats a plain count with comma grouping: 1234 -> "1,234". */
+export function formatCount(n: number): string {
+  return Math.round(n).toLocaleString("en-US")
+}
+
+/** Formats a value already expressed in ZAR millions: 3708.46 -> "R3,708.46M". */
+export function formatZARMillions(millions: number): string {
+  return `R${millions.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}M`
+}
+
 function toCsvField(value: string | number): string {
   const str = String(value)
   return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str
