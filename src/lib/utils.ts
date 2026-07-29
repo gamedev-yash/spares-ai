@@ -39,6 +39,16 @@ export function formatTime12h(date: Date): string {
   return `${hours}:${minutes} ${ampm}`
 }
 
+export type SeverityTone = "default" | "warning" | "danger"
+
+/** Shared "days stuck" severity thresholds for Situation Analysis — keeps the
+ * >10-day high-risk definition consistent across the KPI, pipeline tiles, and table. */
+export function daysStuckTone(days: number): SeverityTone {
+  if (days > 10) return "danger"
+  if (days > 5) return "warning"
+  return "default"
+}
+
 /** Formats a number as compact ZAR for chart axes: "R150k", "R1.3M". */
 export function formatZARCompact(amount: number): string {
   const abs = Math.abs(amount)
@@ -49,6 +59,24 @@ export function formatZARCompact(amount: number): string {
     return `R${Math.round(amount / 1000)}k`
   }
   return `R${amount}`
+}
+
+/** Formats a plain count with comma grouping: 1234 -> "1,234". */
+export function formatCount(n: number): string {
+  return Math.round(n).toLocaleString("en-US")
+}
+
+/** Formats a value already expressed in ZAR millions: 3708.46 -> "R3,708.46M". */
+export function formatZARMillions(millions: number): string {
+  return `R${millions.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}M`
+}
+
+/** Formats a raw ZAR amount as billions: 3708460000 -> "R 3.71B". */
+export function formatZARBillions(amount: number): string {
+  return `R ${(amount / 1_000_000_000).toFixed(2)}B`
 }
 
 function toCsvField(value: string | number): string {

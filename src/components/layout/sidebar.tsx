@@ -8,6 +8,7 @@ import { Plus } from "lucide-react"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
 import {
   CATEGORIES,
+  DASHBOARD_LINKS,
   ICONS,
   NEW_SESSION_ID,
   QUICK_ACTIONS,
@@ -147,6 +148,28 @@ export function Sidebar() {
         })}
       </NavSection>
 
+      <NavSection title="Dashboards">
+        {DASHBOARD_LINKS.map((link) => {
+          const Icon = ICONS[link.icon]
+          const isActive = pathname === link.href
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={cn(
+                "mx-2 my-0.5 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] transition-colors",
+                isActive
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              <Icon className="size-4 shrink-0" />
+              {link.label}
+            </Link>
+          )
+        })}
+      </NavSection>
+
       <NavSection title="Quick actions">
         {QUICK_ACTIONS.map((action) => {
           const Icon = ICONS[action.icon]
@@ -178,13 +201,14 @@ export function Sidebar() {
         {CATEGORIES.map((category) => {
           const Icon = ICONS[category.icon]
           return (
-            <div
+            <Link
               key={category.label}
-              className="mx-2 my-0.5 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] text-muted-foreground"
+              href={`/materials?category=${encodeURIComponent(category.label)}`}
+              className="mx-2 my-0.5 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               <Icon className="size-4 shrink-0" />
               {category.label}
-            </div>
+            </Link>
           )
         })}
       </NavSection>

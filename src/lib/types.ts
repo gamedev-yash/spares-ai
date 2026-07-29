@@ -89,6 +89,8 @@ export type IconKey =
   | "clock"
   | "alert-triangle"
   | "ellipsis-vertical"
+  | "check-circle"
+  | "layers"
 
 export interface ChatOption {
   id: string
@@ -214,18 +216,27 @@ export interface ChatSession {
 
 // ---- Secondary pages ----
 
+export type Urgency = "Normal" | "High" | "Critical"
+
+/** Approvals-table-specific tier labels — business terminology for procurement execs. */
+export type ApprovalMatchTier =
+  | "Direct Equivalent (Usual)"
+  | "Technical Equivalent"
+  | "OEM Original (Same)"
+
 export interface PendingApproval {
   id: string
   sessionId: string
+  rrId: string // Request for Reservation ID, e.g. "RR-8841"
   materialId: string
   materialDescription: string
   requester: string
-  matchTier: MatchTier
-  savingsPct: number
+  matchTier: ApprovalMatchTier
+  lastPurchasePrice: number // ZAR — most recent PO price, final auction savings not yet locked in
   waitingSince: string
   approver: string
   category: Category
-  urgency: "Normal" | "High" | "Critical"
+  urgency: Urgency
 }
 
 export type ApprovalDecision = "approved" | "rejected" | "escalated"
@@ -241,19 +252,148 @@ export interface AuditEntry {
   fullDetail: string
 }
 
-export interface DashboardSummary {
-  activeSessions: number
-  alternatesFoundThisMonth: number
-  costSavingsZAR: number
-  pendingApprovals: number
+// ---- VZI Open PR & PO Position dashboard (/dashboard) ----
+// Ported from Anish's Dash app — figures are transcribed from the VZI review
+// slides workbook and must not be re-derived or "corrected" here either.
+
+export type VziUnit = "Gamsberg" | "BMM"
+
+export interface VziPrSummaryRow {
+  unit: VziUnit
+  material: number
+  service: number
 }
 
-export interface SavingsTrendPoint {
-  month: string
-  savings: number
+export interface VziAgingBucket {
+  bucket: string
+  count: number
 }
 
-export interface CategoryBreakdownPoint {
-  category: Category
+export interface VziOarVbRow {
+  unit: VziUnit
+  area: string
+  oar: number
+  vb: number
+}
+
+export interface VziCategoryRow {
+  unit: VziUnit
+  area: string
+  category: string
+  count: number
+}
+
+export interface VziPoDetailRow {
+  unit: VziUnit
+  area: string
+  matCount: number
+  matValue: number // ZAR millions
+  svcCount: number
+  svcValue: number // ZAR millions
+}
+
+export interface VziFlag {
+  title: string
+  body: string
+}
+
+export interface VziTotals {
+  material: number
+  service: number
+  total: number
+}
+
+export interface VziUnitAggregate {
+  matCount: number
+  matValue: number
+  svcCount: number
+  svcValue: number
+  count: number
   value: number
+}
+
+export interface VziOarVbAggregate {
+  oar: number
+  vb: number
+  total: number
+}
+
+export interface VziCategoryPivotRow {
+  category: string
+  Gamsberg: number
+  BMM: number
+  total: number
+}
+
+export interface VziPoAreaRow extends VziPoDetailRow {
+  label: string
+  total: number
+}
+
+export interface VziKpiSummary {
+  openPr: VziTotals
+  openPo: VziTotals
+  openPoValue: VziTotals // ZAR millions
+  servicePct: number
+  agingTotal: number
+  prOver30: number
+  prOver30Pct: number
+  careMaintenance: VziTotals
+}
+
+// ---- Situation Analysis (VZI root-cause / Fishbone view — Initiative 9) ----
+// All data for this view is loaded at request time from
+// src/lib/data/vzi_situation_analysis.csv (see situation-analysis-data.ts) —
+// these are just the shapes that loader resolves to.
+
+export type FishboneCategory =
+  | "Vendor Delay - Payment"
+  | "User Delay - Scope of Work"
+  | "System Delay"
+  | "Buyer Delay"
+  | "Vendor Delay - Ariba Participation"
+  | "User Delay - Technical Evaluation"
+  | "NFA Approval Delay"
+
+export interface FishboneRootCause {
+  category: FishboneCategory
+  daysLost: number
+  subCauses: string[]
+  badge?: string
+}
+
+export interface RootCauseTrendPoint {
+  month: string
+  category: FishboneCategory
+  daysLost: number
+}
+
+export interface SituationDrillDownItem {
+  id: string
+  prPoNumber: string
+  unit: VziUnit
+  area: string
+  type: "Material" | "Service"
+  category: string
+  valueZar: number
+  agingBucket: string
+  rootCauseCategory: FishboneCategory
+  primaryCauseDetail: string
+  stuckWithPerson: string
+  stuckWithRole: string
+  urgency: Urgency
+  /** links to an existing chat session for the "Chat" row action, when one exists */
+  sessionId?: string
+}
+
+export interface SituationKpiSummary {
+  totalOpenPrs: number
+  prOver30: number
+  prOver30Pct: number
+  totalOpenPos: number
+  totalOpenPoValueZar: number
+  servicePoValueZar: number
+  servicePct: number
+  /** the 2 biggest root causes by days lost, for the KPI card */
+  topDrivers: FishboneRootCause[]
 }

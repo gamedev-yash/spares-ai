@@ -1,6 +1,8 @@
+import { Suspense } from "react"
 import type { Metadata } from "next"
 
 import { MaterialsExplorer } from "@/components/materials/materials-explorer"
+import { Skeleton } from "@/components/ui/skeleton"
 import { MATERIALS } from "@/lib/mock-data"
 
 export const metadata: Metadata = {
@@ -20,7 +22,16 @@ export default function MaterialsPage() {
             material.
           </p>
         </div>
-        <MaterialsExplorer materials={MATERIALS} />
+        <Suspense
+          fallback={
+            <div className="flex flex-col gap-4">
+              <Skeleton className="h-9 w-full" />
+              <Skeleton className="h-80 rounded-xl" />
+            </div>
+          }
+        >
+          <MaterialsExplorer materials={MATERIALS} />
+        </Suspense>
       </div>
     </div>
   )

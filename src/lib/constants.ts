@@ -25,6 +25,8 @@ import {
   Clock,
   TriangleAlert,
   EllipsisVertical,
+  CircleCheck,
+  Layers,
   type LucideIcon,
 } from "lucide-react"
 
@@ -57,6 +59,8 @@ export const ICONS: Record<IconKey, LucideIcon> = {
   clock: Clock,
   "alert-triangle": TriangleAlert,
   "ellipsis-vertical": EllipsisVertical,
+  "check-circle": CircleCheck,
+  layers: Layers,
 }
 
 export const CATEGORIES: { label: Category; icon: IconKey }[] = [
@@ -78,6 +82,29 @@ export const CATEGORY_COLORS: Record<Category, string> = {
   Instrumentation: "var(--chart-4)",
 }
 
+/**
+ * Seven-step "good -> critical" aging gradient, mixed from our own status
+ * tokens (not hardcoded hex) so it stays correct in dark mode too.
+ */
+export const VZI_AGING_COLORS = [
+  "var(--success)",
+  "color-mix(in oklch, var(--success) 66%, var(--warning) 34%)",
+  "color-mix(in oklch, var(--success) 33%, var(--warning) 67%)",
+  "var(--warning)",
+  "color-mix(in oklch, var(--warning) 66%, var(--destructive) 34%)",
+  "color-mix(in oklch, var(--warning) 33%, var(--destructive) 67%)",
+  "var(--destructive)",
+] as const
+
+export const DASHBOARD_LINKS: { label: string; icon: IconKey; href: string }[] = [
+  { label: "Overview", icon: "chart-bar", href: "/dashboard" },
+  {
+    label: "Situation Analysis",
+    icon: "layers",
+    href: "/dashboard/situation-analysis",
+  },
+]
+
 export const QUICK_ACTIONS: {
   label: string
   icon: IconKey
@@ -85,12 +112,11 @@ export const QUICK_ACTIONS: {
   badge?: number
 }[] = [
   { label: "Search materials", icon: "search", href: "/materials" },
-  { label: "Price benchmarks", icon: "chart-bar", href: "/dashboard" },
   {
     label: "Pending approvals",
     icon: "clipboard-check",
     href: "/approvals",
-    badge: 3,
+    badge: 4,
   },
   { label: "Audit trail", icon: "history", href: "/audit" },
 ]

@@ -167,6 +167,31 @@ export function ChatWorkspace({ session }: { session: ChatSession }) {
       toast.success("Approval workflow triggered", {
         description: "Stakeholders have been notified.",
       })
+    } else if (actionId === "proceed-original") {
+      const message = session.messages.find((m) => m.id === messageId)
+      const supplierName =
+        message?.comparison?.current.supplierName ?? "the original supplier"
+      const timestamp = formatTime12h(new Date())
+      setExtraMessages((prev) => [
+        ...prev,
+        {
+          id: `${messageId}-proceed-original-user`,
+          role: "user" as const,
+          authorLabel: "You",
+          timestamp,
+          text: `Proceed with original supplier — ${supplierName}`,
+        },
+        {
+          id: `${messageId}-proceed-original-ai`,
+          role: "ai" as const,
+          authorLabel: "Spares AI",
+          timestamp,
+          text: `Confirmed — purchase requisition raised with **${supplierName}** for the original part. No alternate approval required; procurement will proceed directly to PO generation.`,
+        },
+      ])
+      toast.success("Purchase requisition confirmed", {
+        description: `Original vendor retained — ${supplierName}.`,
+      })
     } else if (actionId === "export") {
       toast.success("Comparison report exported", {
         description: "PDF queued for engineering review.",
