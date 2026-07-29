@@ -90,6 +90,7 @@ export type IconKey =
   | "alert-triangle"
   | "ellipsis-vertical"
   | "check-circle"
+  | "layers"
 
 export interface ChatOption {
   id: string
@@ -215,6 +216,8 @@ export interface ChatSession {
 
 // ---- Secondary pages ----
 
+export type Urgency = "Normal" | "High" | "Critical"
+
 /** Approvals-table-specific tier labels — business terminology for procurement execs. */
 export type ApprovalMatchTier =
   | "Direct Equivalent (Usual)"
@@ -233,7 +236,7 @@ export interface PendingApproval {
   waitingSince: string
   approver: string
   category: Category
-  urgency: "Normal" | "High" | "Critical"
+  urgency: Urgency
 }
 
 export type ApprovalDecision = "approved" | "rejected" | "escalated"
@@ -264,4 +267,67 @@ export interface SavingsTrendPoint {
 export interface CategoryBreakdownPoint {
   category: Category
   value: number
+}
+
+// ---- Situation Analysis (Open PR/PO monitor — Initiative 9) ----
+
+export type PrPoType = "PR" | "PO"
+
+/** One of the 15 official stages an open PR/PO moves through, in order. */
+export interface ProcessStage {
+  no: number
+  name: string
+}
+
+export type RootCauseCategory =
+  | "Scope of Work"
+  | "Vendor Payment"
+  | "System / Integration"
+  | "Buyer Delay"
+  | "Ariba Participation"
+  | "Technical Evaluation (PwC)"
+  | "NFA Approval"
+
+export interface PrPoSituation {
+  id: string
+  prPoNumber: string
+  type: PrPoType
+  buPlant: string
+  materialDescription: string
+  category: Category
+  valueZar: number
+  currentStageNo: number // 1-15, see PROCESS_STAGES
+  currentStageName: string
+  stuckWithPerson: string
+  stuckWithRole: string
+  daysStuck: number
+  rootCauseCategory: RootCauseCategory
+  urgency: Urgency
+  /** links to an existing chat session for the "View chat" row action, when one exists */
+  sessionId?: string
+}
+
+export interface StagePipelinePoint {
+  stageNo: number
+  stageName: string
+  count: number
+  valueZar: number
+  /** worst single item at this stage — drives the tile's severity color */
+  maxDaysStuck: number
+  /** sum of daysStuck across items at this stage — drives bottleneck ranking */
+  totalDaysStuck: number
+}
+
+export interface RootCauseDelayPoint {
+  category: RootCauseCategory
+  totalDaysLost: number
+  itemCount: number
+}
+
+export interface SituationAnalysisSummary {
+  totalCount: number
+  totalValueZar: number
+  avgDaysStuck: number
+  highRiskCount: number // items with daysStuck > 10
+  topBottleneckStage: ProcessStage
 }

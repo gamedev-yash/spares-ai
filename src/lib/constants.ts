@@ -26,10 +26,16 @@ import {
   TriangleAlert,
   EllipsisVertical,
   CircleCheck,
+  Layers,
   type LucideIcon,
 } from "lucide-react"
 
-import type { Category, IconKey } from "@/lib/types"
+import type {
+  Category,
+  IconKey,
+  ProcessStage,
+  RootCauseCategory,
+} from "@/lib/types"
 
 export const ICONS: Record<IconKey, LucideIcon> = {
   cpu: Cpu,
@@ -59,6 +65,7 @@ export const ICONS: Record<IconKey, LucideIcon> = {
   "alert-triangle": TriangleAlert,
   "ellipsis-vertical": EllipsisVertical,
   "check-circle": CircleCheck,
+  layers: Layers,
 }
 
 export const CATEGORIES: { label: Category; icon: IconKey }[] = [
@@ -80,6 +87,15 @@ export const CATEGORY_COLORS: Record<Category, string> = {
   Instrumentation: "var(--chart-4)",
 }
 
+export const DASHBOARD_LINKS: { label: string; icon: IconKey; href: string }[] = [
+  { label: "Overview", icon: "chart-bar", href: "/dashboard" },
+  {
+    label: "Situation Analysis",
+    icon: "layers",
+    href: "/dashboard/situation-analysis",
+  },
+]
+
 export const QUICK_ACTIONS: {
   label: string
   icon: IconKey
@@ -87,7 +103,6 @@ export const QUICK_ACTIONS: {
   badge?: number
 }[] = [
   { label: "Search materials", icon: "search", href: "/materials" },
-  { label: "Price benchmarks", icon: "chart-bar", href: "/dashboard" },
   {
     label: "Pending approvals",
     icon: "clipboard-check",
@@ -109,4 +124,39 @@ export const WORKFLOW_STEP_LABELS = [
   "Procurement approval",
   "Engineering sign-off",
   "PO generation",
+] as const
+
+/** The 15 official PR/PO process stages tracked by Situation Analysis, in order. */
+export const PROCESS_STAGES: ProcessStage[] = [
+  { no: 1, name: "Maintenance Order" },
+  { no: 2, name: "Component" },
+  { no: 3, name: "Request for Reservation (RR)" },
+  { no: 4, name: "DOA (Dept. Table)" },
+  { no: 5, name: "Reservation" },
+  { no: 6, name: "Standard MRP" },
+  { no: 7, name: "PR Creation" },
+  { no: 8, name: "PR (SAP ECC)" },
+  { no: 9, name: "RFQ" },
+  { no: 10, name: "Ariba" },
+  { no: 11, name: "Auction" },
+  { no: 12, name: "Technical Evaluation (PwC)" },
+  { no: 13, name: "NFA" },
+  { no: 14, name: "Ariba Manual" },
+  { no: 15, name: "PO / Contract" },
+]
+
+export const ROOT_CAUSE_CATEGORIES: RootCauseCategory[] = [
+  "Scope of Work",
+  "Vendor Payment",
+  "System / Integration",
+  "Buyer Delay",
+  "Ariba Participation",
+  "Technical Evaluation (PwC)",
+  "NFA Approval",
+]
+
+export const BU_PLANTS = [
+  "Black Mountain Mine",
+  "Gamsberg Mine",
+  "Skorpion Zinc",
 ] as const

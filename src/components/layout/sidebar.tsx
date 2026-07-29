@@ -8,6 +8,7 @@ import { Plus } from "lucide-react"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
 import {
   CATEGORIES,
+  DASHBOARD_LINKS,
   ICONS,
   NEW_SESSION_ID,
   QUICK_ACTIONS,
@@ -142,6 +143,28 @@ export function Sidebar() {
                   !
                 </span>
               )}
+            </Link>
+          )
+        })}
+      </NavSection>
+
+      <NavSection title="Dashboards">
+        {DASHBOARD_LINKS.map((link) => {
+          const Icon = ICONS[link.icon]
+          const isActive = pathname === link.href
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={cn(
+                "mx-2 my-0.5 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] transition-colors",
+                isActive
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              <Icon className="size-4 shrink-0" />
+              {link.label}
             </Link>
           )
         })}
