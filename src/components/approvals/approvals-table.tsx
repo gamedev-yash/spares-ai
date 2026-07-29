@@ -172,7 +172,14 @@ export function ApprovalsTable({ approvals }: { approvals: PendingApproval[] }) 
               <TableHead>Material</TableHead>
               <TableHead>Requester</TableHead>
               <TableHead>Match Tier</TableHead>
-              <TableHead className="text-right">Last Purchase Price (PP)</TableHead>
+              <TableHead className="text-right">
+                <abbr
+                  title="Last Purchase Price (PP)"
+                  className="cursor-help underline decoration-dotted underline-offset-4"
+                >
+                  LPP
+                </abbr>
+              </TableHead>
               <TableHead>Waiting Since</TableHead>
               <TableHead>Approver</TableHead>
               <TableHead>Urgency</TableHead>
