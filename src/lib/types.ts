@@ -89,6 +89,7 @@ export type IconKey =
   | "clock"
   | "alert-triangle"
   | "ellipsis-vertical"
+  | "check-circle"
 
 export interface ChatOption {
   id: string
@@ -214,14 +215,21 @@ export interface ChatSession {
 
 // ---- Secondary pages ----
 
+/** Approvals-table-specific tier labels — business terminology for procurement execs. */
+export type ApprovalMatchTier =
+  | "Direct Equivalent (Usual)"
+  | "Technical Equivalent"
+  | "OEM Original (Same)"
+
 export interface PendingApproval {
   id: string
   sessionId: string
+  rrId: string // Request for Reservation ID, e.g. "RR-8841"
   materialId: string
   materialDescription: string
   requester: string
-  matchTier: MatchTier
-  savingsPct: number
+  matchTier: ApprovalMatchTier
+  lastPurchasePrice: number // ZAR — most recent PO price, final auction savings not yet locked in
   waitingSince: string
   approver: string
   category: Category

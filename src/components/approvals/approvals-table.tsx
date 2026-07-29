@@ -28,19 +28,20 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { CATEGORIES } from "@/lib/constants"
+import { formatZAR } from "@/lib/utils"
 import type {
   ApprovalDecision,
+  ApprovalMatchTier,
   Category,
-  MatchTier,
   PendingApproval,
 } from "@/lib/types"
 
 const ALL_FILTER = "all"
 const URGENCIES = ["Normal", "High", "Critical"] as const
-const MATCH_TIERS: MatchTier[] = [
-  "Direct equivalent",
-  "Technical equivalent",
-  "Functional alternative",
+const MATCH_TIERS: ApprovalMatchTier[] = [
+  "Direct Equivalent (Usual)",
+  "Technical Equivalent",
+  "OEM Original (Same)",
 ]
 
 const URGENCY_TONE: Record<
@@ -69,9 +70,9 @@ export function ApprovalsTable({ approvals }: { approvals: PendingApproval[] }) 
   const [category, setCategory] = useState<Category | typeof ALL_FILTER>(
     ALL_FILTER
   )
-  const [matchTier, setMatchTier] = useState<MatchTier | typeof ALL_FILTER>(
-    ALL_FILTER
-  )
+  const [matchTier, setMatchTier] = useState<
+    ApprovalMatchTier | typeof ALL_FILTER
+  >(ALL_FILTER)
   const [urgency, setUrgency] = useState<
     (typeof URGENCIES)[number] | typeof ALL_FILTER
   >(ALL_FILTER)
@@ -117,7 +118,9 @@ export function ApprovalsTable({ approvals }: { approvals: PendingApproval[] }) 
 
         <Select
           value={matchTier}
-          onValueChange={(value) => setMatchTier(value as MatchTier | typeof ALL_FILTER)}
+          onValueChange={(value) =>
+            setMatchTier(value as ApprovalMatchTier | typeof ALL_FILTER)
+          }
         >
           <SelectTrigger className="h-9 w-full sm:w-52">
             <SelectValue placeholder="Match tier">
@@ -164,12 +167,13 @@ export function ApprovalsTable({ approvals }: { approvals: PendingApproval[] }) 
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Session</TableHead>
+              <TableHead>Session ID</TableHead>
+              <TableHead>RR ID</TableHead>
               <TableHead>Material</TableHead>
               <TableHead>Requester</TableHead>
-              <TableHead>Match tier</TableHead>
-              <TableHead className="text-right">Savings</TableHead>
-              <TableHead>Waiting since</TableHead>
+              <TableHead>Match Tier</TableHead>
+              <TableHead className="text-right">Last Purchase Price (PP)</TableHead>
+              <TableHead>Waiting Since</TableHead>
               <TableHead>Approver</TableHead>
               <TableHead>Urgency</TableHead>
               <TableHead>Actions</TableHead>
@@ -183,6 +187,9 @@ export function ApprovalsTable({ approvals }: { approvals: PendingApproval[] }) 
                   <TableCell className="font-medium text-foreground">
                     #{item.sessionId}
                   </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {item.rrId}
+                  </TableCell>
                   <TableCell className="max-w-[220px] truncate text-foreground">
                     {item.materialDescription}
                   </TableCell>
@@ -192,8 +199,8 @@ export function ApprovalsTable({ approvals }: { approvals: PendingApproval[] }) 
                   <TableCell className="text-muted-foreground">
                     {item.matchTier}
                   </TableCell>
-                  <TableCell className="text-right font-medium text-success">
-                    {item.savingsPct}%
+                  <TableCell className="text-right font-medium text-foreground">
+                    {formatZAR(item.lastPurchasePrice)}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {item.waitingSince}

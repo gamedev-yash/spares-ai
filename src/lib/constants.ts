@@ -25,6 +25,7 @@ import {
   Clock,
   TriangleAlert,
   EllipsisVertical,
+  CircleCheck,
   type LucideIcon,
 } from "lucide-react"
 
@@ -57,6 +58,7 @@ export const ICONS: Record<IconKey, LucideIcon> = {
   clock: Clock,
   "alert-triangle": TriangleAlert,
   "ellipsis-vertical": EllipsisVertical,
+  "check-circle": CircleCheck,
 }
 
 export const CATEGORIES: { label: Category; icon: IconKey }[] = [
