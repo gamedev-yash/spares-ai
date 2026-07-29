@@ -2,10 +2,9 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { Bell, MessageCircle, X } from "lucide-react"
+import { Bell, MessageCircle } from "lucide-react"
 import { toast } from "sonner"
 
-import { StatusBadge } from "@/components/shared/status-badge"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Select,
@@ -22,73 +21,89 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { BU_PLANTS, ROOT_CAUSE_CATEGORIES } from "@/lib/constants"
-import type { PrPoSituation, RootCauseCategory, Urgency } from "@/lib/types"
-import { cn, daysStuckTone, formatZAR } from "@/lib/utils"
+import type {
+  FishboneCategory,
+  SituationDrillDownItem,
+  Urgency,
+  VziUnit,
+} from "@/lib/types"
+import { formatZAR } from "@/lib/utils"
 
 const ALL_FILTER = "all"
+const UNITS: VziUnit[] = ["Gamsberg", "BMM"]
+const TYPES: ("Material" | "Service")[] = ["Material", "Service"]
 const URGENCIES: Urgency[] = ["Normal", "High", "Critical"]
 
-const URGENCY_TONE: Record<Urgency, "default" | "warning" | "danger"> = {
-  Normal: "default",
-  High: "warning",
-  Critical: "danger",
-}
-
-const DAYS_STUCK_CLASSES: Record<ReturnType<typeof daysStuckTone>, string> = {
-  default: "text-foreground",
-  warning: "text-warning",
-  danger: "text-destructive",
-}
-
-function remind(item: PrPoSituation) {
+function remind(item: SituationDrillDownItem) {
   toast.success(`Reminder sent to ${item.stuckWithPerson}`, {
-    description: `${item.prPoNumber} — ${item.currentStageName}, stuck ${item.daysStuck} day${item.daysStuck === 1 ? "" : "s"}.`,
+    description: `${item.prPoNumber} — ${item.rootCauseCategory}, ${item.agingBucket}.`,
   })
 }
 
 export function DrilldownTable({
   items,
-  stageFilter,
-  onClearStageFilter,
+  rootCauseCategories,
 }: {
-  items: PrPoSituation[]
-  stageFilter: { no: number; name: string } | null
-  onClearStageFilter: () => void
+  items: SituationDrillDownItem[]
+  rootCauseCategories: FishboneCategory[]
 }) {
-  const [buPlant, setBuPlant] = useState<string>(ALL_FILTER)
-  const [rootCause, setRootCause] = useState<RootCauseCategory | typeof ALL_FILTER>(
+  const [unit, setUnit] = useState<VziUnit | typeof ALL_FILTER>(ALL_FILTER)
+  const [type, setType] = useState<"Material" | "Service" | typeof ALL_FILTER>(
     ALL_FILTER
   )
+  const [rootCause, setRootCause] = useState<
+    FishboneCategory | typeof ALL_FILTER
+  >(ALL_FILTER)
   const [urgency, setUrgency] = useState<Urgency | typeof ALL_FILTER>(ALL_FILTER)
 
   const filtered = useMemo(() => {
     return items.filter((item) => {
-      if (stageFilter && item.currentStageNo !== stageFilter.no) return false
-      if (buPlant !== ALL_FILTER && item.buPlant !== buPlant) return false
+      if (unit !== ALL_FILTER && item.unit !== unit) return false
+      if (type !== ALL_FILTER && item.type !== type) return false
       if (rootCause !== ALL_FILTER && item.rootCauseCategory !== rootCause) return false
       if (urgency !== ALL_FILTER && item.urgency !== urgency) return false
       return true
     })
-  }, [items, stageFilter, buPlant, rootCause, urgency])
+  }, [items, unit, type, rootCause, urgency])
 
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
         <Select
-          value={buPlant}
-          onValueChange={(value) => setBuPlant(value ?? ALL_FILTER)}
+          value={unit}
+          onValueChange={(value) => setUnit((value ?? ALL_FILTER) as VziUnit | typeof ALL_FILTER)}
         >
-          <SelectTrigger className="h-9 w-full sm:w-48">
-            <SelectValue placeholder="BU / Plant">
-              {(value: string) => (value === ALL_FILTER ? "All BU / Plant" : value)}
+          <SelectTrigger className="h-9 w-full sm:w-36">
+            <SelectValue placeholder="Unit">
+              {(value: string) => (value === ALL_FILTER ? "All units" : value)}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL_FILTER}>All BU / Plant</SelectItem>
-            {BU_PLANTS.map((plant) => (
-              <SelectItem key={plant} value={plant}>
-                {plant}
+            <SelectItem value={ALL_FILTER}>All units</SelectItem>
+            {UNITS.map((u) => (
+              <SelectItem key={u} value={u}>
+                {u}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={type}
+          onValueChange={(value) =>
+            setType((value ?? ALL_FILTER) as "Material" | "Service" | typeof ALL_FILTER)
+          }
+        >
+          <SelectTrigger className="h-9 w-full sm:w-36">
+            <SelectValue placeholder="Type">
+              {(value: string) => (value === ALL_FILTER ? "All types" : value)}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={ALL_FILTER}>All types</SelectItem>
+            {TYPES.map((t) => (
+              <SelectItem key={t} value={t}>
+                {t}
               </SelectItem>
             ))}
           </SelectContent>
@@ -97,19 +112,19 @@ export function DrilldownTable({
         <Select
           value={rootCause}
           onValueChange={(value) =>
-            setRootCause(value as RootCauseCategory | typeof ALL_FILTER)
+            setRootCause((value ?? ALL_FILTER) as FishboneCategory | typeof ALL_FILTER)
           }
         >
-          <SelectTrigger className="h-9 w-full sm:w-56">
+          <SelectTrigger className="h-9 w-full sm:w-64">
             <SelectValue placeholder="Root cause">
               {(value: string) => (value === ALL_FILTER ? "All root causes" : value)}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={ALL_FILTER}>All root causes</SelectItem>
-            {ROOT_CAUSE_CATEGORIES.map((cause) => (
-              <SelectItem key={cause} value={cause}>
-                {cause}
+            {rootCauseCategories.map((c) => (
+              <SelectItem key={c} value={c}>
+                {c}
               </SelectItem>
             ))}
           </SelectContent>
@@ -117,7 +132,9 @@ export function DrilldownTable({
 
         <Select
           value={urgency}
-          onValueChange={(value) => setUrgency(value as Urgency | typeof ALL_FILTER)}
+          onValueChange={(value) =>
+            setUrgency((value ?? ALL_FILTER) as Urgency | typeof ALL_FILTER)
+          }
         >
           <SelectTrigger className="h-9 w-full sm:w-40">
             <SelectValue placeholder="Urgency">
@@ -133,17 +150,6 @@ export function DrilldownTable({
             ))}
           </SelectContent>
         </Select>
-
-        {stageFilter && (
-          <button
-            type="button"
-            onClick={onClearStageFilter}
-            className="flex h-9 items-center gap-1.5 rounded-lg border border-primary/40 bg-accent px-3 text-[13px] font-medium text-accent-foreground transition-colors hover:bg-accent/70"
-          >
-            Stage {stageFilter.no}: {stageFilter.name}
-            <X className="size-3.5" />
-          </button>
-        )}
       </div>
 
       {filtered.length === 0 ? (
@@ -155,13 +161,14 @@ export function DrilldownTable({
           <TableHeader>
             <TableRow>
               <TableHead>PR/PO #</TableHead>
-              <TableHead>BU / Plant</TableHead>
-              <TableHead>Material</TableHead>
-              <TableHead>Current Stage</TableHead>
+              <TableHead>Unit / Area</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead className="text-right">Value (ZAR)</TableHead>
+              <TableHead>Aging Bucket</TableHead>
+              <TableHead>Root Cause Category</TableHead>
+              <TableHead>Primary Cause Detail</TableHead>
               <TableHead>Stuck With</TableHead>
-              <TableHead className="text-right">Days Stuck</TableHead>
-              <TableHead>Root Cause</TableHead>
-              <TableHead>Urgency</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -172,38 +179,27 @@ export function DrilldownTable({
                   {item.prPoNumber}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {item.buPlant}
+                  {item.unit} — {item.area}
                 </TableCell>
-                <TableCell className="max-w-[200px] truncate text-foreground">
-                  {item.materialDescription}
+                <TableCell className="text-muted-foreground">{item.type}</TableCell>
+                <TableCell className="text-muted-foreground">{item.category}</TableCell>
+                <TableCell className="text-right font-medium tabular-nums text-foreground">
+                  {formatZAR(item.valueZar)}
                 </TableCell>
-                <TableCell>
-                  <div className="text-foreground">Stage {item.currentStageNo}</div>
-                  <div className="text-[11px] text-muted-foreground">
-                    {item.currentStageName}
-                  </div>
+                <TableCell className="text-muted-foreground">
+                  {item.agingBucket}
+                </TableCell>
+                <TableCell className="max-w-[190px] truncate text-muted-foreground">
+                  {item.rootCauseCategory}
+                </TableCell>
+                <TableCell className="max-w-[220px] truncate text-muted-foreground">
+                  {item.primaryCauseDetail}
                 </TableCell>
                 <TableCell>
                   <div className="text-foreground">{item.stuckWithPerson}</div>
                   <div className="text-[11px] text-muted-foreground">
                     {item.stuckWithRole}
                   </div>
-                </TableCell>
-                <TableCell
-                  className={cn(
-                    "text-right font-medium tabular-nums",
-                    DAYS_STUCK_CLASSES[daysStuckTone(item.daysStuck)]
-                  )}
-                >
-                  {item.daysStuck}d
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {item.rootCauseCategory}
-                </TableCell>
-                <TableCell>
-                  <StatusBadge tone={URGENCY_TONE[item.urgency]}>
-                    {item.urgency}
-                  </StatusBadge>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1">
@@ -216,11 +212,7 @@ export function DrilldownTable({
                         Chat
                       </Link>
                     )}
-                    <Button
-                      size="xs"
-                      variant="outline"
-                      onClick={() => remind(item)}
-                    >
+                    <Button size="xs" variant="outline" onClick={() => remind(item)}>
                       <Bell className="size-3.5" />
                       Remind
                     </Button>

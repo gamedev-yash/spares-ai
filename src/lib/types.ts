@@ -341,65 +341,59 @@ export interface VziKpiSummary {
   careMaintenance: VziTotals
 }
 
-// ---- Situation Analysis (Open PR/PO monitor — Initiative 9) ----
+// ---- Situation Analysis (VZI root-cause / Fishbone view — Initiative 9) ----
+// All data for this view is loaded at request time from
+// src/lib/data/vzi_situation_analysis.csv (see situation-analysis-data.ts) —
+// these are just the shapes that loader resolves to.
 
-export type PrPoType = "PR" | "PO"
+export type FishboneCategory =
+  | "Vendor Delay - Payment"
+  | "User Delay - Scope of Work"
+  | "System Delay"
+  | "Buyer Delay"
+  | "Vendor Delay - Ariba Participation"
+  | "User Delay - Technical Evaluation"
+  | "NFA Approval Delay"
 
-/** One of the 15 official stages an open PR/PO moves through, in order. */
-export interface ProcessStage {
-  no: number
-  name: string
+export interface FishboneRootCause {
+  category: FishboneCategory
+  daysLost: number
+  subCauses: string[]
+  badge?: string
 }
 
-export type RootCauseCategory =
-  | "Scope of Work"
-  | "Vendor Payment"
-  | "System / Integration"
-  | "Buyer Delay"
-  | "Ariba Participation"
-  | "Technical Evaluation (PwC)"
-  | "NFA Approval"
+export interface RootCauseTrendPoint {
+  month: string
+  category: FishboneCategory
+  daysLost: number
+}
 
-export interface PrPoSituation {
+export interface SituationDrillDownItem {
   id: string
   prPoNumber: string
-  type: PrPoType
-  buPlant: string
-  materialDescription: string
-  category: Category
+  unit: VziUnit
+  area: string
+  type: "Material" | "Service"
+  category: string
   valueZar: number
-  currentStageNo: number // 1-15, see PROCESS_STAGES
-  currentStageName: string
+  agingBucket: string
+  rootCauseCategory: FishboneCategory
+  primaryCauseDetail: string
   stuckWithPerson: string
   stuckWithRole: string
-  daysStuck: number
-  rootCauseCategory: RootCauseCategory
   urgency: Urgency
-  /** links to an existing chat session for the "View chat" row action, when one exists */
+  /** links to an existing chat session for the "Chat" row action, when one exists */
   sessionId?: string
 }
 
-export interface StagePipelinePoint {
-  stageNo: number
-  stageName: string
-  count: number
-  valueZar: number
-  /** worst single item at this stage — drives the tile's severity color */
-  maxDaysStuck: number
-  /** sum of daysStuck across items at this stage — drives bottleneck ranking */
-  totalDaysStuck: number
-}
-
-export interface RootCauseDelayPoint {
-  category: RootCauseCategory
-  totalDaysLost: number
-  itemCount: number
-}
-
-export interface SituationAnalysisSummary {
-  totalCount: number
-  totalValueZar: number
-  avgDaysStuck: number
-  highRiskCount: number // items with daysStuck > 10
-  topBottleneckStage: ProcessStage
+export interface SituationKpiSummary {
+  totalOpenPrs: number
+  prOver30: number
+  prOver30Pct: number
+  totalOpenPos: number
+  totalOpenPoValueZar: number
+  servicePoValueZar: number
+  servicePct: number
+  /** the 2 biggest root causes by days lost, for the KPI card */
+  topDrivers: FishboneRootCause[]
 }

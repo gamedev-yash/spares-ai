@@ -74,6 +74,11 @@ export function formatZARMillions(millions: number): string {
   })}M`
 }
 
+/** Formats a raw ZAR amount as billions: 3708460000 -> "R 3.71B". */
+export function formatZARBillions(amount: number): string {
+  return `R ${(amount / 1_000_000_000).toFixed(2)}B`
+}
+
 function toCsvField(value: string | number): string {
   const str = String(value)
   return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str
