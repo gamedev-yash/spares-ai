@@ -1,0 +1,30 @@
+section,material_id,description,plant,stock_on_hand,reorder_point,doc_type,doc_number,vendor,quantity_out,received_quantity,dispatch_date,expected_delivery,days_open,chain_status,declaration_status,value_zar,pr_number,generated_date,days_flagged,colliding_chain_id,declared_by,declared_at,statement,note,decision,repair_cost,repair_remaining_days,new_unit_price,new_unit_lead_days,recommendation,rationale
+register,500-31005,"Pressure Transmitter, Cerabar PMC21",Gamsberg,2,3,,,,,,,,,,Pending,226800,,,,,,,,,,,,,,,
+register,500-19560,"Control Valve, Globe, easy-E",BMM,0,1,,,,,,,,,,Pending,715200,,,,,,,,,,,,,,,
+register,500-55210,"Motor, TEFC, 132kW 4-pole",BMM,1,1,,,,,,,,,,Complete,493500,,,,,,,,,,,,,,,
+register,500-31048,"Pressure Transmitter, EJA430E",BMM,1,2,,,,,,,,,,Pending,107000,,,,,,,,,,,,,,,
+register,500-31090,"Pressure Transmitter, 2600T",BMM,0,1,,,,,,,,,,Pending,196000,,,,,,,,,,,,,,,
+register,500-31122,"Level Transmitter, Radar FMR10",Gamsberg,3,4,,,,,,,,,,Not required,121600,,,,,,,,,,,,,,,
+register,500-19602,"Control Valve, Rotary, Neldisc",Gamsberg,1,1,,,,,,,,,,Complete,787500,,,,,,,,,,,,,,,
+register,500-19645,"Slurry Valve, Knife Gate",Gamsberg,2,3,,,,,,,,,,Pending,802400,,,,,,,,,,,,,,,
+chain,500-31005,,Gamsberg,,,PO,PO-77401,Becker Mining South Africa,18,6,15 Feb 2026,1 Mar 2026,10,Open,,,,,,,,,,,,,,,,,
+chain,500-19560,,BMM,,,PO,PO-77402,Motion Control Systems,8,0,20 Jan 2026,17 Feb 2026,35,Overdue,,,,,,,,,,,,,,,,,
+chain,500-55210,,BMM,,,PO,PO-77403,Zest WEG Group,6,1,25 Feb 2026,22 Mar 2026,8,Open,,,,,,,,,,,,,,,,,
+chain,500-31048,,BMM,,,PO,PO-77404,Motion Control Systems,14,9,10 Feb 2026,28 Feb 2026,18,Open,,,,,,,,,,,,,,,,,
+chain,500-31090,,BMM,,,PO,PO-77405,Motion Control Systems,10,0,5 Jan 2026,26 Jan 2026,52,Overdue,,,,,,,,,,,,,,,,,
+chain,500-31122,,Gamsberg,,,PO,PO-77406,Becker Mining South Africa,12,4,1 Mar 2026,13 Mar 2026,6,Open,,,,,,,,,,,,,,,,,
+chain,500-19602,,Gamsberg,,,PO,PO-77407,Hytec Group,9,2,12 Feb 2026,17 Mar 2026,14,Open,,,,,,,,,,,,,,,,,
+chain,500-19645,,Gamsberg,,,PO,PO-77408,Weir Minerals Africa,22,5,18 Feb 2026,10 Mar 2026,12,Open,,,,,,,,,,,,,,,,,
+chain,500-19645,,Gamsberg,,,PO,PO-77409,Hytec Group,6,6,5 Jan 2026,2 Feb 2026,30,Received,,,,,,,,,,,,,,,,,
+flagged_pr,500-31005,,Gamsberg,,,,,,6,,,,,,Pending,,PR-90512,20 Feb 2026,5,PO-77401,,,,,,,,,,,
+flagged_pr,500-19560,,BMM,,,,,,3,,,,,,Pending,,PR-90588,15 Feb 2026,10,PO-77402,,,,,,,,,,,
+declaration,500-55210,,BMM,,,,,,,,,,,,,,PR-90340,,,,T. Mokoena,18 Feb 2026,"I confirm this procurement is not a duplicate of the item currently under repair, or a duplicate is genuinely warranted.",Second unit failed independently; confirmed via maintenance work order WO-4482.,proceeded,,,,,,
+declaration,500-19602,,Gamsberg,,,,,,,,,,,,,,PR-90355,,,,R. Naidoo,22 Feb 2026,"I confirm this procurement is not a duplicate of the item currently under repair, or a duplicate is genuinely warranted.","Valve failure on Line 2, unrelated to the unit already at the vendor.",proceeded,,,,,,
+evaluation,500-31005,,,,,,,,,,,,,,,,,,,,,,,,,9500,5,18900,14,repair,Repair costs about half of a new unit and the vendor's return is expected well before a new unit's 14-day lead time.
+evaluation,500-19560,,,,,,,,,,,,,,,,,,,,,,,,,42000,-8,89400,28,either,Repair has overrun its expected return by 8 days; a new unit's 28-day lead time is now a comparable alternative.
+evaluation,500-55210,,,,,,,,,,,,,,,,,,,,,,,,,48000,14,98700,25,repair,Repair remains materially cheaper and is expected back well inside a new unit's 25-day lead time.
+evaluation,500-31048,,,,,,,,,,,,,,,,,,,,,,,,,11500,2,21400,18,repair,Nearly complete -- most of the batch has already been returned and the remainder is due imminently.
+evaluation,500-31090,,,,,,,,,,,,,,,,,,,,,,,,,9000,-22,19600,21,repair,This model is end-of-life -- a replacement unit may require a spec substitution. Repair remains the safer path despite the delay.
+evaluation,500-31122,,,,,,,,,,,,,,,,,,,,,,,,,8000,7,15200,12,repair,Repair cost is roughly half of a new unit with a shorter remaining wait than a new unit's lead time.
+evaluation,500-19602,,,,,,,,,,,,,,,,,,,,,,,,,52000,19,112500,33,repair,"Significant cost saving versus a new unit, and the vendor's return is expected well before a new unit could even be sourced."
+evaluation,500-19645,,,,,,,,,,,,,,,,,,,,,,,,,21000,17,47200,20,repair,One unit has already returned successfully from this vendor; the second is progressing on the same timeline at under half the cost of a new unit.

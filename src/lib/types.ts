@@ -484,3 +484,81 @@ export type SapDocRef = {
   expectedDelivery?: string
   receivedQuantity?: number
 }
+
+// ---- Initiative 8: Repairables ----
+
+export type DeclarationStatus = "Pending" | "Complete" | "Not required"
+export type ChainStatus = "Open" | "Overdue" | "Received"
+
+export type RepairChain = {
+  id: string
+  materialId: string
+  plant: VziUnit
+  document: SapDocRef // the open repair PO
+  quantityOut: number
+  receivedQuantity: number
+  quantityUnderRepair: number // = quantityOut - receivedQuantity
+  vendor: string
+  dispatchDate: string
+  expectedDelivery: string
+  daysOpen: number
+  status: ChainStatus
+}
+
+export type RepairRegisterRow = {
+  materialId: string // 80-series
+  description: string
+  plant: VziUnit
+  stockOnHand: number
+  reorderPoint?: number
+  atOrBelowRop: boolean // the condition that causes duplicate spend
+  chains: RepairChain[]
+  quantityUnderRepair: number
+  earliestExpectedDelivery?: string
+  maxDaysOpen: number
+  declarationStatus: DeclarationStatus
+  valueZar: number
+}
+
+export type ConditionAttestation = {
+  id: string
+  prNumber: string
+  materialId: string
+  plant: VziUnit
+  declaredBy: string
+  declaredAt: string
+  statement: string
+  note?: string
+  chainContextSnapshot: string // what the guard showed at the moment of declaring
+  decision: "proceeded" | "waited" | "cancelled"
+}
+
+export type FlaggedPr = {
+  prNumber: string
+  materialId: string
+  plant: VziUnit
+  quantity: number
+  generatedDate: string
+  daysFlagged: number
+  collidingChainId?: string
+  declarationStatus: DeclarationStatus
+}
+
+export type RepairVsNewEvaluation = {
+  materialId: string
+  repairCost: number
+  repairRemainingDays: number
+  repairExpectedReturn: string
+  newUnitPrice: number
+  newUnitLeadDays: number
+  recommendation: "repair" | "new" | "either"
+  rationale: string
+}
+
+export type RepairKpiSummary = {
+  itemsOutForRepair: number // the headline figure
+  unitsAtVendors: number
+  valueOutForRepair: number
+  chainsOverdue: number
+  declarationsPending: number
+}
