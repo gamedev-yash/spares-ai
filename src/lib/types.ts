@@ -457,3 +457,30 @@ export type PlatformAlert = {
   href: string
   daysOpen?: number
 }
+
+// ---- Shared spares domain ----
+
+/** Placeholder classes -- confirm the real criticality classes with VZI. */
+export type CriticalityClass = "A" | "B" | "C"
+
+/** Placeholder circuit list -- confirm the real process circuits with VZI. */
+export type Circuit = "Crushing" | "Milling" | "Pumping" | "Filtration"
+
+/** Provisional -- the real SAP fields identifying OAR planning category are
+ * still to be confirmed (see docs/IMPLEMENTATION_BLUEPRINT.md section 2). */
+export type PlanningCategory = "OAR" | "Stock"
+
+// ---- SAP document reference model (shared by I8 and I13) ----
+
+export type SapDocType = "PR" | "PO" | "GR" | "GI" | "RES"
+
+export type SapDocRef = {
+  docType: SapDocType
+  docNumber: string
+  itemNumber?: string
+  date?: string
+  quantity?: number
+  vendor?: string
+  expectedDelivery?: string
+  receivedQuantity?: number
+}
