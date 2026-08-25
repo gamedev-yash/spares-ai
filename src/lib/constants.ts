@@ -134,3 +134,61 @@ export const WORKFLOW_STEP_LABELS = [
   "Engineering sign-off",
   "PO generation",
 ] as const
+
+// ---- Initiative navigation (Repairables / Inventory / Utilisation / Platform) ----
+
+export type NavItem = { label: string; icon: IconKey; href: string; badge?: number }
+export type NavGroup = { title: string; items: NavItem[] }
+
+export const INITIATIVE_NAV: NavGroup[] = [
+  {
+    title: "Repairables",
+    items: [
+      { label: "Repair register", icon: "wrench", href: "/repairables" },
+      {
+        label: "Flagged PRs",
+        icon: "alert-triangle",
+        href: "/repairables/flagged",
+      },
+      { label: "Attestation log", icon: "history", href: "/repairables/audit" },
+    ],
+  },
+  {
+    title: "Inventory",
+    items: [
+      {
+        label: "Recommendations",
+        icon: "lightbulb",
+        href: "/inventory/recommendations",
+      },
+      {
+        label: "Criticality policy",
+        icon: "file-text",
+        href: "/inventory/policy",
+      },
+      {
+        label: "Exceptions",
+        icon: "alert-triangle",
+        href: "/inventory/exceptions",
+      },
+      { label: "Monitoring", icon: "chart-bar", href: "/inventory/monitoring" },
+    ],
+  },
+  {
+    title: "Utilisation",
+    items: [
+      { label: "Ledger", icon: "clipboard-check", href: "/utilisation/ledger" },
+      {
+        label: "Exceptions",
+        icon: "alert-triangle",
+        href: "/utilisation/exceptions",
+      },
+      { label: "Dashboards", icon: "layers", href: "/utilisation/dashboards" },
+      { label: "Event log", icon: "history", href: "/utilisation/audit" },
+    ],
+  },
+  {
+    title: "Platform",
+    items: [{ label: "Alert centre", icon: "alert-triangle", href: "/alerts" }],
+  },
+]
