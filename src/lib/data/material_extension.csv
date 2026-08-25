@@ -1,0 +1,25 @@
+section,material_id,plant,canonical_material_id,criticality_class,circuit,planning_category,material_group,mrp_type,is_repairable,repair_material_code,current_rop,current_safety_stock,current_max_stock,holding_cost_pct,unit_price
+extension,500-14892,Gamsberg,,A,Milling,Stock,Mechanical Seals,PD,false,,3,1,6,12,48200
+extension,500-14905,Gamsberg,,B,Milling,Stock,Mechanical Seals,PD,false,,2,1,4,12,31400
+extension,500-15020,BMM,,B,Milling,Stock,Mechanical Seals,PD,false,,2,1,4,12,52600
+extension,500-15134,BMM,,A,Milling,OAR,Mechanical Seals,ND,false,,2,1,4,12,61300
+extension,500-08823,Gamsberg,,A,Pumping,Stock,Pump Impellers,PD,false,,2,1,4,14,74500
+extension,500-08841,Gamsberg,,B,Pumping,Stock,Pump Impellers,PD,false,,3,1,6,14,58200
+extension,500-08876,BMM,,A,Pumping,OAR,Pump Impellers,ND,false,,2,1,4,14,66900
+extension,500-08902,BMM,,B,Pumping,Stock,Pump Impellers,PD,false,,4,2,8,14,41800
+extension,500-22140,Gamsberg,,C,Crushing,Stock,Conveyor Components,PD,false,,8,3,16,10,8400
+extension,500-22188,Gamsberg,,A,Crushing,Stock,Conveyor Components,PD,false,,1,1,2,10,186500
+extension,500-22219,BMM,,A,Crushing,OAR,Conveyor Components,ND,false,,1,1,2,10,94200
+extension,500-22254,BMM,,C,Crushing,Stock,Conveyor Components,PD,false,,15,5,30,10,4200
+extension,500-22301,Gamsberg,,B,Crushing,Stock,Conveyor Components,PD,false,,4,2,8,10,14600
+extension,500-31005,Gamsberg,,B,Pumping,Stock,Instrumentation,PD,true,800-31005,3,1,6,15,18900
+extension,500-31048,BMM,,B,Pumping,Stock,Instrumentation,PD,true,800-31048,2,1,4,15,21400
+extension,500-31090,BMM,,C,Pumping,OAR,Instrumentation,ND,true,800-31090,1,1,2,15,19600
+extension,500-31122,Gamsberg,,B,Filtration,Stock,Instrumentation,PD,true,800-31122,4,2,8,15,15200
+extension,500-40011,Gamsberg,,A,Milling,Stock,Bearings,PD,false,,1,1,2,12,142000
+extension,500-40056,Gamsberg,,C,Milling,Stock,Bearings,PD,false,,10,4,20,12,3900
+extension,500-40098,BMM,,B,Milling,Stock,Bearings,PD,false,,3,1,6,12,9800
+extension,500-19560,BMM,,A,Milling,OAR,Valves,ND,true,800-19560,1,1,2,12,89400
+extension,500-19602,Gamsberg,,A,Milling,Stock,Valves,PD,true,800-19602,1,1,2,12,112500
+extension,500-19645,Gamsberg,,B,Milling,Stock,Valves,PD,true,800-19645,3,1,6,12,47200
+extension,500-55210,BMM,,A,Crushing,Stock,Motors,PD,true,800-55210,1,1,2,10,98700

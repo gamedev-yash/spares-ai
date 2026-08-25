@@ -10,6 +10,7 @@ import {
   CATEGORIES,
   DASHBOARD_LINKS,
   ICONS,
+  INITIATIVE_NAV,
   NEW_SESSION_ID,
   QUICK_ACTIONS,
 } from "@/lib/constants"
@@ -212,6 +213,35 @@ export function Sidebar() {
           )
         })}
       </NavSection>
+
+      {INITIATIVE_NAV.map((group) => (
+        <NavSection key={group.title} title={group.title}>
+          {group.items.map((item) => {
+            const Icon = ICONS[item.icon]
+            const isActive = pathname === item.href
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "mx-2 my-0.5 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] transition-colors",
+                  isActive
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                )}
+              >
+                <Icon className="size-4 shrink-0" />
+                {item.label}
+                {item.badge && (
+                  <span className="ml-auto shrink-0 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[11px] font-medium text-destructive">
+                    {item.badge}
+                  </span>
+                )}
+              </Link>
+            )
+          })}
+        </NavSection>
+      ))}
 
       <div className="mt-auto border-t border-border py-1">
         <ThemeToggle />
