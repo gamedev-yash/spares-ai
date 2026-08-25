@@ -1,15 +1,12 @@
 import type { Metadata } from "next"
 
 import { AuditLog } from "@/components/audit/audit-log"
-import { getAuditLog } from "@/lib/mock-data"
 
 export const metadata: Metadata = {
   title: "Audit trail — Spares AI",
 }
 
 export default function AuditPage() {
-  const entries = getAuditLog()
-
   return (
     <div className="min-h-0 flex-1 overflow-y-auto p-6">
       <div className="mx-auto flex max-w-6xl flex-col gap-4">
@@ -22,7 +19,7 @@ export default function AuditPage() {
             user selection.
           </p>
         </div>
-        <AuditLog entries={entries} />
+        <AuditLog />
       </div>
     </div>
   )

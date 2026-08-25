@@ -6,19 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  VZI_AGING,
-  VZI_OAR_VB,
-  VZI_PO_DETAIL,
-  VZI_PO_SUMMARY,
-  VZI_PR_SUMMARY,
-  vziAgingTotal,
-  vziCategoryPivot,
-  vziOarVbByUnit,
-  vziPoByUnit,
-  vziPoTotals,
-  vziPrTotals,
-} from "@/lib/mock-data"
+import type { VziDashboard } from "@/lib/api/vzi"
 import { formatCount } from "@/lib/utils"
 
 function decimal2(n: number): string {
@@ -29,8 +17,8 @@ const SUBTOTAL_ROW = "bg-muted/40 font-semibold [&_td]:text-foreground"
 const GRAND_ROW =
   "bg-accent/50 font-semibold [&_td]:text-foreground border-t-2 border-t-primary/40"
 
-export function PrSummaryTable() {
-  const totals = vziPrTotals()
+export function PrSummaryTable({ dashboard }: { dashboard: VziDashboard }) {
+  const totals = dashboard.kpiSummary.openPr
   return (
     <Table>
       <TableHeader>
@@ -42,7 +30,7 @@ export function PrSummaryTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {VZI_PR_SUMMARY.map((r) => (
+        {dashboard.prSummary.map((r) => (
           <TableRow key={r.unit}>
             <TableCell className="text-foreground">{r.unit}</TableCell>
             <TableCell className="text-right text-muted-foreground">
@@ -67,8 +55,8 @@ export function PrSummaryTable() {
   )
 }
 
-export function PoSummaryTable() {
-  const totals = vziPoTotals()
+export function PoSummaryTable({ dashboard }: { dashboard: VziDashboard }) {
+  const totals = dashboard.kpiSummary.openPo
   return (
     <Table>
       <TableHeader>
@@ -80,7 +68,7 @@ export function PoSummaryTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {VZI_PO_SUMMARY.map((r) => (
+        {dashboard.poSummary.map((r) => (
           <TableRow key={r.unit}>
             <TableCell className="text-foreground">{r.unit}</TableCell>
             <TableCell className="text-right text-muted-foreground">
@@ -105,8 +93,8 @@ export function PoSummaryTable() {
   )
 }
 
-export function AgingTable() {
-  const total = vziAgingTotal()
+export function AgingTable({ dashboard }: { dashboard: VziDashboard }) {
+  const total = dashboard.kpiSummary.agingTotal
   return (
     <Table>
       <TableHeader>
@@ -117,7 +105,7 @@ export function AgingTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {VZI_AGING.map((a) => (
+        {dashboard.aging.map((a) => (
           <TableRow key={a.bucket}>
             <TableCell className="text-foreground">{a.bucket}</TableCell>
             <TableCell className="text-right text-muted-foreground">
@@ -138,8 +126,8 @@ export function AgingTable() {
   )
 }
 
-export function CategoriesTable() {
-  const rows = vziCategoryPivot()
+export function CategoriesTable({ dashboard }: { dashboard: VziDashboard }) {
+  const rows = dashboard.categoryPivot
   const totalG = rows.reduce((sum, r) => sum + r.Gamsberg, 0)
   const totalB = rows.reduce((sum, r) => sum + r.BMM, 0)
   return (
@@ -178,14 +166,14 @@ export function CategoriesTable() {
   )
 }
 
-export function OarVbTable() {
-  const byUnit = vziOarVbByUnit()
-  const grandOar = VZI_OAR_VB.reduce((sum, r) => sum + r.oar, 0)
-  const grandVb = VZI_OAR_VB.reduce((sum, r) => sum + r.vb, 0)
+export function OarVbTable({ dashboard }: { dashboard: VziDashboard }) {
+  const byUnit = dashboard.oarVbByUnit
+  const grandOar = dashboard.oarVb.reduce((sum, r) => sum + r.oar, 0)
+  const grandVb = dashboard.oarVb.reduce((sum, r) => sum + r.vb, 0)
 
   const rows: { label: string; oar: number; vb: number; cls?: string }[] = []
   let currentUnit: string | null = null
-  for (const r of VZI_OAR_VB) {
+  for (const r of dashboard.oarVb) {
     if (currentUnit !== null && r.unit !== currentUnit) {
       const s = byUnit[currentUnit]
       rows.push({ label: `${currentUnit} subtotal`, oar: s.oar, vb: s.vb, cls: SUBTOTAL_ROW })
@@ -234,10 +222,10 @@ export function OarVbTable() {
   )
 }
 
-export function PoDetailTable() {
-  const byUnit = vziPoByUnit()
-  const pot = vziPoTotals()
-  const pv = VZI_PO_DETAIL.reduce(
+export function PoDetailTable({ dashboard }: { dashboard: VziDashboard }) {
+  const byUnit = dashboard.poByUnit
+  const pot = dashboard.kpiSummary.openPo
+  const pv = dashboard.poDetail.reduce(
     (acc, p) => ({ material: acc.material + p.matValue, service: acc.service + p.svcValue }),
     { material: 0, service: 0 }
   )
@@ -251,7 +239,7 @@ export function PoDetailTable() {
     cls?: string
   }[] = []
   let currentUnit: string | null = null
-  for (const p of VZI_PO_DETAIL) {
+  for (const p of dashboard.poDetail) {
     if (currentUnit !== null && p.unit !== currentUnit) {
       const s = byUnit[currentUnit]
       rows.push({

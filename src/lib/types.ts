@@ -1,10 +1,52 @@
 // Domain types for the Spares AI mockup. All data is mock/local — see mock-data.ts.
 
+/** Legacy 4-value tagging used by the still-mock ChatSession/PendingApproval/Supplier domains. */
 export type Category = "Flotation" | "Conveyance" | "Milling" | "Instrumentation"
+
+/** Real material catalog groups, backed by the database (backend/scripts/catalog.py). */
+export type MaterialCategory =
+  | "Bearings"
+  | "Pumps"
+  | "Valves"
+  | "Motors"
+  | "Conveyor Components"
+  | "Crusher Components"
+  | "Milling Components"
+  | "Flotation Components"
+  | "Electrical Spares"
+  | "Instrumentation"
+  | "Mechanical Seals"
+  | "Services"
 
 export type LifecycleStatus = "Active" | "EOL" | "Obsolete"
 
+/** Mirrors the backend's MaterialOut (backend/app/schemas/materials.py) -- field names
+ * intentionally match the API response so the frontend does no shape translation. */
 export interface Material {
+  id: number
+  material_code: string
+  description: string
+  material_group: MaterialCategory
+  material_type: string
+  plant: string
+  storage_location: string
+  unit_of_measure: string
+  criticality: string
+  lifecycle_status: LifecycleStatus
+  service_code: string | null
+  manufacturer: string | null
+  manufacturer_part_no: string | null
+  last_po_price: number | null
+  last_vendor: string | null
+  stock_level: number
+  lead_time_days: number
+  active: boolean
+}
+
+/** Old mock-only material shape, still used by the not-yet-migrated chat/alternates
+ * flow in mock-data.ts (see [[mock-data-migration]]). Distinct from `Material` above,
+ * which mirrors the real backend now powering /materials. */
+export interface MockMaterial {
   id: string // material code, format 500-XXXXX
   description: string
   manufacturer: string
@@ -342,9 +384,9 @@ export interface VziKpiSummary {
 }
 
 // ---- Situation Analysis (VZI root-cause / Fishbone view — Initiative 9) ----
-// All data for this view is loaded at request time from
-// src/lib/data/vzi_situation_analysis.csv (see situation-analysis-data.ts) —
-// these are just the shapes that loader resolves to.
+// All data for this view is loaded from the backend's /api/situation-analysis/*
+// endpoints (see src/lib/api/situation-analysis.ts), backed by
+// backend/data/situation_analysis.csv — these are just the shapes those calls resolve to.
 
 export type FishboneCategory =
   | "Vendor Delay - Payment"
@@ -359,7 +401,7 @@ export interface FishboneRootCause {
   category: FishboneCategory
   daysLost: number
   subCauses: string[]
-  badge?: string
+  badge?: string | null
 }
 
 export interface RootCauseTrendPoint {
@@ -383,7 +425,7 @@ export interface SituationDrillDownItem {
   stuckWithRole: string
   urgency: Urgency
   /** links to an existing chat session for the "Chat" row action, when one exists */
-  sessionId?: string
+  sessionId?: string | null
 }
 
 export interface SituationKpiSummary {

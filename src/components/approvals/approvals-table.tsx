@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Check, EllipsisVertical, TriangleAlert, X } from "lucide-react"
 import { toast } from "sonner"
 
@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
   TableBody,
@@ -27,121 +28,91 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { CATEGORIES } from "@/lib/constants"
+import { ApiError } from "@/lib/api/client"
+import {
+  approveApproval,
+  escalateApproval,
+  rejectApproval,
+  searchApprovals,
+  type ApprovalRecord,
+} from "@/lib/api/approvals"
 import { formatZAR } from "@/lib/utils"
-import type {
-  ApprovalDecision,
-  ApprovalMatchTier,
-  Category,
-  PendingApproval,
-} from "@/lib/types"
 
 const ALL_FILTER = "all"
 const URGENCIES = ["Normal", "High", "Critical"] as const
-const MATCH_TIERS: ApprovalMatchTier[] = [
-  "Direct Equivalent (Usual)",
-  "Technical Equivalent",
-  "OEM Original (Same)",
-]
+const PAGE_SIZE = 25
 
-const URGENCY_TONE: Record<
-  (typeof URGENCIES)[number],
-  "default" | "warning" | "danger"
-> = {
+const URGENCY_TONE: Record<(typeof URGENCIES)[number], "default" | "warning" | "danger"> = {
   Normal: "default",
   High: "warning",
   Critical: "danger",
 }
 
-const DECISION_LABEL: Record<ApprovalDecision, string> = {
-  approved: "Approved",
-  rejected: "Rejected",
-  escalated: "Escalated",
-}
+export function ApprovalsTable() {
+  const [urgency, setUrgency] = useState<(typeof URGENCIES)[number] | typeof ALL_FILTER>(ALL_FILTER)
+  const [page, setPage] = useState(1)
+  const [approvals, setApprovals] = useState<ApprovalRecord[]>([])
+  const [total, setTotal] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [actingOn, setActingOn] = useState<number | null>(null)
 
-const DECISION_TONE: Record<ApprovalDecision, "success" | "danger" | "warning"> = {
-  approved: "success",
-  rejected: "danger",
-  escalated: "warning",
-}
+  const load = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const result = await searchApprovals({
+        status: "PENDING",
+        urgency: urgency === ALL_FILTER ? undefined : urgency,
+        page,
+        page_size: PAGE_SIZE,
+      })
+      setApprovals(result.items)
+      setTotal(result.total)
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Failed to load approvals.")
+    } finally {
+      setLoading(false)
+    }
+  }, [urgency, page])
 
-export function ApprovalsTable({ approvals }: { approvals: PendingApproval[] }) {
-  const [decisions, setDecisions] = useState<Record<string, ApprovalDecision>>({})
-  const [category, setCategory] = useState<Category | typeof ALL_FILTER>(
-    ALL_FILTER
-  )
-  const [matchTier, setMatchTier] = useState<
-    ApprovalMatchTier | typeof ALL_FILTER
-  >(ALL_FILTER)
-  const [urgency, setUrgency] = useState<
-    (typeof URGENCIES)[number] | typeof ALL_FILTER
-  >(ALL_FILTER)
+  useEffect(() => {
+    load()
+  }, [load])
 
-  const filtered = useMemo(() => {
-    return approvals.filter((a) => {
-      if (category !== ALL_FILTER && a.category !== category) return false
-      if (matchTier !== ALL_FILTER && a.matchTier !== matchTier) return false
-      if (urgency !== ALL_FILTER && a.urgency !== urgency) return false
-      return true
-    })
-  }, [approvals, category, matchTier, urgency])
+  async function decide(item: ApprovalRecord, action: "approved" | "rejected" | "escalated") {
+    setActingOn(item.id)
+    const label = item.material_description ?? item.rr_number ?? `Approval #${item.id}`
+    try {
+      if (action === "approved") await approveApproval(item.id)
+      else if (action === "rejected") await rejectApproval(item.id)
+      else await escalateApproval(item.id)
 
-  function decide(item: PendingApproval, decision: ApprovalDecision) {
-    setDecisions((prev) => ({ ...prev, [item.id]: decision }))
-    const message = `${DECISION_LABEL[decision]} — ${item.materialDescription} (#${item.sessionId})`
-    if (decision === "rejected") toast.error(message)
-    else if (decision === "escalated") toast.warning(message)
-    else toast.success(message)
+      const message = `${action[0].toUpperCase()}${action.slice(1)} — ${label}`
+      if (action === "rejected") toast.error(message)
+      else if (action === "escalated") toast.warning(message)
+      else toast.success(message)
+
+      setApprovals((prev) => prev.filter((a) => a.id !== item.id))
+      setTotal((t) => Math.max(0, t - 1))
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : "Action failed.")
+    } finally {
+      setActingOn(null)
+    }
   }
+
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <Select
-          value={category}
-          onValueChange={(value) => setCategory(value as Category | typeof ALL_FILTER)}
-        >
-          <SelectTrigger className="h-9 w-full sm:w-44">
-            <SelectValue placeholder="Category">
-              {(value: string) => (value === ALL_FILTER ? "All categories" : value)}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={ALL_FILTER}>All categories</SelectItem>
-            {CATEGORIES.map((c) => (
-              <SelectItem key={c.label} value={c.label}>
-                {c.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={matchTier}
-          onValueChange={(value) =>
-            setMatchTier(value as ApprovalMatchTier | typeof ALL_FILTER)
-          }
-        >
-          <SelectTrigger className="h-9 w-full sm:w-52">
-            <SelectValue placeholder="Match tier">
-              {(value: string) => (value === ALL_FILTER ? "All match tiers" : value)}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={ALL_FILTER}>All match tiers</SelectItem>
-            {MATCH_TIERS.map((t) => (
-              <SelectItem key={t} value={t}>
-                {t}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select
           value={urgency}
-          onValueChange={(value) =>
-            setUrgency(value as (typeof URGENCIES)[number] | typeof ALL_FILTER)
-          }
+          onValueChange={(value) => {
+            setUrgency((value as (typeof URGENCIES)[number] | typeof ALL_FILTER) ?? ALL_FILTER)
+            setPage(1)
+          }}
         >
           <SelectTrigger className="h-9 w-full sm:w-40">
             <SelectValue placeholder="Urgency">
@@ -159,112 +130,130 @@ export function ApprovalsTable({ approvals }: { approvals: PendingApproval[] }) 
         </Select>
       </div>
 
-      {filtered.length === 0 ? (
+      {error ? (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+          {error}
+        </div>
+      ) : loading ? (
+        <Skeleton className="h-80 rounded-xl" />
+      ) : approvals.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          No approvals match these filters.
+          No pending approvals match these filters.
         </div>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Session ID</TableHead>
-              <TableHead>RR ID</TableHead>
-              <TableHead>Material</TableHead>
-              <TableHead>Requester</TableHead>
-              <TableHead>Match Tier</TableHead>
-              <TableHead className="text-right">
-                <abbr
-                  title="Last Purchase Price (PP)"
-                  className="cursor-help underline decoration-dotted underline-offset-4"
-                >
-                  LPP
-                </abbr>
-              </TableHead>
-              <TableHead>Waiting Since</TableHead>
-              <TableHead>Approver</TableHead>
-              <TableHead>Urgency</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filtered.map((item) => {
-              const decision = decisions[item.id]
-              return (
+        <>
+          <p className="text-xs text-muted-foreground">{total} pending approvals</p>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>RR</TableHead>
+                <TableHead>Material</TableHead>
+                <TableHead>Requester</TableHead>
+                <TableHead>Approval type</TableHead>
+                <TableHead className="text-right">Est. value</TableHead>
+                <TableHead>Submitted</TableHead>
+                <TableHead>Approver role</TableHead>
+                <TableHead>Urgency</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {approvals.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium text-foreground">
-                    #{item.sessionId}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {item.rrId}
+                    {item.rr_number ?? "-"}
                   </TableCell>
                   <TableCell className="max-w-[220px] truncate text-foreground">
-                    {item.materialDescription}
+                    {item.material_description ?? "-"}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {item.requester}
+                    {item.requester_name ?? "-"}
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {item.matchTier}
-                  </TableCell>
+                  <TableCell className="text-muted-foreground">{item.approval_type}</TableCell>
                   <TableCell className="text-right font-medium text-foreground">
-                    {formatZAR(item.lastPurchasePrice)}
+                    {item.total_value != null ? formatZAR(item.total_value) : "-"}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {item.waitingSince}
+                    {new Date(item.submitted_at).toLocaleDateString()}
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {item.approver}
-                  </TableCell>
+                  <TableCell className="text-muted-foreground">{item.approver_role}</TableCell>
                   <TableCell>
-                    <StatusBadge tone={URGENCY_TONE[item.urgency]}>
-                      {item.urgency}
-                    </StatusBadge>
-                  </TableCell>
-                  <TableCell>
-                    {decision ? (
-                      <StatusBadge tone={DECISION_TONE[decision]}>
-                        {DECISION_LABEL[decision]}
+                    {item.urgency ? (
+                      <StatusBadge
+                        tone={URGENCY_TONE[item.urgency as (typeof URGENCIES)[number]] ?? "default"}
+                      >
+                        {item.urgency}
                       </StatusBadge>
                     ) : (
-                      <div className="flex items-center gap-1">
-                        <Button
-                          size="xs"
-                          variant="outline"
-                          className="border-success/40 text-success hover:bg-success/10"
-                          onClick={() => decide(item, "approved")}
-                        >
-                          <Check className="size-3.5" />
-                          Approve
-                        </Button>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger
-                            className="flex size-6 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground outline-none hover:bg-muted hover:text-foreground"
-                            aria-label="More actions"
-                          >
-                            <EllipsisVertical className="size-3.5" />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              variant="destructive"
-                              onClick={() => decide(item, "rejected")}
-                            >
-                              <X className="size-3.5" />
-                              Reject
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => decide(item, "escalated")}>
-                              <TriangleAlert className="size-3.5 text-warning" />
-                              Escalate
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
+                      "-"
                     )}
                   </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        size="xs"
+                        variant="outline"
+                        disabled={actingOn === item.id}
+                        className="border-success/40 text-success hover:bg-success/10"
+                        onClick={() => decide(item, "approved")}
+                      >
+                        <Check className="size-3.5" />
+                        Approve
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger
+                          className="flex size-6 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground outline-none hover:bg-muted hover:text-foreground"
+                          aria-label="More actions"
+                          disabled={actingOn === item.id}
+                        >
+                          <EllipsisVertical className="size-3.5" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            variant="destructive"
+                            onClick={() => decide(item, "rejected")}
+                          >
+                            <X className="size-3.5" />
+                            Reject
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => decide(item, "escalated")}>
+                            <TriangleAlert className="size-3.5 text-warning" />
+                            Escalate
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </TableCell>
                 </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
+              ))}
+            </TableBody>
+          </Table>
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">
+                Page {page} of {totalPages}
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page <= 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page >= totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   )

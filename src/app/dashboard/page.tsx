@@ -4,14 +4,15 @@ import { AgingStrip } from "@/components/dashboard/aging-strip"
 import { KpiRow } from "@/components/dashboard/kpi-row"
 import { PrPoTabs } from "@/components/dashboard/pr-po-tabs"
 import { StatusBadge } from "@/components/shared/status-badge"
-import { VZI_AGING, getVziKpiSummary } from "@/lib/mock-data"
+import { getVziDashboard } from "@/lib/api/vzi"
 
 export const metadata: Metadata = {
   title: "Open PR & PO position — Spares AI",
 }
 
-export default function DashboardPage() {
-  const summary = getVziKpiSummary()
+export default async function DashboardPage() {
+  const dashboard = await getVziDashboard()
+  const summary = dashboard.kpiSummary
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto p-6">
@@ -35,8 +36,8 @@ export default function DashboardPage() {
         </div>
 
         <KpiRow summary={summary} />
-        <AgingStrip buckets={VZI_AGING} over30={summary.prOver30} />
-        <PrPoTabs />
+        <AgingStrip buckets={dashboard.aging} over30={summary.prOver30} />
+        <PrPoTabs dashboard={dashboard} />
 
         <p className="mt-2 border-t border-border pt-3 text-xs text-muted-foreground">
           Source: VZI review slides &quot;Open PR analysis&quot; and &quot;Open

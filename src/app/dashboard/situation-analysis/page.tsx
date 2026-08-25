@@ -14,18 +14,20 @@ import {
   getRootCauses,
   getRootCauseTrend,
   getSituationKpiSummary,
-} from "@/lib/situation-analysis-data"
+} from "@/lib/api/situation-analysis"
 
 export const metadata: Metadata = {
   title: "Situation analysis — Spares AI",
 }
 
-export default function SituationAnalysisPage() {
-  const summary = getSituationKpiSummary()
-  const rootCauses = getRootCauses()
-  const trend = getRootCauseTrend()
-  const agingBuckets = getAgingBuckets()
-  const drillDownItems = getDrillDownItems()
+export default async function SituationAnalysisPage() {
+  const [summary, rootCauses, trend, agingBuckets, drillDownItems] = await Promise.all([
+    getSituationKpiSummary(),
+    getRootCauses(),
+    getRootCauseTrend(),
+    getAgingBuckets(),
+    getDrillDownItems(),
+  ])
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto p-6">

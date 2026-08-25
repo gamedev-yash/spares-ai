@@ -10,8 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { CATEGORIES } from "@/lib/constants"
-import type { Category, LifecycleStatus } from "@/lib/types"
+import { MATERIAL_CATEGORY_OPTIONS } from "@/lib/constants"
+import type { LifecycleStatus, MaterialCategory } from "@/lib/types"
 
 export const ALL_FILTER = "all"
 
@@ -20,19 +20,13 @@ export function MaterialSearch({
   onQueryChange,
   category,
   onCategoryChange,
-  manufacturer,
-  onManufacturerChange,
-  manufacturers,
   lifecycle,
   onLifecycleChange,
 }: {
   query: string
   onQueryChange: (value: string) => void
-  category: Category | typeof ALL_FILTER
-  onCategoryChange: (value: Category | typeof ALL_FILTER) => void
-  manufacturer: string
-  onManufacturerChange: (value: string) => void
-  manufacturers: string[]
+  category: MaterialCategory | typeof ALL_FILTER
+  onCategoryChange: (value: MaterialCategory | typeof ALL_FILTER) => void
   lifecycle: LifecycleStatus | typeof ALL_FILTER
   onLifecycleChange: (value: LifecycleStatus | typeof ALL_FILTER) => void
 }) {
@@ -43,44 +37,25 @@ export function MaterialSearch({
         <Input
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
-          placeholder="Search by code, description, or part number..."
+          placeholder="Search by code, description, manufacturer, or part number..."
           className="h-9 pl-8"
         />
       </div>
 
       <Select
         value={category}
-        onValueChange={(value) => onCategoryChange(value as Category | typeof ALL_FILTER)}
+        onValueChange={(value) => onCategoryChange(value as MaterialCategory | typeof ALL_FILTER)}
       >
-        <SelectTrigger className="h-9 w-full sm:w-44">
+        <SelectTrigger className="h-9 w-full sm:w-52">
           <SelectValue placeholder="Category">
             {(value: string) => (value === ALL_FILTER ? "All categories" : value)}
           </SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={ALL_FILTER}>All categories</SelectItem>
-          {CATEGORIES.map((c) => (
-            <SelectItem key={c.label} value={c.label}>
-              {c.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <Select
-        value={manufacturer}
-        onValueChange={(value) => onManufacturerChange(value ?? ALL_FILTER)}
-      >
-        <SelectTrigger className="h-9 w-full sm:w-48">
-          <SelectValue placeholder="Manufacturer">
-            {(value: string) => (value === ALL_FILTER ? "All manufacturers" : value)}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value={ALL_FILTER}>All manufacturers</SelectItem>
-          {manufacturers.map((m) => (
-            <SelectItem key={m} value={m}>
-              {m}
+          {MATERIAL_CATEGORY_OPTIONS.map((c) => (
+            <SelectItem key={c} value={c}>
+              {c}
             </SelectItem>
           ))}
         </SelectContent>

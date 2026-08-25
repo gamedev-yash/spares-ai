@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 
 import { ApprovalsTable } from "@/components/approvals/approvals-table"
-import { PENDING_APPROVALS } from "@/lib/mock-data"
 
 export const metadata: Metadata = {
   title: "Pending approvals — Spares AI",
@@ -19,7 +18,7 @@ export default function ApprovalsPage() {
             Procurement decisions waiting across all active sessions.
           </p>
         </div>
-        <ApprovalsTable approvals={PENDING_APPROVALS} />
+        <ApprovalsTable />
       </div>
     </div>
   )

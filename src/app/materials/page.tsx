@@ -3,7 +3,6 @@ import type { Metadata } from "next"
 
 import { MaterialsExplorer } from "@/components/materials/materials-explorer"
 import { Skeleton } from "@/components/ui/skeleton"
-import { MATERIALS } from "@/lib/mock-data"
 
 export const metadata: Metadata = {
   title: "Materials — Spares AI",
@@ -30,7 +29,7 @@ export default function MaterialsPage() {
             </div>
           }
         >
-          <MaterialsExplorer materials={MATERIALS} />
+          <MaterialsExplorer />
         </Suspense>
       </div>
     </div>

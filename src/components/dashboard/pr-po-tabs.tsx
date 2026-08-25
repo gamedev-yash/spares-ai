@@ -2,6 +2,7 @@
 
 import { DashboardCard } from "@/components/dashboard/dashboard-card"
 import { FlagsPanel } from "@/components/dashboard/flags-panel"
+import { LiveCycleTimeTab } from "@/components/dashboard/live-cycle-time-tab"
 import { PoValueDonut } from "@/components/dashboard/po-value-donut"
 import { PrAgingChart } from "@/components/dashboard/pr-aging-chart"
 import {
@@ -14,20 +15,7 @@ import {
 } from "@/components/dashboard/vzi-tables"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TwoSeriesBarChart } from "@/components/dashboard/two-series-bar-chart"
-import {
-  VZI_AGING,
-  VZI_DERIVED_NOTES,
-  VZI_FLAGS,
-  VZI_PO_SUMMARY,
-  VZI_PR_SUMMARY,
-  vziCategoryPivot,
-  vziOarVbByUnit,
-  vziPoAreaSorted,
-  vziPoByUnit,
-  vziPoValueTotals,
-  vziPrSummaryByUnit,
-  VZI_SLIDE_NOTES,
-} from "@/lib/mock-data"
+import type { VziDashboard } from "@/lib/api/vzi"
 import { formatCount, formatZARMillions } from "@/lib/utils"
 
 const MATERIAL = { key: "material", name: "Material", color: "var(--chart-1)" }
@@ -39,35 +27,32 @@ const VB = { key: "vb", name: "VB", color: "var(--chart-2)" }
 const MAT_VALUE = { key: "matValue", name: "Material", color: "var(--chart-1)" }
 const SVC_VALUE = { key: "svcValue", name: "Service", color: "var(--chart-2)" }
 
-export function PrPoTabs() {
-  const prByUnit = vziPrSummaryByUnit()
-  const oarVbByUnit = vziOarVbByUnit()
-  const poByUnit = vziPoByUnit()
-  const categoryPivot = vziCategoryPivot()
-  const poAreaSorted = vziPoAreaSorted()
-  const poValue = vziPoValueTotals()
+export function PrPoTabs({ dashboard }: { dashboard: VziDashboard }) {
+  const prByUnit: Record<string, number> = {}
+  for (const r of dashboard.prSummary) prByUnit[r.unit] = r.material + r.service
 
   const oarVbData = ["Gamsberg", "BMM"].map((unit) => ({
     unit,
-    oar: oarVbByUnit[unit].oar,
-    vb: oarVbByUnit[unit].vb,
+    oar: dashboard.oarVbByUnit[unit]?.oar ?? 0,
+    vb: dashboard.oarVbByUnit[unit]?.vb ?? 0,
   }))
-  const poCountData = VZI_PO_SUMMARY.map((r) => ({
+  const poCountData = dashboard.poSummary.map((r) => ({
     unit: r.unit,
     material: r.material,
     service: r.service,
   }))
   const poValueData = ["Gamsberg", "BMM"].map((unit) => ({
     unit,
-    material: poByUnit[unit].matValue,
-    service: poByUnit[unit].svcValue,
+    material: dashboard.poByUnit[unit]?.matValue ?? 0,
+    service: dashboard.poByUnit[unit]?.svcValue ?? 0,
   }))
-  const categoryData = [...categoryPivot].reverse() // bottom-up -> largest on top
-  const poAreaData = [...poAreaSorted].reverse().map((r) => ({
+  const categoryData = [...dashboard.categoryPivot].reverse() // bottom-up -> largest on top
+  const poAreaData = [...dashboard.poAreaSorted].reverse().map((r) => ({
     label: r.label,
     matValue: r.matValue,
     svcValue: r.svcValue,
   }))
+  const poValue = dashboard.kpiSummary.openPoValue
 
   return (
     <Tabs defaultValue="overview">
@@ -87,6 +72,9 @@ export function PrPoTabs() {
         <TabsTrigger value="flags" className="px-0.5 py-2.5 text-sm">
           Data &amp; flags
         </TabsTrigger>
+        <TabsTrigger value="live" className="px-0.5 py-2.5 text-sm">
+          Live cycle time
+        </TabsTrigger>
       </TabsList>
 
       {/* Panels share one grid cell so a panel stuck mid-exit-transition
@@ -99,10 +87,10 @@ export function PrPoTabs() {
         <div className="grid grid-cols-1 gap-3.5 lg:grid-cols-12">
           <DashboardCard
             title="PR aging distribution"
-            subtitle={`Open PRs by age bucket · total ${formatCount(VZI_AGING.reduce((s, a) => s + a.count, 0))}`}
+            subtitle={`Open PRs by age bucket · total ${formatCount(dashboard.aging.reduce((s, a) => s + a.count, 0))}`}
             span={7}
           >
-            <PrAgingChart buckets={VZI_AGING} />
+            <PrAgingChart buckets={dashboard.aging} />
           </DashboardCard>
           <DashboardCard
             title="Where open PO value sits"
@@ -113,14 +101,14 @@ export function PrPoTabs() {
           </DashboardCard>
           <DashboardCard title="Observations from the review slides" span={6}>
             <ul className="list-disc space-y-2.5 pl-4.5 text-[13px] leading-relaxed text-foreground">
-              {VZI_SLIDE_NOTES.map((note) => (
+              {dashboard.slideNotes.map((note) => (
                 <li key={note}>{note}</li>
               ))}
             </ul>
           </DashboardCard>
           <DashboardCard title="What the numbers add up to" span={6}>
             <ul className="list-disc space-y-2.5 pl-4.5 text-[13px] leading-relaxed text-foreground marker:text-success">
-              {VZI_DERIVED_NOTES.map((note) => (
+              {dashboard.derivedNotes.map((note) => (
                 <li key={note}>{note}</li>
               ))}
             </ul>
@@ -141,7 +129,7 @@ export function PrPoTabs() {
             span={6}
           >
             <TwoSeriesBarChart
-              data={VZI_PR_SUMMARY}
+              data={dashboard.prSummary}
               categoryKey="unit"
               seriesA={MATERIAL}
               seriesB={SERVICE}
@@ -183,7 +171,7 @@ export function PrPoTabs() {
             span={12}
             footnote="Unit split here (296 / 213) differs from the unit summary (307 / 202) by 11 each way — see Data & flags."
           >
-            <OarVbTable />
+            <OarVbTable dashboard={dashboard} />
           </DashboardCard>
         </div>
       </TabsContent>
@@ -195,7 +183,7 @@ export function PrPoTabs() {
         <div className="grid grid-cols-1 gap-3.5 lg:grid-cols-12">
           <DashboardCard
             title="Count by unit and type"
-            hint={`${formatCount(VZI_PO_SUMMARY.reduce((s, r) => s + r.material + r.service, 0))} open POs`}
+            hint={`${formatCount(dashboard.poSummary.reduce((s, r) => s + r.material + r.service, 0))} open POs`}
             span={6}
           >
             <TwoSeriesBarChart
@@ -238,7 +226,7 @@ export function PrPoTabs() {
             span={12}
             footnote="BMM 'Other' service value is blank on the slide; it back-calculates to 0.00 from the BMM subtotal."
           >
-            <PoDetailTable />
+            <PoDetailTable dashboard={dashboard} />
           </DashboardCard>
         </div>
       </TabsContent>
@@ -249,21 +237,28 @@ export function PrPoTabs() {
       >
         <div className="grid grid-cols-1 gap-3.5 lg:grid-cols-12">
           <DashboardCard title="Points to confirm with the data owner" span={12}>
-            <FlagsPanel flags={VZI_FLAGS} />
+            <FlagsPanel flags={dashboard.flags} />
           </DashboardCard>
           <DashboardCard title="PR summary" span={6}>
-            <PrSummaryTable />
+            <PrSummaryTable dashboard={dashboard} />
           </DashboardCard>
           <DashboardCard title="PR aging" span={6}>
-            <AgingTable />
+            <AgingTable dashboard={dashboard} />
           </DashboardCard>
           <DashboardCard title="PO summary" span={6}>
-            <PoSummaryTable />
+            <PoSummaryTable dashboard={dashboard} />
           </DashboardCard>
           <DashboardCard title="PR categories" span={6}>
-            <CategoriesTable />
+            <CategoriesTable dashboard={dashboard} />
           </DashboardCard>
         </div>
+      </TabsContent>
+
+      <TabsContent
+        value="live"
+        className="col-start-1 row-start-1 pt-4 data-ending-style:invisible data-ending-style:pointer-events-none"
+      >
+        <LiveCycleTimeTab />
       </TabsContent>
       </div>
     </Tabs>

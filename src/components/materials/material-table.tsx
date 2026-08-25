@@ -51,39 +51,39 @@ export function MaterialTable({ materials }: { materials: Material[] }) {
           <TableRow
             key={material.id}
             className="cursor-pointer"
-            onClick={() => router.push(`/chat/new/${material.id}`)}
+            onClick={() => router.push(`/chat/new/${material.material_code}`)}
           >
             <TableCell>
               <Link
-                href={`/chat/new/${material.id}`}
+                href={`/chat/new/${material.material_code}`}
                 onClick={(e) => e.stopPropagation()}
                 className="font-medium text-primary hover:underline"
               >
-                {material.id}
+                {material.material_code}
               </Link>
             </TableCell>
             <TableCell className="max-w-[220px] truncate text-foreground">
               {material.description}
             </TableCell>
             <TableCell className="text-muted-foreground">
-              {material.manufacturerPartNo}
+              {material.manufacturer_part_no}
             </TableCell>
             <TableCell className="text-muted-foreground">
-              {material.lastVendor}
+              {material.last_vendor}
             </TableCell>
             <TableCell className="text-muted-foreground">
-              {material.category}
+              {material.material_group}
             </TableCell>
             <TableCell>
-              <StatusBadge tone={LIFECYCLE_TONE[material.lifecycleStatus]}>
-                {material.lifecycleStatus}
+              <StatusBadge tone={LIFECYCLE_TONE[material.lifecycle_status]}>
+                {material.lifecycle_status}
               </StatusBadge>
             </TableCell>
             <TableCell className="text-right">
-              <PriceDisplay amount={material.lastPoPrice} />
+              <PriceDisplay amount={material.last_po_price ?? 0} />
             </TableCell>
             <TableCell className="text-right text-muted-foreground">
-              {material.stockLevel}
+              {material.stock_level}
             </TableCell>
           </TableRow>
         ))}

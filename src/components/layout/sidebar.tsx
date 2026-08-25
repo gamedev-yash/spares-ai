@@ -1,19 +1,20 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Plus } from "lucide-react"
 
+import { LogoutButton } from "@/components/shared/logout-button"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
+import { searchApprovals } from "@/lib/api/approvals"
+import { listChatSessions, type ChatSessionSummary } from "@/lib/api/chat"
 import {
-  CATEGORIES,
+  MATERIAL_CATEGORIES,
   DASHBOARD_LINKS,
   ICONS,
-  NEW_SESSION_ID,
   QUICK_ACTIONS,
 } from "@/lib/constants"
-import { getActiveSessions } from "@/lib/mock-data"
 import { cn } from "@/lib/utils"
 
 function NavSection({
@@ -35,20 +36,25 @@ function NavSection({
 
 export function Sidebar() {
   const pathname = usePathname()
-  const allSessions = getActiveSessions()
-  const sessions = allSessions.filter(
-    (session) => session.id !== NEW_SESSION_ID
-  )
-  const draftSession = allSessions.find(
-    (session) => session.id === NEW_SESSION_ID
-  )
+  const [pendingApprovals, setPendingApprovals] = useState<number | null>(null)
+  const [sessions, setSessions] = useState<ChatSessionSummary[]>([])
+
+  useEffect(() => {
+    if (pathname === "/login") return
+    searchApprovals({ status: "PENDING", page_size: 1 })
+      .then((result) => setPendingApprovals(result.total))
+      .catch(() => setPendingApprovals(null))
+    listChatSessions()
+      .then(setSessions)
+      .catch(() => setSessions([]))
+  }, [pathname])
+
+  if (pathname === "/login") return null
+
   const CpuIcon = ICONS["cpu"]
   const MessageIcon = ICONS["message-circle"]
-  const draftHref = `/chat/${NEW_SESSION_ID}`
-  const isOnDraft = pathname === draftHref
-
-  // In-memory only — a full page refresh clears the draft tab.
-  const [draftOpen, setDraftOpen] = useState(false)
+  const newSessionHref = "/chat/assistant"
+  const isOnNewSession = pathname?.startsWith(newSessionHref) ?? false
 
   return (
     <aside className="flex w-[240px] shrink-0 flex-col overflow-y-auto border-r border-border bg-card">
@@ -64,11 +70,10 @@ export function Sidebar() {
 
       <div className="px-2 pt-3 pb-1">
         <Link
-          href={draftHref}
-          onClick={() => setDraftOpen(true)}
+          href={newSessionHref}
           className={cn(
             "flex items-center gap-2 rounded-lg border border-dashed border-border px-3 py-2 text-[13px] transition-colors",
-            isOnDraft
+            isOnNewSession
               ? "bg-accent text-accent-foreground"
               : "text-muted-foreground hover:bg-muted hover:text-foreground"
           )}
@@ -79,34 +84,8 @@ export function Sidebar() {
       </div>
 
       <NavSection title="Active sessions">
-        {draftOpen && draftSession && (
-          <Link
-            href={draftHref}
-            className={cn(
-              "mx-2 my-0.5 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] transition-colors",
-              isOnDraft
-                ? "bg-accent text-accent-foreground"
-                : "text-muted-foreground hover:bg-muted"
-            )}
-          >
-            <MessageIcon className="size-4 shrink-0" />
-            <span className="min-w-0 flex-1">
-              <span
-                className={cn(
-                  "block truncate font-medium",
-                  isOnDraft ? "text-accent-foreground" : "text-foreground"
-                )}
-              >
-                {draftSession.navLabel}
-              </span>
-              <span className="block truncate text-[11px] text-muted-foreground">
-                {draftSession.navSubtitle}
-              </span>
-            </span>
-          </Link>
-        )}
         {sessions.map((session) => {
-          const href = `/chat/${session.id}`
+          const href = `/chat/assistant/${session.id}`
           const isActive = pathname === href
           return (
             <Link
@@ -127,22 +106,12 @@ export function Sidebar() {
                     isActive ? "text-accent-foreground" : "text-foreground"
                   )}
                 >
-                  {session.navLabel}
+                  {session.title}
                 </span>
                 <span className="block truncate text-[11px] text-muted-foreground">
-                  {session.navSubtitle}
+                  {session.status}
                 </span>
               </span>
-              {session.navBadge?.type === "count" && (
-                <span className="shrink-0 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[11px] font-medium text-destructive">
-                  {session.navBadge.value}
-                </span>
-              )}
-              {session.navBadge?.type === "alert" && (
-                <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-destructive text-[11px] font-medium text-white">
-                  !
-                </span>
-              )}
             </Link>
           )
         })}
@@ -187,18 +156,24 @@ export function Sidebar() {
             >
               <Icon className="size-4 shrink-0" />
               {action.label}
-              {action.badge && (
-                <span className="ml-auto shrink-0 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[11px] font-medium text-destructive">
-                  {action.badge}
-                </span>
-              )}
+              {(() => {
+                const badge = action.href === "/approvals" ? pendingApprovals : action.badge
+                return (
+                  badge != null &&
+                  badge > 0 && (
+                    <span className="ml-auto shrink-0 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[11px] font-medium text-destructive">
+                      {badge}
+                    </span>
+                  )
+                )
+              })()}
             </Link>
           )
         })}
       </NavSection>
 
       <NavSection title="Categories">
-        {CATEGORIES.map((category) => {
+        {MATERIAL_CATEGORIES.map((category) => {
           const Icon = ICONS[category.icon]
           return (
             <Link
@@ -215,6 +190,7 @@ export function Sidebar() {
 
       <div className="mt-auto border-t border-border py-1">
         <ThemeToggle />
+        <LogoutButton />
       </div>
     </aside>
   )

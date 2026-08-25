@@ -1,0 +1,1112 @@
+id,recipient_id,type,title,message,status,related_entity_type,related_entity_id,created_at,read_at
+1,20,APPROVAL_RESULT,RR-1001 approved,Your requisition was approved at DOA.,READ,RR,1,2026-04-01T05:09:36.211764+00:00,2026-04-02T04:09:36.211764+00:00
+2,20,PO_CREATED,PO-3001 created,A purchase order has been created for your requisition.,READ,PO,1,2026-04-11T05:09:36.211764+00:00,2026-04-11T14:09:36.211764+00:00
+3,1,APPROVAL_RESULT,RR-1002 approved,Your requisition was approved at DOA.,READ,RR,2,2026-07-16T00:09:36.211764+00:00,2026-07-16T10:09:36.211764+00:00
+4,1,PO_CREATED,PO-3002 created,A purchase order has been created for your requisition.,UNREAD,PO,2,2026-07-23T00:09:36.211764+00:00,
+5,24,APPROVAL_RESULT,RR-1003 approved,Your requisition was approved at DOA.,UNREAD,RR,3,2026-06-19T23:09:36.211764+00:00,
+6,15,APPROVAL_RESULT,RR-1004 approved,Your requisition was approved at DOA.,READ,RR,4,2026-02-01T02:09:36.211764+00:00,2026-02-01T12:09:36.211764+00:00
+7,15,PO_CREATED,PO-3003 created,A purchase order has been created for your requisition.,READ,PO,3,2026-03-09T02:09:36.211764+00:00,2026-03-09T03:09:36.211764+00:00
+8,19,APPROVAL_RESULT,RR-1006 approved,Your requisition was approved at DOA.,READ,RR,6,2026-07-22T14:09:36.211764+00:00,2026-07-23T15:09:36.211764+00:00
+9,19,PO_CREATED,PO-3004 created,A purchase order has been created for your requisition.,UNREAD,PO,4,2026-07-29T14:09:36.211764+00:00,
+10,16,APPROVAL_RESULT,RR-1007 approved,Your requisition was approved at DOA.,READ,RR,7,2026-04-07T22:09:36.211764+00:00,2026-04-08T18:09:36.211764+00:00
+11,16,PO_CREATED,PO-3005 created,A purchase order has been created for your requisition.,UNREAD,PO,5,2026-04-13T22:09:36.211764+00:00,
+12,17,APPROVAL_RESULT,RR-1008 approved,Your requisition was approved at DOA.,UNREAD,RR,8,2025-12-17T18:09:36.211764+00:00,
+13,17,PO_CREATED,PO-3006 created,A purchase order has been created for your requisition.,UNREAD,PO,6,2025-12-30T18:09:36.211764+00:00,
+14,21,APPROVAL_RESULT,RR-1009 approved,Your requisition was approved at DOA.,READ,RR,9,2025-12-24T04:09:36.211764+00:00,2025-12-24T19:09:36.211764+00:00
+15,21,PO_CREATED,PO-3007 created,A purchase order has been created for your requisition.,READ,PO,7,2026-01-24T04:09:36.211764+00:00,2026-01-25T09:09:36.211764+00:00
+16,18,APPROVAL_RESULT,RR-1010 approved,Your requisition was approved at DOA.,UNREAD,RR,10,2026-06-21T15:09:36.211764+00:00,
+17,18,PO_CREATED,PO-3008 created,A purchase order has been created for your requisition.,UNREAD,PO,8,2026-06-24T15:09:36.211764+00:00,
+18,23,APPROVAL_RESULT,RR-1011 approved,Your requisition was approved at DOA.,READ,RR,11,2026-06-20T12:09:36.211764+00:00,2026-06-21T17:09:36.211764+00:00
+19,23,PO_CREATED,PO-3009 created,A purchase order has been created for your requisition.,READ,PO,9,2026-06-28T12:09:36.211764+00:00,2026-06-29T08:09:36.211764+00:00
+20,24,APPROVAL_RESULT,RR-1013 approved,Your requisition was approved at DOA.,UNREAD,RR,13,2026-04-28T09:09:36.211764+00:00,
+21,24,PO_CREATED,PO-3010 created,A purchase order has been created for your requisition.,UNREAD,PO,10,2026-05-09T09:09:36.211764+00:00,
+22,5,APPROVAL_RESULT,RR-1014 approved,Your requisition was approved at DOA.,UNREAD,RR,14,2026-07-25T22:09:36.211764+00:00,
+23,5,PO_CREATED,PO-3011 created,A purchase order has been created for your requisition.,READ,PO,11,2026-08-16T22:09:36.211764+00:00,2026-08-17T07:09:36.211764+00:00
+24,22,APPROVAL_RESULT,RR-1015 approved,Your requisition was approved at DOA.,READ,RR,15,2026-08-15T09:09:36.211764+00:00,2026-08-16T08:09:36.211764+00:00
+25,22,PO_CREATED,PO-3012 created,A purchase order has been created for your requisition.,READ,PO,12,2026-08-29T09:09:36.211764+00:00,2026-08-29T23:09:36.211764+00:00
+26,3,APPROVAL_RESULT,RR-1016 approved,Your requisition was approved at DOA.,READ,RR,16,2026-05-14T07:09:36.211764+00:00,2026-05-14T17:09:36.211764+00:00
+27,3,PO_CREATED,PO-3013 created,A purchase order has been created for your requisition.,UNREAD,PO,13,2026-05-29T07:09:36.211764+00:00,
+28,3,APPROVAL_REQUEST,DOA approval needed: RR-1017,A requisition is waiting on your DOA approval.,UNREAD,RR,17,2026-05-07T03:09:36.211764+00:00,
+29,17,APPROVAL_RESULT,RR-1018 approved,Your requisition was approved at DOA.,UNREAD,RR,18,2026-03-03T21:09:36.211764+00:00,
+30,17,PO_CREATED,PO-3014 created,A purchase order has been created for your requisition.,UNREAD,PO,14,2026-03-18T21:09:36.211764+00:00,
+31,8,APPROVAL_RESULT,RR-1019 approved,Your requisition was approved at DOA.,READ,RR,19,2026-01-09T09:09:36.211764+00:00,2026-01-09T19:09:36.211764+00:00
+32,8,PO_CREATED,PO-3015 created,A purchase order has been created for your requisition.,UNREAD,PO,15,2026-01-24T09:09:36.211764+00:00,
+33,4,APPROVAL_RESULT,RR-1020 approved,Your requisition was approved at DOA.,UNREAD,RR,20,2026-06-15T14:09:36.211764+00:00,
+34,4,PO_CREATED,PO-3016 created,A purchase order has been created for your requisition.,READ,PO,16,2026-07-01T14:09:36.211764+00:00,2026-07-02T13:09:36.211764+00:00
+35,2,APPROVAL_RESULT,RR-1021 approved,Your requisition was approved at DOA.,UNREAD,RR,21,2026-03-16T21:09:36.211764+00:00,
+36,2,APPROVAL_RESULT,RR-1022 approved,Your requisition was approved at DOA.,READ,RR,22,2026-08-18T11:09:36.211764+00:00,2026-08-18T22:09:36.211764+00:00
+37,1,APPROVAL_RESULT,RR-1023 approved,Your requisition was approved at DOA.,READ,RR,23,2026-08-24T02:09:36.211764+00:00,2026-08-24T11:09:36.211764+00:00
+38,11,APPROVAL_RESULT,RR-1024 approved,Your requisition was approved at DOA.,READ,RR,24,2026-07-07T03:09:36.211764+00:00,2026-07-07T08:09:36.211764+00:00
+39,11,PO_CREATED,PO-3017 created,A purchase order has been created for your requisition.,UNREAD,PO,17,2026-07-10T03:09:36.211764+00:00,
+40,23,APPROVAL_RESULT,RR-1025 approved,Your requisition was approved at DOA.,UNREAD,RR,25,2026-06-04T12:09:36.211764+00:00,
+41,7,APPROVAL_RESULT,RR-1026 approved,Your requisition was approved at DOA.,READ,RR,26,2026-02-11T02:09:36.211764+00:00,2026-02-12T06:09:36.211764+00:00
+42,7,PO_CREATED,PO-3018 created,A purchase order has been created for your requisition.,READ,PO,18,2026-02-20T02:09:36.211764+00:00,2026-02-20T12:09:36.211764+00:00
+43,5,APPROVAL_RESULT,RR-1027 approved,Your requisition was approved at DOA.,READ,RR,27,2026-05-22T22:09:36.211764+00:00,2026-05-24T04:09:36.211764+00:00
+44,5,PO_CREATED,PO-3019 created,A purchase order has been created for your requisition.,READ,PO,19,2026-06-11T22:09:36.211764+00:00,2026-06-12T21:09:36.211764+00:00
+45,6,APPROVAL_RESULT,RR-1028 approved,Your requisition was approved at DOA.,READ,RR,28,2026-04-04T04:09:36.211764+00:00,2026-04-05T01:09:36.211764+00:00
+46,6,PO_CREATED,PO-3020 created,A purchase order has been created for your requisition.,READ,PO,20,2026-04-19T04:09:36.211764+00:00,2026-04-19T09:09:36.211764+00:00
+47,18,APPROVAL_RESULT,RR-1029 approved,Your requisition was approved at DOA.,READ,RR,29,2026-06-20T15:09:36.211764+00:00,2026-06-20T19:09:36.211764+00:00
+48,18,PO_CREATED,PO-3021 created,A purchase order has been created for your requisition.,READ,PO,21,2026-07-08T15:09:36.211764+00:00,2026-07-09T07:09:36.211764+00:00
+49,21,APPROVAL_RESULT,RR-1030 approved,Your requisition was approved at DOA.,READ,RR,30,2025-11-29T19:09:36.211764+00:00,2025-11-30T06:09:36.211764+00:00
+50,21,PO_CREATED,PO-3022 created,A purchase order has been created for your requisition.,READ,PO,22,2025-12-02T19:09:36.211764+00:00,2025-12-03T13:09:36.211764+00:00
+51,24,APPROVAL_RESULT,RR-1031 approved,Your requisition was approved at DOA.,UNREAD,RR,31,2025-12-18T19:09:36.211764+00:00,
+52,24,PO_CREATED,PO-3023 created,A purchase order has been created for your requisition.,UNREAD,PO,23,2026-01-31T10:09:36.211764+00:00,
+53,7,APPROVAL_RESULT,RR-1032 approved,Your requisition was approved at DOA.,UNREAD,RR,32,2026-07-15T10:09:36.211764+00:00,
+54,7,PO_CREATED,PO-3024 created,A purchase order has been created for your requisition.,READ,PO,24,2026-07-25T10:09:36.211764+00:00,2026-07-26T04:09:36.211764+00:00
+55,2,APPROVAL_REQUEST,DOA approval needed: RR-1033,A requisition is waiting on your DOA approval.,UNREAD,RR,33,2026-06-22T13:09:36.211764+00:00,
+56,21,APPROVAL_RESULT,RR-1034 approved,Your requisition was approved at DOA.,UNREAD,RR,34,2026-06-13T20:09:36.211764+00:00,
+57,6,APPROVAL_RESULT,RR-1035 approved,Your requisition was approved at DOA.,READ,RR,35,2026-03-06T01:09:36.211764+00:00,2026-03-06T19:09:36.211764+00:00
+58,6,PO_CREATED,PO-3025 created,A purchase order has been created for your requisition.,READ,PO,25,2026-03-27T01:09:36.211764+00:00,2026-03-28T07:09:36.211764+00:00
+59,6,APPROVAL_RESULT,RR-1036 approved,Your requisition was approved at DOA.,READ,RR,36,2026-03-14T05:09:36.211764+00:00,2026-03-14T12:09:36.211764+00:00
+60,6,PO_CREATED,PO-3026 created,A purchase order has been created for your requisition.,READ,PO,26,2026-03-21T05:09:36.211764+00:00,2026-03-21T21:09:36.211764+00:00
+61,3,APPROVAL_REQUEST,DOA approval needed: RR-1037,A requisition is waiting on your DOA approval.,UNREAD,RR,37,2026-08-24T05:09:36.211764+00:00,
+62,19,APPROVAL_RESULT,RR-1038 approved,Your requisition was approved at DOA.,READ,RR,38,2026-01-29T18:09:36.211764+00:00,2026-01-29T20:09:36.211764+00:00
+63,19,PO_CREATED,PO-3027 created,A purchase order has been created for your requisition.,UNREAD,PO,27,2026-03-15T18:09:36.211764+00:00,
+64,1,APPROVAL_RESULT,RR-1039 approved,Your requisition was approved at DOA.,READ,RR,39,2026-02-26T08:09:36.211764+00:00,2026-02-26T21:09:36.211764+00:00
+65,1,PO_CREATED,PO-3028 created,A purchase order has been created for your requisition.,READ,PO,28,2026-03-07T08:09:36.211764+00:00,2026-03-07T20:09:36.211764+00:00
+66,6,APPROVAL_RESULT,RR-1040 approved,Your requisition was approved at DOA.,READ,RR,40,2026-07-27T11:09:36.211764+00:00,2026-07-28T07:09:36.211764+00:00
+67,6,PO_CREATED,PO-3029 created,A purchase order has been created for your requisition.,READ,PO,29,2026-08-16T11:09:36.211764+00:00,2026-08-17T14:09:36.211764+00:00
+68,24,APPROVAL_RESULT,RR-1041 approved,Your requisition was approved at DOA.,UNREAD,RR,41,2026-04-29T16:09:36.211764+00:00,
+69,24,PO_CREATED,PO-3030 created,A purchase order has been created for your requisition.,UNREAD,PO,30,2026-05-22T16:09:36.211764+00:00,
+70,19,APPROVAL_RESULT,RR-1043 approved,Your requisition was approved at DOA.,READ,RR,43,2026-05-31T08:09:36.211764+00:00,2026-06-01T13:09:36.211764+00:00
+71,19,PO_CREATED,PO-3031 created,A purchase order has been created for your requisition.,READ,PO,31,2026-06-07T08:09:36.211764+00:00,2026-06-08T01:09:36.211764+00:00
+72,7,APPROVAL_RESULT,RR-1044 approved,Your requisition was approved at DOA.,READ,RR,44,2026-01-08T02:09:36.211764+00:00,2026-01-08T08:09:36.211764+00:00
+73,7,PO_CREATED,PO-3032 created,A purchase order has been created for your requisition.,UNREAD,PO,32,2026-01-28T02:09:36.211764+00:00,
+74,1,APPROVAL_RESULT,RR-1045 approved,Your requisition was approved at DOA.,READ,RR,45,2026-02-06T14:09:36.211764+00:00,2026-02-06T16:09:36.211764+00:00
+75,1,PO_CREATED,PO-3033 created,A purchase order has been created for your requisition.,READ,PO,33,2026-02-09T14:09:36.211764+00:00,2026-02-10T06:09:36.211764+00:00
+76,15,APPROVAL_REQUEST,DOA approval needed: RR-1046,A requisition is waiting on your DOA approval.,UNREAD,RR,46,2026-06-22T05:09:36.211764+00:00,
+77,22,APPROVAL_RESULT,RR-1047 approved,Your requisition was approved at DOA.,READ,RR,47,2026-04-06T07:09:36.211764+00:00,2026-04-06T08:09:36.211764+00:00
+78,22,PO_CREATED,PO-3034 created,A purchase order has been created for your requisition.,UNREAD,PO,34,2026-04-09T07:09:36.211764+00:00,
+79,3,APPROVAL_REQUEST,DOA approval needed: RR-1048,A requisition is waiting on your DOA approval.,UNREAD,RR,48,2026-05-08T10:09:36.211764+00:00,
+80,15,APPROVAL_REQUEST,DOA approval needed: RR-1049,A requisition is waiting on your DOA approval.,UNREAD,RR,49,2026-04-06T13:09:36.211764+00:00,
+81,18,APPROVAL_RESULT,RR-1050 approved,Your requisition was approved at DOA.,READ,RR,50,2026-01-31T21:09:36.211764+00:00,2026-02-01T11:09:36.211764+00:00
+82,18,PO_CREATED,PO-3035 created,A purchase order has been created for your requisition.,UNREAD,PO,35,2026-03-08T00:09:36.211764+00:00,
+83,7,APPROVAL_RESULT,RR-1051 approved,Your requisition was approved at DOA.,UNREAD,RR,51,2026-08-16T23:09:36.211764+00:00,
+84,7,PO_CREATED,PO-3036 created,A purchase order has been created for your requisition.,UNREAD,PO,36,2026-09-02T17:09:36.211764+00:00,
+85,22,APPROVAL_RESULT,RR-1052 approved,Your requisition was approved at DOA.,UNREAD,RR,52,2026-07-27T02:09:36.211764+00:00,
+86,3,APPROVAL_REQUEST,NFA approval needed: PR-2043,An NFA is waiting on your approval.,UNREAD,PR,43,2026-08-08T02:09:36.211764+00:00,
+87,6,APPROVAL_RESULT,RR-1053 approved,Your requisition was approved at DOA.,UNREAD,RR,53,2026-04-14T19:09:36.211764+00:00,
+88,6,PO_CREATED,PO-3037 created,A purchase order has been created for your requisition.,READ,PO,37,2026-04-28T19:09:36.211764+00:00,2026-04-29T12:09:36.211764+00:00
+89,19,APPROVAL_RESULT,RR-1054 approved,Your requisition was approved at DOA.,READ,RR,54,2026-08-11T16:09:36.211764+00:00,2026-08-12T15:09:36.211764+00:00
+90,17,APPROVAL_RESULT,RR-1055 approved,Your requisition was approved at DOA.,READ,RR,55,2026-02-23T16:09:36.211764+00:00,2026-02-24T05:09:36.211764+00:00
+91,17,PO_CREATED,PO-3038 created,A purchase order has been created for your requisition.,UNREAD,PO,38,2026-03-04T16:09:36.211764+00:00,
+92,3,APPROVAL_RESULT,RR-1056 approved,Your requisition was approved at DOA.,READ,RR,56,2026-04-08T03:09:36.211764+00:00,2026-04-09T07:09:36.211764+00:00
+93,11,APPROVAL_RESULT,RR-1057 approved,Your requisition was approved at DOA.,UNREAD,RR,57,2025-12-05T20:09:36.211764+00:00,
+94,11,PO_CREATED,PO-3039 created,A purchase order has been created for your requisition.,UNREAD,PO,39,2025-12-28T00:09:36.211764+00:00,
+95,11,APPROVAL_RESULT,RR-1058 approved,Your requisition was approved at DOA.,READ,RR,58,2026-02-21T17:09:36.211764+00:00,2026-02-22T00:09:36.211764+00:00
+96,2,APPROVAL_RESULT,RR-1059 approved,Your requisition was approved at DOA.,READ,RR,59,2026-05-27T19:09:36.211764+00:00,2026-05-28T09:09:36.211764+00:00
+97,14,APPROVAL_RESULT,RR-1060 approved,Your requisition was approved at DOA.,UNREAD,RR,60,2026-07-26T16:09:36.211764+00:00,
+98,24,APPROVAL_RESULT,RR-1061 approved,Your requisition was approved at DOA.,UNREAD,RR,61,2026-07-11T07:09:36.211764+00:00,
+99,10,APPROVAL_RESULT,RR-1062 approved,Your requisition was approved at DOA.,READ,RR,62,2026-07-07T23:09:36.211764+00:00,2026-07-08T16:09:36.211764+00:00
+100,10,PO_CREATED,PO-3040 created,A purchase order has been created for your requisition.,READ,PO,40,2026-07-15T23:09:36.211764+00:00,2026-07-16T06:09:36.211764+00:00
+101,2,APPROVAL_REQUEST,DOA approval needed: RR-1063,A requisition is waiting on your DOA approval.,UNREAD,RR,63,2026-04-30T04:09:36.211764+00:00,
+102,3,APPROVAL_RESULT,RR-1064 approved,Your requisition was approved at DOA.,READ,RR,64,2026-04-03T13:09:36.211764+00:00,2026-04-03T18:09:36.211764+00:00
+103,3,PO_CREATED,PO-3041 created,A purchase order has been created for your requisition.,READ,PO,41,2026-04-25T22:09:36.211764+00:00,2026-04-26T02:09:36.211764+00:00
+104,23,APPROVAL_RESULT,RR-1065 approved,Your requisition was approved at DOA.,READ,RR,65,2026-04-05T17:09:36.211764+00:00,2026-04-06T05:09:36.211764+00:00
+105,17,APPROVAL_RESULT,RR-1066 approved,Your requisition was approved at DOA.,READ,RR,66,2026-02-18T16:09:36.211764+00:00,2026-02-19T00:09:36.211764+00:00
+106,15,APPROVAL_RESULT,RR-1067 approved,Your requisition was approved at DOA.,UNREAD,RR,67,2026-05-21T22:09:36.211764+00:00,
+107,15,PO_CREATED,PO-3042 created,A purchase order has been created for your requisition.,UNREAD,PO,42,2026-06-11T22:09:36.211764+00:00,
+108,3,APPROVAL_REQUEST,DOA approval needed: RR-1068,A requisition is waiting on your DOA approval.,UNREAD,RR,68,2026-05-08T07:09:36.211764+00:00,
+109,7,APPROVAL_RESULT,RR-1069 approved,Your requisition was approved at DOA.,READ,RR,69,2026-04-03T04:09:36.211764+00:00,2026-04-04T00:09:36.211764+00:00
+110,7,PO_CREATED,PO-3043 created,A purchase order has been created for your requisition.,READ,PO,43,2026-04-17T04:09:36.211764+00:00,2026-04-17T07:09:36.211764+00:00
+111,11,APPROVAL_RESULT,RR-1070 approved,Your requisition was approved at DOA.,READ,RR,70,2026-01-26T14:09:36.211764+00:00,2026-01-26T21:09:36.211764+00:00
+112,11,PO_CREATED,PO-3044 created,A purchase order has been created for your requisition.,READ,PO,44,2026-02-13T14:09:36.211764+00:00,2026-02-14T18:09:36.211764+00:00
+113,6,APPROVAL_RESULT,RR-1071 approved,Your requisition was approved at DOA.,READ,RR,71,2026-01-06T12:09:36.211764+00:00,2026-01-06T20:09:36.211764+00:00
+114,6,PO_CREATED,PO-3045 created,A purchase order has been created for your requisition.,READ,PO,45,2026-01-12T12:09:36.211764+00:00,2026-01-12T18:09:36.211764+00:00
+115,20,APPROVAL_RESULT,RR-1072 approved,Your requisition was approved at DOA.,READ,RR,72,2026-02-07T02:09:36.211764+00:00,2026-02-07T09:09:36.211764+00:00
+116,20,PO_CREATED,PO-3046 created,A purchase order has been created for your requisition.,READ,PO,46,2026-02-24T02:09:36.211764+00:00,2026-02-24T07:09:36.211764+00:00
+117,14,APPROVAL_RESULT,RR-1073 approved,Your requisition was approved at DOA.,UNREAD,RR,73,2026-01-17T06:09:36.211764+00:00,
+118,14,PO_CREATED,PO-3047 created,A purchase order has been created for your requisition.,READ,PO,47,2026-01-24T06:09:36.211764+00:00,2026-01-24T13:09:36.211764+00:00
+119,10,APPROVAL_RESULT,RR-1074 approved,Your requisition was approved at DOA.,READ,RR,74,2026-07-11T08:09:36.211764+00:00,2026-07-12T11:09:36.211764+00:00
+120,10,PO_CREATED,PO-3048 created,A purchase order has been created for your requisition.,READ,PO,48,2026-07-14T08:09:36.211764+00:00,2026-07-14T19:09:36.211764+00:00
+121,3,APPROVAL_RESULT,RR-1075 approved,Your requisition was approved at DOA.,READ,RR,75,2025-12-20T14:09:36.211764+00:00,2025-12-20T19:09:36.211764+00:00
+122,5,APPROVAL_RESULT,NFA rejected for PR-2064,The NFA for this PR was rejected.,UNREAD,PR,64,2025-12-28T14:09:36.211764+00:00,
+123,4,APPROVAL_RESULT,RR-1076 approved,Your requisition was approved at DOA.,READ,RR,76,2026-01-09T20:09:36.211764+00:00,2026-01-10T22:09:36.211764+00:00
+124,4,PO_CREATED,PO-3049 created,A purchase order has been created for your requisition.,READ,PO,49,2026-02-27T12:09:36.211764+00:00,2026-02-28T14:09:36.211764+00:00
+125,2,APPROVAL_REQUEST,DOA approval needed: RR-1077,A requisition is waiting on your DOA approval.,UNREAD,RR,77,2026-04-19T03:09:36.211764+00:00,
+126,7,APPROVAL_RESULT,RR-1078 approved,Your requisition was approved at DOA.,READ,RR,78,2026-07-07T01:09:36.211764+00:00,2026-07-07T05:09:36.211764+00:00
+127,7,PO_CREATED,PO-3050 created,A purchase order has been created for your requisition.,READ,PO,50,2026-07-21T01:09:36.211764+00:00,2026-07-21T21:09:36.211764+00:00
+128,24,APPROVAL_RESULT,RR-1079 approved,Your requisition was approved at DOA.,READ,RR,79,2025-12-27T22:09:36.211764+00:00,2025-12-28T05:09:36.211764+00:00
+129,24,PO_CREATED,PO-3051 created,A purchase order has been created for your requisition.,UNREAD,PO,51,2026-01-24T22:09:36.211764+00:00,
+130,13,APPROVAL_RESULT,RR-1080 approved,Your requisition was approved at DOA.,UNREAD,RR,80,2026-05-18T21:09:36.211764+00:00,
+131,13,PO_CREATED,PO-3052 created,A purchase order has been created for your requisition.,READ,PO,52,2026-06-09T20:09:36.211764+00:00,2026-06-10T20:09:36.211764+00:00
+132,4,APPROVAL_RESULT,RR-1081 approved,Your requisition was approved at DOA.,READ,RR,81,2026-05-15T04:09:36.211764+00:00,2026-05-15T17:09:36.211764+00:00
+133,4,PO_CREATED,PO-3053 created,A purchase order has been created for your requisition.,READ,PO,53,2026-06-22T04:09:36.211764+00:00,2026-06-22T14:09:36.211764+00:00
+134,19,APPROVAL_RESULT,RR-1082 approved,Your requisition was approved at DOA.,READ,RR,82,2026-01-28T08:09:36.211764+00:00,2026-01-28T10:09:36.211764+00:00
+135,19,PO_CREATED,PO-3054 created,A purchase order has been created for your requisition.,UNREAD,PO,54,2026-02-01T08:09:36.211764+00:00,
+136,23,APPROVAL_RESULT,RR-1083 approved,Your requisition was approved at DOA.,READ,RR,83,2026-08-02T22:09:36.211764+00:00,2026-08-03T20:09:36.211764+00:00
+137,7,APPROVAL_RESULT,RR-1084 approved,Your requisition was approved at DOA.,UNREAD,RR,84,2026-04-18T01:09:36.211764+00:00,
+138,7,PO_CREATED,PO-3055 created,A purchase order has been created for your requisition.,UNREAD,PO,55,2026-04-22T01:09:36.211764+00:00,
+139,9,APPROVAL_RESULT,RR-1085 approved,Your requisition was approved at DOA.,READ,RR,85,2026-07-10T16:09:36.211764+00:00,2026-07-10T18:09:36.211764+00:00
+140,13,APPROVAL_RESULT,RR-1086 approved,Your requisition was approved at DOA.,READ,RR,86,2026-04-26T05:09:36.211764+00:00,2026-04-26T15:09:36.211764+00:00
+141,13,PO_CREATED,PO-3056 created,A purchase order has been created for your requisition.,UNREAD,PO,56,2026-05-07T05:09:36.211764+00:00,
+142,6,APPROVAL_RESULT,RR-1087 approved,Your requisition was approved at DOA.,READ,RR,87,2026-08-21T07:09:36.211764+00:00,2026-08-22T08:09:36.211764+00:00
+143,6,PO_CREATED,PO-3057 created,A purchase order has been created for your requisition.,READ,PO,57,2026-08-23T07:09:36.211764+00:00,2026-08-23T23:09:36.211764+00:00
+144,2,APPROVAL_REQUEST,DOA approval needed: RR-1088,A requisition is waiting on your DOA approval.,UNREAD,RR,88,2026-06-06T11:09:36.211764+00:00,
+145,6,APPROVAL_RESULT,RR-1089 approved,Your requisition was approved at DOA.,UNREAD,RR,89,2026-03-27T13:09:36.211764+00:00,
+146,6,PO_CREATED,PO-3058 created,A purchase order has been created for your requisition.,UNREAD,PO,58,2026-03-29T13:09:36.211764+00:00,
+147,21,APPROVAL_RESULT,RR-1090 approved,Your requisition was approved at DOA.,READ,RR,90,2025-12-08T15:09:36.211764+00:00,2025-12-09T03:09:36.211764+00:00
+148,11,APPROVAL_RESULT,RR-1091 approved,Your requisition was approved at DOA.,UNREAD,RR,91,2026-06-17T11:09:36.211764+00:00,
+149,11,PO_CREATED,PO-3059 created,A purchase order has been created for your requisition.,UNREAD,PO,59,2026-07-29T08:09:36.211764+00:00,
+150,20,APPROVAL_RESULT,RR-1092 approved,Your requisition was approved at DOA.,READ,RR,92,2026-06-18T21:09:36.211764+00:00,2026-06-19T18:09:36.211764+00:00
+151,20,PO_CREATED,PO-3060 created,A purchase order has been created for your requisition.,UNREAD,PO,60,2026-06-28T21:09:36.211764+00:00,
+152,5,APPROVAL_RESULT,RR-1093 approved,Your requisition was approved at DOA.,READ,RR,93,2026-05-30T02:09:36.211764+00:00,2026-05-30T16:09:36.211764+00:00
+153,5,PO_CREATED,PO-3061 created,A purchase order has been created for your requisition.,UNREAD,PO,61,2026-06-01T02:09:36.211764+00:00,
+154,22,APPROVAL_RESULT,RR-1094 approved,Your requisition was approved at DOA.,READ,RR,94,2026-02-21T08:09:36.211764+00:00,2026-02-21T18:09:36.211764+00:00
+155,22,PO_CREATED,PO-3062 created,A purchase order has been created for your requisition.,READ,PO,62,2026-03-09T02:09:36.211764+00:00,2026-03-10T02:09:36.211764+00:00
+156,6,APPROVAL_RESULT,RR-1095 approved,Your requisition was approved at DOA.,UNREAD,RR,95,2026-07-24T04:09:36.211764+00:00,
+157,6,PO_CREATED,PO-3063 created,A purchase order has been created for your requisition.,UNREAD,PO,63,2026-07-31T04:09:36.211764+00:00,
+158,6,APPROVAL_RESULT,RR-1096 approved,Your requisition was approved at DOA.,READ,RR,96,2026-07-04T04:09:36.211764+00:00,2026-07-04T20:09:36.211764+00:00
+159,6,PO_CREATED,PO-3064 created,A purchase order has been created for your requisition.,READ,PO,64,2026-07-08T04:09:36.211764+00:00,2026-07-08T08:09:36.211764+00:00
+160,3,APPROVAL_REQUEST,DOA approval needed: RR-1097,A requisition is waiting on your DOA approval.,UNREAD,RR,97,2026-07-29T02:09:36.211764+00:00,
+161,16,APPROVAL_RESULT,RR-1098 approved,Your requisition was approved at DOA.,UNREAD,RR,98,2026-08-03T19:09:36.211764+00:00,
+162,16,PO_CREATED,PO-3065 created,A purchase order has been created for your requisition.,READ,PO,65,2026-08-12T19:09:36.211764+00:00,2026-08-13T05:09:36.211764+00:00
+163,22,APPROVAL_RESULT,RR-1099 approved,Your requisition was approved at DOA.,UNREAD,RR,99,2026-07-13T03:09:36.211764+00:00,
+164,22,PO_CREATED,PO-3066 created,A purchase order has been created for your requisition.,READ,PO,66,2026-08-16T03:09:36.211764+00:00,2026-08-16T06:09:36.211764+00:00
+165,7,APPROVAL_RESULT,RR-1100 approved,Your requisition was approved at DOA.,READ,RR,100,2026-05-29T01:09:36.211764+00:00,2026-05-29T22:09:36.211764+00:00
+166,7,PO_CREATED,PO-3067 created,A purchase order has been created for your requisition.,UNREAD,PO,67,2026-06-01T01:09:36.211764+00:00,
+167,19,APPROVAL_RESULT,RR-1101 approved,Your requisition was approved at DOA.,READ,RR,101,2026-04-19T09:09:36.211764+00:00,2026-04-19T21:09:36.211764+00:00
+168,19,PO_CREATED,PO-3068 created,A purchase order has been created for your requisition.,READ,PO,68,2026-06-03T09:09:36.211764+00:00,2026-06-03T21:09:36.211764+00:00
+169,19,APPROVAL_RESULT,RR-1102 approved,Your requisition was approved at DOA.,READ,RR,102,2025-12-14T03:09:36.211764+00:00,2025-12-14T04:09:36.211764+00:00
+170,19,PO_CREATED,PO-3069 created,A purchase order has been created for your requisition.,READ,PO,69,2026-01-05T16:09:36.211764+00:00,2026-01-06T10:09:36.211764+00:00
+171,2,APPROVAL_REQUEST,DOA approval needed: RR-1103,A requisition is waiting on your DOA approval.,UNREAD,RR,103,2026-05-08T04:09:36.211764+00:00,
+172,13,APPROVAL_RESULT,RR-1104 approved,Your requisition was approved at DOA.,UNREAD,RR,104,2026-08-07T18:09:36.211764+00:00,
+173,17,APPROVAL_RESULT,RR-1105 approved,Your requisition was approved at DOA.,READ,RR,105,2026-06-19T04:09:36.211764+00:00,2026-06-19T10:09:36.211764+00:00
+174,17,PO_CREATED,PO-3070 created,A purchase order has been created for your requisition.,UNREAD,PO,70,2026-07-04T04:09:36.211764+00:00,
+175,13,APPROVAL_RESULT,RR-1106 approved,Your requisition was approved at DOA.,READ,RR,106,2026-05-29T15:09:36.211764+00:00,2026-05-30T13:09:36.211764+00:00
+176,13,PO_CREATED,PO-3071 created,A purchase order has been created for your requisition.,UNREAD,PO,71,2026-06-03T15:09:36.211764+00:00,
+177,3,APPROVAL_RESULT,RR-1107 approved,Your requisition was approved at DOA.,READ,RR,107,2026-08-20T13:09:36.211764+00:00,2026-08-21T05:09:36.211764+00:00
+178,3,PO_CREATED,PO-3072 created,A purchase order has been created for your requisition.,UNREAD,PO,72,2026-09-25T13:09:36.211764+00:00,
+179,9,APPROVAL_RESULT,RR-1108 approved,Your requisition was approved at DOA.,READ,RR,108,2026-06-20T08:09:36.211764+00:00,2026-06-21T14:09:36.211764+00:00
+180,21,APPROVAL_RESULT,RR-1109 approved,Your requisition was approved at DOA.,UNREAD,RR,109,2026-03-16T11:09:36.211764+00:00,
+181,24,APPROVAL_RESULT,NFA rejected for PR-2094,The NFA for this PR was rejected.,UNREAD,PR,94,2026-03-30T11:09:36.211764+00:00,
+182,3,APPROVAL_RESULT,RR-1110 approved,Your requisition was approved at DOA.,READ,RR,110,2026-08-17T12:09:36.211764+00:00,2026-08-18T10:09:36.211764+00:00
+183,3,PO_CREATED,PO-3073 created,A purchase order has been created for your requisition.,READ,PO,73,2026-08-25T12:09:36.211764+00:00,2026-08-25T15:09:36.211764+00:00
+184,6,APPROVAL_RESULT,RR-1111 approved,Your requisition was approved at DOA.,READ,RR,111,2026-01-17T09:09:36.211764+00:00,2026-01-17T12:09:36.211764+00:00
+185,6,PO_CREATED,PO-3074 created,A purchase order has been created for your requisition.,UNREAD,PO,74,2026-01-21T09:09:36.211764+00:00,
+186,16,APPROVAL_RESULT,RR-1112 approved,Your requisition was approved at DOA.,READ,RR,112,2026-05-20T13:09:36.211764+00:00,2026-05-20T16:09:36.211764+00:00
+187,16,PO_CREATED,PO-3075 created,A purchase order has been created for your requisition.,READ,PO,75,2026-06-06T13:09:36.211764+00:00,2026-06-06T21:09:36.211764+00:00
+188,16,APPROVAL_RESULT,RR-1113 approved,Your requisition was approved at DOA.,UNREAD,RR,113,2025-12-23T05:09:36.211764+00:00,
+189,16,PO_CREATED,PO-3076 created,A purchase order has been created for your requisition.,UNREAD,PO,76,2026-02-01T05:09:36.211764+00:00,
+190,2,APPROVAL_REQUEST,DOA approval needed: RR-1114,A requisition is waiting on your DOA approval.,UNREAD,RR,114,2026-07-22T23:09:36.211764+00:00,
+191,12,APPROVAL_RESULT,RR-1115 approved,Your requisition was approved at DOA.,READ,RR,115,2026-07-09T14:09:36.211764+00:00,2026-07-10T06:09:36.211764+00:00
+192,12,PO_CREATED,PO-3077 created,A purchase order has been created for your requisition.,UNREAD,PO,77,2026-08-15T14:09:36.211764+00:00,
+193,7,APPROVAL_RESULT,RR-1116 approved,Your requisition was approved at DOA.,UNREAD,RR,116,2026-05-29T17:09:36.211764+00:00,
+194,7,PO_CREATED,PO-3078 created,A purchase order has been created for your requisition.,UNREAD,PO,78,2026-06-09T17:09:36.211764+00:00,
+195,11,APPROVAL_RESULT,RR-1117 approved,Your requisition was approved at DOA.,READ,RR,117,2026-04-27T04:09:36.211764+00:00,2026-04-27T12:09:36.211764+00:00
+196,11,PO_CREATED,PO-3079 created,A purchase order has been created for your requisition.,UNREAD,PO,79,2026-05-07T04:09:36.211764+00:00,
+197,15,APPROVAL_RESULT,RR-1118 approved,Your requisition was approved at DOA.,READ,RR,118,2026-04-05T13:09:36.211764+00:00,2026-04-06T05:09:36.211764+00:00
+198,15,PO_CREATED,PO-3080 created,A purchase order has been created for your requisition.,UNREAD,PO,80,2026-05-13T01:09:36.211764+00:00,
+199,9,APPROVAL_RESULT,RR-1119 approved,Your requisition was approved at DOA.,READ,RR,119,2026-06-02T12:09:36.211764+00:00,2026-06-03T10:09:36.211764+00:00
+200,5,APPROVAL_RESULT,RR-1120 approved,Your requisition was approved at DOA.,UNREAD,RR,120,2025-12-30T12:09:36.211764+00:00,
+201,5,PO_CREATED,PO-3081 created,A purchase order has been created for your requisition.,UNREAD,PO,81,2026-02-16T03:09:36.211764+00:00,
+202,10,APPROVAL_RESULT,RR-1121 approved,Your requisition was approved at DOA.,READ,RR,121,2026-06-29T02:09:36.211764+00:00,2026-06-29T13:09:36.211764+00:00
+203,10,PO_CREATED,PO-3082 created,A purchase order has been created for your requisition.,READ,PO,82,2026-07-27T02:09:36.211764+00:00,2026-07-28T04:09:36.211764+00:00
+204,24,APPROVAL_RESULT,RR-1122 approved,Your requisition was approved at DOA.,READ,RR,122,2026-03-24T13:09:36.211764+00:00,2026-03-25T02:09:36.211764+00:00
+205,24,PO_CREATED,PO-3083 created,A purchase order has been created for your requisition.,READ,PO,83,2026-04-13T14:09:36.211764+00:00,2026-04-14T00:09:36.211764+00:00
+206,9,APPROVAL_RESULT,RR-1123 approved,Your requisition was approved at DOA.,READ,RR,123,2026-06-26T14:09:36.211764+00:00,2026-06-27T07:09:36.211764+00:00
+207,9,PO_CREATED,PO-3084 created,A purchase order has been created for your requisition.,UNREAD,PO,84,2026-07-04T14:09:36.211764+00:00,
+208,21,APPROVAL_RESULT,RR-1124 approved,Your requisition was approved at DOA.,UNREAD,RR,124,2026-01-17T12:09:36.211764+00:00,
+209,21,PO_CREATED,PO-3085 created,A purchase order has been created for your requisition.,UNREAD,PO,85,2026-01-30T12:09:36.211764+00:00,
+210,1,APPROVAL_RESULT,RR-1125 approved,Your requisition was approved at DOA.,READ,RR,125,2026-08-15T06:09:36.211764+00:00,2026-08-16T08:09:36.211764+00:00
+211,1,PO_CREATED,PO-3086 created,A purchase order has been created for your requisition.,UNREAD,PO,86,2026-08-23T06:09:36.211764+00:00,
+212,15,APPROVAL_RESULT,RR-1126 approved,Your requisition was approved at DOA.,READ,RR,126,2025-12-25T16:09:36.211764+00:00,2025-12-26T14:09:36.211764+00:00
+213,15,PO_CREATED,PO-3087 created,A purchase order has been created for your requisition.,READ,PO,87,2026-01-03T16:09:36.211764+00:00,2026-01-03T22:09:36.211764+00:00
+214,2,APPROVAL_RESULT,RR-1127 approved,Your requisition was approved at DOA.,UNREAD,RR,127,2026-02-25T22:09:36.211764+00:00,
+215,2,PO_CREATED,PO-3088 created,A purchase order has been created for your requisition.,READ,PO,88,2026-03-04T22:09:36.211764+00:00,2026-03-05T21:09:36.211764+00:00
+216,10,APPROVAL_RESULT,RR-1128 approved,Your requisition was approved at DOA.,READ,RR,128,2026-01-21T16:09:36.211764+00:00,2026-01-22T19:09:36.211764+00:00
+217,10,PO_CREATED,PO-3089 created,A purchase order has been created for your requisition.,UNREAD,PO,89,2026-02-28T16:09:36.211764+00:00,
+218,18,APPROVAL_RESULT,RR-1129 approved,Your requisition was approved at DOA.,UNREAD,RR,129,2026-01-26T14:09:36.211764+00:00,
+219,18,PO_CREATED,PO-3090 created,A purchase order has been created for your requisition.,UNREAD,PO,90,2026-03-18T20:09:36.211764+00:00,
+220,11,APPROVAL_RESULT,RR-1131 approved,Your requisition was approved at DOA.,READ,RR,131,2026-07-29T23:09:36.211764+00:00,2026-07-30T01:09:36.211764+00:00
+221,15,APPROVAL_REQUEST,NFA approval needed: PR-2114,An NFA is waiting on your approval.,UNREAD,PR,114,2026-08-15T17:09:36.211764+00:00,
+222,21,APPROVAL_RESULT,RR-1132 approved,Your requisition was approved at DOA.,READ,RR,132,2026-01-08T11:09:36.211764+00:00,2026-01-09T16:09:36.211764+00:00
+223,21,PO_CREATED,PO-3091 created,A purchase order has been created for your requisition.,READ,PO,91,2026-01-12T11:09:36.211764+00:00,2026-01-13T14:09:36.211764+00:00
+224,11,APPROVAL_RESULT,RR-1133 approved,Your requisition was approved at DOA.,READ,RR,133,2026-02-15T21:09:36.211764+00:00,2026-02-17T02:09:36.211764+00:00
+225,11,PO_CREATED,PO-3092 created,A purchase order has been created for your requisition.,READ,PO,92,2026-03-03T21:09:36.211764+00:00,2026-03-04T14:09:36.211764+00:00
+226,19,APPROVAL_RESULT,RR-1135 approved,Your requisition was approved at DOA.,READ,RR,135,2026-06-01T10:09:36.211764+00:00,2026-06-02T09:09:36.211764+00:00
+227,19,PO_CREATED,PO-3093 created,A purchase order has been created for your requisition.,UNREAD,PO,93,2026-06-07T10:09:36.211764+00:00,
+228,6,APPROVAL_RESULT,RR-1136 approved,Your requisition was approved at DOA.,READ,RR,136,2026-07-19T11:09:36.211764+00:00,2026-07-20T00:09:36.211764+00:00
+229,6,PO_CREATED,PO-3094 created,A purchase order has been created for your requisition.,READ,PO,94,2026-07-23T11:09:36.211764+00:00,2026-07-24T05:09:36.211764+00:00
+230,24,APPROVAL_RESULT,RR-1137 approved,Your requisition was approved at DOA.,READ,RR,137,2026-08-11T15:09:36.211764+00:00,2026-08-11T21:09:36.211764+00:00
+231,24,PO_CREATED,PO-3095 created,A purchase order has been created for your requisition.,READ,PO,95,2026-08-18T15:09:36.211764+00:00,2026-08-19T21:09:36.211764+00:00
+232,7,APPROVAL_RESULT,RR-1138 approved,Your requisition was approved at DOA.,READ,RR,138,2026-06-14T18:09:36.211764+00:00,2026-06-14T22:09:36.211764+00:00
+233,20,APPROVAL_RESULT,RR-1139 approved,Your requisition was approved at DOA.,UNREAD,RR,139,2026-07-21T10:09:36.211764+00:00,
+234,20,PO_CREATED,PO-3096 created,A purchase order has been created for your requisition.,UNREAD,PO,96,2026-07-27T10:09:36.211764+00:00,
+235,14,APPROVAL_RESULT,RR-1140 approved,Your requisition was approved at DOA.,READ,RR,140,2026-07-27T20:09:36.211764+00:00,2026-07-27T23:09:36.211764+00:00
+236,14,PO_CREATED,PO-3097 created,A purchase order has been created for your requisition.,READ,PO,97,2026-08-08T20:09:36.211764+00:00,2026-08-09T01:09:36.211764+00:00
+237,13,APPROVAL_RESULT,RR-1141 approved,Your requisition was approved at DOA.,READ,RR,141,2025-12-01T14:09:36.211764+00:00,2025-12-01T19:09:36.211764+00:00
+238,13,PO_CREATED,PO-3098 created,A purchase order has been created for your requisition.,READ,PO,98,2025-12-10T14:09:36.211764+00:00,2025-12-11T14:09:36.211764+00:00
+239,16,APPROVAL_RESULT,RR-1142 approved,Your requisition was approved at DOA.,READ,RR,142,2026-03-03T11:09:36.211764+00:00,2026-03-04T00:09:36.211764+00:00
+240,16,PO_CREATED,PO-3099 created,A purchase order has been created for your requisition.,UNREAD,PO,99,2026-04-09T10:09:36.211764+00:00,
+241,24,APPROVAL_RESULT,RR-1143 approved,Your requisition was approved at DOA.,READ,RR,143,2026-01-15T09:09:36.211764+00:00,2026-01-16T13:09:36.211764+00:00
+242,24,PO_CREATED,PO-3100 created,A purchase order has been created for your requisition.,READ,PO,100,2026-02-23T09:09:36.211764+00:00,2026-02-23T13:09:36.211764+00:00
+243,1,APPROVAL_RESULT,RR-1144 approved,Your requisition was approved at DOA.,UNREAD,RR,144,2026-06-25T00:09:36.211764+00:00,
+244,1,PO_CREATED,PO-3101 created,A purchase order has been created for your requisition.,UNREAD,PO,101,2026-07-04T00:09:36.211764+00:00,
+245,2,APPROVAL_REQUEST,DOA approval needed: RR-1145,A requisition is waiting on your DOA approval.,UNREAD,RR,145,2026-05-31T03:09:36.211764+00:00,
+246,17,APPROVAL_RESULT,RR-1146 approved,Your requisition was approved at DOA.,READ,RR,146,2026-04-27T05:09:36.211764+00:00,2026-04-28T00:09:36.211764+00:00
+247,17,PO_CREATED,PO-3102 created,A purchase order has been created for your requisition.,UNREAD,PO,102,2026-06-12T05:09:36.211764+00:00,
+248,16,APPROVAL_RESULT,RR-1147 approved,Your requisition was approved at DOA.,UNREAD,RR,147,2025-12-06T14:09:36.211764+00:00,
+249,16,PO_CREATED,PO-3103 created,A purchase order has been created for your requisition.,READ,PO,103,2025-12-21T14:09:36.211764+00:00,2025-12-22T05:09:36.211764+00:00
+250,4,APPROVAL_RESULT,RR-1148 approved,Your requisition was approved at DOA.,READ,RR,148,2026-07-23T21:09:36.211764+00:00,2026-07-24T07:09:36.211764+00:00
+251,4,PO_CREATED,PO-3104 created,A purchase order has been created for your requisition.,READ,PO,104,2026-08-06T21:09:36.211764+00:00,2026-08-07T12:09:36.211764+00:00
+252,20,APPROVAL_RESULT,RR-1150 approved,Your requisition was approved at DOA.,UNREAD,RR,150,2026-05-11T03:09:36.211764+00:00,
+253,20,PO_CREATED,PO-3105 created,A purchase order has been created for your requisition.,READ,PO,105,2026-05-16T03:09:36.211764+00:00,2026-05-16T19:09:36.211764+00:00
+254,13,APPROVAL_RESULT,RR-1152 approved,Your requisition was approved at DOA.,READ,RR,152,2026-06-15T13:09:36.211764+00:00,2026-06-16T19:09:36.211764+00:00
+255,13,PO_CREATED,PO-3106 created,A purchase order has been created for your requisition.,READ,PO,106,2026-06-24T13:09:36.211764+00:00,2026-06-24T18:09:36.211764+00:00
+256,6,APPROVAL_RESULT,RR-1153 approved,Your requisition was approved at DOA.,READ,RR,153,2026-02-15T13:09:36.211764+00:00,2026-02-15T14:09:36.211764+00:00
+257,6,PO_CREATED,PO-3107 created,A purchase order has been created for your requisition.,READ,PO,107,2026-02-22T13:09:36.211764+00:00,2026-02-22T14:09:36.211764+00:00
+258,20,APPROVAL_RESULT,RR-1154 approved,Your requisition was approved at DOA.,READ,RR,154,2025-12-31T04:09:36.211764+00:00,2026-01-01T06:09:36.211764+00:00
+259,20,PO_CREATED,PO-3108 created,A purchase order has been created for your requisition.,UNREAD,PO,108,2026-02-15T04:09:36.211764+00:00,
+260,24,APPROVAL_RESULT,RR-1155 approved,Your requisition was approved at DOA.,UNREAD,RR,155,2026-02-01T14:09:36.211764+00:00,
+261,24,PO_CREATED,PO-3109 created,A purchase order has been created for your requisition.,UNREAD,PO,109,2026-02-16T14:09:36.211764+00:00,
+262,20,APPROVAL_RESULT,RR-1156 rejected,Your requisition was rejected at DOA approval.,UNREAD,RR,156,2026-06-10T04:09:36.211764+00:00,
+263,4,APPROVAL_RESULT,RR-1157 approved,Your requisition was approved at DOA.,READ,RR,157,2026-05-07T01:09:36.211764+00:00,2026-05-07T03:09:36.211764+00:00
+264,4,PO_CREATED,PO-3110 created,A purchase order has been created for your requisition.,UNREAD,PO,110,2026-05-15T01:09:36.211764+00:00,
+265,17,APPROVAL_RESULT,RR-1158 approved,Your requisition was approved at DOA.,UNREAD,RR,158,2025-12-14T20:09:36.211764+00:00,
+266,17,PO_CREATED,PO-3111 created,A purchase order has been created for your requisition.,UNREAD,PO,111,2026-01-23T09:09:36.211764+00:00,
+267,11,APPROVAL_RESULT,RR-1159 approved,Your requisition was approved at DOA.,READ,RR,159,2026-01-01T15:09:36.211764+00:00,2026-01-02T09:09:36.211764+00:00
+268,11,PO_CREATED,PO-3112 created,A purchase order has been created for your requisition.,UNREAD,PO,112,2026-01-21T15:09:36.211764+00:00,
+269,12,APPROVAL_RESULT,RR-1160 approved,Your requisition was approved at DOA.,READ,RR,160,2026-07-05T20:09:36.211764+00:00,2026-07-06T08:09:36.211764+00:00
+270,12,PO_CREATED,PO-3113 created,A purchase order has been created for your requisition.,UNREAD,PO,113,2026-07-11T20:09:36.211764+00:00,
+271,3,APPROVAL_RESULT,RR-1161 approved,Your requisition was approved at DOA.,READ,RR,161,2025-12-06T12:09:36.211764+00:00,2025-12-07T06:09:36.211764+00:00
+272,3,PO_CREATED,PO-3114 created,A purchase order has been created for your requisition.,READ,PO,114,2025-12-29T06:09:36.211764+00:00,2025-12-29T14:09:36.211764+00:00
+273,8,APPROVAL_RESULT,RR-1162 approved,Your requisition was approved at DOA.,READ,RR,162,2025-11-30T07:09:36.211764+00:00,2025-12-01T03:09:36.211764+00:00
+274,8,PO_CREATED,PO-3115 created,A purchase order has been created for your requisition.,READ,PO,115,2025-12-10T07:09:36.211764+00:00,2025-12-11T12:09:36.211764+00:00
+275,6,APPROVAL_RESULT,RR-1163 approved,Your requisition was approved at DOA.,UNREAD,RR,163,2026-01-01T07:09:36.211764+00:00,
+276,6,PO_CREATED,PO-3116 created,A purchase order has been created for your requisition.,READ,PO,116,2026-01-05T07:09:36.211764+00:00,2026-01-05T13:09:36.211764+00:00
+277,18,APPROVAL_RESULT,RR-1164 approved,Your requisition was approved at DOA.,READ,RR,164,2026-07-27T02:09:36.211764+00:00,2026-07-27T20:09:36.211764+00:00
+278,4,APPROVAL_RESULT,RR-1165 approved,Your requisition was approved at DOA.,READ,RR,165,2026-07-24T12:09:36.211764+00:00,2026-07-25T02:09:36.211764+00:00
+279,4,PO_CREATED,PO-3117 created,A purchase order has been created for your requisition.,READ,PO,117,2026-08-06T12:09:36.211764+00:00,2026-08-07T11:09:36.211764+00:00
+280,1,APPROVAL_RESULT,RR-1166 approved,Your requisition was approved at DOA.,READ,RR,166,2026-04-30T11:09:36.211764+00:00,2026-04-30T16:09:36.211764+00:00
+281,1,PO_CREATED,PO-3118 created,A purchase order has been created for your requisition.,READ,PO,118,2026-05-23T04:09:36.211764+00:00,2026-05-24T05:09:36.211764+00:00
+282,12,APPROVAL_RESULT,RR-1167 approved,Your requisition was approved at DOA.,READ,RR,167,2026-01-15T20:09:36.211764+00:00,2026-01-16T02:09:36.211764+00:00
+283,12,PO_CREATED,PO-3119 created,A purchase order has been created for your requisition.,UNREAD,PO,119,2026-02-25T20:09:36.211764+00:00,
+284,20,APPROVAL_RESULT,RR-1168 approved,Your requisition was approved at DOA.,READ,RR,168,2026-01-15T03:09:36.211764+00:00,2026-01-16T02:09:36.211764+00:00
+285,20,PO_CREATED,PO-3120 created,A purchase order has been created for your requisition.,READ,PO,120,2026-01-30T03:09:36.211764+00:00,2026-01-30T08:09:36.211764+00:00
+286,14,APPROVAL_RESULT,RR-1169 approved,Your requisition was approved at DOA.,UNREAD,RR,169,2026-07-26T14:09:36.211764+00:00,
+287,14,PO_CREATED,PO-3121 created,A purchase order has been created for your requisition.,READ,PO,121,2026-08-05T14:09:36.211764+00:00,2026-08-05T23:09:36.211764+00:00
+288,4,APPROVAL_RESULT,RR-1170 approved,Your requisition was approved at DOA.,READ,RR,170,2026-07-04T11:09:36.211764+00:00,2026-07-05T06:09:36.211764+00:00
+289,4,PO_CREATED,PO-3122 created,A purchase order has been created for your requisition.,UNREAD,PO,122,2026-08-01T11:09:36.211764+00:00,
+290,5,APPROVAL_RESULT,RR-1171 approved,Your requisition was approved at DOA.,UNREAD,RR,171,2025-12-27T03:09:36.211764+00:00,
+291,5,PO_CREATED,PO-3123 created,A purchase order has been created for your requisition.,READ,PO,123,2026-01-22T03:09:36.211764+00:00,2026-01-22T09:09:36.211764+00:00
+292,21,APPROVAL_RESULT,RR-1172 approved,Your requisition was approved at DOA.,UNREAD,RR,172,2026-07-30T17:09:36.211764+00:00,
+293,21,PO_CREATED,PO-3124 created,A purchase order has been created for your requisition.,UNREAD,PO,124,2026-08-01T17:09:36.211764+00:00,
+294,2,APPROVAL_REQUEST,DOA approval needed: RR-1173,A requisition is waiting on your DOA approval.,UNREAD,RR,173,2026-05-27T14:09:36.211764+00:00,
+295,12,APPROVAL_RESULT,RR-1174 approved,Your requisition was approved at DOA.,READ,RR,174,2026-02-23T21:09:36.211764+00:00,2026-02-24T11:09:36.211764+00:00
+296,12,PO_CREATED,PO-3125 created,A purchase order has been created for your requisition.,READ,PO,125,2026-03-12T21:09:36.211764+00:00,2026-03-13T04:09:36.211764+00:00
+297,1,APPROVAL_RESULT,RR-1175 rejected,Your requisition was rejected at DOA approval.,READ,RR,175,2025-12-27T22:09:36.211764+00:00,2025-12-28T04:09:36.211764+00:00
+298,10,APPROVAL_RESULT,RR-1176 approved,Your requisition was approved at DOA.,READ,RR,176,2026-01-22T03:09:36.211764+00:00,2026-01-22T19:09:36.211764+00:00
+299,10,PO_CREATED,PO-3126 created,A purchase order has been created for your requisition.,READ,PO,126,2026-02-05T03:09:36.211764+00:00,2026-02-05T10:09:36.211764+00:00
+300,18,APPROVAL_RESULT,RR-1177 approved,Your requisition was approved at DOA.,READ,RR,177,2026-04-07T10:09:36.211764+00:00,2026-04-08T07:09:36.211764+00:00
+301,18,PO_CREATED,PO-3127 created,A purchase order has been created for your requisition.,UNREAD,PO,127,2026-05-14T10:09:36.211764+00:00,
+302,23,APPROVAL_RESULT,RR-1178 approved,Your requisition was approved at DOA.,READ,RR,178,2026-07-17T11:09:36.211764+00:00,2026-07-17T18:09:36.211764+00:00
+303,1,APPROVAL_RESULT,RR-1179 rejected,Your requisition was rejected at DOA approval.,UNREAD,RR,179,2025-12-05T00:09:36.211764+00:00,
+304,14,APPROVAL_RESULT,RR-1180 approved,Your requisition was approved at DOA.,READ,RR,180,2026-08-10T04:09:36.211764+00:00,2026-08-10T05:09:36.211764+00:00
+305,12,APPROVAL_RESULT,RR-1182 approved,Your requisition was approved at DOA.,READ,RR,182,2026-05-03T13:09:36.211764+00:00,2026-05-03T22:09:36.211764+00:00
+306,12,PO_CREATED,PO-3128 created,A purchase order has been created for your requisition.,READ,PO,128,2026-05-12T13:09:36.211764+00:00,2026-05-13T06:09:36.211764+00:00
+307,6,APPROVAL_RESULT,RR-1183 approved,Your requisition was approved at DOA.,UNREAD,RR,183,2026-01-03T13:09:36.211764+00:00,
+308,6,PO_CREATED,PO-3129 created,A purchase order has been created for your requisition.,READ,PO,129,2026-01-19T00:09:36.211764+00:00,2026-01-20T03:09:36.211764+00:00
+309,22,APPROVAL_RESULT,RR-1184 approved,Your requisition was approved at DOA.,READ,RR,184,2026-05-09T14:09:36.211764+00:00,2026-05-09T17:09:36.211764+00:00
+310,22,PO_CREATED,PO-3130 created,A purchase order has been created for your requisition.,READ,PO,130,2026-05-23T14:09:36.211764+00:00,2026-05-24T00:09:36.211764+00:00
+311,14,APPROVAL_RESULT,RR-1185 approved,Your requisition was approved at DOA.,READ,RR,185,2026-01-20T23:09:36.211764+00:00,2026-01-21T17:09:36.211764+00:00
+312,14,PO_CREATED,PO-3131 created,A purchase order has been created for your requisition.,UNREAD,PO,131,2026-02-28T23:09:36.211764+00:00,
+313,19,APPROVAL_RESULT,RR-1186 approved,Your requisition was approved at DOA.,READ,RR,186,2026-06-20T09:09:36.211764+00:00,2026-06-21T12:09:36.211764+00:00
+314,11,APPROVAL_RESULT,RR-1187 approved,Your requisition was approved at DOA.,READ,RR,187,2026-07-19T09:09:36.211764+00:00,2026-07-19T20:09:36.211764+00:00
+315,11,PO_CREATED,PO-3132 created,A purchase order has been created for your requisition.,READ,PO,132,2026-08-04T09:09:36.211764+00:00,2026-08-04T17:09:36.211764+00:00
+316,6,APPROVAL_RESULT,RR-1188 approved,Your requisition was approved at DOA.,READ,RR,188,2026-05-01T03:09:36.211764+00:00,2026-05-01T05:09:36.211764+00:00
+317,6,PO_CREATED,PO-3133 created,A purchase order has been created for your requisition.,READ,PO,133,2026-05-11T03:09:36.211764+00:00,2026-05-12T06:09:36.211764+00:00
+318,4,APPROVAL_RESULT,RR-1189 approved,Your requisition was approved at DOA.,READ,RR,189,2025-12-11T18:09:36.211764+00:00,2025-12-12T11:09:36.211764+00:00
+319,4,PO_CREATED,PO-3134 created,A purchase order has been created for your requisition.,UNREAD,PO,134,2025-12-24T18:09:36.211764+00:00,
+320,21,APPROVAL_RESULT,RR-1190 approved,Your requisition was approved at DOA.,READ,RR,190,2026-03-01T09:09:36.211764+00:00,2026-03-01T12:09:36.211764+00:00
+321,9,APPROVAL_RESULT,RR-1191 approved,Your requisition was approved at DOA.,READ,RR,191,2026-05-20T14:09:36.211764+00:00,2026-05-21T11:09:36.211764+00:00
+322,9,PO_CREATED,PO-3135 created,A purchase order has been created for your requisition.,READ,PO,135,2026-06-24T14:09:36.211764+00:00,2026-06-25T19:09:36.211764+00:00
+323,10,APPROVAL_RESULT,RR-1192 approved,Your requisition was approved at DOA.,READ,RR,192,2025-11-30T21:09:36.211764+00:00,2025-12-01T07:09:36.211764+00:00
+324,10,PO_CREATED,PO-3136 created,A purchase order has been created for your requisition.,READ,PO,136,2026-01-20T08:09:36.211764+00:00,2026-01-20T21:09:36.211764+00:00
+325,7,APPROVAL_RESULT,RR-1193 approved,Your requisition was approved at DOA.,READ,RR,193,2026-06-26T04:09:36.211764+00:00,2026-06-26T23:09:36.211764+00:00
+326,7,PO_CREATED,PO-3137 created,A purchase order has been created for your requisition.,UNREAD,PO,137,2026-07-09T04:09:36.211764+00:00,
+327,9,APPROVAL_RESULT,RR-1194 approved,Your requisition was approved at DOA.,READ,RR,194,2026-06-03T04:09:36.211764+00:00,2026-06-03T16:09:36.211764+00:00
+328,9,PO_CREATED,PO-3138 created,A purchase order has been created for your requisition.,READ,PO,138,2026-06-30T02:09:36.211764+00:00,2026-07-01T01:09:36.211764+00:00
+329,17,APPROVAL_RESULT,RR-1195 approved,Your requisition was approved at DOA.,READ,RR,195,2026-02-21T12:09:36.211764+00:00,2026-02-22T01:09:36.211764+00:00
+330,24,APPROVAL_RESULT,NFA rejected for PR-2169,The NFA for this PR was rejected.,UNREAD,PR,169,2026-03-07T12:09:36.211764+00:00,
+331,2,APPROVAL_REQUEST,DOA approval needed: RR-1196,A requisition is waiting on your DOA approval.,UNREAD,RR,196,2026-08-24T01:09:36.211764+00:00,
+332,5,APPROVAL_RESULT,RR-1197 approved,Your requisition was approved at DOA.,UNREAD,RR,197,2026-02-26T06:09:36.211764+00:00,
+333,5,PO_CREATED,PO-3139 created,A purchase order has been created for your requisition.,READ,PO,139,2026-03-13T06:09:36.211764+00:00,2026-03-14T05:09:36.211764+00:00
+334,16,APPROVAL_RESULT,RR-1198 approved,Your requisition was approved at DOA.,READ,RR,198,2026-03-10T11:09:36.211764+00:00,2026-03-11T11:09:36.211764+00:00
+335,16,PO_CREATED,PO-3140 created,A purchase order has been created for your requisition.,UNREAD,PO,140,2026-03-30T05:09:36.211764+00:00,
+336,12,APPROVAL_RESULT,RR-1199 approved,Your requisition was approved at DOA.,READ,RR,199,2026-08-20T00:09:36.211764+00:00,2026-08-20T18:09:36.211764+00:00
+337,12,PO_CREATED,PO-3141 created,A purchase order has been created for your requisition.,UNREAD,PO,141,2026-09-01T00:09:36.211764+00:00,
+338,11,APPROVAL_RESULT,RR-1200 approved,Your requisition was approved at DOA.,READ,RR,200,2026-07-08T01:09:36.211764+00:00,2026-07-09T02:09:36.211764+00:00
+339,11,PO_CREATED,PO-3142 created,A purchase order has been created for your requisition.,READ,PO,142,2026-07-17T01:09:36.211764+00:00,2026-07-18T01:09:36.211764+00:00
+340,12,APPROVAL_RESULT,RR-1201 approved,Your requisition was approved at DOA.,READ,RR,201,2026-07-26T10:09:36.211764+00:00,2026-07-26T11:09:36.211764+00:00
+341,12,PO_CREATED,PO-3143 created,A purchase order has been created for your requisition.,READ,PO,143,2026-08-09T22:09:36.211764+00:00,2026-08-10T18:09:36.211764+00:00
+342,20,APPROVAL_RESULT,RR-1202 approved,Your requisition was approved at DOA.,READ,RR,202,2026-07-24T08:09:36.211764+00:00,2026-07-24T13:09:36.211764+00:00
+343,10,APPROVAL_RESULT,RR-1203 approved,Your requisition was approved at DOA.,READ,RR,203,2026-04-22T20:09:36.211764+00:00,2026-04-24T00:09:36.211764+00:00
+344,21,APPROVAL_RESULT,RR-1204 approved,Your requisition was approved at DOA.,READ,RR,204,2026-04-29T05:09:36.211764+00:00,2026-04-29T14:09:36.211764+00:00
+345,21,PO_CREATED,PO-3144 created,A purchase order has been created for your requisition.,UNREAD,PO,144,2026-05-21T07:09:36.211764+00:00,
+346,18,APPROVAL_RESULT,RR-1205 approved,Your requisition was approved at DOA.,UNREAD,RR,205,2026-03-17T05:09:36.211764+00:00,
+347,18,PO_CREATED,PO-3145 created,A purchase order has been created for your requisition.,READ,PO,145,2026-03-30T05:09:36.211764+00:00,2026-03-30T09:09:36.211764+00:00
+348,10,APPROVAL_RESULT,RR-1206 approved,Your requisition was approved at DOA.,UNREAD,RR,206,2026-04-17T04:09:36.211764+00:00,
+349,10,PO_CREATED,PO-3146 created,A purchase order has been created for your requisition.,READ,PO,146,2026-06-09T12:09:36.211764+00:00,2026-06-10T14:09:36.211764+00:00
+350,20,APPROVAL_RESULT,RR-1207 approved,Your requisition was approved at DOA.,READ,RR,207,2026-01-29T03:09:36.211764+00:00,2026-01-30T09:09:36.211764+00:00
+351,20,PO_CREATED,PO-3147 created,A purchase order has been created for your requisition.,READ,PO,147,2026-02-10T03:09:36.211764+00:00,2026-02-10T16:09:36.211764+00:00
+352,14,APPROVAL_RESULT,RR-1208 approved,Your requisition was approved at DOA.,UNREAD,RR,208,2026-04-18T00:09:36.211764+00:00,
+353,22,APPROVAL_RESULT,RR-1209 approved,Your requisition was approved at DOA.,UNREAD,RR,209,2025-12-18T14:09:36.211764+00:00,
+354,22,PO_CREATED,PO-3148 created,A purchase order has been created for your requisition.,UNREAD,PO,148,2025-12-21T14:09:36.211764+00:00,
+355,23,APPROVAL_RESULT,RR-1210 approved,Your requisition was approved at DOA.,READ,RR,210,2026-03-21T00:09:36.211764+00:00,2026-03-21T22:09:36.211764+00:00
+356,23,PO_CREATED,PO-3149 created,A purchase order has been created for your requisition.,UNREAD,PO,149,2026-04-17T00:09:36.211764+00:00,
+357,4,APPROVAL_RESULT,RR-1211 approved,Your requisition was approved at DOA.,UNREAD,RR,211,2026-02-08T16:09:36.211764+00:00,
+358,4,PO_CREATED,PO-3150 created,A purchase order has been created for your requisition.,READ,PO,150,2026-02-11T16:09:36.211764+00:00,2026-02-12T21:09:36.211764+00:00
+359,3,APPROVAL_REQUEST,DOA approval needed: RR-1212,A requisition is waiting on your DOA approval.,UNREAD,RR,212,2026-03-30T17:09:36.211764+00:00,
+360,13,APPROVAL_RESULT,RR-1213 approved,Your requisition was approved at DOA.,READ,RR,213,2026-04-21T02:09:36.211764+00:00,2026-04-21T21:09:36.211764+00:00
+361,13,PO_CREATED,PO-3151 created,A purchase order has been created for your requisition.,UNREAD,PO,151,2026-05-01T02:09:36.211764+00:00,
+362,22,APPROVAL_RESULT,RR-1214 approved,Your requisition was approved at DOA.,READ,RR,214,2026-03-17T22:09:36.211764+00:00,2026-03-18T21:09:36.211764+00:00
+363,22,PO_CREATED,PO-3152 created,A purchase order has been created for your requisition.,UNREAD,PO,152,2026-04-09T22:09:36.211764+00:00,
+364,24,APPROVAL_RESULT,RR-1215 approved,Your requisition was approved at DOA.,READ,RR,215,2026-07-05T18:09:36.211764+00:00,2026-07-05T21:09:36.211764+00:00
+365,24,PO_CREATED,PO-3153 created,A purchase order has been created for your requisition.,UNREAD,PO,153,2026-07-20T06:09:36.211764+00:00,
+366,8,APPROVAL_RESULT,RR-1216 approved,Your requisition was approved at DOA.,UNREAD,RR,216,2026-03-15T20:09:36.211764+00:00,
+367,8,PO_CREATED,PO-3154 created,A purchase order has been created for your requisition.,READ,PO,154,2026-05-01T03:09:36.211764+00:00,2026-05-01T12:09:36.211764+00:00
+368,24,APPROVAL_RESULT,RR-1217 approved,Your requisition was approved at DOA.,READ,RR,217,2026-08-12T12:09:36.211764+00:00,2026-08-13T05:09:36.211764+00:00
+369,24,PO_CREATED,PO-3155 created,A purchase order has been created for your requisition.,UNREAD,PO,155,2026-08-23T12:09:36.211764+00:00,
+370,23,APPROVAL_RESULT,RR-1218 approved,Your requisition was approved at DOA.,READ,RR,218,2026-08-21T03:09:36.211764+00:00,2026-08-22T08:09:36.211764+00:00
+371,23,PO_CREATED,PO-3156 created,A purchase order has been created for your requisition.,READ,PO,156,2026-10-14T05:09:36.211764+00:00,2026-10-14T19:09:36.211764+00:00
+372,22,APPROVAL_RESULT,RR-1219 approved,Your requisition was approved at DOA.,UNREAD,RR,219,2026-02-03T02:09:36.211764+00:00,
+373,22,PO_CREATED,PO-3157 created,A purchase order has been created for your requisition.,READ,PO,157,2026-03-15T02:09:36.211764+00:00,2026-03-16T07:09:36.211764+00:00
+374,8,APPROVAL_RESULT,RR-1220 approved,Your requisition was approved at DOA.,READ,RR,220,2026-05-28T01:09:36.211764+00:00,2026-05-28T04:09:36.211764+00:00
+375,8,PO_CREATED,PO-3158 created,A purchase order has been created for your requisition.,READ,PO,158,2026-06-19T13:09:36.211764+00:00,2026-06-20T06:09:36.211764+00:00
+376,6,APPROVAL_RESULT,RR-1221 approved,Your requisition was approved at DOA.,READ,RR,221,2026-04-19T11:09:36.211764+00:00,2026-04-20T06:09:36.211764+00:00
+377,6,PO_CREATED,PO-3159 created,A purchase order has been created for your requisition.,READ,PO,159,2026-05-05T08:09:36.211764+00:00,2026-05-06T07:09:36.211764+00:00
+378,17,APPROVAL_RESULT,RR-1222 approved,Your requisition was approved at DOA.,UNREAD,RR,222,2026-03-11T23:09:36.211764+00:00,
+379,17,PO_CREATED,PO-3160 created,A purchase order has been created for your requisition.,READ,PO,160,2026-03-15T23:09:36.211764+00:00,2026-03-16T18:09:36.211764+00:00
+380,20,APPROVAL_RESULT,RR-1223 approved,Your requisition was approved at DOA.,READ,RR,223,2026-01-21T12:09:36.211764+00:00,2026-01-21T23:09:36.211764+00:00
+381,20,PO_CREATED,PO-3161 created,A purchase order has been created for your requisition.,READ,PO,161,2026-02-24T12:09:36.211764+00:00,2026-02-24T21:09:36.211764+00:00
+382,21,APPROVAL_RESULT,RR-1224 approved,Your requisition was approved at DOA.,READ,RR,224,2026-07-14T19:09:36.211764+00:00,2026-07-15T03:09:36.211764+00:00
+383,21,PO_CREATED,PO-3162 created,A purchase order has been created for your requisition.,READ,PO,162,2026-08-09T15:09:36.211764+00:00,2026-08-09T19:09:36.211764+00:00
+384,4,APPROVAL_RESULT,RR-1225 approved,Your requisition was approved at DOA.,READ,RR,225,2026-08-15T02:09:36.211764+00:00,2026-08-16T08:09:36.211764+00:00
+385,4,PO_CREATED,PO-3163 created,A purchase order has been created for your requisition.,UNREAD,PO,163,2026-09-02T16:09:36.211764+00:00,
+386,12,APPROVAL_RESULT,RR-1226 approved,Your requisition was approved at DOA.,READ,RR,226,2026-06-01T04:09:36.211764+00:00,2026-06-01T22:09:36.211764+00:00
+387,12,PO_CREATED,PO-3164 created,A purchase order has been created for your requisition.,READ,PO,164,2026-06-15T18:09:36.211764+00:00,2026-06-16T03:09:36.211764+00:00
+388,21,APPROVAL_RESULT,RR-1227 approved,Your requisition was approved at DOA.,READ,RR,227,2026-07-15T09:09:36.211764+00:00,2026-07-15T17:09:36.211764+00:00
+389,21,PO_CREATED,PO-3165 created,A purchase order has been created for your requisition.,UNREAD,PO,165,2026-07-18T09:09:36.211764+00:00,
+390,10,APPROVAL_RESULT,RR-1228 approved,Your requisition was approved at DOA.,READ,RR,228,2026-01-21T18:09:36.211764+00:00,2026-01-22T07:09:36.211764+00:00
+391,10,PO_CREATED,PO-3166 created,A purchase order has been created for your requisition.,UNREAD,PO,166,2026-01-30T18:09:36.211764+00:00,
+392,21,APPROVAL_RESULT,RR-1230 approved,Your requisition was approved at DOA.,UNREAD,RR,230,2026-06-23T02:09:36.211764+00:00,
+393,21,PO_CREATED,PO-3167 created,A purchase order has been created for your requisition.,UNREAD,PO,167,2026-07-01T02:09:36.211764+00:00,
+394,7,APPROVAL_RESULT,RR-1231 approved,Your requisition was approved at DOA.,READ,RR,231,2026-03-02T06:09:36.211764+00:00,2026-03-02T10:09:36.211764+00:00
+395,7,PO_CREATED,PO-3168 created,A purchase order has been created for your requisition.,UNREAD,PO,168,2026-03-31T06:09:36.211764+00:00,
+396,12,APPROVAL_RESULT,RR-1232 approved,Your requisition was approved at DOA.,UNREAD,RR,232,2026-04-11T15:09:36.211764+00:00,
+397,12,PO_CREATED,PO-3169 created,A purchase order has been created for your requisition.,READ,PO,169,2026-04-20T15:09:36.211764+00:00,2026-04-21T09:09:36.211764+00:00
+398,22,APPROVAL_RESULT,RR-1233 approved,Your requisition was approved at DOA.,READ,RR,233,2026-06-07T04:09:36.211764+00:00,2026-06-07T19:09:36.211764+00:00
+399,22,PO_CREATED,PO-3170 created,A purchase order has been created for your requisition.,READ,PO,170,2026-06-16T04:09:36.211764+00:00,2026-06-17T09:09:36.211764+00:00
+400,17,APPROVAL_RESULT,RR-1234 approved,Your requisition was approved at DOA.,UNREAD,RR,234,2026-02-20T15:09:36.211764+00:00,
+401,17,PO_CREATED,PO-3171 created,A purchase order has been created for your requisition.,UNREAD,PO,171,2026-03-19T15:09:36.211764+00:00,
+402,3,APPROVAL_RESULT,RR-1235 approved,Your requisition was approved at DOA.,READ,RR,235,2026-04-13T03:09:36.211764+00:00,2026-04-13T13:09:36.211764+00:00
+403,12,APPROVAL_RESULT,RR-1236 approved,Your requisition was approved at DOA.,UNREAD,RR,236,2026-06-30T09:09:36.211764+00:00,
+404,12,PO_CREATED,PO-3172 created,A purchase order has been created for your requisition.,UNREAD,PO,172,2026-07-13T09:09:36.211764+00:00,
+405,2,APPROVAL_REQUEST,DOA approval needed: RR-1237,A requisition is waiting on your DOA approval.,UNREAD,RR,237,2026-04-17T23:09:36.211764+00:00,
+406,15,APPROVAL_REQUEST,DOA approval needed: RR-1238,A requisition is waiting on your DOA approval.,UNREAD,RR,238,2026-04-30T06:09:36.211764+00:00,
+407,16,APPROVAL_RESULT,RR-1239 rejected,Your requisition was rejected at DOA approval.,UNREAD,RR,239,2026-04-25T00:09:36.211764+00:00,
+408,24,APPROVAL_RESULT,RR-1240 approved,Your requisition was approved at DOA.,READ,RR,240,2025-12-26T22:09:36.211764+00:00,2025-12-27T08:09:36.211764+00:00
+409,24,PO_CREATED,PO-3173 created,A purchase order has been created for your requisition.,UNREAD,PO,173,2026-01-02T22:09:36.211764+00:00,
+410,22,APPROVAL_RESULT,RR-1241 approved,Your requisition was approved at DOA.,READ,RR,241,2026-06-14T10:09:36.211764+00:00,2026-06-15T14:09:36.211764+00:00
+411,22,PO_CREATED,PO-3174 created,A purchase order has been created for your requisition.,UNREAD,PO,174,2026-06-29T10:09:36.211764+00:00,
+412,1,APPROVAL_RESULT,RR-1242 approved,Your requisition was approved at DOA.,READ,RR,242,2026-07-23T23:09:36.211764+00:00,2026-07-24T20:09:36.211764+00:00
+413,1,PO_CREATED,PO-3175 created,A purchase order has been created for your requisition.,READ,PO,175,2026-08-07T23:09:36.211764+00:00,2026-08-08T00:09:36.211764+00:00
+414,6,APPROVAL_RESULT,RR-1243 approved,Your requisition was approved at DOA.,UNREAD,RR,243,2026-07-15T00:09:36.211764+00:00,
+415,19,APPROVAL_RESULT,RR-1244 approved,Your requisition was approved at DOA.,UNREAD,RR,244,2025-12-10T00:09:36.211764+00:00,
+416,19,PO_CREATED,PO-3176 created,A purchase order has been created for your requisition.,UNREAD,PO,176,2025-12-15T00:09:36.211764+00:00,
+417,23,APPROVAL_RESULT,RR-1245 rejected,Your requisition was rejected at DOA approval.,UNREAD,RR,245,2026-07-18T03:09:36.211764+00:00,
+418,7,APPROVAL_RESULT,RR-1246 approved,Your requisition was approved at DOA.,READ,RR,246,2026-03-23T22:09:36.211764+00:00,2026-03-25T01:09:36.211764+00:00
+419,7,PO_CREATED,PO-3177 created,A purchase order has been created for your requisition.,READ,PO,177,2026-04-19T22:09:36.211764+00:00,2026-04-21T03:09:36.211764+00:00
+420,1,APPROVAL_RESULT,RR-1247 approved,Your requisition was approved at DOA.,UNREAD,RR,247,2026-07-23T07:09:36.211764+00:00,
+421,1,PO_CREATED,PO-3178 created,A purchase order has been created for your requisition.,UNREAD,PO,178,2026-07-28T07:09:36.211764+00:00,
+422,5,APPROVAL_RESULT,RR-1248 approved,Your requisition was approved at DOA.,READ,RR,248,2026-07-26T14:09:36.211764+00:00,2026-07-26T20:09:36.211764+00:00
+423,5,PO_CREATED,PO-3179 created,A purchase order has been created for your requisition.,UNREAD,PO,179,2026-08-08T14:09:36.211764+00:00,
+424,4,APPROVAL_RESULT,RR-1249 approved,Your requisition was approved at DOA.,READ,RR,249,2026-02-19T20:09:36.211764+00:00,2026-02-20T02:09:36.211764+00:00
+425,4,PO_CREATED,PO-3180 created,A purchase order has been created for your requisition.,READ,PO,180,2026-03-24T20:09:36.211764+00:00,2026-03-24T22:09:36.211764+00:00
+426,15,APPROVAL_REQUEST,DOA approval needed: RR-1250,A requisition is waiting on your DOA approval.,UNREAD,RR,250,2026-05-11T22:09:36.211764+00:00,
+427,21,APPROVAL_RESULT,RR-1251 approved,Your requisition was approved at DOA.,READ,RR,251,2026-02-13T11:09:36.211764+00:00,2026-02-14T01:09:36.211764+00:00
+428,21,PO_CREATED,PO-3181 created,A purchase order has been created for your requisition.,READ,PO,181,2026-02-22T11:09:36.211764+00:00,2026-02-23T04:09:36.211764+00:00
+429,24,APPROVAL_RESULT,RR-1252 approved,Your requisition was approved at DOA.,READ,RR,252,2026-07-30T11:09:36.211764+00:00,2026-07-31T01:09:36.211764+00:00
+430,15,APPROVAL_RESULT,RR-1253 approved,Your requisition was approved at DOA.,READ,RR,253,2026-07-21T19:09:36.211764+00:00,2026-07-22T21:09:36.211764+00:00
+431,20,APPROVAL_RESULT,RR-1254 approved,Your requisition was approved at DOA.,READ,RR,254,2026-01-11T03:09:36.211764+00:00,2026-01-11T19:09:36.211764+00:00
+432,20,PO_CREATED,PO-3182 created,A purchase order has been created for your requisition.,UNREAD,PO,182,2026-01-29T03:09:36.211764+00:00,
+433,11,APPROVAL_RESULT,RR-1256 approved,Your requisition was approved at DOA.,READ,RR,256,2026-02-24T09:09:36.211764+00:00,2026-02-25T08:09:36.211764+00:00
+434,11,PO_CREATED,PO-3183 created,A purchase order has been created for your requisition.,READ,PO,183,2026-03-11T05:09:36.211764+00:00,2026-03-11T08:09:36.211764+00:00
+435,19,APPROVAL_RESULT,RR-1257 approved,Your requisition was approved at DOA.,UNREAD,RR,257,2026-07-09T03:09:36.211764+00:00,
+436,19,PO_CREATED,PO-3184 created,A purchase order has been created for your requisition.,READ,PO,184,2026-08-13T03:09:36.211764+00:00,2026-08-14T01:09:36.211764+00:00
+437,5,APPROVAL_RESULT,RR-1258 approved,Your requisition was approved at DOA.,READ,RR,258,2026-07-02T17:09:36.211764+00:00,2026-07-03T22:09:36.211764+00:00
+438,5,PO_CREATED,PO-3185 created,A purchase order has been created for your requisition.,UNREAD,PO,185,2026-07-04T17:09:36.211764+00:00,
+439,8,APPROVAL_RESULT,RR-1259 approved,Your requisition was approved at DOA.,UNREAD,RR,259,2026-01-29T23:09:36.211764+00:00,
+440,8,PO_CREATED,PO-3186 created,A purchase order has been created for your requisition.,UNREAD,PO,186,2026-03-04T20:09:36.211764+00:00,
+441,19,APPROVAL_RESULT,RR-1260 approved,Your requisition was approved at DOA.,READ,RR,260,2026-06-02T22:09:36.211764+00:00,2026-06-03T07:09:36.211764+00:00
+442,2,APPROVAL_REQUEST,DOA approval needed: RR-1261,A requisition is waiting on your DOA approval.,UNREAD,RR,261,2026-05-27T02:09:36.211764+00:00,
+443,4,APPROVAL_RESULT,RR-1262 approved,Your requisition was approved at DOA.,UNREAD,RR,262,2026-06-26T04:09:36.211764+00:00,
+444,4,PO_CREATED,PO-3187 created,A purchase order has been created for your requisition.,UNREAD,PO,187,2026-07-03T04:09:36.211764+00:00,
+445,11,APPROVAL_RESULT,RR-1263 approved,Your requisition was approved at DOA.,READ,RR,263,2026-04-21T00:09:36.211764+00:00,2026-04-21T15:09:36.211764+00:00
+446,11,PO_CREATED,PO-3188 created,A purchase order has been created for your requisition.,UNREAD,PO,188,2026-06-12T06:09:36.211764+00:00,
+447,16,APPROVAL_RESULT,RR-1265 approved,Your requisition was approved at DOA.,READ,RR,265,2026-05-09T00:09:36.211764+00:00,2026-05-09T20:09:36.211764+00:00
+448,16,PO_CREATED,PO-3189 created,A purchase order has been created for your requisition.,UNREAD,PO,189,2026-05-17T00:09:36.211764+00:00,
+449,1,APPROVAL_RESULT,RR-1266 approved,Your requisition was approved at DOA.,UNREAD,RR,266,2026-01-13T23:09:36.211764+00:00,
+450,5,APPROVAL_RESULT,RR-1267 approved,Your requisition was approved at DOA.,READ,RR,267,2026-06-10T21:09:36.211764+00:00,2026-06-11T19:09:36.211764+00:00
+451,24,APPROVAL_RESULT,NFA rejected for PR-2230,The NFA for this PR was rejected.,UNREAD,PR,230,2026-06-27T21:09:36.211764+00:00,
+452,22,APPROVAL_RESULT,RR-1268 approved,Your requisition was approved at DOA.,READ,RR,268,2026-06-28T22:09:36.211764+00:00,2026-06-29T16:09:36.211764+00:00
+453,15,APPROVAL_REQUEST,DOA approval needed: RR-1269,A requisition is waiting on your DOA approval.,UNREAD,RR,269,2026-05-08T05:09:36.211764+00:00,
+454,7,APPROVAL_RESULT,RR-1270 approved,Your requisition was approved at DOA.,READ,RR,270,2026-04-14T01:09:36.211764+00:00,2026-04-15T04:09:36.211764+00:00
+455,7,PO_CREATED,PO-3190 created,A purchase order has been created for your requisition.,UNREAD,PO,190,2026-05-03T17:09:36.211764+00:00,
+456,16,APPROVAL_RESULT,RR-1271 approved,Your requisition was approved at DOA.,READ,RR,271,2025-12-18T06:09:36.211764+00:00,2025-12-18T07:09:36.211764+00:00
+457,16,PO_CREATED,PO-3191 created,A purchase order has been created for your requisition.,READ,PO,191,2025-12-25T06:09:36.211764+00:00,2025-12-26T09:09:36.211764+00:00
+458,2,APPROVAL_RESULT,RR-1272 approved,Your requisition was approved at DOA.,UNREAD,RR,272,2026-04-02T05:09:36.211764+00:00,
+459,2,PO_CREATED,PO-3192 created,A purchase order has been created for your requisition.,UNREAD,PO,192,2026-04-17T05:09:36.211764+00:00,
+460,7,APPROVAL_RESULT,RR-1273 approved,Your requisition was approved at DOA.,READ,RR,273,2026-05-04T11:09:36.211764+00:00,2026-05-04T18:09:36.211764+00:00
+461,7,PO_CREATED,PO-3193 created,A purchase order has been created for your requisition.,READ,PO,193,2026-05-12T11:09:36.211764+00:00,2026-05-13T11:09:36.211764+00:00
+462,14,APPROVAL_RESULT,RR-1274 approved,Your requisition was approved at DOA.,READ,RR,274,2026-04-23T02:09:36.211764+00:00,2026-04-23T19:09:36.211764+00:00
+463,14,PO_CREATED,PO-3194 created,A purchase order has been created for your requisition.,READ,PO,194,2026-05-09T02:09:36.211764+00:00,2026-05-09T16:09:36.211764+00:00
+464,20,APPROVAL_RESULT,RR-1275 approved,Your requisition was approved at DOA.,READ,RR,275,2026-07-05T22:09:36.211764+00:00,2026-07-06T06:09:36.211764+00:00
+465,20,PO_CREATED,PO-3195 created,A purchase order has been created for your requisition.,READ,PO,195,2026-07-16T22:09:36.211764+00:00,2026-07-17T14:09:36.211764+00:00
+466,15,APPROVAL_RESULT,RR-1276 approved,Your requisition was approved at DOA.,READ,RR,276,2026-02-16T08:09:36.211764+00:00,2026-02-17T13:09:36.211764+00:00
+467,15,PO_CREATED,PO-3196 created,A purchase order has been created for your requisition.,READ,PO,196,2026-02-27T08:09:36.211764+00:00,2026-02-27T09:09:36.211764+00:00
+468,7,APPROVAL_RESULT,RR-1277 approved,Your requisition was approved at DOA.,READ,RR,277,2026-07-18T08:09:36.211764+00:00,2026-07-18T21:09:36.211764+00:00
+469,7,PO_CREATED,PO-3197 created,A purchase order has been created for your requisition.,READ,PO,197,2026-08-10T08:09:36.211764+00:00,2026-08-10T09:09:36.211764+00:00
+470,17,APPROVAL_RESULT,RR-1278 approved,Your requisition was approved at DOA.,READ,RR,278,2026-01-19T03:09:36.211764+00:00,2026-01-20T07:09:36.211764+00:00
+471,17,PO_CREATED,PO-3198 created,A purchase order has been created for your requisition.,UNREAD,PO,198,2026-01-27T03:09:36.211764+00:00,
+472,1,APPROVAL_RESULT,RR-1279 approved,Your requisition was approved at DOA.,READ,RR,279,2026-05-07T04:09:36.211764+00:00,2026-05-07T17:09:36.211764+00:00
+473,1,PO_CREATED,PO-3199 created,A purchase order has been created for your requisition.,READ,PO,199,2026-05-11T04:09:36.211764+00:00,2026-05-11T15:09:36.211764+00:00
+474,13,APPROVAL_RESULT,RR-1280 approved,Your requisition was approved at DOA.,READ,RR,280,2026-07-01T10:09:36.211764+00:00,2026-07-02T14:09:36.211764+00:00
+475,13,PO_CREATED,PO-3200 created,A purchase order has been created for your requisition.,READ,PO,200,2026-07-31T10:09:36.211764+00:00,2026-08-01T00:09:36.211764+00:00
+476,5,APPROVAL_RESULT,RR-1281 approved,Your requisition was approved at DOA.,UNREAD,RR,281,2026-01-01T09:09:36.211764+00:00,
+477,5,PO_CREATED,PO-3201 created,A purchase order has been created for your requisition.,UNREAD,PO,201,2026-01-23T04:09:36.211764+00:00,
+478,9,APPROVAL_RESULT,RR-1282 approved,Your requisition was approved at DOA.,READ,RR,282,2026-03-25T10:09:36.211764+00:00,2026-03-25T18:09:36.211764+00:00
+479,9,PO_CREATED,PO-3202 created,A purchase order has been created for your requisition.,READ,PO,202,2026-04-02T10:09:36.211764+00:00,2026-04-02T13:09:36.211764+00:00
+480,4,APPROVAL_RESULT,RR-1283 rejected,Your requisition was rejected at DOA approval.,UNREAD,RR,283,2026-03-02T03:09:36.211764+00:00,
+481,21,APPROVAL_RESULT,RR-1284 approved,Your requisition was approved at DOA.,READ,RR,284,2026-02-26T19:09:36.211764+00:00,2026-02-27T04:09:36.211764+00:00
+482,21,PO_CREATED,PO-3203 created,A purchase order has been created for your requisition.,UNREAD,PO,203,2026-03-05T19:09:36.211764+00:00,
+483,2,APPROVAL_REQUEST,DOA approval needed: RR-1285,A requisition is waiting on your DOA approval.,UNREAD,RR,285,2026-06-20T06:09:36.211764+00:00,
+484,19,APPROVAL_RESULT,RR-1286 approved,Your requisition was approved at DOA.,UNREAD,RR,286,2026-01-15T06:09:36.211764+00:00,
+485,19,PO_CREATED,PO-3204 created,A purchase order has been created for your requisition.,READ,PO,204,2026-02-01T06:09:36.211764+00:00,2026-02-01T17:09:36.211764+00:00
+486,15,APPROVAL_REQUEST,DOA approval needed: RR-1287,A requisition is waiting on your DOA approval.,UNREAD,RR,287,2026-04-29T04:09:36.211764+00:00,
+487,4,APPROVAL_RESULT,RR-1288 approved,Your requisition was approved at DOA.,READ,RR,288,2026-04-04T01:09:36.211764+00:00,2026-04-05T04:09:36.211764+00:00
+488,4,PO_CREATED,PO-3205 created,A purchase order has been created for your requisition.,READ,PO,205,2026-05-21T01:09:36.211764+00:00,2026-05-21T06:09:36.211764+00:00
+489,2,APPROVAL_REQUEST,DOA approval needed: RR-1289,A requisition is waiting on your DOA approval.,UNREAD,RR,289,2026-06-18T23:09:36.211764+00:00,
+490,21,APPROVAL_RESULT,RR-1290 approved,Your requisition was approved at DOA.,READ,RR,290,2026-08-20T06:09:36.211764+00:00,2026-08-21T00:09:36.211764+00:00
+491,21,PO_CREATED,PO-3206 created,A purchase order has been created for your requisition.,READ,PO,206,2026-08-27T06:09:36.211764+00:00,2026-08-27T10:09:36.211764+00:00
+492,22,APPROVAL_RESULT,RR-1291 approved,Your requisition was approved at DOA.,READ,RR,291,2026-07-04T05:09:36.211764+00:00,2026-07-04T12:09:36.211764+00:00
+493,22,PO_CREATED,PO-3207 created,A purchase order has been created for your requisition.,READ,PO,207,2026-07-14T05:09:36.211764+00:00,2026-07-14T06:09:36.211764+00:00
+494,15,APPROVAL_REQUEST,DOA approval needed: RR-1292,A requisition is waiting on your DOA approval.,UNREAD,RR,292,2026-04-21T22:09:36.211764+00:00,
+495,21,APPROVAL_RESULT,RR-1293 approved,Your requisition was approved at DOA.,READ,RR,293,2026-05-26T11:09:36.211764+00:00,2026-05-26T20:09:36.211764+00:00
+496,12,APPROVAL_RESULT,NFA rejected for PR-2250,The NFA for this PR was rejected.,UNREAD,PR,250,2026-06-10T11:09:36.211764+00:00,
+497,20,APPROVAL_RESULT,RR-1294 approved,Your requisition was approved at DOA.,READ,RR,294,2026-06-14T18:09:36.211764+00:00,2026-06-14T19:09:36.211764+00:00
+498,20,PO_CREATED,PO-3208 created,A purchase order has been created for your requisition.,UNREAD,PO,208,2026-06-16T18:09:36.211764+00:00,
+499,16,APPROVAL_RESULT,RR-1295 approved,Your requisition was approved at DOA.,READ,RR,295,2026-06-01T02:09:36.211764+00:00,2026-06-01T16:09:36.211764+00:00
+500,11,APPROVAL_RESULT,RR-1296 approved,Your requisition was approved at DOA.,READ,RR,296,2026-05-30T00:09:36.211764+00:00,2026-05-31T04:09:36.211764+00:00
+501,11,PO_CREATED,PO-3209 created,A purchase order has been created for your requisition.,READ,PO,209,2026-06-02T00:09:36.211764+00:00,2026-06-02T17:09:36.211764+00:00
+502,3,APPROVAL_RESULT,RR-1297 approved,Your requisition was approved at DOA.,UNREAD,RR,297,2025-12-22T01:09:36.211764+00:00,
+503,3,PO_CREATED,PO-3210 created,A purchase order has been created for your requisition.,UNREAD,PO,210,2026-02-08T16:09:36.211764+00:00,
+504,10,APPROVAL_RESULT,RR-1298 approved,Your requisition was approved at DOA.,READ,RR,298,2026-04-08T10:09:36.211764+00:00,2026-04-09T05:09:36.211764+00:00
+505,10,PO_CREATED,PO-3211 created,A purchase order has been created for your requisition.,READ,PO,211,2026-04-26T10:09:36.211764+00:00,2026-04-26T19:09:36.211764+00:00
+506,4,APPROVAL_RESULT,RR-1299 rejected,Your requisition was rejected at DOA approval.,UNREAD,RR,299,2026-08-03T14:09:36.211764+00:00,
+507,5,APPROVAL_RESULT,RR-1300 approved,Your requisition was approved at DOA.,READ,RR,300,2026-06-21T06:09:36.211764+00:00,2026-06-22T09:09:36.211764+00:00
+508,5,PO_CREATED,PO-3212 created,A purchase order has been created for your requisition.,READ,PO,212,2026-07-08T06:09:36.211764+00:00,2026-07-09T06:09:36.211764+00:00
+509,10,APPROVAL_RESULT,RR-1301 approved,Your requisition was approved at DOA.,READ,RR,301,2026-07-04T04:09:36.211764+00:00,2026-07-04T23:09:36.211764+00:00
+510,10,PO_CREATED,PO-3213 created,A purchase order has been created for your requisition.,UNREAD,PO,213,2026-07-19T09:09:36.211764+00:00,
+511,22,APPROVAL_RESULT,RR-1302 approved,Your requisition was approved at DOA.,READ,RR,302,2026-04-10T15:09:36.211764+00:00,2026-04-10T23:09:36.211764+00:00
+512,22,PO_CREATED,PO-3214 created,A purchase order has been created for your requisition.,READ,PO,214,2026-04-21T15:09:36.211764+00:00,2026-04-22T19:09:36.211764+00:00
+513,2,APPROVAL_REQUEST,DOA approval needed: RR-1303,A requisition is waiting on your DOA approval.,UNREAD,RR,303,2026-05-13T11:09:36.211764+00:00,
+514,19,APPROVAL_RESULT,RR-1304 approved,Your requisition was approved at DOA.,READ,RR,304,2026-02-08T19:09:36.211764+00:00,2026-02-09T20:09:36.211764+00:00
+515,19,PO_CREATED,PO-3215 created,A purchase order has been created for your requisition.,READ,PO,215,2026-02-26T19:09:36.211764+00:00,2026-02-26T20:09:36.211764+00:00
+516,7,APPROVAL_RESULT,RR-1305 approved,Your requisition was approved at DOA.,UNREAD,RR,305,2026-03-25T18:09:36.211764+00:00,
+517,7,PO_CREATED,PO-3216 created,A purchase order has been created for your requisition.,UNREAD,PO,216,2026-04-13T18:09:36.211764+00:00,
+518,13,APPROVAL_RESULT,RR-1306 approved,Your requisition was approved at DOA.,READ,RR,306,2026-04-29T14:09:36.211764+00:00,2026-04-29T15:09:36.211764+00:00
+519,13,PO_CREATED,PO-3217 created,A purchase order has been created for your requisition.,UNREAD,PO,217,2026-05-04T14:09:36.211764+00:00,
+520,23,APPROVAL_RESULT,RR-1307 approved,Your requisition was approved at DOA.,READ,RR,307,2026-03-04T23:09:36.211764+00:00,2026-03-05T23:09:36.211764+00:00
+521,23,PO_CREATED,PO-3218 created,A purchase order has been created for your requisition.,UNREAD,PO,218,2026-04-04T23:09:36.211764+00:00,
+522,15,APPROVAL_REQUEST,DOA approval needed: RR-1308,A requisition is waiting on your DOA approval.,UNREAD,RR,308,2026-06-10T13:09:36.211764+00:00,
+523,16,APPROVAL_RESULT,RR-1309 approved,Your requisition was approved at DOA.,READ,RR,309,2026-05-03T03:09:36.211764+00:00,2026-05-04T05:09:36.211764+00:00
+524,16,PO_CREATED,PO-3219 created,A purchase order has been created for your requisition.,READ,PO,219,2026-05-20T13:09:36.211764+00:00,2026-05-20T16:09:36.211764+00:00
+525,24,APPROVAL_RESULT,RR-1310 approved,Your requisition was approved at DOA.,UNREAD,RR,310,2026-02-05T01:09:36.211764+00:00,
+526,24,PO_CREATED,PO-3220 created,A purchase order has been created for your requisition.,UNREAD,PO,220,2026-02-18T01:09:36.211764+00:00,
+527,18,APPROVAL_RESULT,RR-1311 approved,Your requisition was approved at DOA.,READ,RR,311,2026-07-05T07:09:36.211764+00:00,2026-07-05T18:09:36.211764+00:00
+528,18,PO_CREATED,PO-3221 created,A purchase order has been created for your requisition.,READ,PO,221,2026-07-29T07:09:36.211764+00:00,2026-07-30T08:09:36.211764+00:00
+529,23,APPROVAL_RESULT,RR-1312 approved,Your requisition was approved at DOA.,READ,RR,312,2026-01-30T11:09:36.211764+00:00,2026-01-30T23:09:36.211764+00:00
+530,23,PO_CREATED,PO-3222 created,A purchase order has been created for your requisition.,UNREAD,PO,222,2026-03-05T11:09:36.211764+00:00,
+531,4,APPROVAL_RESULT,RR-1314 approved,Your requisition was approved at DOA.,READ,RR,314,2026-05-06T03:09:36.211764+00:00,2026-05-06T20:09:36.211764+00:00
+532,4,PO_CREATED,PO-3223 created,A purchase order has been created for your requisition.,UNREAD,PO,223,2026-05-12T03:09:36.211764+00:00,
+533,6,APPROVAL_RESULT,RR-1315 approved,Your requisition was approved at DOA.,READ,RR,315,2026-04-16T12:09:36.211764+00:00,2026-04-16T21:09:36.211764+00:00
+534,6,PO_CREATED,PO-3224 created,A purchase order has been created for your requisition.,UNREAD,PO,224,2026-05-01T12:09:36.211764+00:00,
+535,18,APPROVAL_RESULT,RR-1316 approved,Your requisition was approved at DOA.,READ,RR,316,2025-12-27T17:09:36.211764+00:00,2025-12-28T09:09:36.211764+00:00
+536,18,PO_CREATED,PO-3225 created,A purchase order has been created for your requisition.,UNREAD,PO,225,2026-01-03T17:09:36.211764+00:00,
+537,21,APPROVAL_RESULT,RR-1317 approved,Your requisition was approved at DOA.,UNREAD,RR,317,2026-05-12T01:09:36.211764+00:00,
+538,22,APPROVAL_RESULT,RR-1318 approved,Your requisition was approved at DOA.,UNREAD,RR,318,2026-07-31T07:09:36.211764+00:00,
+539,22,PO_CREATED,PO-3226 created,A purchase order has been created for your requisition.,READ,PO,226,2026-09-22T01:09:36.211764+00:00,2026-09-22T15:09:36.211764+00:00
+540,2,APPROVAL_RESULT,RR-1319 approved,Your requisition was approved at DOA.,READ,RR,319,2026-01-13T05:09:36.211764+00:00,2026-01-13T08:09:36.211764+00:00
+541,2,PO_CREATED,PO-3227 created,A purchase order has been created for your requisition.,READ,PO,227,2026-01-22T05:09:36.211764+00:00,2026-01-23T07:09:36.211764+00:00
+542,5,APPROVAL_RESULT,RR-1320 rejected,Your requisition was rejected at DOA approval.,UNREAD,RR,320,2026-03-08T02:09:36.211764+00:00,
+543,15,APPROVAL_RESULT,RR-1321 approved,Your requisition was approved at DOA.,READ,RR,321,2026-01-18T15:09:36.211764+00:00,2026-01-19T05:09:36.211764+00:00
+544,15,PO_CREATED,PO-3228 created,A purchase order has been created for your requisition.,UNREAD,PO,228,2026-01-31T15:09:36.211764+00:00,
+545,17,APPROVAL_RESULT,RR-1322 approved,Your requisition was approved at DOA.,READ,RR,322,2025-12-27T23:09:36.211764+00:00,2025-12-28T22:09:36.211764+00:00
+546,17,PO_CREATED,PO-3229 created,A purchase order has been created for your requisition.,UNREAD,PO,229,2026-01-02T23:09:36.211764+00:00,
+547,3,APPROVAL_RESULT,RR-1323 approved,Your requisition was approved at DOA.,READ,RR,323,2026-08-11T08:09:36.211764+00:00,2026-08-12T12:09:36.211764+00:00
+548,3,PO_CREATED,PO-3230 created,A purchase order has been created for your requisition.,READ,PO,230,2026-08-26T08:09:36.211764+00:00,2026-08-26T11:09:36.211764+00:00
+549,18,APPROVAL_RESULT,RR-1324 approved,Your requisition was approved at DOA.,READ,RR,324,2026-03-21T15:09:36.211764+00:00,2026-03-22T20:09:36.211764+00:00
+550,18,PO_CREATED,PO-3231 created,A purchase order has been created for your requisition.,READ,PO,231,2026-04-10T07:09:36.211764+00:00,2026-04-10T20:09:36.211764+00:00
+551,10,APPROVAL_RESULT,RR-1325 approved,Your requisition was approved at DOA.,READ,RR,325,2026-02-07T19:09:36.211764+00:00,2026-02-07T22:09:36.211764+00:00
+552,10,PO_CREATED,PO-3232 created,A purchase order has been created for your requisition.,UNREAD,PO,232,2026-02-09T19:09:36.211764+00:00,
+553,11,APPROVAL_RESULT,RR-1326 approved,Your requisition was approved at DOA.,READ,RR,326,2026-02-01T10:09:36.211764+00:00,2026-02-02T13:09:36.211764+00:00
+554,11,PO_CREATED,PO-3233 created,A purchase order has been created for your requisition.,UNREAD,PO,233,2026-03-05T10:09:36.211764+00:00,
+555,10,APPROVAL_RESULT,RR-1327 approved,Your requisition was approved at DOA.,READ,RR,327,2026-02-05T07:09:36.211764+00:00,2026-02-06T07:09:36.211764+00:00
+556,10,PO_CREATED,PO-3234 created,A purchase order has been created for your requisition.,READ,PO,234,2026-02-15T07:09:36.211764+00:00,2026-02-15T16:09:36.211764+00:00
+557,8,APPROVAL_RESULT,RR-1328 approved,Your requisition was approved at DOA.,UNREAD,RR,328,2026-04-27T01:09:36.211764+00:00,
+558,8,PO_CREATED,PO-3235 created,A purchase order has been created for your requisition.,READ,PO,235,2026-05-16T03:09:36.211764+00:00,2026-05-16T16:09:36.211764+00:00
+559,24,APPROVAL_RESULT,RR-1329 approved,Your requisition was approved at DOA.,READ,RR,329,2026-03-03T20:09:36.211764+00:00,2026-03-04T22:09:36.211764+00:00
+560,24,PO_CREATED,PO-3236 created,A purchase order has been created for your requisition.,READ,PO,236,2026-04-12T20:09:36.211764+00:00,2026-04-13T20:09:36.211764+00:00
+561,15,APPROVAL_RESULT,RR-1330 approved,Your requisition was approved at DOA.,READ,RR,330,2025-12-21T17:09:36.211764+00:00,2025-12-22T20:09:36.211764+00:00
+562,15,PO_CREATED,PO-3237 created,A purchase order has been created for your requisition.,READ,PO,237,2026-01-07T17:09:36.211764+00:00,2026-01-08T10:09:36.211764+00:00
+563,14,APPROVAL_RESULT,RR-1331 rejected,Your requisition was rejected at DOA approval.,READ,RR,331,2026-05-11T02:09:36.211764+00:00,2026-05-11T06:09:36.211764+00:00
+564,6,APPROVAL_RESULT,RR-1332 approved,Your requisition was approved at DOA.,UNREAD,RR,332,2026-05-20T08:09:36.211764+00:00,
+565,6,PO_CREATED,PO-3238 created,A purchase order has been created for your requisition.,UNREAD,PO,238,2026-06-08T08:09:36.211764+00:00,
+566,20,APPROVAL_RESULT,RR-1333 rejected,Your requisition was rejected at DOA approval.,UNREAD,RR,333,2026-05-04T19:09:36.211764+00:00,
+567,12,APPROVAL_RESULT,RR-1334 approved,Your requisition was approved at DOA.,READ,RR,334,2026-05-26T01:09:36.211764+00:00,2026-05-27T06:09:36.211764+00:00
+568,12,PO_CREATED,PO-3239 created,A purchase order has been created for your requisition.,READ,PO,239,2026-05-28T01:09:36.211764+00:00,2026-05-28T23:09:36.211764+00:00
+569,19,APPROVAL_RESULT,RR-1335 approved,Your requisition was approved at DOA.,READ,RR,335,2025-12-08T20:09:36.211764+00:00,2025-12-09T14:09:36.211764+00:00
+570,19,PO_CREATED,PO-3240 created,A purchase order has been created for your requisition.,READ,PO,240,2025-12-22T20:09:36.211764+00:00,2025-12-23T21:09:36.211764+00:00
+571,21,APPROVAL_RESULT,RR-1336 approved,Your requisition was approved at DOA.,READ,RR,336,2026-07-25T17:09:36.211764+00:00,2026-07-26T04:09:36.211764+00:00
+572,15,APPROVAL_REQUEST,NFA approval needed: PR-2286,An NFA is waiting on your approval.,UNREAD,PR,286,2026-08-14T15:09:36.211764+00:00,
+573,6,APPROVAL_RESULT,RR-1337 approved,Your requisition was approved at DOA.,UNREAD,RR,337,2026-01-09T02:09:36.211764+00:00,
+574,6,PO_CREATED,PO-3241 created,A purchase order has been created for your requisition.,UNREAD,PO,241,2026-03-04T02:09:36.211764+00:00,
+575,9,APPROVAL_RESULT,RR-1338 approved,Your requisition was approved at DOA.,UNREAD,RR,338,2026-08-12T21:09:36.211764+00:00,
+576,9,PO_CREATED,PO-3242 created,A purchase order has been created for your requisition.,UNREAD,PO,242,2026-08-14T21:09:36.211764+00:00,
+577,15,APPROVAL_REQUEST,DOA approval needed: RR-1339,A requisition is waiting on your DOA approval.,UNREAD,RR,339,2026-07-03T03:09:36.211764+00:00,
+578,20,APPROVAL_RESULT,RR-1340 approved,Your requisition was approved at DOA.,READ,RR,340,2026-08-01T18:09:36.211764+00:00,2026-08-01T22:09:36.211764+00:00
+579,20,PO_CREATED,PO-3243 created,A purchase order has been created for your requisition.,READ,PO,243,2026-08-05T18:09:36.211764+00:00,2026-08-06T12:09:36.211764+00:00
+580,6,APPROVAL_RESULT,RR-1341 approved,Your requisition was approved at DOA.,UNREAD,RR,341,2026-03-02T15:09:36.211764+00:00,
+581,6,PO_CREATED,PO-3244 created,A purchase order has been created for your requisition.,UNREAD,PO,244,2026-03-11T15:09:36.211764+00:00,
+582,9,APPROVAL_RESULT,RR-1342 approved,Your requisition was approved at DOA.,READ,RR,342,2026-08-15T04:09:36.211764+00:00,2026-08-15T09:09:36.211764+00:00
+583,9,PO_CREATED,PO-3245 created,A purchase order has been created for your requisition.,UNREAD,PO,245,2026-08-17T04:09:36.211764+00:00,
+584,20,APPROVAL_RESULT,RR-1343 approved,Your requisition was approved at DOA.,READ,RR,343,2026-03-01T22:09:36.211764+00:00,2026-03-02T18:09:36.211764+00:00
+585,20,PO_CREATED,PO-3246 created,A purchase order has been created for your requisition.,UNREAD,PO,246,2026-03-15T22:09:36.211764+00:00,
+586,2,APPROVAL_REQUEST,DOA approval needed: RR-1344,A requisition is waiting on your DOA approval.,UNREAD,RR,344,2026-04-03T13:09:36.211764+00:00,
+587,1,APPROVAL_RESULT,RR-1345 approved,Your requisition was approved at DOA.,READ,RR,345,2026-07-28T09:09:36.211764+00:00,2026-07-29T11:09:36.211764+00:00
+588,9,APPROVAL_RESULT,RR-1346 approved,Your requisition was approved at DOA.,READ,RR,346,2026-05-13T01:09:36.211764+00:00,2026-05-13T09:09:36.211764+00:00
+589,9,PO_CREATED,PO-3247 created,A purchase order has been created for your requisition.,READ,PO,247,2026-06-24T11:09:36.211764+00:00,2026-06-24T18:09:36.211764+00:00
+590,15,APPROVAL_RESULT,RR-1347 approved,Your requisition was approved at DOA.,READ,RR,347,2026-02-19T20:09:36.211764+00:00,2026-02-20T07:09:36.211764+00:00
+591,14,APPROVAL_RESULT,RR-1348 approved,Your requisition was approved at DOA.,READ,RR,348,2026-05-11T05:09:36.211764+00:00,2026-05-11T15:09:36.211764+00:00
+592,14,PO_CREATED,PO-3248 created,A purchase order has been created for your requisition.,READ,PO,248,2026-05-15T05:09:36.211764+00:00,2026-05-16T11:09:36.211764+00:00
+593,7,APPROVAL_RESULT,RR-1349 approved,Your requisition was approved at DOA.,UNREAD,RR,349,2026-04-23T19:09:36.211764+00:00,
+594,18,APPROVAL_RESULT,RR-1350 approved,Your requisition was approved at DOA.,READ,RR,350,2026-06-06T01:09:36.211764+00:00,2026-06-06T13:09:36.211764+00:00
+595,18,PO_CREATED,PO-3249 created,A purchase order has been created for your requisition.,READ,PO,249,2026-07-12T01:09:36.211764+00:00,2026-07-13T00:09:36.211764+00:00
+596,24,APPROVAL_RESULT,RR-1351 approved,Your requisition was approved at DOA.,UNREAD,RR,351,2026-07-04T17:09:36.211764+00:00,
+597,24,PO_CREATED,PO-3250 created,A purchase order has been created for your requisition.,UNREAD,PO,250,2026-08-21T13:09:36.211764+00:00,
+598,11,APPROVAL_RESULT,RR-1352 approved,Your requisition was approved at DOA.,READ,RR,352,2026-02-07T10:09:36.211764+00:00,2026-02-08T07:09:36.211764+00:00
+599,11,PO_CREATED,PO-3251 created,A purchase order has been created for your requisition.,UNREAD,PO,251,2026-02-23T10:09:36.211764+00:00,
+600,15,APPROVAL_RESULT,RR-1354 approved,Your requisition was approved at DOA.,READ,RR,354,2026-08-07T21:09:36.211764+00:00,2026-08-08T15:09:36.211764+00:00
+601,15,PO_CREATED,PO-3252 created,A purchase order has been created for your requisition.,READ,PO,252,2026-08-22T21:09:36.211764+00:00,2026-08-24T02:09:36.211764+00:00
+602,3,APPROVAL_RESULT,RR-1356 approved,Your requisition was approved at DOA.,READ,RR,356,2026-05-27T02:09:36.211764+00:00,2026-05-27T13:09:36.211764+00:00
+603,24,APPROVAL_RESULT,RR-1357 approved,Your requisition was approved at DOA.,READ,RR,357,2026-06-25T20:09:36.211764+00:00,2026-06-26T05:09:36.211764+00:00
+604,24,PO_CREATED,PO-3253 created,A purchase order has been created for your requisition.,UNREAD,PO,253,2026-07-03T20:09:36.211764+00:00,
+605,19,APPROVAL_RESULT,RR-1358 approved,Your requisition was approved at DOA.,READ,RR,358,2026-03-26T06:09:36.211764+00:00,2026-03-26T10:09:36.211764+00:00
+606,19,PO_CREATED,PO-3254 created,A purchase order has been created for your requisition.,READ,PO,254,2026-04-29T19:09:36.211764+00:00,2026-04-30T21:09:36.211764+00:00
+607,2,APPROVAL_RESULT,RR-1359 approved,Your requisition was approved at DOA.,READ,RR,359,2026-02-14T08:09:36.211764+00:00,2026-02-15T10:09:36.211764+00:00
+608,2,PO_CREATED,PO-3255 created,A purchase order has been created for your requisition.,READ,PO,255,2026-03-04T08:09:36.211764+00:00,2026-03-05T03:09:36.211764+00:00
+609,16,APPROVAL_RESULT,RR-1360 approved,Your requisition was approved at DOA.,READ,RR,360,2026-03-01T10:09:36.211764+00:00,2026-03-02T02:09:36.211764+00:00
+610,16,PO_CREATED,PO-3256 created,A purchase order has been created for your requisition.,READ,PO,256,2026-03-06T10:09:36.211764+00:00,2026-03-07T10:09:36.211764+00:00
+611,10,APPROVAL_RESULT,RR-1361 approved,Your requisition was approved at DOA.,READ,RR,361,2026-06-03T12:09:36.211764+00:00,2026-06-04T01:09:36.211764+00:00
+612,10,PO_CREATED,PO-3257 created,A purchase order has been created for your requisition.,READ,PO,257,2026-07-28T03:09:36.211764+00:00,2026-07-29T02:09:36.211764+00:00
+613,7,APPROVAL_RESULT,RR-1362 approved,Your requisition was approved at DOA.,READ,RR,362,2026-03-02T04:09:36.211764+00:00,2026-03-03T05:09:36.211764+00:00
+614,7,PO_CREATED,PO-3258 created,A purchase order has been created for your requisition.,UNREAD,PO,258,2026-03-17T04:09:36.211764+00:00,
+615,8,APPROVAL_RESULT,RR-1363 approved,Your requisition was approved at DOA.,READ,RR,363,2026-02-26T22:09:36.211764+00:00,2026-02-27T04:09:36.211764+00:00
+616,8,PO_CREATED,PO-3259 created,A purchase order has been created for your requisition.,READ,PO,259,2026-04-16T05:09:36.211764+00:00,2026-04-16T21:09:36.211764+00:00
+617,12,APPROVAL_RESULT,RR-1364 approved,Your requisition was approved at DOA.,READ,RR,364,2026-06-21T05:09:36.211764+00:00,2026-06-21T20:09:36.211764+00:00
+618,12,PO_CREATED,PO-3260 created,A purchase order has been created for your requisition.,READ,PO,260,2026-06-28T05:09:36.211764+00:00,2026-06-29T04:09:36.211764+00:00
+619,14,APPROVAL_RESULT,RR-1365 approved,Your requisition was approved at DOA.,READ,RR,365,2026-07-17T07:09:36.211764+00:00,2026-07-17T20:09:36.211764+00:00
+620,14,PO_CREATED,PO-3261 created,A purchase order has been created for your requisition.,UNREAD,PO,261,2026-08-26T07:09:36.211764+00:00,
+621,10,APPROVAL_RESULT,RR-1366 approved,Your requisition was approved at DOA.,UNREAD,RR,366,2026-05-04T21:09:36.211764+00:00,
+622,10,PO_CREATED,PO-3262 created,A purchase order has been created for your requisition.,READ,PO,262,2026-05-17T21:09:36.211764+00:00,2026-05-17T22:09:36.211764+00:00
+623,2,APPROVAL_RESULT,RR-1367 approved,Your requisition was approved at DOA.,READ,RR,367,2026-05-18T14:09:36.211764+00:00,2026-05-19T09:09:36.211764+00:00
+624,2,PO_CREATED,PO-3263 created,A purchase order has been created for your requisition.,UNREAD,PO,263,2026-06-28T14:09:36.211764+00:00,
+625,19,APPROVAL_RESULT,RR-1368 approved,Your requisition was approved at DOA.,READ,RR,368,2026-02-12T16:09:36.211764+00:00,2026-02-12T21:09:36.211764+00:00
+626,19,PO_CREATED,PO-3264 created,A purchase order has been created for your requisition.,READ,PO,264,2026-02-28T16:09:36.211764+00:00,2026-02-28T22:09:36.211764+00:00
+627,15,APPROVAL_REQUEST,DOA approval needed: RR-1369,A requisition is waiting on your DOA approval.,UNREAD,RR,369,2026-05-15T08:09:36.211764+00:00,
+628,7,APPROVAL_RESULT,RR-1370 approved,Your requisition was approved at DOA.,READ,RR,370,2026-02-24T19:09:36.211764+00:00,2026-02-25T18:09:36.211764+00:00
+629,7,PO_CREATED,PO-3265 created,A purchase order has been created for your requisition.,UNREAD,PO,265,2026-03-12T19:09:36.211764+00:00,
+630,14,APPROVAL_RESULT,RR-1371 approved,Your requisition was approved at DOA.,UNREAD,RR,371,2025-12-20T01:09:36.211764+00:00,
+631,14,PO_CREATED,PO-3266 created,A purchase order has been created for your requisition.,UNREAD,PO,266,2026-01-02T01:09:36.211764+00:00,
+632,7,APPROVAL_RESULT,RR-1372 approved,Your requisition was approved at DOA.,READ,RR,372,2025-12-09T17:09:36.211764+00:00,2025-12-10T07:09:36.211764+00:00
+633,7,PO_CREATED,PO-3267 created,A purchase order has been created for your requisition.,UNREAD,PO,267,2025-12-24T17:09:36.211764+00:00,
+634,10,APPROVAL_RESULT,RR-1373 approved,Your requisition was approved at DOA.,UNREAD,RR,373,2026-06-04T14:09:36.211764+00:00,
+635,10,PO_CREATED,PO-3268 created,A purchase order has been created for your requisition.,READ,PO,268,2026-06-26T03:09:36.211764+00:00,2026-06-27T04:09:36.211764+00:00
+636,5,APPROVAL_RESULT,RR-1374 approved,Your requisition was approved at DOA.,UNREAD,RR,374,2026-08-23T02:09:36.211764+00:00,
+637,5,PO_CREATED,PO-3269 created,A purchase order has been created for your requisition.,READ,PO,269,2026-08-31T02:09:36.211764+00:00,2026-08-31T19:09:36.211764+00:00
+638,15,APPROVAL_RESULT,RR-1375 approved,Your requisition was approved at DOA.,READ,RR,375,2026-04-16T07:09:36.211764+00:00,2026-04-17T10:09:36.211764+00:00
+639,15,PO_CREATED,PO-3270 created,A purchase order has been created for your requisition.,READ,PO,270,2026-05-04T07:09:36.211764+00:00,2026-05-05T11:09:36.211764+00:00
+640,19,APPROVAL_RESULT,RR-1376 approved,Your requisition was approved at DOA.,UNREAD,RR,376,2026-03-24T21:09:36.211764+00:00,
+641,19,PO_CREATED,PO-3271 created,A purchase order has been created for your requisition.,READ,PO,271,2026-04-27T21:09:36.211764+00:00,2026-04-28T03:09:36.211764+00:00
+642,15,APPROVAL_REQUEST,DOA approval needed: RR-1377,A requisition is waiting on your DOA approval.,UNREAD,RR,377,2026-07-07T18:09:36.211764+00:00,
+643,14,APPROVAL_RESULT,RR-1378 approved,Your requisition was approved at DOA.,READ,RR,378,2026-05-16T03:09:36.211764+00:00,2026-05-16T19:09:36.211764+00:00
+644,14,PO_CREATED,PO-3272 created,A purchase order has been created for your requisition.,READ,PO,272,2026-05-23T03:09:36.211764+00:00,2026-05-23T07:09:36.211764+00:00
+645,13,APPROVAL_RESULT,RR-1379 approved,Your requisition was approved at DOA.,UNREAD,RR,379,2026-05-28T13:09:36.211764+00:00,
+646,19,APPROVAL_RESULT,RR-1380 approved,Your requisition was approved at DOA.,READ,RR,380,2025-12-15T01:09:36.211764+00:00,2025-12-15T21:09:36.211764+00:00
+647,19,PO_CREATED,PO-3273 created,A purchase order has been created for your requisition.,READ,PO,273,2026-01-20T01:09:36.211764+00:00,2026-01-20T07:09:36.211764+00:00
+648,18,APPROVAL_RESULT,RR-1381 approved,Your requisition was approved at DOA.,UNREAD,RR,381,2026-06-05T16:09:36.211764+00:00,
+649,18,PO_CREATED,PO-3274 created,A purchase order has been created for your requisition.,UNREAD,PO,274,2026-06-24T16:09:36.211764+00:00,
+650,12,APPROVAL_RESULT,RR-1382 approved,Your requisition was approved at DOA.,UNREAD,RR,382,2025-12-21T17:09:36.211764+00:00,
+651,12,PO_CREATED,PO-3275 created,A purchase order has been created for your requisition.,READ,PO,275,2026-01-02T17:09:36.211764+00:00,2026-01-03T11:09:36.211764+00:00
+652,9,APPROVAL_RESULT,RR-1383 approved,Your requisition was approved at DOA.,READ,RR,383,2026-07-14T21:09:36.211764+00:00,2026-07-15T02:09:36.211764+00:00
+653,9,PO_CREATED,PO-3276 created,A purchase order has been created for your requisition.,UNREAD,PO,276,2026-08-02T21:09:36.211764+00:00,
+654,18,APPROVAL_RESULT,RR-1384 approved,Your requisition was approved at DOA.,READ,RR,384,2026-02-19T22:09:36.211764+00:00,2026-02-20T04:09:36.211764+00:00
+655,18,PO_CREATED,PO-3277 created,A purchase order has been created for your requisition.,READ,PO,277,2026-03-06T22:09:36.211764+00:00,2026-03-07T07:09:36.211764+00:00
+656,12,APPROVAL_RESULT,RR-1385 approved,Your requisition was approved at DOA.,READ,RR,385,2026-04-14T23:09:36.211764+00:00,2026-04-16T00:09:36.211764+00:00
+657,12,PO_CREATED,PO-3278 created,A purchase order has been created for your requisition.,UNREAD,PO,278,2026-05-02T13:09:36.211764+00:00,
+658,14,APPROVAL_RESULT,RR-1386 approved,Your requisition was approved at DOA.,READ,RR,386,2026-04-13T17:09:36.211764+00:00,2026-04-14T22:09:36.211764+00:00
+659,14,PO_CREATED,PO-3279 created,A purchase order has been created for your requisition.,READ,PO,279,2026-06-01T17:09:36.211764+00:00,2026-06-02T17:09:36.211764+00:00
+660,23,APPROVAL_RESULT,RR-1387 approved,Your requisition was approved at DOA.,UNREAD,RR,387,2026-05-11T04:09:36.211764+00:00,
+661,23,PO_CREATED,PO-3280 created,A purchase order has been created for your requisition.,READ,PO,280,2026-05-16T04:09:36.211764+00:00,2026-05-17T03:09:36.211764+00:00
+662,9,APPROVAL_RESULT,RR-1388 approved,Your requisition was approved at DOA.,READ,RR,388,2026-04-27T05:09:36.211764+00:00,2026-04-27T20:09:36.211764+00:00
+663,2,APPROVAL_RESULT,RR-1389 approved,Your requisition was approved at DOA.,UNREAD,RR,389,2026-08-05T08:09:36.211764+00:00,
+664,9,APPROVAL_RESULT,RR-1390 approved,Your requisition was approved at DOA.,READ,RR,390,2026-03-10T18:09:36.211764+00:00,2026-03-11T05:09:36.211764+00:00
+665,9,PO_CREATED,PO-3281 created,A purchase order has been created for your requisition.,UNREAD,PO,281,2026-03-25T16:09:36.211764+00:00,
+666,15,APPROVAL_REQUEST,DOA approval needed: RR-1391,A requisition is waiting on your DOA approval.,UNREAD,RR,391,2026-04-11T13:09:36.211764+00:00,
+667,16,APPROVAL_RESULT,RR-1392 approved,Your requisition was approved at DOA.,READ,RR,392,2026-02-05T15:09:36.211764+00:00,2026-02-05T22:09:36.211764+00:00
+668,16,PO_CREATED,PO-3282 created,A purchase order has been created for your requisition.,UNREAD,PO,282,2026-02-20T15:09:36.211764+00:00,
+669,2,APPROVAL_REQUEST,DOA approval needed: RR-1393,A requisition is waiting on your DOA approval.,UNREAD,RR,393,2026-06-07T18:09:36.211764+00:00,
+670,24,APPROVAL_RESULT,RR-1394 approved,Your requisition was approved at DOA.,UNREAD,RR,394,2026-01-03T05:09:36.211764+00:00,
+671,13,APPROVAL_RESULT,NFA rejected for PR-2336,The NFA for this PR was rejected.,READ,PR,336,2026-01-24T03:09:36.211764+00:00,2026-01-24T09:09:36.211764+00:00
+672,11,APPROVAL_RESULT,RR-1395 approved,Your requisition was approved at DOA.,READ,RR,395,2026-08-01T08:09:36.211764+00:00,2026-08-01T16:09:36.211764+00:00
+673,11,PO_CREATED,PO-3283 created,A purchase order has been created for your requisition.,READ,PO,283,2026-08-17T08:09:36.211764+00:00,2026-08-18T09:09:36.211764+00:00
+674,11,APPROVAL_RESULT,RR-1397 approved,Your requisition was approved at DOA.,UNREAD,RR,397,2026-03-06T12:09:36.211764+00:00,
+675,20,APPROVAL_RESULT,RR-1398 approved,Your requisition was approved at DOA.,READ,RR,398,2026-04-08T16:09:36.211764+00:00,2026-04-09T00:09:36.211764+00:00
+676,20,PO_CREATED,PO-3284 created,A purchase order has been created for your requisition.,READ,PO,284,2026-04-22T16:09:36.211764+00:00,2026-04-23T05:09:36.211764+00:00
+677,2,APPROVAL_RESULT,RR-1399 approved,Your requisition was approved at DOA.,READ,RR,399,2026-04-18T15:09:36.211764+00:00,2026-04-19T15:09:36.211764+00:00
+678,2,PO_CREATED,PO-3285 created,A purchase order has been created for your requisition.,READ,PO,285,2026-04-30T15:09:36.211764+00:00,2026-05-01T16:09:36.211764+00:00
+679,8,APPROVAL_RESULT,RR-1400 approved,Your requisition was approved at DOA.,UNREAD,RR,400,2026-03-08T02:09:36.211764+00:00,
+680,8,PO_CREATED,PO-3286 created,A purchase order has been created for your requisition.,UNREAD,PO,286,2026-04-21T02:09:36.211764+00:00,
+681,16,APPROVAL_RESULT,RR-1401 approved,Your requisition was approved at DOA.,READ,RR,401,2026-04-18T14:09:36.211764+00:00,2026-04-18T20:09:36.211764+00:00
+682,2,APPROVAL_REQUEST,DOA approval needed: RR-1402,A requisition is waiting on your DOA approval.,UNREAD,RR,402,2026-04-19T19:09:36.211764+00:00,
+683,21,APPROVAL_RESULT,RR-1403 approved,Your requisition was approved at DOA.,READ,RR,403,2026-01-09T01:09:36.211764+00:00,2026-01-09T13:09:36.211764+00:00
+684,21,PO_CREATED,PO-3287 created,A purchase order has been created for your requisition.,READ,PO,287,2026-01-11T01:09:36.211764+00:00,2026-01-11T06:09:36.211764+00:00
+685,7,APPROVAL_RESULT,RR-1404 approved,Your requisition was approved at DOA.,READ,RR,404,2026-04-04T22:09:36.211764+00:00,2026-04-05T16:09:36.211764+00:00
+686,18,APPROVAL_RESULT,RR-1405 approved,Your requisition was approved at DOA.,UNREAD,RR,405,2026-02-01T14:09:36.211764+00:00,
+687,18,PO_CREATED,PO-3288 created,A purchase order has been created for your requisition.,UNREAD,PO,288,2026-03-08T00:09:36.211764+00:00,
+688,15,APPROVAL_RESULT,RR-1406 approved,Your requisition was approved at DOA.,READ,RR,406,2026-03-17T21:09:36.211764+00:00,2026-03-18T09:09:36.211764+00:00
+689,15,PO_CREATED,PO-3289 created,A purchase order has been created for your requisition.,UNREAD,PO,289,2026-04-30T21:09:36.211764+00:00,
+690,16,APPROVAL_RESULT,RR-1407 approved,Your requisition was approved at DOA.,UNREAD,RR,407,2026-08-06T20:09:36.211764+00:00,
+691,16,PO_CREATED,PO-3290 created,A purchase order has been created for your requisition.,UNREAD,PO,290,2026-08-23T20:09:36.211764+00:00,
+692,2,APPROVAL_REQUEST,DOA approval needed: RR-1408,A requisition is waiting on your DOA approval.,UNREAD,RR,408,2026-04-08T13:09:36.211764+00:00,
+693,8,APPROVAL_RESULT,RR-1409 approved,Your requisition was approved at DOA.,READ,RR,409,2026-01-18T14:09:36.211764+00:00,2026-01-18T19:09:36.211764+00:00
+694,21,APPROVAL_RESULT,RR-1410 approved,Your requisition was approved at DOA.,READ,RR,410,2026-05-26T09:09:36.211764+00:00,2026-05-27T02:09:36.211764+00:00
+695,20,APPROVAL_RESULT,RR-1411 approved,Your requisition was approved at DOA.,READ,RR,411,2026-03-11T07:09:36.211764+00:00,2026-03-12T05:09:36.211764+00:00
+696,20,PO_CREATED,PO-3291 created,A purchase order has been created for your requisition.,UNREAD,PO,291,2026-03-24T07:09:36.211764+00:00,
+697,20,APPROVAL_RESULT,RR-1413 approved,Your requisition was approved at DOA.,UNREAD,RR,413,2025-12-10T08:09:36.211764+00:00,
+698,20,PO_CREATED,PO-3292 created,A purchase order has been created for your requisition.,READ,PO,292,2025-12-12T08:09:36.211764+00:00,2025-12-13T04:09:36.211764+00:00
+699,6,APPROVAL_RESULT,RR-1414 approved,Your requisition was approved at DOA.,READ,RR,414,2026-01-24T10:09:36.211764+00:00,2026-01-24T14:09:36.211764+00:00
+700,6,PO_CREATED,PO-3293 created,A purchase order has been created for your requisition.,READ,PO,293,2026-02-10T10:09:36.211764+00:00,2026-02-10T20:09:36.211764+00:00
+701,5,APPROVAL_RESULT,RR-1415 approved,Your requisition was approved at DOA.,UNREAD,RR,415,2026-05-28T13:09:36.211764+00:00,
+702,5,PO_CREATED,PO-3294 created,A purchase order has been created for your requisition.,READ,PO,294,2026-06-07T13:09:36.211764+00:00,2026-06-08T05:09:36.211764+00:00
+703,1,APPROVAL_RESULT,RR-1416 approved,Your requisition was approved at DOA.,READ,RR,416,2026-04-04T05:09:36.211764+00:00,2026-04-05T03:09:36.211764+00:00
+704,1,PO_CREATED,PO-3295 created,A purchase order has been created for your requisition.,READ,PO,295,2026-05-11T20:09:36.211764+00:00,2026-05-12T12:09:36.211764+00:00
+705,20,APPROVAL_RESULT,RR-1417 rejected,Your requisition was rejected at DOA approval.,READ,RR,417,2026-01-09T05:09:36.211764+00:00,2026-01-09T18:09:36.211764+00:00
+706,22,APPROVAL_RESULT,RR-1418 approved,Your requisition was approved at DOA.,READ,RR,418,2026-03-03T00:09:36.211764+00:00,2026-03-03T19:09:36.211764+00:00
+707,22,PO_CREATED,PO-3296 created,A purchase order has been created for your requisition.,UNREAD,PO,296,2026-03-05T00:09:36.211764+00:00,
+708,17,APPROVAL_RESULT,RR-1419 approved,Your requisition was approved at DOA.,READ,RR,419,2026-07-24T15:09:36.211764+00:00,2026-07-25T21:09:36.211764+00:00
+709,17,PO_CREATED,PO-3297 created,A purchase order has been created for your requisition.,READ,PO,297,2026-08-17T10:09:36.211764+00:00,2026-08-18T14:09:36.211764+00:00
+710,20,APPROVAL_RESULT,RR-1420 approved,Your requisition was approved at DOA.,READ,RR,420,2026-07-18T20:09:36.211764+00:00,2026-07-19T18:09:36.211764+00:00
+711,20,PO_CREATED,PO-3298 created,A purchase order has been created for your requisition.,READ,PO,298,2026-08-06T20:09:36.211764+00:00,2026-08-07T02:09:36.211764+00:00
+712,14,APPROVAL_RESULT,RR-1421 approved,Your requisition was approved at DOA.,READ,RR,421,2026-02-07T12:09:36.211764+00:00,2026-02-07T16:09:36.211764+00:00
+713,14,PO_CREATED,PO-3299 created,A purchase order has been created for your requisition.,UNREAD,PO,299,2026-02-23T12:09:36.211764+00:00,
+714,22,APPROVAL_RESULT,RR-1422 approved,Your requisition was approved at DOA.,UNREAD,RR,422,2026-07-05T15:09:36.211764+00:00,
+715,21,APPROVAL_RESULT,RR-1423 approved,Your requisition was approved at DOA.,READ,RR,423,2025-12-11T18:09:36.211764+00:00,2025-12-11T23:09:36.211764+00:00
+716,21,PO_CREATED,PO-3300 created,A purchase order has been created for your requisition.,READ,PO,300,2026-01-15T18:09:36.211764+00:00,2026-01-16T23:09:36.211764+00:00
+717,3,APPROVAL_REQUEST,DOA approval needed: RR-1424,A requisition is waiting on your DOA approval.,UNREAD,RR,424,2026-04-29T21:09:36.211764+00:00,
+718,22,APPROVAL_RESULT,RR-1425 approved,Your requisition was approved at DOA.,UNREAD,RR,425,2026-07-31T15:09:36.211764+00:00,
+719,22,PO_CREATED,PO-3301 created,A purchase order has been created for your requisition.,UNREAD,PO,301,2026-08-05T15:09:36.211764+00:00,
+720,14,APPROVAL_RESULT,RR-1426 approved,Your requisition was approved at DOA.,READ,RR,426,2026-02-28T21:09:36.211764+00:00,2026-03-01T10:09:36.211764+00:00
+721,13,APPROVAL_RESULT,NFA rejected for PR-2362,The NFA for this PR was rejected.,UNREAD,PR,362,2026-03-16T21:09:36.211764+00:00,
+722,16,APPROVAL_RESULT,RR-1427 approved,Your requisition was approved at DOA.,UNREAD,RR,427,2026-01-17T00:09:36.211764+00:00,
+723,16,PO_CREATED,PO-3302 created,A purchase order has been created for your requisition.,UNREAD,PO,302,2026-01-30T00:09:36.211764+00:00,
+724,9,APPROVAL_RESULT,RR-1428 approved,Your requisition was approved at DOA.,READ,RR,428,2026-03-11T04:09:36.211764+00:00,2026-03-11T09:09:36.211764+00:00
+725,9,PO_CREATED,PO-3303 created,A purchase order has been created for your requisition.,READ,PO,303,2026-03-30T04:09:36.211764+00:00,2026-03-30T13:09:36.211764+00:00
+726,4,APPROVAL_RESULT,RR-1429 approved,Your requisition was approved at DOA.,READ,RR,429,2026-06-19T23:09:36.211764+00:00,2026-06-20T18:09:36.211764+00:00
+727,4,PO_CREATED,PO-3304 created,A purchase order has been created for your requisition.,READ,PO,304,2026-08-11T10:09:36.211764+00:00,2026-08-11T14:09:36.211764+00:00
+728,20,APPROVAL_RESULT,RR-1430 approved,Your requisition was approved at DOA.,READ,RR,430,2026-08-03T05:09:36.211764+00:00,2026-08-04T10:09:36.211764+00:00
+729,20,PO_CREATED,PO-3305 created,A purchase order has been created for your requisition.,UNREAD,PO,305,2026-08-14T05:09:36.211764+00:00,
+730,16,APPROVAL_RESULT,RR-1431 approved,Your requisition was approved at DOA.,READ,RR,431,2026-02-13T01:09:36.211764+00:00,2026-02-13T20:09:36.211764+00:00
+731,16,PO_CREATED,PO-3306 created,A purchase order has been created for your requisition.,UNREAD,PO,306,2026-02-28T01:09:36.211764+00:00,
+732,3,APPROVAL_REQUEST,DOA approval needed: RR-1432,A requisition is waiting on your DOA approval.,UNREAD,RR,432,2026-08-07T12:09:36.211764+00:00,
+733,8,APPROVAL_RESULT,RR-1433 approved,Your requisition was approved at DOA.,READ,RR,433,2026-02-06T03:09:36.211764+00:00,2026-02-06T19:09:36.211764+00:00
+734,8,PO_CREATED,PO-3307 created,A purchase order has been created for your requisition.,UNREAD,PO,307,2026-03-17T03:09:36.211764+00:00,
+735,3,APPROVAL_RESULT,RR-1434 approved,Your requisition was approved at DOA.,UNREAD,RR,434,2026-01-03T10:09:36.211764+00:00,
+736,3,PO_CREATED,PO-3308 created,A purchase order has been created for your requisition.,UNREAD,PO,308,2026-02-13T10:09:36.211764+00:00,
+737,23,APPROVAL_RESULT,RR-1435 approved,Your requisition was approved at DOA.,UNREAD,RR,435,2026-05-04T05:09:36.211764+00:00,
+738,23,PO_CREATED,PO-3309 created,A purchase order has been created for your requisition.,UNREAD,PO,309,2026-06-03T18:09:36.211764+00:00,
+739,9,APPROVAL_RESULT,RR-1436 approved,Your requisition was approved at DOA.,READ,RR,436,2025-12-01T12:09:36.211764+00:00,2025-12-02T16:09:36.211764+00:00
+740,9,PO_CREATED,PO-3310 created,A purchase order has been created for your requisition.,READ,PO,310,2025-12-10T12:09:36.211764+00:00,2025-12-11T08:09:36.211764+00:00
+741,12,APPROVAL_RESULT,RR-1438 approved,Your requisition was approved at DOA.,READ,RR,438,2026-08-15T21:09:36.211764+00:00,2026-08-16T05:09:36.211764+00:00
+742,12,PO_CREATED,PO-3311 created,A purchase order has been created for your requisition.,UNREAD,PO,311,2026-08-17T21:09:36.211764+00:00,
+743,16,APPROVAL_RESULT,RR-1439 approved,Your requisition was approved at DOA.,READ,RR,439,2026-06-30T09:09:36.211764+00:00,2026-06-30T19:09:36.211764+00:00
+744,16,PO_CREATED,PO-3312 created,A purchase order has been created for your requisition.,READ,PO,312,2026-08-20T09:09:36.211764+00:00,2026-08-20T23:09:36.211764+00:00
+745,2,APPROVAL_RESULT,RR-1440 approved,Your requisition was approved at DOA.,UNREAD,RR,440,2026-03-01T02:09:36.211764+00:00,
+746,2,PO_CREATED,PO-3313 created,A purchase order has been created for your requisition.,UNREAD,PO,313,2026-03-10T02:09:36.211764+00:00,
+747,18,APPROVAL_RESULT,RR-1441 approved,Your requisition was approved at DOA.,UNREAD,RR,441,2026-06-28T16:09:36.211764+00:00,
+748,18,PO_CREATED,PO-3314 created,A purchase order has been created for your requisition.,READ,PO,314,2026-07-16T16:09:36.211764+00:00,2026-07-16T22:09:36.211764+00:00
+749,14,APPROVAL_RESULT,RR-1442 approved,Your requisition was approved at DOA.,UNREAD,RR,442,2026-08-01T18:09:36.211764+00:00,
+750,14,PO_CREATED,PO-3315 created,A purchase order has been created for your requisition.,READ,PO,315,2026-08-16T18:09:36.211764+00:00,2026-08-17T06:09:36.211764+00:00
+751,17,APPROVAL_RESULT,RR-1443 approved,Your requisition was approved at DOA.,READ,RR,443,2025-12-11T21:09:36.211764+00:00,2025-12-12T03:09:36.211764+00:00
+752,17,PO_CREATED,PO-3316 created,A purchase order has been created for your requisition.,READ,PO,316,2025-12-22T21:09:36.211764+00:00,2025-12-23T01:09:36.211764+00:00
+753,2,APPROVAL_RESULT,RR-1444 approved,Your requisition was approved at DOA.,READ,RR,444,2026-03-21T23:09:36.211764+00:00,2026-03-22T07:09:36.211764+00:00
+754,2,PO_CREATED,PO-3317 created,A purchase order has been created for your requisition.,READ,PO,317,2026-05-08T23:09:36.211764+00:00,2026-05-09T23:09:36.211764+00:00
+755,10,APPROVAL_RESULT,RR-1445 approved,Your requisition was approved at DOA.,UNREAD,RR,445,2026-07-16T02:09:36.211764+00:00,
+756,10,PO_CREATED,PO-3318 created,A purchase order has been created for your requisition.,UNREAD,PO,318,2026-07-27T02:09:36.211764+00:00,
+757,18,APPROVAL_RESULT,RR-1446 approved,Your requisition was approved at DOA.,READ,RR,446,2026-06-20T13:09:36.211764+00:00,2026-06-21T08:09:36.211764+00:00
+758,18,PO_CREATED,PO-3319 created,A purchase order has been created for your requisition.,READ,PO,319,2026-06-30T13:09:36.211764+00:00,2026-07-01T12:09:36.211764+00:00
+759,21,APPROVAL_RESULT,RR-1447 approved,Your requisition was approved at DOA.,READ,RR,447,2026-05-03T13:09:36.211764+00:00,2026-05-03T14:09:36.211764+00:00
+760,21,PO_CREATED,PO-3320 created,A purchase order has been created for your requisition.,UNREAD,PO,320,2026-06-06T13:09:36.211764+00:00,
+761,20,APPROVAL_RESULT,RR-1449 approved,Your requisition was approved at DOA.,READ,RR,449,2026-04-17T12:09:36.211764+00:00,2026-04-18T14:09:36.211764+00:00
+762,20,PO_CREATED,PO-3321 created,A purchase order has been created for your requisition.,READ,PO,321,2026-04-20T12:09:36.211764+00:00,2026-04-20T15:09:36.211764+00:00
+763,3,APPROVAL_REQUEST,DOA approval needed: RR-1450,A requisition is waiting on your DOA approval.,UNREAD,RR,450,2026-08-21T04:09:36.211764+00:00,
+764,24,APPROVAL_RESULT,RR-1451 approved,Your requisition was approved at DOA.,UNREAD,RR,451,2026-02-16T05:09:36.211764+00:00,
+765,24,PO_CREATED,PO-3322 created,A purchase order has been created for your requisition.,UNREAD,PO,322,2026-03-16T05:09:36.211764+00:00,
+766,8,APPROVAL_RESULT,RR-1452 approved,Your requisition was approved at DOA.,READ,RR,452,2026-07-28T18:09:36.211764+00:00,2026-07-28T20:09:36.211764+00:00
+767,8,PO_CREATED,PO-3323 created,A purchase order has been created for your requisition.,UNREAD,PO,323,2026-08-16T18:09:36.211764+00:00,
+768,3,APPROVAL_RESULT,RR-1453 approved,Your requisition was approved at DOA.,READ,RR,453,2026-08-02T13:09:36.211764+00:00,2026-08-03T01:09:36.211764+00:00
+769,3,PO_CREATED,PO-3324 created,A purchase order has been created for your requisition.,UNREAD,PO,324,2026-08-12T13:09:36.211764+00:00,
+770,7,APPROVAL_RESULT,RR-1454 rejected,Your requisition was rejected at DOA approval.,READ,RR,454,2026-08-25T01:09:36.211764+00:00,2026-08-26T00:09:36.211764+00:00
+771,19,APPROVAL_RESULT,RR-1455 approved,Your requisition was approved at DOA.,READ,RR,455,2026-05-08T04:09:36.211764+00:00,2026-05-08T13:09:36.211764+00:00
+772,19,PO_CREATED,PO-3325 created,A purchase order has been created for your requisition.,UNREAD,PO,325,2026-06-17T04:09:36.211764+00:00,
+773,23,APPROVAL_RESULT,RR-1456 approved,Your requisition was approved at DOA.,READ,RR,456,2026-07-25T06:09:36.211764+00:00,2026-07-26T02:09:36.211764+00:00
+774,2,APPROVAL_REQUEST,DOA approval needed: RR-1457,A requisition is waiting on your DOA approval.,UNREAD,RR,457,2026-04-16T19:09:36.211764+00:00,
+775,21,APPROVAL_RESULT,RR-1458 approved,Your requisition was approved at DOA.,READ,RR,458,2026-04-26T12:09:36.211764+00:00,2026-04-27T16:09:36.211764+00:00
+776,21,PO_CREATED,PO-3326 created,A purchase order has been created for your requisition.,READ,PO,326,2026-04-28T12:09:36.211764+00:00,2026-04-29T01:09:36.211764+00:00
+777,20,APPROVAL_RESULT,RR-1459 approved,Your requisition was approved at DOA.,UNREAD,RR,459,2026-05-02T12:09:36.211764+00:00,
+778,20,PO_CREATED,PO-3327 created,A purchase order has been created for your requisition.,READ,PO,327,2026-06-14T02:09:36.211764+00:00,2026-06-14T22:09:36.211764+00:00
+779,19,APPROVAL_RESULT,RR-1460 approved,Your requisition was approved at DOA.,UNREAD,RR,460,2026-04-06T07:09:36.211764+00:00,
+780,19,PO_CREATED,PO-3328 created,A purchase order has been created for your requisition.,UNREAD,PO,328,2026-04-22T07:09:36.211764+00:00,
+781,4,APPROVAL_RESULT,RR-1461 approved,Your requisition was approved at DOA.,READ,RR,461,2026-01-31T01:09:36.211764+00:00,2026-01-31T21:09:36.211764+00:00
+782,4,PO_CREATED,PO-3329 created,A purchase order has been created for your requisition.,READ,PO,329,2026-02-20T01:09:36.211764+00:00,2026-02-21T00:09:36.211764+00:00
+783,18,APPROVAL_RESULT,RR-1462 approved,Your requisition was approved at DOA.,READ,RR,462,2026-06-26T18:09:36.211764+00:00,2026-06-27T18:09:36.211764+00:00
+784,18,PO_CREATED,PO-3330 created,A purchase order has been created for your requisition.,UNREAD,PO,330,2026-06-30T18:09:36.211764+00:00,
+785,17,APPROVAL_RESULT,RR-1463 approved,Your requisition was approved at DOA.,READ,RR,463,2026-07-27T21:09:36.211764+00:00,2026-07-28T23:09:36.211764+00:00
+786,17,PO_CREATED,PO-3331 created,A purchase order has been created for your requisition.,UNREAD,PO,331,2026-08-17T15:09:36.211764+00:00,
+787,15,APPROVAL_RESULT,RR-1464 approved,Your requisition was approved at DOA.,READ,RR,464,2026-05-05T02:09:36.211764+00:00,2026-05-06T08:09:36.211764+00:00
+788,15,PO_CREATED,PO-3332 created,A purchase order has been created for your requisition.,READ,PO,332,2026-06-13T02:09:36.211764+00:00,2026-06-13T18:09:36.211764+00:00
+789,5,APPROVAL_RESULT,RR-1465 approved,Your requisition was approved at DOA.,READ,RR,465,2026-03-23T06:09:36.211764+00:00,2026-03-23T12:09:36.211764+00:00
+790,5,PO_CREATED,PO-3333 created,A purchase order has been created for your requisition.,UNREAD,PO,333,2026-04-09T21:09:36.211764+00:00,
+791,13,APPROVAL_RESULT,RR-1466 approved,Your requisition was approved at DOA.,READ,RR,466,2026-06-23T19:09:36.211764+00:00,2026-06-25T00:09:36.211764+00:00
+792,13,PO_CREATED,PO-3334 created,A purchase order has been created for your requisition.,UNREAD,PO,334,2026-07-01T19:09:36.211764+00:00,
+793,18,APPROVAL_RESULT,RR-1467 approved,Your requisition was approved at DOA.,READ,RR,467,2026-02-16T09:09:36.211764+00:00,2026-02-16T13:09:36.211764+00:00
+794,18,PO_CREATED,PO-3335 created,A purchase order has been created for your requisition.,READ,PO,335,2026-02-21T09:09:36.211764+00:00,2026-02-21T22:09:36.211764+00:00
+795,14,APPROVAL_RESULT,RR-1468 approved,Your requisition was approved at DOA.,READ,RR,468,2026-07-19T15:09:36.211764+00:00,2026-07-20T17:09:36.211764+00:00
+796,3,APPROVAL_REQUEST,NFA approval needed: PR-2398,An NFA is waiting on your approval.,UNREAD,PR,398,2026-07-30T15:09:36.211764+00:00,
+797,20,APPROVAL_RESULT,RR-1469 approved,Your requisition was approved at DOA.,READ,RR,469,2026-08-01T09:09:36.211764+00:00,2026-08-02T03:09:36.211764+00:00
+798,20,PO_CREATED,PO-3336 created,A purchase order has been created for your requisition.,READ,PO,336,2026-08-17T01:09:36.211764+00:00,2026-08-17T08:09:36.211764+00:00
+799,8,APPROVAL_RESULT,RR-1471 approved,Your requisition was approved at DOA.,READ,RR,471,2026-07-08T22:09:36.211764+00:00,2026-07-09T07:09:36.211764+00:00
+800,8,PO_CREATED,PO-3337 created,A purchase order has been created for your requisition.,UNREAD,PO,337,2026-07-31T22:09:36.211764+00:00,
+801,7,APPROVAL_RESULT,RR-1472 approved,Your requisition was approved at DOA.,READ,RR,472,2026-03-04T07:09:36.211764+00:00,2026-03-05T12:09:36.211764+00:00
+802,7,PO_CREATED,PO-3338 created,A purchase order has been created for your requisition.,UNREAD,PO,338,2026-04-04T07:09:36.211764+00:00,
+803,9,APPROVAL_RESULT,RR-1473 approved,Your requisition was approved at DOA.,READ,RR,473,2026-02-04T23:09:36.211764+00:00,2026-02-05T21:09:36.211764+00:00
+804,9,PO_CREATED,PO-3339 created,A purchase order has been created for your requisition.,UNREAD,PO,339,2026-02-21T23:09:36.211764+00:00,
+805,5,APPROVAL_RESULT,RR-1474 approved,Your requisition was approved at DOA.,READ,RR,474,2026-04-03T17:09:36.211764+00:00,2026-04-04T15:09:36.211764+00:00
+806,5,PO_CREATED,PO-3340 created,A purchase order has been created for your requisition.,UNREAD,PO,340,2026-04-14T17:09:36.211764+00:00,
+807,2,APPROVAL_REQUEST,DOA approval needed: RR-1475,A requisition is waiting on your DOA approval.,UNREAD,RR,475,2026-05-13T11:09:36.211764+00:00,
+808,13,APPROVAL_RESULT,RR-1476 approved,Your requisition was approved at DOA.,READ,RR,476,2026-06-01T10:09:36.211764+00:00,2026-06-02T00:09:36.211764+00:00
+809,13,PO_CREATED,PO-3341 created,A purchase order has been created for your requisition.,UNREAD,PO,341,2026-07-01T10:09:36.211764+00:00,
+810,2,APPROVAL_RESULT,RR-1477 approved,Your requisition was approved at DOA.,READ,RR,477,2026-03-14T20:09:36.211764+00:00,2026-03-15T07:09:36.211764+00:00
+811,2,PO_CREATED,PO-3342 created,A purchase order has been created for your requisition.,READ,PO,342,2026-04-05T20:09:36.211764+00:00,2026-04-06T08:09:36.211764+00:00
+812,3,APPROVAL_RESULT,RR-1478 approved,Your requisition was approved at DOA.,UNREAD,RR,478,2026-02-04T02:09:36.211764+00:00,
+813,3,APPROVAL_RESULT,RR-1480 approved,Your requisition was approved at DOA.,READ,RR,480,2026-01-15T13:09:36.211764+00:00,2026-01-16T02:09:36.211764+00:00
+814,3,PO_CREATED,PO-3343 created,A purchase order has been created for your requisition.,UNREAD,PO,343,2026-01-21T13:09:36.211764+00:00,
+815,7,APPROVAL_RESULT,RR-1481 approved,Your requisition was approved at DOA.,UNREAD,RR,481,2026-07-23T04:09:36.211764+00:00,
+816,7,PO_CREATED,PO-3344 created,A purchase order has been created for your requisition.,READ,PO,344,2026-09-05T04:09:36.211764+00:00,2026-09-05T09:09:36.211764+00:00
+817,20,APPROVAL_RESULT,RR-1482 approved,Your requisition was approved at DOA.,READ,RR,482,2026-07-14T20:09:36.211764+00:00,2026-07-15T20:09:36.211764+00:00
+818,20,PO_CREATED,PO-3345 created,A purchase order has been created for your requisition.,READ,PO,345,2026-07-16T20:09:36.211764+00:00,2026-07-16T21:09:36.211764+00:00
+819,24,APPROVAL_RESULT,RR-1483 approved,Your requisition was approved at DOA.,READ,RR,483,2026-06-20T10:09:36.211764+00:00,2026-06-20T12:09:36.211764+00:00
+820,24,PO_CREATED,PO-3346 created,A purchase order has been created for your requisition.,READ,PO,346,2026-08-03T23:09:36.211764+00:00,2026-08-04T18:09:36.211764+00:00
+821,4,APPROVAL_RESULT,RR-1484 approved,Your requisition was approved at DOA.,READ,RR,484,2026-08-02T05:09:36.211764+00:00,2026-08-03T05:09:36.211764+00:00
+822,15,APPROVAL_REQUEST,DOA approval needed: RR-1485,A requisition is waiting on your DOA approval.,UNREAD,RR,485,2026-06-03T04:09:36.211764+00:00,
+823,8,APPROVAL_RESULT,RR-1486 approved,Your requisition was approved at DOA.,READ,RR,486,2026-02-12T16:09:36.211764+00:00,2026-02-13T11:09:36.211764+00:00
+824,8,PO_CREATED,PO-3347 created,A purchase order has been created for your requisition.,READ,PO,347,2026-02-22T16:09:36.211764+00:00,2026-02-23T08:09:36.211764+00:00
+825,2,APPROVAL_REQUEST,DOA approval needed: RR-1487,A requisition is waiting on your DOA approval.,UNREAD,RR,487,2026-04-04T17:09:36.211764+00:00,
+826,16,APPROVAL_RESULT,RR-1488 approved,Your requisition was approved at DOA.,READ,RR,488,2026-01-16T11:09:36.211764+00:00,2026-01-16T20:09:36.211764+00:00
+827,16,PO_CREATED,PO-3348 created,A purchase order has been created for your requisition.,READ,PO,348,2026-01-27T11:09:36.211764+00:00,2026-01-28T17:09:36.211764+00:00
+828,23,APPROVAL_RESULT,RR-1489 approved,Your requisition was approved at DOA.,READ,RR,489,2026-06-04T00:09:36.211764+00:00,2026-06-04T18:09:36.211764+00:00
+829,23,PO_CREATED,PO-3349 created,A purchase order has been created for your requisition.,UNREAD,PO,349,2026-06-26T02:09:36.211764+00:00,
+830,10,APPROVAL_RESULT,RR-1490 approved,Your requisition was approved at DOA.,READ,RR,490,2026-07-09T10:09:36.211764+00:00,2026-07-09T18:09:36.211764+00:00
+831,10,PO_CREATED,PO-3350 created,A purchase order has been created for your requisition.,UNREAD,PO,350,2026-07-27T10:09:36.211764+00:00,
+832,13,APPROVAL_RESULT,RR-1491 approved,Your requisition was approved at DOA.,UNREAD,RR,491,2026-08-05T11:09:36.211764+00:00,
+833,13,PO_CREATED,PO-3351 created,A purchase order has been created for your requisition.,READ,PO,351,2026-08-26T13:09:36.211764+00:00,2026-08-27T15:09:36.211764+00:00
+834,23,APPROVAL_RESULT,RR-1492 approved,Your requisition was approved at DOA.,UNREAD,RR,492,2026-02-10T06:09:36.211764+00:00,
+835,23,PO_CREATED,PO-3352 created,A purchase order has been created for your requisition.,UNREAD,PO,352,2026-02-20T06:09:36.211764+00:00,
+836,15,APPROVAL_REQUEST,DOA approval needed: RR-1493,A requisition is waiting on your DOA approval.,UNREAD,RR,493,2026-04-02T09:09:36.211764+00:00,
+837,9,APPROVAL_RESULT,RR-1494 approved,Your requisition was approved at DOA.,UNREAD,RR,494,2026-01-01T02:09:36.211764+00:00,
+838,9,PO_CREATED,PO-3353 created,A purchase order has been created for your requisition.,UNREAD,PO,353,2026-01-11T02:09:36.211764+00:00,
+839,20,APPROVAL_RESULT,RR-1495 approved,Your requisition was approved at DOA.,READ,RR,495,2026-07-13T16:09:36.211764+00:00,2026-07-14T19:09:36.211764+00:00
+840,24,APPROVAL_RESULT,RR-1496 approved,Your requisition was approved at DOA.,READ,RR,496,2026-08-02T00:09:36.211764+00:00,2026-08-02T01:09:36.211764+00:00
+841,15,APPROVAL_REQUEST,NFA approval needed: PR-2420,An NFA is waiting on your approval.,UNREAD,PR,420,2026-08-13T00:09:36.211764+00:00,
+842,14,APPROVAL_RESULT,RR-1497 approved,Your requisition was approved at DOA.,UNREAD,RR,497,2026-01-11T11:09:36.211764+00:00,
+843,14,PO_CREATED,PO-3354 created,A purchase order has been created for your requisition.,READ,PO,354,2026-01-18T11:09:36.211764+00:00,2026-01-19T00:09:36.211764+00:00
+844,6,APPROVAL_RESULT,RR-1498 approved,Your requisition was approved at DOA.,READ,RR,498,2026-07-13T14:09:36.211764+00:00,2026-07-14T07:09:36.211764+00:00
+845,6,PO_CREATED,PO-3355 created,A purchase order has been created for your requisition.,READ,PO,355,2026-08-08T14:09:36.211764+00:00,2026-08-09T00:09:36.211764+00:00
+846,18,APPROVAL_RESULT,RR-1499 approved,Your requisition was approved at DOA.,READ,RR,499,2026-08-09T08:09:36.211764+00:00,2026-08-09T19:09:36.211764+00:00
+847,18,PO_CREATED,PO-3356 created,A purchase order has been created for your requisition.,READ,PO,356,2026-08-16T08:09:36.211764+00:00,2026-08-17T01:09:36.211764+00:00
+848,5,APPROVAL_RESULT,RR-1500 approved,Your requisition was approved at DOA.,READ,RR,500,2026-04-12T21:09:36.211764+00:00,2026-04-13T00:09:36.211764+00:00
+849,5,PO_CREATED,PO-3357 created,A purchase order has been created for your requisition.,UNREAD,PO,357,2026-05-15T05:09:36.211764+00:00,
+850,1,APPROVAL_RESULT,RR-1501 approved,Your requisition was approved at DOA.,READ,RR,501,2026-03-16T13:09:36.211764+00:00,2026-03-17T04:09:36.211764+00:00
+851,1,PO_CREATED,PO-3358 created,A purchase order has been created for your requisition.,UNREAD,PO,358,2026-04-10T03:09:36.211764+00:00,
+852,6,APPROVAL_RESULT,RR-1502 approved,Your requisition was approved at DOA.,READ,RR,502,2026-03-01T00:09:36.211764+00:00,2026-03-01T06:09:36.211764+00:00
+853,6,PO_CREATED,PO-3359 created,A purchase order has been created for your requisition.,READ,PO,359,2026-03-15T00:09:36.211764+00:00,2026-03-15T11:09:36.211764+00:00
+854,1,APPROVAL_RESULT,RR-1503 approved,Your requisition was approved at DOA.,READ,RR,503,2026-01-10T14:09:36.211764+00:00,2026-01-11T19:09:36.211764+00:00
+855,1,PO_CREATED,PO-3360 created,A purchase order has been created for your requisition.,READ,PO,360,2026-02-27T10:09:36.211764+00:00,2026-02-28T15:09:36.211764+00:00
+856,4,APPROVAL_RESULT,RR-1504 approved,Your requisition was approved at DOA.,READ,RR,504,2026-03-11T10:09:36.211764+00:00,2026-03-11T22:09:36.211764+00:00
+857,4,PO_CREATED,PO-3361 created,A purchase order has been created for your requisition.,READ,PO,361,2026-03-25T10:09:36.211764+00:00,2026-03-25T17:09:36.211764+00:00
+858,15,APPROVAL_RESULT,RR-1505 approved,Your requisition was approved at DOA.,UNREAD,RR,505,2026-03-17T11:09:36.211764+00:00,
+859,15,PO_CREATED,PO-3362 created,A purchase order has been created for your requisition.,UNREAD,PO,362,2026-04-10T10:09:36.211764+00:00,
+860,2,APPROVAL_RESULT,RR-1506 approved,Your requisition was approved at DOA.,READ,RR,506,2026-08-18T01:09:36.211764+00:00,2026-08-19T03:09:36.211764+00:00
+861,2,PO_CREATED,PO-3363 created,A purchase order has been created for your requisition.,READ,PO,363,2026-08-27T01:09:36.211764+00:00,2026-08-27T19:09:36.211764+00:00
+862,4,APPROVAL_RESULT,RR-1507 approved,Your requisition was approved at DOA.,READ,RR,507,2026-01-18T20:09:36.211764+00:00,2026-01-19T02:09:36.211764+00:00
+863,4,PO_CREATED,PO-3364 created,A purchase order has been created for your requisition.,READ,PO,364,2026-01-21T20:09:36.211764+00:00,2026-01-22T12:09:36.211764+00:00
+864,3,APPROVAL_REQUEST,DOA approval needed: RR-1508,A requisition is waiting on your DOA approval.,UNREAD,RR,508,2026-05-27T10:09:36.211764+00:00,
+865,9,APPROVAL_RESULT,RR-1509 approved,Your requisition was approved at DOA.,READ,RR,509,2026-07-01T17:09:36.211764+00:00,2026-07-02T06:09:36.211764+00:00
+866,9,PO_CREATED,PO-3365 created,A purchase order has been created for your requisition.,READ,PO,365,2026-07-17T17:09:36.211764+00:00,2026-07-18T17:09:36.211764+00:00
+867,10,APPROVAL_RESULT,RR-1510 approved,Your requisition was approved at DOA.,UNREAD,RR,510,2026-06-01T18:09:36.211764+00:00,
+868,10,PO_CREATED,PO-3366 created,A purchase order has been created for your requisition.,READ,PO,366,2026-06-07T18:09:36.211764+00:00,2026-06-08T04:09:36.211764+00:00
+869,2,APPROVAL_RESULT,RR-1511 approved,Your requisition was approved at DOA.,UNREAD,RR,511,2026-01-22T01:09:36.211764+00:00,
+870,2,PO_CREATED,PO-3367 created,A purchase order has been created for your requisition.,UNREAD,PO,367,2026-01-29T01:09:36.211764+00:00,
+871,8,APPROVAL_RESULT,RR-1512 approved,Your requisition was approved at DOA.,UNREAD,RR,512,2026-05-12T07:09:36.211764+00:00,
+872,8,PO_CREATED,PO-3368 created,A purchase order has been created for your requisition.,UNREAD,PO,368,2026-05-18T07:09:36.211764+00:00,
+873,5,APPROVAL_RESULT,RR-1513 approved,Your requisition was approved at DOA.,READ,RR,513,2026-04-24T14:09:36.211764+00:00,2026-04-25T15:09:36.211764+00:00
+874,6,APPROVAL_RESULT,RR-1514 approved,Your requisition was approved at DOA.,READ,RR,514,2025-12-21T05:09:36.211764+00:00,2025-12-21T19:09:36.211764+00:00
+875,6,PO_CREATED,PO-3369 created,A purchase order has been created for your requisition.,READ,PO,369,2025-12-28T05:09:36.211764+00:00,2025-12-28T07:09:36.211764+00:00
+876,11,APPROVAL_RESULT,RR-1515 approved,Your requisition was approved at DOA.,READ,RR,515,2026-07-07T10:09:36.211764+00:00,2026-07-08T13:09:36.211764+00:00
+877,11,PO_CREATED,PO-3370 created,A purchase order has been created for your requisition.,READ,PO,370,2026-07-30T10:09:36.211764+00:00,2026-07-31T04:09:36.211764+00:00
+878,20,APPROVAL_RESULT,RR-1516 approved,Your requisition was approved at DOA.,READ,RR,516,2026-08-16T19:09:36.211764+00:00,2026-08-17T19:09:36.211764+00:00
+879,20,PO_CREATED,PO-3371 created,A purchase order has been created for your requisition.,READ,PO,371,2026-08-31T19:09:36.211764+00:00,2026-09-01T14:09:36.211764+00:00
+880,16,APPROVAL_RESULT,RR-1517 approved,Your requisition was approved at DOA.,READ,RR,517,2025-12-09T20:09:36.211764+00:00,2025-12-10T17:09:36.211764+00:00
+881,16,PO_CREATED,PO-3372 created,A purchase order has been created for your requisition.,READ,PO,372,2025-12-13T20:09:36.211764+00:00,2025-12-14T23:09:36.211764+00:00
+882,20,APPROVAL_RESULT,RR-1518 approved,Your requisition was approved at DOA.,READ,RR,518,2026-02-18T01:09:36.211764+00:00,2026-02-18T16:09:36.211764+00:00
+883,20,PO_CREATED,PO-3373 created,A purchase order has been created for your requisition.,UNREAD,PO,373,2026-03-28T01:09:36.211764+00:00,
+884,23,APPROVAL_RESULT,RR-1519 approved,Your requisition was approved at DOA.,READ,RR,519,2026-05-26T18:09:36.211764+00:00,2026-05-27T22:09:36.211764+00:00
+885,23,PO_CREATED,PO-3374 created,A purchase order has been created for your requisition.,READ,PO,374,2026-06-26T18:09:36.211764+00:00,2026-06-27T17:09:36.211764+00:00
+886,8,APPROVAL_RESULT,RR-1520 rejected,Your requisition was rejected at DOA approval.,READ,RR,520,2026-02-07T22:09:36.211764+00:00,2026-02-08T02:09:36.211764+00:00
+887,11,APPROVAL_RESULT,RR-1521 approved,Your requisition was approved at DOA.,UNREAD,RR,521,2026-07-19T06:09:36.211764+00:00,
+888,11,PO_CREATED,PO-3375 created,A purchase order has been created for your requisition.,READ,PO,375,2026-08-20T06:09:36.211764+00:00,2026-08-21T07:09:36.211764+00:00
+889,22,APPROVAL_RESULT,RR-1522 approved,Your requisition was approved at DOA.,UNREAD,RR,522,2026-01-31T14:09:36.211764+00:00,
+890,22,PO_CREATED,PO-3376 created,A purchase order has been created for your requisition.,UNREAD,PO,376,2026-02-08T14:09:36.211764+00:00,
+891,4,APPROVAL_RESULT,RR-1523 approved,Your requisition was approved at DOA.,READ,RR,523,2026-07-14T20:09:36.211764+00:00,2026-07-15T10:09:36.211764+00:00
+892,4,PO_CREATED,PO-3377 created,A purchase order has been created for your requisition.,READ,PO,377,2026-08-13T11:09:36.211764+00:00,2026-08-14T08:09:36.211764+00:00
+893,2,APPROVAL_REQUEST,DOA approval needed: RR-1524,A requisition is waiting on your DOA approval.,UNREAD,RR,524,2026-06-23T00:09:36.211764+00:00,
+894,9,APPROVAL_RESULT,RR-1525 approved,Your requisition was approved at DOA.,READ,RR,525,2026-03-17T12:09:36.211764+00:00,2026-03-17T16:09:36.211764+00:00
+895,9,PO_CREATED,PO-3378 created,A purchase order has been created for your requisition.,READ,PO,378,2026-04-04T04:09:36.211764+00:00,2026-04-04T05:09:36.211764+00:00
+896,4,APPROVAL_RESULT,RR-1526 approved,Your requisition was approved at DOA.,READ,RR,526,2026-08-04T06:09:36.211764+00:00,2026-08-04T14:09:36.211764+00:00
+897,4,PO_CREATED,PO-3379 created,A purchase order has been created for your requisition.,READ,PO,379,2026-08-16T06:09:36.211764+00:00,2026-08-17T10:09:36.211764+00:00
+898,16,APPROVAL_RESULT,RR-1527 approved,Your requisition was approved at DOA.,UNREAD,RR,527,2026-06-29T10:09:36.211764+00:00,
+899,16,PO_CREATED,PO-3380 created,A purchase order has been created for your requisition.,UNREAD,PO,380,2026-08-11T08:09:36.211764+00:00,
+900,13,APPROVAL_RESULT,RR-1528 approved,Your requisition was approved at DOA.,READ,RR,528,2026-03-19T19:09:36.211764+00:00,2026-03-19T23:09:36.211764+00:00
+901,13,PO_CREATED,PO-3381 created,A purchase order has been created for your requisition.,READ,PO,381,2026-04-01T19:09:36.211764+00:00,2026-04-02T13:09:36.211764+00:00
+902,7,APPROVAL_RESULT,RR-1529 approved,Your requisition was approved at DOA.,UNREAD,RR,529,2026-07-19T15:09:36.211764+00:00,
+903,7,PO_CREATED,PO-3382 created,A purchase order has been created for your requisition.,UNREAD,PO,382,2026-07-26T15:09:36.211764+00:00,
+904,13,APPROVAL_RESULT,RR-1530 approved,Your requisition was approved at DOA.,UNREAD,RR,530,2026-06-14T08:09:36.211764+00:00,
+905,2,APPROVAL_RESULT,RR-1531 approved,Your requisition was approved at DOA.,READ,RR,531,2026-01-07T20:09:36.211764+00:00,2026-01-08T19:09:36.211764+00:00
+906,2,PO_CREATED,PO-3383 created,A purchase order has been created for your requisition.,READ,PO,383,2026-01-13T20:09:36.211764+00:00,2026-01-14T04:09:36.211764+00:00
+907,23,APPROVAL_RESULT,RR-1532 approved,Your requisition was approved at DOA.,UNREAD,RR,532,2026-07-18T05:09:36.211764+00:00,
+908,23,PO_CREATED,PO-3384 created,A purchase order has been created for your requisition.,UNREAD,PO,384,2026-07-20T05:09:36.211764+00:00,
+909,19,APPROVAL_RESULT,RR-1533 approved,Your requisition was approved at DOA.,UNREAD,RR,533,2026-07-09T08:09:36.211764+00:00,
+910,24,APPROVAL_RESULT,NFA rejected for PR-2454,The NFA for this PR was rejected.,UNREAD,PR,454,2026-07-25T08:09:36.211764+00:00,
+911,14,APPROVAL_RESULT,RR-1534 approved,Your requisition was approved at DOA.,READ,RR,534,2026-07-26T05:09:36.211764+00:00,2026-07-27T07:09:36.211764+00:00
+912,14,PO_CREATED,PO-3385 created,A purchase order has been created for your requisition.,UNREAD,PO,385,2026-08-04T05:09:36.211764+00:00,
+913,6,APPROVAL_RESULT,RR-1535 approved,Your requisition was approved at DOA.,READ,RR,535,2026-01-12T08:09:36.211764+00:00,2026-01-12T09:09:36.211764+00:00
+914,6,PO_CREATED,PO-3386 created,A purchase order has been created for your requisition.,READ,PO,386,2026-02-26T16:09:36.211764+00:00,2026-02-26T19:09:36.211764+00:00
+915,6,APPROVAL_RESULT,RR-1536 approved,Your requisition was approved at DOA.,READ,RR,536,2026-01-24T20:09:36.211764+00:00,2026-01-25T16:09:36.211764+00:00
+916,6,PO_CREATED,PO-3387 created,A purchase order has been created for your requisition.,READ,PO,387,2026-02-19T09:09:36.211764+00:00,2026-02-20T12:09:36.211764+00:00
+917,19,APPROVAL_RESULT,RR-1537 approved,Your requisition was approved at DOA.,READ,RR,537,2026-07-14T15:09:36.211764+00:00,2026-07-14T19:09:36.211764+00:00
+918,19,PO_CREATED,PO-3388 created,A purchase order has been created for your requisition.,UNREAD,PO,388,2026-08-01T15:09:36.211764+00:00,
+919,23,APPROVAL_RESULT,RR-1538 approved,Your requisition was approved at DOA.,READ,RR,538,2026-08-06T00:09:36.211764+00:00,2026-08-06T09:09:36.211764+00:00
+920,3,APPROVAL_REQUEST,NFA approval needed: PR-2459,An NFA is waiting on your approval.,UNREAD,PR,459,2026-08-22T00:09:36.211764+00:00,
+921,15,APPROVAL_RESULT,RR-1539 approved,Your requisition was approved at DOA.,READ,RR,539,2026-08-01T12:09:36.211764+00:00,2026-08-01T16:09:36.211764+00:00
+922,23,APPROVAL_RESULT,RR-1540 approved,Your requisition was approved at DOA.,READ,RR,540,2026-01-23T15:09:36.211764+00:00,2026-01-24T03:09:36.211764+00:00
+923,23,PO_CREATED,PO-3389 created,A purchase order has been created for your requisition.,READ,PO,389,2026-02-06T15:09:36.211764+00:00,2026-02-07T05:09:36.211764+00:00
+924,6,APPROVAL_RESULT,RR-1541 approved,Your requisition was approved at DOA.,READ,RR,541,2026-06-29T18:09:36.211764+00:00,2026-06-30T14:09:36.211764+00:00
+925,6,PO_CREATED,PO-3390 created,A purchase order has been created for your requisition.,READ,PO,390,2026-07-19T20:09:36.211764+00:00,2026-07-20T23:09:36.211764+00:00
+926,21,APPROVAL_RESULT,RR-1542 approved,Your requisition was approved at DOA.,UNREAD,RR,542,2026-02-07T12:09:36.211764+00:00,
+927,21,PO_CREATED,PO-3391 created,A purchase order has been created for your requisition.,UNREAD,PO,391,2026-04-09T06:09:36.211764+00:00,
+928,9,APPROVAL_RESULT,RR-1543 approved,Your requisition was approved at DOA.,READ,RR,543,2026-04-27T02:09:36.211764+00:00,2026-04-27T20:09:36.211764+00:00
+929,9,PO_CREATED,PO-3392 created,A purchase order has been created for your requisition.,UNREAD,PO,392,2026-06-02T02:09:36.211764+00:00,
+930,6,APPROVAL_RESULT,RR-1544 approved,Your requisition was approved at DOA.,UNREAD,RR,544,2026-07-15T00:09:36.211764+00:00,
+931,6,PO_CREATED,PO-3393 created,A purchase order has been created for your requisition.,UNREAD,PO,393,2026-08-02T00:09:36.211764+00:00,
+932,6,APPROVAL_RESULT,RR-1545 approved,Your requisition was approved at DOA.,READ,RR,545,2026-03-27T19:09:36.211764+00:00,2026-03-28T19:09:36.211764+00:00
+933,6,PO_CREATED,PO-3394 created,A purchase order has been created for your requisition.,UNREAD,PO,394,2026-04-16T14:09:36.211764+00:00,
+934,20,APPROVAL_RESULT,RR-1546 approved,Your requisition was approved at DOA.,READ,RR,546,2026-08-03T18:09:36.211764+00:00,2026-08-04T07:09:36.211764+00:00
+935,20,PO_CREATED,PO-3395 created,A purchase order has been created for your requisition.,READ,PO,395,2026-08-07T18:09:36.211764+00:00,2026-08-08T23:09:36.211764+00:00
+936,16,APPROVAL_RESULT,RR-1547 approved,Your requisition was approved at DOA.,UNREAD,RR,547,2025-12-02T06:09:36.211764+00:00,
+937,16,PO_CREATED,PO-3396 created,A purchase order has been created for your requisition.,UNREAD,PO,396,2025-12-10T06:09:36.211764+00:00,
+938,13,APPROVAL_RESULT,RR-1548 approved,Your requisition was approved at DOA.,READ,RR,548,2026-03-19T12:09:36.211764+00:00,2026-03-19T21:09:36.211764+00:00
+939,13,PO_CREATED,PO-3397 created,A purchase order has been created for your requisition.,READ,PO,397,2026-03-29T12:09:36.211764+00:00,2026-03-30T09:09:36.211764+00:00
+940,18,APPROVAL_RESULT,RR-1549 approved,Your requisition was approved at DOA.,READ,RR,549,2026-07-01T11:09:36.211764+00:00,2026-07-02T13:09:36.211764+00:00
+941,18,PO_CREATED,PO-3398 created,A purchase order has been created for your requisition.,UNREAD,PO,398,2026-07-28T11:09:36.211764+00:00,
+942,2,APPROVAL_RESULT,RR-1550 approved,Your requisition was approved at DOA.,READ,RR,550,2025-12-21T08:09:36.211764+00:00,2025-12-22T14:09:36.211764+00:00
+943,2,PO_CREATED,PO-3399 created,A purchase order has been created for your requisition.,UNREAD,PO,399,2025-12-30T08:09:36.211764+00:00,
+944,2,APPROVAL_REQUEST,DOA approval needed: RR-1551,A requisition is waiting on your DOA approval.,UNREAD,RR,551,2026-05-07T06:09:36.211764+00:00,
+945,19,APPROVAL_RESULT,RR-1552 approved,Your requisition was approved at DOA.,READ,RR,552,2026-02-12T12:09:36.211764+00:00,2026-02-13T12:09:36.211764+00:00
+946,19,PO_CREATED,PO-3400 created,A purchase order has been created for your requisition.,READ,PO,400,2026-02-20T12:09:36.211764+00:00,2026-02-21T15:09:36.211764+00:00
+947,11,APPROVAL_RESULT,RR-1553 approved,Your requisition was approved at DOA.,READ,RR,553,2025-12-10T14:09:36.211764+00:00,2025-12-11T04:09:36.211764+00:00
+948,11,PO_CREATED,PO-3401 created,A purchase order has been created for your requisition.,READ,PO,401,2025-12-30T07:09:36.211764+00:00,2025-12-30T14:09:36.211764+00:00
+949,14,APPROVAL_RESULT,RR-1554 approved,Your requisition was approved at DOA.,READ,RR,554,2026-04-08T00:09:36.211764+00:00,2026-04-08T17:09:36.211764+00:00
+950,14,PO_CREATED,PO-3402 created,A purchase order has been created for your requisition.,UNREAD,PO,402,2026-04-30T00:09:36.211764+00:00,
+951,21,APPROVAL_RESULT,RR-1555 approved,Your requisition was approved at DOA.,READ,RR,555,2026-05-03T12:09:36.211764+00:00,2026-05-04T15:09:36.211764+00:00
+952,21,PO_CREATED,PO-3403 created,A purchase order has been created for your requisition.,READ,PO,403,2026-05-26T12:09:36.211764+00:00,2026-05-27T13:09:36.211764+00:00
+953,14,APPROVAL_RESULT,RR-1556 approved,Your requisition was approved at DOA.,UNREAD,RR,556,2026-07-13T04:09:36.211764+00:00,
+954,14,PO_CREATED,PO-3404 created,A purchase order has been created for your requisition.,READ,PO,404,2026-08-10T04:09:36.211764+00:00,2026-08-10T08:09:36.211764+00:00
+955,11,APPROVAL_RESULT,RR-1557 approved,Your requisition was approved at DOA.,READ,RR,557,2026-08-20T20:09:36.211764+00:00,2026-08-21T23:09:36.211764+00:00
+956,11,PO_CREATED,PO-3405 created,A purchase order has been created for your requisition.,READ,PO,405,2026-09-06T20:09:36.211764+00:00,2026-09-07T15:09:36.211764+00:00
+957,3,APPROVAL_REQUEST,DOA approval needed: RR-1558,A requisition is waiting on your DOA approval.,UNREAD,RR,558,2026-06-10T22:09:36.211764+00:00,
+958,14,APPROVAL_RESULT,RR-1559 approved,Your requisition was approved at DOA.,READ,RR,559,2026-08-14T21:09:36.211764+00:00,2026-08-15T11:09:36.211764+00:00
+959,14,PO_CREATED,PO-3406 created,A purchase order has been created for your requisition.,READ,PO,406,2026-08-17T21:09:36.211764+00:00,2026-08-18T16:09:36.211764+00:00
+960,3,APPROVAL_RESULT,RR-1560 approved,Your requisition was approved at DOA.,READ,RR,560,2026-02-08T00:09:36.211764+00:00,2026-02-08T23:09:36.211764+00:00
+961,3,PO_CREATED,PO-3407 created,A purchase order has been created for your requisition.,UNREAD,PO,407,2026-03-04T00:09:36.211764+00:00,
+962,9,APPROVAL_RESULT,RR-1561 approved,Your requisition was approved at DOA.,READ,RR,561,2026-04-30T05:09:36.211764+00:00,2026-04-30T20:09:36.211764+00:00
+963,9,PO_CREATED,PO-3408 created,A purchase order has been created for your requisition.,UNREAD,PO,408,2026-06-18T03:09:36.211764+00:00,
+964,8,APPROVAL_RESULT,RR-1562 approved,Your requisition was approved at DOA.,UNREAD,RR,562,2026-04-23T15:09:36.211764+00:00,
+965,8,PO_CREATED,PO-3409 created,A purchase order has been created for your requisition.,READ,PO,409,2026-06-08T15:09:36.211764+00:00,2026-06-08T23:09:36.211764+00:00
+966,9,APPROVAL_RESULT,RR-1563 approved,Your requisition was approved at DOA.,READ,RR,563,2026-01-26T16:09:36.211764+00:00,2026-01-27T07:09:36.211764+00:00
+967,9,PO_CREATED,PO-3410 created,A purchase order has been created for your requisition.,READ,PO,410,2026-02-05T16:09:36.211764+00:00,2026-02-06T05:09:36.211764+00:00
+968,5,APPROVAL_RESULT,RR-1564 approved,Your requisition was approved at DOA.,READ,RR,564,2025-12-23T22:09:36.211764+00:00,2025-12-24T17:09:36.211764+00:00
+969,5,PO_CREATED,PO-3411 created,A purchase order has been created for your requisition.,READ,PO,411,2026-01-10T22:09:36.211764+00:00,2026-01-11T21:09:36.211764+00:00
+970,1,APPROVAL_RESULT,RR-1565 approved,Your requisition was approved at DOA.,READ,RR,565,2026-08-04T02:09:36.211764+00:00,2026-08-04T03:09:36.211764+00:00
+971,20,APPROVAL_RESULT,RR-1566 approved,Your requisition was approved at DOA.,READ,RR,566,2026-08-05T22:09:36.211764+00:00,2026-08-06T07:09:36.211764+00:00
+972,20,PO_CREATED,PO-3412 created,A purchase order has been created for your requisition.,UNREAD,PO,412,2026-08-08T22:09:36.211764+00:00,
+973,15,APPROVAL_REQUEST,DOA approval needed: RR-1567,A requisition is waiting on your DOA approval.,UNREAD,RR,567,2026-04-19T04:09:36.211764+00:00,
+974,10,APPROVAL_RESULT,RR-1568 approved,Your requisition was approved at DOA.,UNREAD,RR,568,2025-11-30T21:09:36.211764+00:00,
+975,10,PO_CREATED,PO-3413 created,A purchase order has been created for your requisition.,UNREAD,PO,413,2026-01-13T21:09:36.211764+00:00,
+976,14,APPROVAL_RESULT,RR-1569 approved,Your requisition was approved at DOA.,UNREAD,RR,569,2026-05-29T22:09:36.211764+00:00,
+977,14,PO_CREATED,PO-3414 created,A purchase order has been created for your requisition.,UNREAD,PO,414,2026-05-31T22:09:36.211764+00:00,
+978,16,APPROVAL_RESULT,RR-1570 approved,Your requisition was approved at DOA.,READ,RR,570,2026-07-23T04:09:36.211764+00:00,2026-07-24T05:09:36.211764+00:00
+979,16,PO_CREATED,PO-3415 created,A purchase order has been created for your requisition.,UNREAD,PO,415,2026-08-08T04:09:36.211764+00:00,
+980,20,APPROVAL_RESULT,RR-1571 approved,Your requisition was approved at DOA.,READ,RR,571,2026-03-15T15:09:36.211764+00:00,2026-03-15T19:09:36.211764+00:00
+981,20,PO_CREATED,PO-3416 created,A purchase order has been created for your requisition.,UNREAD,PO,416,2026-03-30T15:09:36.211764+00:00,
+982,15,APPROVAL_REQUEST,DOA approval needed: RR-1572,A requisition is waiting on your DOA approval.,UNREAD,RR,572,2026-06-02T03:09:36.211764+00:00,
+983,18,APPROVAL_RESULT,RR-1573 approved,Your requisition was approved at DOA.,READ,RR,573,2026-07-13T02:09:36.211764+00:00,2026-07-14T06:09:36.211764+00:00
+984,22,APPROVAL_RESULT,RR-1574 approved,Your requisition was approved at DOA.,READ,RR,574,2026-01-10T21:09:36.211764+00:00,2026-01-11T08:09:36.211764+00:00
+985,22,PO_CREATED,PO-3417 created,A purchase order has been created for your requisition.,UNREAD,PO,417,2026-02-24T21:09:36.211764+00:00,
+986,12,APPROVAL_RESULT,RR-1575 approved,Your requisition was approved at DOA.,UNREAD,RR,575,2026-02-21T14:09:36.211764+00:00,
+987,12,PO_CREATED,PO-3418 created,A purchase order has been created for your requisition.,UNREAD,PO,418,2026-03-10T14:09:36.211764+00:00,
+988,8,APPROVAL_RESULT,RR-1576 approved,Your requisition was approved at DOA.,READ,RR,576,2026-03-15T17:09:36.211764+00:00,2026-03-16T15:09:36.211764+00:00
+989,8,PO_CREATED,PO-3419 created,A purchase order has been created for your requisition.,READ,PO,419,2026-04-10T17:09:36.211764+00:00,2026-04-10T23:09:36.211764+00:00
+990,15,APPROVAL_RESULT,RR-1577 approved,Your requisition was approved at DOA.,UNREAD,RR,577,2026-01-05T02:09:36.211764+00:00,
+991,15,PO_CREATED,PO-3420 created,A purchase order has been created for your requisition.,READ,PO,420,2026-01-09T02:09:36.211764+00:00,2026-01-09T05:09:36.211764+00:00
+992,17,APPROVAL_RESULT,RR-1578 approved,Your requisition was approved at DOA.,UNREAD,RR,578,2026-03-31T20:09:36.211764+00:00,
+993,17,PO_CREATED,PO-3421 created,A purchase order has been created for your requisition.,READ,PO,421,2026-04-25T19:09:36.211764+00:00,2026-04-27T00:09:36.211764+00:00
+994,15,APPROVAL_RESULT,RR-1579 approved,Your requisition was approved at DOA.,UNREAD,RR,579,2026-06-14T09:09:36.211764+00:00,
+995,15,PO_CREATED,PO-3422 created,A purchase order has been created for your requisition.,UNREAD,PO,422,2026-07-05T09:09:36.211764+00:00,
+996,11,APPROVAL_RESULT,RR-1580 approved,Your requisition was approved at DOA.,UNREAD,RR,580,2026-08-23T06:09:36.211764+00:00,
+997,19,APPROVAL_RESULT,RR-1581 approved,Your requisition was approved at DOA.,READ,RR,581,2026-06-03T04:09:36.211764+00:00,2026-06-03T08:09:36.211764+00:00
+998,19,PO_CREATED,PO-3423 created,A purchase order has been created for your requisition.,UNREAD,PO,423,2026-07-18T04:09:36.211764+00:00,
+999,5,APPROVAL_RESULT,RR-1582 approved,Your requisition was approved at DOA.,READ,RR,582,2026-04-29T14:09:36.211764+00:00,2026-04-30T20:09:36.211764+00:00
+1000,5,PO_CREATED,PO-3424 created,A purchase order has been created for your requisition.,READ,PO,424,2026-05-11T14:09:36.211764+00:00,2026-05-12T03:09:36.211764+00:00
+1001,3,APPROVAL_RESULT,RR-1583 approved,Your requisition was approved at DOA.,READ,RR,583,2026-05-16T17:09:36.211764+00:00,2026-05-17T16:09:36.211764+00:00
+1002,3,PO_CREATED,PO-3425 created,A purchase order has been created for your requisition.,READ,PO,425,2026-05-29T17:09:36.211764+00:00,2026-05-30T19:09:36.211764+00:00
+1003,19,APPROVAL_RESULT,RR-1584 approved,Your requisition was approved at DOA.,READ,RR,584,2026-04-05T10:09:36.211764+00:00,2026-04-05T13:09:36.211764+00:00
+1004,19,PO_CREATED,PO-3426 created,A purchase order has been created for your requisition.,READ,PO,426,2026-04-23T04:09:36.211764+00:00,2026-04-23T12:09:36.211764+00:00
+1005,22,APPROVAL_RESULT,RR-1585 approved,Your requisition was approved at DOA.,READ,RR,585,2026-01-15T21:09:36.211764+00:00,2026-01-16T05:09:36.211764+00:00
+1006,22,PO_CREATED,PO-3427 created,A purchase order has been created for your requisition.,UNREAD,PO,427,2026-01-30T21:09:36.211764+00:00,
+1007,13,APPROVAL_RESULT,RR-1586 approved,Your requisition was approved at DOA.,READ,RR,586,2026-03-29T03:09:36.211764+00:00,2026-03-29T20:09:36.211764+00:00
+1008,13,PO_CREATED,PO-3428 created,A purchase order has been created for your requisition.,READ,PO,428,2026-04-14T03:09:36.211764+00:00,2026-04-15T08:09:36.211764+00:00
+1009,6,APPROVAL_RESULT,RR-1587 approved,Your requisition was approved at DOA.,READ,RR,587,2026-03-20T06:09:36.211764+00:00,2026-03-20T17:09:36.211764+00:00
+1010,6,PO_CREATED,PO-3429 created,A purchase order has been created for your requisition.,READ,PO,429,2026-03-30T06:09:36.211764+00:00,2026-03-30T07:09:36.211764+00:00
+1011,11,APPROVAL_RESULT,RR-1588 approved,Your requisition was approved at DOA.,UNREAD,RR,588,2026-01-16T03:09:36.211764+00:00,
+1012,11,PO_CREATED,PO-3430 created,A purchase order has been created for your requisition.,READ,PO,430,2026-01-24T03:09:36.211764+00:00,2026-01-24T05:09:36.211764+00:00
+1013,23,APPROVAL_RESULT,RR-1589 approved,Your requisition was approved at DOA.,READ,RR,589,2026-03-29T23:09:36.211764+00:00,2026-03-30T05:09:36.211764+00:00
+1014,23,PO_CREATED,PO-3431 created,A purchase order has been created for your requisition.,UNREAD,PO,431,2026-05-12T22:09:36.211764+00:00,
+1015,14,APPROVAL_RESULT,RR-1590 approved,Your requisition was approved at DOA.,UNREAD,RR,590,2026-04-20T23:09:36.211764+00:00,
+1016,14,PO_CREATED,PO-3432 created,A purchase order has been created for your requisition.,READ,PO,432,2026-05-09T23:09:36.211764+00:00,2026-05-11T04:09:36.211764+00:00
+1017,3,APPROVAL_REQUEST,DOA approval needed: RR-1591,A requisition is waiting on your DOA approval.,UNREAD,RR,591,2026-05-08T16:09:36.211764+00:00,
+1018,11,APPROVAL_RESULT,RR-1592 approved,Your requisition was approved at DOA.,READ,RR,592,2025-12-26T03:09:36.211764+00:00,2025-12-26T21:09:36.211764+00:00
+1019,11,PO_CREATED,PO-3433 created,A purchase order has been created for your requisition.,UNREAD,PO,433,2026-02-09T21:09:36.211764+00:00,
+1020,19,APPROVAL_RESULT,RR-1593 approved,Your requisition was approved at DOA.,UNREAD,RR,593,2026-08-02T10:09:36.211764+00:00,
+1021,19,PO_CREATED,PO-3434 created,A purchase order has been created for your requisition.,UNREAD,PO,434,2026-08-09T10:09:36.211764+00:00,
+1022,20,APPROVAL_RESULT,RR-1594 approved,Your requisition was approved at DOA.,READ,RR,594,2026-04-19T18:09:36.211764+00:00,2026-04-20T13:09:36.211764+00:00
+1023,20,PO_CREATED,PO-3435 created,A purchase order has been created for your requisition.,READ,PO,435,2026-05-14T18:09:36.211764+00:00,2026-05-15T02:09:36.211764+00:00
+1024,3,APPROVAL_RESULT,RR-1595 approved,Your requisition was approved at DOA.,READ,RR,595,2026-01-24T12:09:36.211764+00:00,2026-01-24T13:09:36.211764+00:00
+1025,3,PO_CREATED,PO-3436 created,A purchase order has been created for your requisition.,UNREAD,PO,436,2026-02-21T23:09:36.211764+00:00,
+1026,2,APPROVAL_REQUEST,DOA approval needed: RR-1596,A requisition is waiting on your DOA approval.,UNREAD,RR,596,2026-07-02T06:09:36.211764+00:00,
+1027,1,APPROVAL_RESULT,RR-1597 approved,Your requisition was approved at DOA.,READ,RR,597,2026-02-02T21:09:36.211764+00:00,2026-02-03T17:09:36.211764+00:00
+1028,1,PO_CREATED,PO-3437 created,A purchase order has been created for your requisition.,UNREAD,PO,437,2026-02-21T21:09:36.211764+00:00,
+1029,9,APPROVAL_RESULT,RR-1598 approved,Your requisition was approved at DOA.,READ,RR,598,2026-06-30T15:09:36.211764+00:00,2026-06-30T19:09:36.211764+00:00
+1030,9,PO_CREATED,PO-3438 created,A purchase order has been created for your requisition.,READ,PO,438,2026-07-31T15:09:36.211764+00:00,2026-07-31T22:09:36.211764+00:00
+1031,14,APPROVAL_RESULT,RR-1599 approved,Your requisition was approved at DOA.,READ,RR,599,2025-12-13T03:09:36.211764+00:00,2025-12-13T21:09:36.211764+00:00
+1032,14,PO_CREATED,PO-3439 created,A purchase order has been created for your requisition.,READ,PO,439,2025-12-23T03:09:36.211764+00:00,2025-12-23T10:09:36.211764+00:00
+1033,20,APPROVAL_RESULT,RR-1600 approved,Your requisition was approved at DOA.,UNREAD,RR,600,2026-03-25T23:09:36.211764+00:00,
+1034,20,PO_CREATED,PO-3440 created,A purchase order has been created for your requisition.,UNREAD,PO,440,2026-04-28T21:09:36.211764+00:00,
+1035,10,APPROVAL_RESULT,RR-1601 approved,Your requisition was approved at DOA.,READ,RR,601,2026-05-02T15:09:36.211764+00:00,2026-05-03T11:09:36.211764+00:00
+1036,24,APPROVAL_RESULT,RR-1602 rejected,Your requisition was rejected at DOA approval.,READ,RR,602,2026-01-06T06:09:36.211764+00:00,2026-01-06T17:09:36.211764+00:00
+1037,12,APPROVAL_RESULT,RR-1603 rejected,Your requisition was rejected at DOA approval.,READ,RR,603,2026-02-18T01:09:36.211764+00:00,2026-02-18T11:09:36.211764+00:00
+1038,12,APPROVAL_RESULT,RR-1604 approved,Your requisition was approved at DOA.,UNREAD,RR,604,2026-01-20T16:09:36.211764+00:00,
+1039,12,PO_CREATED,PO-3441 created,A purchase order has been created for your requisition.,READ,PO,441,2026-01-30T16:09:36.211764+00:00,2026-01-31T03:09:36.211764+00:00
+1040,17,APPROVAL_RESULT,RR-1605 approved,Your requisition was approved at DOA.,READ,RR,605,2026-05-26T22:09:36.211764+00:00,2026-05-27T04:09:36.211764+00:00
+1041,15,APPROVAL_REQUEST,DOA approval needed: RR-1606,A requisition is waiting on your DOA approval.,UNREAD,RR,606,2026-08-02T07:09:36.211764+00:00,
+1042,3,APPROVAL_REQUEST,DOA approval needed: RR-1607,A requisition is waiting on your DOA approval.,UNREAD,RR,607,2026-07-01T16:09:36.211764+00:00,
+1043,20,APPROVAL_RESULT,RR-1608 approved,Your requisition was approved at DOA.,UNREAD,RR,608,2026-05-31T15:09:36.211764+00:00,
+1044,20,PO_CREATED,PO-3442 created,A purchase order has been created for your requisition.,READ,PO,442,2026-06-22T09:09:36.211764+00:00,2026-06-23T06:09:36.211764+00:00
+1045,12,APPROVAL_RESULT,RR-1609 approved,Your requisition was approved at DOA.,READ,RR,609,2025-12-19T11:09:36.211764+00:00,2025-12-20T02:09:36.211764+00:00
+1046,12,PO_CREATED,PO-3443 created,A purchase order has been created for your requisition.,READ,PO,443,2025-12-28T11:09:36.211764+00:00,2025-12-29T07:09:36.211764+00:00
+1047,2,APPROVAL_REQUEST,DOA approval needed: RR-1610,A requisition is waiting on your DOA approval.,UNREAD,RR,610,2026-04-02T15:09:36.211764+00:00,
+1048,2,APPROVAL_REQUEST,DOA approval needed: RR-1611,A requisition is waiting on your DOA approval.,UNREAD,RR,611,2026-03-29T06:09:36.211764+00:00,
+1049,3,APPROVAL_RESULT,RR-1612 approved,Your requisition was approved at DOA.,READ,RR,612,2026-05-09T18:09:36.211764+00:00,2026-05-10T08:09:36.211764+00:00
+1050,23,APPROVAL_RESULT,RR-1614 approved,Your requisition was approved at DOA.,UNREAD,RR,614,2026-04-27T00:09:36.211764+00:00,
+1051,23,PO_CREATED,PO-3444 created,A purchase order has been created for your requisition.,READ,PO,444,2026-05-12T00:09:36.211764+00:00,2026-05-13T06:09:36.211764+00:00
+1052,24,APPROVAL_RESULT,RR-1615 approved,Your requisition was approved at DOA.,UNREAD,RR,615,2026-02-01T03:09:36.211764+00:00,
+1053,24,PO_CREATED,PO-3445 created,A purchase order has been created for your requisition.,UNREAD,PO,445,2026-03-25T01:09:36.211764+00:00,
+1054,11,APPROVAL_RESULT,RR-1616 approved,Your requisition was approved at DOA.,UNREAD,RR,616,2026-02-14T07:09:36.211764+00:00,
+1055,11,PO_CREATED,PO-3446 created,A purchase order has been created for your requisition.,UNREAD,PO,446,2026-02-22T07:09:36.211764+00:00,
+1056,16,APPROVAL_RESULT,RR-1617 approved,Your requisition was approved at DOA.,READ,RR,617,2026-02-28T04:09:36.211764+00:00,2026-02-28T09:09:36.211764+00:00
+1057,16,PO_CREATED,PO-3447 created,A purchase order has been created for your requisition.,UNREAD,PO,447,2026-04-15T04:09:36.211764+00:00,
+1058,7,APPROVAL_RESULT,RR-1618 approved,Your requisition was approved at DOA.,READ,RR,618,2026-02-20T21:09:36.211764+00:00,2026-02-21T03:09:36.211764+00:00
+1059,7,PO_CREATED,PO-3448 created,A purchase order has been created for your requisition.,UNREAD,PO,448,2026-04-09T21:09:36.211764+00:00,
+1060,17,APPROVAL_RESULT,RR-1619 approved,Your requisition was approved at DOA.,READ,RR,619,2026-04-10T16:09:36.211764+00:00,2026-04-11T21:09:36.211764+00:00
+1061,22,APPROVAL_RESULT,RR-1620 approved,Your requisition was approved at DOA.,UNREAD,RR,620,2026-01-23T01:09:36.211764+00:00,
+1062,22,PO_CREATED,PO-3449 created,A purchase order has been created for your requisition.,UNREAD,PO,449,2026-02-09T01:09:36.211764+00:00,
+1063,2,APPROVAL_REQUEST,DOA approval needed: RR-1621,A requisition is waiting on your DOA approval.,UNREAD,RR,621,2026-07-03T16:09:36.211764+00:00,
+1064,20,APPROVAL_RESULT,RR-1622 approved,Your requisition was approved at DOA.,READ,RR,622,2026-01-26T11:09:36.211764+00:00,2026-01-27T00:09:36.211764+00:00
+1065,4,APPROVAL_RESULT,RR-1623 approved,Your requisition was approved at DOA.,READ,RR,623,2026-06-13T08:09:36.211764+00:00,2026-06-13T11:09:36.211764+00:00
+1066,4,PO_CREATED,PO-3450 created,A purchase order has been created for your requisition.,READ,PO,450,2026-06-20T08:09:36.211764+00:00,2026-06-21T01:09:36.211764+00:00
+1067,23,APPROVAL_RESULT,RR-1624 approved,Your requisition was approved at DOA.,READ,RR,624,2025-12-23T10:09:36.211764+00:00,2025-12-23T12:09:36.211764+00:00
+1068,23,PO_CREATED,PO-3451 created,A purchase order has been created for your requisition.,READ,PO,451,2026-01-21T22:09:36.211764+00:00,2026-01-22T18:09:36.211764+00:00
+1069,14,APPROVAL_RESULT,RR-1625 approved,Your requisition was approved at DOA.,READ,RR,625,2026-04-20T00:09:36.211764+00:00,2026-04-20T19:09:36.211764+00:00
+1070,14,PO_CREATED,PO-3452 created,A purchase order has been created for your requisition.,UNREAD,PO,452,2026-05-12T01:09:36.211764+00:00,
+1071,13,APPROVAL_RESULT,RR-1626 approved,Your requisition was approved at DOA.,READ,RR,626,2026-04-04T21:09:36.211764+00:00,2026-04-06T03:09:36.211764+00:00
+1072,13,PO_CREATED,PO-3453 created,A purchase order has been created for your requisition.,UNREAD,PO,453,2026-05-01T21:09:36.211764+00:00,
+1073,8,APPROVAL_RESULT,RR-1627 approved,Your requisition was approved at DOA.,READ,RR,627,2026-05-13T17:09:36.211764+00:00,2026-05-13T18:09:36.211764+00:00
+1074,8,PO_CREATED,PO-3454 created,A purchase order has been created for your requisition.,UNREAD,PO,454,2026-05-30T23:09:36.211764+00:00,
+1075,11,APPROVAL_RESULT,RR-1628 approved,Your requisition was approved at DOA.,READ,RR,628,2026-04-22T08:09:36.211764+00:00,2026-04-22T22:09:36.211764+00:00
+1076,11,PO_CREATED,PO-3455 created,A purchase order has been created for your requisition.,READ,PO,455,2026-05-03T08:09:36.211764+00:00,2026-05-04T06:09:36.211764+00:00
+1077,7,APPROVAL_RESULT,RR-1629 approved,Your requisition was approved at DOA.,READ,RR,629,2026-04-29T04:09:36.211764+00:00,2026-04-29T06:09:36.211764+00:00
+1078,7,PO_CREATED,PO-3456 created,A purchase order has been created for your requisition.,UNREAD,PO,456,2026-05-06T04:09:36.211764+00:00,
+1079,13,APPROVAL_RESULT,RR-1630 approved,Your requisition was approved at DOA.,UNREAD,RR,630,2026-04-06T15:09:36.211764+00:00,
+1080,8,APPROVAL_RESULT,RR-1631 approved,Your requisition was approved at DOA.,UNREAD,RR,631,2026-03-02T00:09:36.211764+00:00,
+1081,11,APPROVAL_RESULT,RR-1632 approved,Your requisition was approved at DOA.,READ,RR,632,2026-02-23T23:09:36.211764+00:00,2026-02-24T06:09:36.211764+00:00
+1082,11,PO_CREATED,PO-3457 created,A purchase order has been created for your requisition.,UNREAD,PO,457,2026-03-31T23:09:36.211764+00:00,
+1083,23,APPROVAL_RESULT,RR-1634 approved,Your requisition was approved at DOA.,READ,RR,634,2026-07-01T05:09:36.211764+00:00,2026-07-02T06:09:36.211764+00:00
+1084,24,APPROVAL_RESULT,RR-1635 approved,Your requisition was approved at DOA.,READ,RR,635,2026-06-03T14:09:36.211764+00:00,2026-06-04T04:09:36.211764+00:00
+1085,24,PO_CREATED,PO-3458 created,A purchase order has been created for your requisition.,READ,PO,458,2026-06-26T14:09:36.211764+00:00,2026-06-26T19:09:36.211764+00:00
+1086,22,APPROVAL_RESULT,RR-1636 approved,Your requisition was approved at DOA.,UNREAD,RR,636,2026-07-13T13:09:36.211764+00:00,
+1087,22,PO_CREATED,PO-3459 created,A purchase order has been created for your requisition.,UNREAD,PO,459,2026-07-15T13:09:36.211764+00:00,
+1088,3,APPROVAL_REQUEST,DOA approval needed: RR-1637,A requisition is waiting on your DOA approval.,UNREAD,RR,637,2026-07-27T18:09:36.211764+00:00,
+1089,3,APPROVAL_REQUEST,DOA approval needed: RR-1638,A requisition is waiting on your DOA approval.,UNREAD,RR,638,2026-05-08T18:09:36.211764+00:00,
+1090,18,APPROVAL_RESULT,RR-1639 approved,Your requisition was approved at DOA.,UNREAD,RR,639,2025-12-05T06:09:36.211764+00:00,
+1091,18,PO_CREATED,PO-3460 created,A purchase order has been created for your requisition.,READ,PO,460,2026-01-10T09:09:36.211764+00:00,2026-01-11T05:09:36.211764+00:00
+1092,16,APPROVAL_RESULT,RR-1640 approved,Your requisition was approved at DOA.,READ,RR,640,2026-07-31T02:09:36.211764+00:00,2026-07-31T17:09:36.211764+00:00
+1093,3,APPROVAL_REQUEST,DOA approval needed: RR-1641,A requisition is waiting on your DOA approval.,UNREAD,RR,641,2026-07-10T07:09:36.211764+00:00,
+1094,20,APPROVAL_RESULT,RR-1642 approved,Your requisition was approved at DOA.,READ,RR,642,2026-04-06T05:09:36.211764+00:00,2026-04-07T06:09:36.211764+00:00
+1095,18,APPROVAL_RESULT,RR-1644 approved,Your requisition was approved at DOA.,UNREAD,RR,644,2026-02-02T23:09:36.211764+00:00,
+1096,18,PO_CREATED,PO-3461 created,A purchase order has been created for your requisition.,READ,PO,461,2026-03-23T13:09:36.211764+00:00,2026-03-23T14:09:36.211764+00:00
+1097,5,APPROVAL_RESULT,RR-1645 approved,Your requisition was approved at DOA.,READ,RR,645,2026-01-27T18:09:36.211764+00:00,2026-01-27T20:09:36.211764+00:00
+1098,5,PO_CREATED,PO-3462 created,A purchase order has been created for your requisition.,UNREAD,PO,462,2026-02-13T18:09:36.211764+00:00,
+1099,2,APPROVAL_REQUEST,DOA approval needed: RR-1646,A requisition is waiting on your DOA approval.,UNREAD,RR,646,2026-06-20T10:09:36.211764+00:00,
+1100,15,APPROVAL_RESULT,RR-1647 approved,Your requisition was approved at DOA.,READ,RR,647,2026-05-11T20:09:36.211764+00:00,2026-05-12T10:09:36.211764+00:00
+1101,15,PO_CREATED,PO-3463 created,A purchase order has been created for your requisition.,READ,PO,463,2026-05-15T20:09:36.211764+00:00,2026-05-17T02:09:36.211764+00:00
+1102,22,APPROVAL_RESULT,RR-1648 approved,Your requisition was approved at DOA.,UNREAD,RR,648,2026-05-07T12:09:36.211764+00:00,
+1103,22,PO_CREATED,PO-3464 created,A purchase order has been created for your requisition.,READ,PO,464,2026-06-26T12:09:36.211764+00:00,2026-06-26T23:09:36.211764+00:00
+1104,4,APPROVAL_RESULT,RR-1649 approved,Your requisition was approved at DOA.,READ,RR,649,2026-04-11T23:09:36.211764+00:00,2026-04-12T13:09:36.211764+00:00
+1105,4,PO_CREATED,PO-3465 created,A purchase order has been created for your requisition.,READ,PO,465,2026-04-13T23:09:36.211764+00:00,2026-04-14T19:09:36.211764+00:00
+1106,4,APPROVAL_RESULT,RR-1650 approved,Your requisition was approved at DOA.,UNREAD,RR,650,2026-04-21T18:09:36.211764+00:00,
+1107,4,PO_CREATED,PO-3466 created,A purchase order has been created for your requisition.,UNREAD,PO,466,2026-05-20T18:09:36.211764+00:00,
+1108,23,APPROVAL_RESULT,RR-1493 approved,Your requisition was approved at DOA stage.,UNREAD,RR,493,2026-08-25T09:18:56.799283+00:00,
+1109,1,APPROVAL_RESULT,RR-1611 approved,Your requisition was approved at DOA stage.,UNREAD,RR,611,2026-08-25T09:19:01.595219+00:00,
+1110,16,APPROVAL_RESULT,RR-1610 approved,Your requisition was approved at DOA stage.,UNREAD,RR,610,2026-08-25T09:19:02.651350+00:00,
+1111,5,APPROVAL_RESULT,RR-1457 approved,Your requisition was approved at DOA stage.,UNREAD,RR,457,2026-08-25T09:19:10.587879+00:00,

@@ -1,0 +1,13 @@
+fastapi==0.118.0
+uvicorn[standard]==0.38.0
+pydantic==2.12.4
+pydantic-settings==2.11.0
+httpx==0.28.1
+Faker==33.3.1
+anthropic==0.71.0
+openai==2.6.1
+python-dotenv==1.1.1
+structlog==25.5.0
+
+pytest==8.4.2
+pytest-cov==7.0.0

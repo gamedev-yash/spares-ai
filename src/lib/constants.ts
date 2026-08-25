@@ -30,7 +30,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
-import type { Category, IconKey } from "@/lib/types"
+import type { Category, IconKey, MaterialCategory } from "@/lib/types"
 
 export const ICONS: Record<IconKey, LucideIcon> = {
   cpu: Cpu,
@@ -68,6 +68,34 @@ export const CATEGORIES: { label: Category; icon: IconKey }[] = [
   { label: "Conveyance", icon: "arrows-right-left" },
   { label: "Milling", icon: "wrench" },
   { label: "Instrumentation", icon: "gauge" },
+]
+
+/** All real material catalog groups (backend/scripts/catalog.py) -- used by the materials
+ * search filter dropdown. */
+export const MATERIAL_CATEGORY_OPTIONS: MaterialCategory[] = [
+  "Bearings",
+  "Pumps",
+  "Valves",
+  "Motors",
+  "Conveyor Components",
+  "Crusher Components",
+  "Milling Components",
+  "Flotation Components",
+  "Electrical Spares",
+  "Instrumentation",
+  "Mechanical Seals",
+  "Services",
+]
+
+/** Curated subset shown as sidebar quick-links, so the list stays short like the original
+ * 4-category nav did -- the materials page filter still exposes all categories. */
+export const MATERIAL_CATEGORIES: { label: MaterialCategory; icon: IconKey }[] = [
+  { label: "Bearings", icon: "settings" },
+  { label: "Pumps", icon: "droplet" },
+  { label: "Valves", icon: "sliders" },
+  { label: "Motors", icon: "gauge" },
+  { label: "Electrical Spares", icon: "cpu" },
+  { label: "Mechanical Seals", icon: "check-circle" },
 ]
 
 /**
@@ -116,9 +144,10 @@ export const QUICK_ACTIONS: {
     label: "Pending approvals",
     icon: "clipboard-check",
     href: "/approvals",
-    badge: 4,
+    // badge is overridden with a live count from the backend -- see Sidebar.
   },
   { label: "Audit trail", icon: "history", href: "/audit" },
+  { label: "Notifications", icon: "mail", href: "/notifications" },
 ]
 
 export const DEFAULT_SESSION_ID = "SPR-2847"
