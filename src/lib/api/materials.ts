@@ -23,3 +23,8 @@ export function searchMaterials(params: MaterialSearchParams = {}): Promise<Page
 export function getMaterial(id: number): Promise<Material> {
   return apiFetch<Material>(`/materials/${id}`)
 }
+
+/** Distinct material_group values actually in the generated catalog -- not a static list. */
+export function getMaterialCategories(): Promise<string[]> {
+  return apiFetch<string[]>("/materials/categories")
+}

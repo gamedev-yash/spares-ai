@@ -3,7 +3,7 @@ from datetime import date, datetime, timezone
 from app.core.exceptions import ValidationAppError
 from app.schemas.procurement import RequestRequisitionCreate
 from app.services.audit_service import record_audit
-from app.services.csv_store import DataStore, Row
+from app.services.csv_store import DataStore, Row, area_for_department
 
 
 def create_rr(store: DataStore, requester: Row, payload: RequestRequisitionCreate, source_system: str = "manual") -> Row:
@@ -36,6 +36,8 @@ def create_rr(store: DataStore, requester: Row, payload: RequestRequisitionCreat
             "requester_id": requester["id"],
             "plant": payload.plant,
             "department": payload.department,
+            "area": area_for_department(payload.department),
+            "trigger_type": "OAR_MANUAL",  # a human/chat request, never an automatic min-max trigger
             "creation_date": date.today().isoformat(),
             "required_date": payload.required_date.isoformat(),
             "purpose": payload.purpose,

@@ -28,6 +28,7 @@ from faker import Faker
 
 from app.config import get_settings
 from app.services import csv_store as cs
+from app.services.csv_store import area_for_department
 from scripts import catalog
 
 MANAGER_ROLES = ["ENGINEERING_MANAGER", "COMMERCIAL_MANAGER"]
@@ -278,6 +279,7 @@ def duration_days(rng: random.Random, scenario: str, stage: str) -> int:
 
 def generate_pipeline(rng: random.Random, now: datetime, users: list[dict], users_by_role: dict[str, list[dict]], materials: list[dict], suppliers: list[dict], rows: Rows) -> None:
     physical_materials = [m for m in materials if m["material_group"] != "Services"]
+    service_materials = [m for m in materials if m["material_group"] == "Services"]
 
     rr_seq, rrline_seq = IdSequence(1), IdSequence(1)
     pr_seq, prline_seq = IdSequence(1), IdSequence(1)
@@ -342,11 +344,15 @@ def generate_pipeline(rng: random.Random, now: datetime, users: list[dict], user
         required_date = creation_date + timedelta(days=rng.randint(14, 60))
         priority = rng.choices(["Normal", "High", "Critical"], weights=[0.65, 0.25, 0.10])[0]
 
+        is_service_rr = rng.random() < 0.18
+        line_pool = service_materials if is_service_rr else physical_materials
+        trigger_type = "OAR_MANUAL" if rng.random() < 0.45 else "MIN_MAX_AUTO"
+
         line_count = rng.randint(5, 12) if scenario == "multi_line_pr" else rng.randint(1, 3)
         pr_line_rows: list[dict] = []
         total_value = 0.0
         for line_no in range(1, line_count + 1):
-            material = rng.choice(physical_materials)
+            material = rng.choice(line_pool)
             qty = rng.randint(1, 20)
             unit_price = round(float(material["last_po_price"]) * rng.uniform(0.92, 1.15), 2)
             description = material["description"]
@@ -373,7 +379,8 @@ def generate_pipeline(rng: random.Random, now: datetime, users: list[dict], user
 
         rr_row = {
             "id": rr_id, "rr_number": f"RR-{1000 + rr_id}", "requester_id": requester["id"], "plant": plant,
-            "department": department, "creation_date": creation_date.isoformat(), "required_date": required_date.isoformat(),
+            "department": department, "area": area_for_department(department), "trigger_type": trigger_type,
+            "creation_date": creation_date.isoformat(), "required_date": required_date.isoformat(),
             "purpose": f"{department} spares replenishment - {pr_line_rows[0]['description']}", "status": "IN_PROGRESS",
             "priority": priority, "total_estimated_value": round(total_value, 2), "source_system": "synthetic",
             "created_at": creation_dt.isoformat(), "updated_at": creation_dt.isoformat(),

@@ -69,7 +69,7 @@ export default async function SituationAnalysisPage() {
             </div>
             <div>
               <h3 className="mb-1 text-xs font-medium tracking-[0.5px] text-muted-foreground uppercase">
-                Monthly trend — Feb to Jul 2026
+                Monthly trend
               </h3>
               <RootCauseTrendChart trend={trend} rootCauses={rootCauses} />
             </div>

@@ -16,15 +16,20 @@ import type { FishboneRootCause, RootCauseTrendPoint } from "@/lib/types"
 const TOP_DRIVER_COUNT = 3
 const TOP_COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)"]
 const OTHER_COLOR = "var(--muted-foreground)"
-const OTHER_KEY = "Other (4 categories)"
-// Fixed calendar order for the X axis — not a data value, just display ordering.
-const MONTHS = ["Feb", "Mar", "Apr", "May", "Jun", "Jul"]
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+/** `month` is "YYYY-MM" from the API — render it as e.g. "Feb 2026". */
+function formatMonth(month: string): string {
+  const [year, m] = month.split("-")
+  const idx = Number(m) - 1
+  return `${MONTH_NAMES[idx] ?? m} ${year}`
+}
 
 function TrendTooltip({ active, payload, label }: TooltipContentProps) {
   if (!active || !payload?.length) return null
   return (
     <div className="rounded-lg border border-border bg-popover px-3 py-2 text-xs shadow-md">
-      <div className="font-medium text-foreground">{label} 2026</div>
+      <div className="font-medium text-foreground">{formatMonth(String(label))}</div>
       {payload.map((entry) => (
         <div key={entry.name} className="mt-1 flex items-center gap-1.5">
           <span
@@ -46,12 +51,16 @@ export function RootCauseTrendChart({
   trend: RootCauseTrendPoint[]
   rootCauses: FishboneRootCause[]
 }) {
-  // 7 categories exceeds the categorical-palette ceiling for a multi-line
-  // chart, so the top 3 (already the headline drivers) get their own color
-  // and the rest fold into a single de-emphasized "Other" line.
+  // More categories than the categorical-palette ceiling for a multi-line chart, so the
+  // top 3 (already the headline drivers) get their own color and the rest fold into a
+  // single de-emphasized "Other" line — sized to however many categories that actually is.
   const topCategories = rootCauses.slice(0, TOP_DRIVER_COUNT).map((c) => c.category)
+  const otherCount = Math.max(rootCauses.length - topCategories.length, 0)
+  const otherKey = `Other (${otherCount} categories)`
 
-  const data = MONTHS.map((month) => {
+  const months = [...new Set(trend.map((t) => t.month))].sort()
+
+  const data = months.map((month) => {
     const point: Record<string, string | number> = { month }
     let other = 0
     for (const entry of trend.filter((t) => t.month === month)) {
@@ -61,7 +70,7 @@ export function RootCauseTrendChart({
         other += entry.daysLost
       }
     }
-    point[OTHER_KEY] = other
+    if (otherCount > 0) point[otherKey] = other
     return point
   })
 
@@ -73,6 +82,7 @@ export function RootCauseTrendChart({
             <CartesianGrid vertical={false} stroke="var(--border)" />
             <XAxis
               dataKey="month"
+              tickFormatter={formatMonth}
               stroke="var(--muted-foreground)"
               tickLine={false}
               axisLine={false}
@@ -100,17 +110,19 @@ export function RootCauseTrendChart({
                 isAnimationActive={false}
               />
             ))}
-            <Line
-              type="monotone"
-              dataKey={OTHER_KEY}
-              name={OTHER_KEY}
-              stroke={OTHER_COLOR}
-              strokeWidth={2}
-              strokeDasharray="4 3"
-              dot={{ r: 3, strokeWidth: 2, stroke: "var(--card)", fill: OTHER_COLOR }}
-              activeDot={{ r: 4, strokeWidth: 2, stroke: "var(--card)" }}
-              isAnimationActive={false}
-            />
+            {otherCount > 0 && (
+              <Line
+                type="monotone"
+                dataKey={otherKey}
+                name={otherKey}
+                stroke={OTHER_COLOR}
+                strokeWidth={2}
+                strokeDasharray="4 3"
+                dot={{ r: 3, strokeWidth: 2, stroke: "var(--card)", fill: OTHER_COLOR }}
+                activeDot={{ r: 4, strokeWidth: 2, stroke: "var(--card)" }}
+                isAnimationActive={false}
+              />
+            )}
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -124,13 +136,15 @@ export function RootCauseTrendChart({
             {category}
           </div>
         ))}
-        <div className="flex items-center gap-1.5">
-          <span
-            className="h-0.5 w-3 shrink-0 rounded-full"
-            style={{ backgroundColor: OTHER_COLOR }}
-          />
-          {OTHER_KEY}
-        </div>
+        {otherCount > 0 && (
+          <div className="flex items-center gap-1.5">
+            <span
+              className="h-0.5 w-3 shrink-0 rounded-full"
+              style={{ backgroundColor: OTHER_COLOR }}
+            />
+            {otherKey}
+          </div>
+        )}
       </div>
     </div>
   )

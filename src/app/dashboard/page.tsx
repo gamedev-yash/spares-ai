@@ -31,7 +31,7 @@ export default async function DashboardPage() {
             </p>
           </div>
           <StatusBadge tone="default" className="shrink-0">
-            Snapshot per review slides
+            Computed from generated data
           </StatusBadge>
         </div>
 
@@ -40,8 +40,8 @@ export default async function DashboardPage() {
         <PrPoTabs dashboard={dashboard} />
 
         <p className="mt-2 border-t border-border pt-3 text-xs text-muted-foreground">
-          Source: VZI review slides &quot;Open PR analysis&quot; and &quot;Open
-          PO breakdown&quot; (snapshot date not stated on slides). Values in
+          Source: the synthetic Initiative-9 dataset (backend/data/*.csv), computed live —
+          re-running the generator with a different seed changes these numbers. Values in
           ZAR Mn.
         </p>
       </div>

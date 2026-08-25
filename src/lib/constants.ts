@@ -70,25 +70,9 @@ export const CATEGORIES: { label: Category; icon: IconKey }[] = [
   { label: "Instrumentation", icon: "gauge" },
 ]
 
-/** All real material catalog groups (backend/scripts/catalog.py) -- used by the materials
- * search filter dropdown. */
-export const MATERIAL_CATEGORY_OPTIONS: MaterialCategory[] = [
-  "Bearings",
-  "Pumps",
-  "Valves",
-  "Motors",
-  "Conveyor Components",
-  "Crusher Components",
-  "Milling Components",
-  "Flotation Components",
-  "Electrical Spares",
-  "Instrumentation",
-  "Mechanical Seals",
-  "Services",
-]
-
 /** Curated subset shown as sidebar quick-links, so the list stays short like the original
- * 4-category nav did -- the materials page filter still exposes all categories. */
+ * 4-category nav did -- the materials page filter fetches the full, live category list from
+ * GET /api/materials/categories instead of a static one. */
 export const MATERIAL_CATEGORIES: { label: MaterialCategory; icon: IconKey }[] = [
   { label: "Bearings", icon: "settings" },
   { label: "Pumps", icon: "droplet" },

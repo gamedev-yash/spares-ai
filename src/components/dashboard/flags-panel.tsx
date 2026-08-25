@@ -1,6 +1,15 @@
 import type { VziFlag } from "@/lib/types"
 
 export function FlagsPanel({ flags }: { flags: VziFlag[] }) {
+  if (flags.length === 0) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        No data-quality flags — these numbers are computed directly from the generated
+        dataset, so the source tables can&apos;t disagree with each other the way a
+        hand-compiled report sometimes does.
+      </p>
+    )
+  }
   return (
     <div className="flex flex-col gap-3">
       {flags.map((flag, i) => (

@@ -54,6 +54,14 @@ export function PrPoTabs({ dashboard }: { dashboard: VziDashboard }) {
   }))
   const poValue = dashboard.kpiSummary.openPoValue
 
+  const miningTotal = dashboard.poAreaSorted
+    .filter((r) => r.area === "Mining")
+    .reduce((s, r) => s + r.total, 0)
+  const miningAreaHint =
+    poValue.total > 0
+      ? `mining areas hold ${formatZARMillions(miningTotal)} (${((miningTotal / poValue.total) * 100).toFixed(1)}%)`
+      : undefined
+
   return (
     <Tabs defaultValue="overview">
       <TabsList
@@ -99,7 +107,7 @@ export function PrPoTabs({ dashboard }: { dashboard: VziDashboard }) {
           >
             <PoValueDonut value={poValue} />
           </DashboardCard>
-          <DashboardCard title="Observations from the review slides" span={6}>
+          <DashboardCard title="Observations" span={6}>
             <ul className="list-disc space-y-2.5 pl-4.5 text-[13px] leading-relaxed text-foreground">
               {dashboard.slideNotes.map((note) => (
                 <li key={note}>{note}</li>
@@ -139,7 +147,6 @@ export function PrPoTabs({ dashboard }: { dashboard: VziDashboard }) {
           <DashboardCard
             title="Material PRs by trigger — OAR vs VB"
             span={6}
-            footnote="† The slide's narrative quotes these two counts the other way around — see Data & flags."
           >
             <TwoSeriesBarChart
               data={oarVbData}
@@ -152,7 +159,7 @@ export function PrPoTabs({ dashboard }: { dashboard: VziDashboard }) {
           </DashboardCard>
           <DashboardCard
             title="Material PRs by category"
-            subtitle="Plant + Other combined, sorted by total · 509 material PRs"
+            subtitle={`Sorted by total · ${formatCount(dashboard.categoryPivot.reduce((s, r) => s + r.total, 0))} material PRs`}
             span={12}
           >
             <TwoSeriesBarChart
@@ -169,7 +176,6 @@ export function PrPoTabs({ dashboard }: { dashboard: VziDashboard }) {
           <DashboardCard
             title="OAR / VB by area"
             span={12}
-            footnote="Unit split here (296 / 213) differs from the unit summary (307 / 202) by 11 each way — see Data & flags."
           >
             <OarVbTable dashboard={dashboard} />
           </DashboardCard>
@@ -206,7 +212,7 @@ export function PrPoTabs({ dashboard }: { dashboard: VziDashboard }) {
           <DashboardCard
             title="Open PO value by area"
             subtitle="Material + service, ZAR Mn, sorted by total"
-            hint="the two mining areas alone hold ZAR 2 695,91 Mn (72,7%)"
+            hint={miningAreaHint}
             span={12}
           >
             <TwoSeriesBarChart
@@ -221,11 +227,7 @@ export function PrPoTabs({ dashboard }: { dashboard: VziDashboard }) {
               formatValue={(v) => formatZARMillions(v)}
             />
           </DashboardCard>
-          <DashboardCard
-            title="Full PO detail"
-            span={12}
-            footnote="BMM 'Other' service value is blank on the slide; it back-calculates to 0.00 from the BMM subtotal."
-          >
+          <DashboardCard title="Full PO detail" span={12}>
             <PoDetailTable dashboard={dashboard} />
           </DashboardCard>
         </div>

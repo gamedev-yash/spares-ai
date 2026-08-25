@@ -62,6 +62,14 @@ def list_materials(
     return Page(items=[MaterialOut.model_validate(m) for m in page_items], total=total, page=page, page_size=page_size)
 
 
+@router.get("/categories", response_model=list[str])
+def list_material_categories(store: DataStore = Depends(get_store)) -> list[str]:
+    """Distinct material_group values actually present in materials.csv -- lets the
+    frontend's category filter track the generated catalog instead of a static list that
+    can drift from it."""
+    return sorted({m["material_group"] for m in store.materials.all()})
+
+
 @router.get("/{material_id}", response_model=MaterialOut)
 def get_material(material_id: int, store: DataStore = Depends(get_store)) -> MaterialOut:
     material = store.materials.get(material_id)

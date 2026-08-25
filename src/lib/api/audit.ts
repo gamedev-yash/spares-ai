@@ -28,3 +28,14 @@ export interface AuditSearchParams {
 export function searchAuditLogs(params: AuditSearchParams = {}): Promise<Page<AuditLogEntry>> {
   return apiFetch<Page<AuditLogEntry>>("/audit", { params })
 }
+
+export interface AuditFacets {
+  entity_types: string[]
+  actions: string[]
+}
+
+/** Distinct entity_type/action values actually written so far -- not a static list that
+ * can miss real values (e.g. approval actions, AI tool actions). */
+export function getAuditFacets(): Promise<AuditFacets> {
+  return apiFetch<AuditFacets>("/audit/facets")
+}

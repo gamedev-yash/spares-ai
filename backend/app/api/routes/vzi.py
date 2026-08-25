@@ -3,6 +3,7 @@ from collections import OrderedDict
 from fastapi import APIRouter, Depends
 
 from app.api.deps import get_store
+from app.services import dashboard_service
 from app.schemas.vzi import (
     VziAgingBucketOut,
     VziCategoryPivotRow,
@@ -25,7 +26,7 @@ router = APIRouter(prefix="/vzi", tags=["vzi"])
 
 @router.get("/dashboard", response_model=VziDashboardOut)
 def get_vzi_dashboard(store: DataStore = Depends(get_store)) -> VziDashboardOut:
-    ref = store.vzi_reference
+    ref = dashboard_service.get_vzi_dashboard(store)
     pr_summary_rows = ref["pr_summary"]
     po_summary_rows = ref["po_summary"]
     aging_rows = ref["aging"]

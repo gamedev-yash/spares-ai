@@ -10,8 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { MATERIAL_CATEGORY_OPTIONS } from "@/lib/constants"
-import type { LifecycleStatus, MaterialCategory } from "@/lib/types"
+import type { LifecycleStatus } from "@/lib/types"
 
 export const ALL_FILTER = "all"
 
@@ -20,13 +19,15 @@ export function MaterialSearch({
   onQueryChange,
   category,
   onCategoryChange,
+  categoryOptions,
   lifecycle,
   onLifecycleChange,
 }: {
   query: string
   onQueryChange: (value: string) => void
-  category: MaterialCategory | typeof ALL_FILTER
-  onCategoryChange: (value: MaterialCategory | typeof ALL_FILTER) => void
+  category: string
+  onCategoryChange: (value: string) => void
+  categoryOptions: string[]
   lifecycle: LifecycleStatus | typeof ALL_FILTER
   onLifecycleChange: (value: LifecycleStatus | typeof ALL_FILTER) => void
 }) {
@@ -44,7 +45,7 @@ export function MaterialSearch({
 
       <Select
         value={category}
-        onValueChange={(value) => onCategoryChange(value as MaterialCategory | typeof ALL_FILTER)}
+        onValueChange={(value) => onCategoryChange(value ?? ALL_FILTER)}
       >
         <SelectTrigger className="h-9 w-full sm:w-52">
           <SelectValue placeholder="Category">
@@ -53,7 +54,7 @@ export function MaterialSearch({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={ALL_FILTER}>All categories</SelectItem>
-          {MATERIAL_CATEGORY_OPTIONS.map((c) => (
+          {categoryOptions.map((c) => (
             <SelectItem key={c} value={c}>
               {c}
             </SelectItem>

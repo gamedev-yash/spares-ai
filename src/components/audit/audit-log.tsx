@@ -23,24 +23,11 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { ApiError } from "@/lib/api/client"
-import { searchAuditLogs, type AuditLogEntry } from "@/lib/api/audit"
+import { getAuditFacets, searchAuditLogs, type AuditLogEntry } from "@/lib/api/audit"
 import { downloadCsv } from "@/lib/utils"
 
 const ALL_FILTER = "all"
 const PAGE_SIZE = 50
-
-const ENTITY_TYPES = ["RR", "PR", "PO"]
-const ACTIONS = [
-  "RR_CREATED",
-  "RR_CANCELLED",
-  "DOA_APPROVED",
-  "DOA_REJECTED",
-  "PR_CREATED",
-  "RFQ_CLOSED",
-  "NFA_APPROVED",
-  "NFA_REJECTED",
-  "PO_CREATED",
-]
 
 function formatDetail(entry: AuditLogEntry): string {
   const parts: string[] = []
@@ -61,6 +48,20 @@ export function AuditLog() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [expandedId, setExpandedId] = useState<number | null>(null)
+  const [entityTypes, setEntityTypes] = useState<string[]>([])
+  const [actions, setActions] = useState<string[]>([])
+
+  useEffect(() => {
+    getAuditFacets()
+      .then((facets) => {
+        setEntityTypes(facets.entity_types)
+        setActions(facets.actions)
+      })
+      .catch(() => {
+        setEntityTypes([])
+        setActions([])
+      })
+  }, [])
 
   useEffect(() => {
     setPage(1)
@@ -129,7 +130,7 @@ export function AuditLog() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={ALL_FILTER}>All entities</SelectItem>
-              {ENTITY_TYPES.map((t) => (
+              {entityTypes.map((t) => (
                 <SelectItem key={t} value={t}>
                   {t}
                 </SelectItem>
@@ -145,7 +146,7 @@ export function AuditLog() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={ALL_FILTER}>All actions</SelectItem>
-              {ACTIONS.map((a) => (
+              {actions.map((a) => (
                 <SelectItem key={a} value={a}>
                   {a}
                 </SelectItem>

@@ -151,10 +151,27 @@ SUPPLIERS_COLUMNS = ["id", "supplier_code", "supplier_name", "country", "categor
 SUPPLIERS_TYPES = {"id": int, "rating": float, "active": bool}
 
 RR_COLUMNS = [
-    "id", "rr_number", "requester_id", "plant", "department", "creation_date", "required_date", "purpose",
-    "status", "priority", "total_estimated_value", "source_system", "created_at", "updated_at",
+    "id", "rr_number", "requester_id", "plant", "department", "area", "trigger_type", "creation_date",
+    "required_date", "purpose", "status", "priority", "total_estimated_value", "source_system",
+    "created_at", "updated_at",
 ]
 RR_TYPES = {"id": int, "requester_id": int, "total_estimated_value": float}
+
+# `area` groups a department into the same Plant/Mining/Other buckets the VZI dashboard uses.
+DEPARTMENT_AREA = {
+    "Mining Operations": "Mining",
+    "Processing / Plant Operations": "Plant",
+    "Plant Maintenance": "Plant",
+    "Mechanical Engineering": "Plant",
+    "Instrumentation & Electrical": "Plant",
+    "Warehouse & Stores": "Other",
+    "Procurement": "Other",
+    "Safety & SHEQ": "Other",
+}
+
+
+def area_for_department(department: str) -> str:
+    return DEPARTMENT_AREA.get(department, "Other")
 
 RR_LINE_ITEMS_COLUMNS = [
     "id", "rr_id", "line_number", "material_id", "quantity", "estimated_unit_price", "service_code",
@@ -205,73 +222,6 @@ NOTIFICATIONS_COLUMNS = [
     "created_at", "read_at",
 ]
 NOTIFICATIONS_TYPES = {"id": int, "recipient_id": int, "related_entity_id": int}
-
-
-def _load_situation_analysis(path: Path) -> dict[str, list[Row]]:
-    """Parses the single multi-section situation_analysis.csv (one `section` column
-    discriminates aging/po_detail/root_cause/trend/drill_down rows) into 5 in-memory lists.
-    Mirrors the shape the old import_situation_analysis_csv.py normalized into Postgres tables.
-    """
-    aging: list[Row] = []
-    po_detail: list[Row] = []
-    root_cause: list[Row] = []
-    trend: list[Row] = []
-    drilldown: list[Row] = []
-
-    if not path.exists():
-        return {"aging": aging, "po_detail": po_detail, "root_cause": root_cause, "trend": trend, "drilldown": drilldown}
-
-    def num(value: str) -> float:
-        return float(value) if value not in (None, "") else 0.0
-
-    with path.open(newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            section = row.get("section")
-            if section == "aging":
-                aging.append({"bucket": row["aging_bucket"], "count": int(row["count"]), "sequence_order": len(aging)})
-            elif section == "po_detail":
-                po_detail.append({"unit": row["unit"], "area": row["area"], "type": row["type"], "value_zar": num(row["value_zar"]), "count": int(row["count"])})
-            elif section == "root_cause":
-                sub_causes = [s for s in row["sub_causes"].split("|") if s] if row.get("sub_causes") else []
-                root_cause.append({"root_cause_category": row["root_cause_category"], "sub_causes": sub_causes, "badge": row.get("badge") or None, "days_lost": num(row["days_lost"])})
-            elif section == "trend":
-                trend.append({"root_cause_category": row["root_cause_category"], "month": row["month"], "days_lost": num(row["days_lost"])})
-            elif section == "drill_down":
-                drilldown.append(
-                    {
-                        "pr_po_number": row["pr_po_number"], "unit": row["unit"], "area": row["area"], "type": row["type"],
-                        "category": row["category"], "value_zar": num(row["value_zar"]), "aging_bucket": row["aging_bucket"],
-                        "root_cause_category": row["root_cause_category"], "primary_cause_detail": row["primary_cause_detail"],
-                        "stuck_with_person": row["stuck_with_person"], "stuck_with_role": row["stuck_with_role"],
-                        "urgency": row["urgency"], "session_id": row.get("session_id") or None,
-                    }
-                )
-    root_cause.sort(key=lambda r: r["days_lost"], reverse=True)
-    return {"aging": aging, "po_detail": po_detail, "root_cause": root_cause, "trend": trend, "drilldown": drilldown}
-
-
-def _load_vzi_reference(path: Path) -> dict[str, Any]:
-    """VZI reference data is fixed, hand-transcribed presentation/reference data (see the
-    module docstring in scripts/vzi_reference_data.py) -- not synthetic, not regenerated.
-    Loaded once here into plain dicts/lists for the /vzi/dashboard route.
-    """
-    from app.services.vzi_reference_data import (
-        AGING, CARE_MAINTENANCE, CATEGORIES, FLAGS, OAR_VB, PO_DETAIL, PO_SUMMARY, PR_SUMMARY,
-        SLIDE_NOTES, DERIVED_NOTES,
-    )
-
-    return {
-        "pr_summary": PR_SUMMARY,
-        "po_summary": PO_SUMMARY,
-        "aging": [{"bucket": r["bucket"], "count": r["count"], "sequence_order": i} for i, r in enumerate(AGING)],
-        "oar_vb": OAR_VB,
-        "categories": CATEGORIES,
-        "po_detail": PO_DETAIL,
-        "slide_notes": SLIDE_NOTES,
-        "derived_notes": DERIVED_NOTES,
-        "care_maintenance": CARE_MAINTENANCE,
-        "flags": FLAGS,
-    }
 
 
 class ChatStore:
@@ -338,9 +288,6 @@ class DataStore:
         self.approvals = Table(data_dir / "approvals.csv", APPROVALS_COLUMNS, APPROVALS_TYPES)
         self.audit_logs = Table(data_dir / "audit_logs.csv", AUDIT_LOGS_COLUMNS, AUDIT_LOGS_TYPES)
         self.notifications = Table(data_dir / "notifications.csv", NOTIFICATIONS_COLUMNS, NOTIFICATIONS_TYPES)
-
-        self.situation_analysis = _load_situation_analysis(data_dir / "situation_analysis.csv")
-        self.vzi_reference = _load_vzi_reference(data_dir / "vzi_reference.csv")
 
         self.chat = ChatStore()
 

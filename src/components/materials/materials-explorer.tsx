@@ -8,9 +8,8 @@ import { MaterialTable } from "@/components/materials/material-table"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ApiError } from "@/lib/api/client"
-import { searchMaterials } from "@/lib/api/materials"
-import { MATERIAL_CATEGORY_OPTIONS } from "@/lib/constants"
-import type { LifecycleStatus, Material, MaterialCategory } from "@/lib/types"
+import { getMaterialCategories, searchMaterials } from "@/lib/api/materials"
+import type { LifecycleStatus, Material } from "@/lib/types"
 
 const PAGE_SIZE = 25
 
@@ -20,7 +19,8 @@ export function MaterialsExplorer() {
 
   const [query, setQuery] = useState("")
   const [debouncedQuery, setDebouncedQuery] = useState("")
-  const [category, setCategory] = useState<MaterialCategory | typeof ALL_FILTER>(ALL_FILTER)
+  const [category, setCategory] = useState<string>(ALL_FILTER)
+  const [categoryOptions, setCategoryOptions] = useState<string[]>([])
   const [lifecycle, setLifecycle] = useState<LifecycleStatus | typeof ALL_FILTER>(ALL_FILTER)
   const [page, setPage] = useState(1)
 
@@ -30,10 +30,16 @@ export function MaterialsExplorer() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (categoryParam && MATERIAL_CATEGORY_OPTIONS.includes(categoryParam as MaterialCategory)) {
-      setCategory(categoryParam as MaterialCategory)
+    getMaterialCategories()
+      .then(setCategoryOptions)
+      .catch(() => setCategoryOptions([]))
+  }, [])
+
+  useEffect(() => {
+    if (categoryParam && categoryOptions.includes(categoryParam)) {
+      setCategory(categoryParam)
     }
-  }, [categoryParam])
+  }, [categoryParam, categoryOptions])
 
   useEffect(() => {
     const timeout = setTimeout(() => setDebouncedQuery(query), 300)
@@ -77,6 +83,7 @@ export function MaterialsExplorer() {
         onQueryChange={setQuery}
         category={category}
         onCategoryChange={setCategory}
+        categoryOptions={categoryOptions}
         lifecycle={lifecycle}
         onLifecycleChange={setLifecycle}
       />

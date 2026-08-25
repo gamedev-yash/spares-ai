@@ -8,6 +8,7 @@ from app.schemas.situation_analysis import (
     SituationKpiSummaryOut,
     TrendPointOut,
 )
+from app.services import dashboard_service
 from app.services.csv_store import DataStore
 
 router = APIRouter(prefix="/situation-analysis", tags=["situation-analysis"])
@@ -15,7 +16,7 @@ router = APIRouter(prefix="/situation-analysis", tags=["situation-analysis"])
 
 @router.get("/aging", response_model=list[AgingBucketOut])
 def get_aging(store: DataStore = Depends(get_store)) -> list[AgingBucketOut]:
-    buckets = sorted(store.situation_analysis["aging"], key=lambda b: b["sequence_order"])
+    buckets = sorted(dashboard_service.get_situation_analysis(store)["aging"], key=lambda b: b["sequence_order"])
     return [AgingBucketOut(bucket=b["bucket"], count=b["count"]) for b in buckets]
 
 
@@ -23,7 +24,7 @@ def get_aging(store: DataStore = Depends(get_store)) -> list[AgingBucketOut]:
 def get_root_causes(store: DataStore = Depends(get_store)) -> list[RootCauseOut]:
     return [
         RootCauseOut(category=r["root_cause_category"], daysLost=r["days_lost"], subCauses=r["sub_causes"], badge=r["badge"])
-        for r in store.situation_analysis["root_cause"]
+        for r in dashboard_service.get_situation_analysis(store)["root_cause"]
     ]
 
 
@@ -31,7 +32,7 @@ def get_root_causes(store: DataStore = Depends(get_store)) -> list[RootCauseOut]
 def get_trend(store: DataStore = Depends(get_store)) -> list[TrendPointOut]:
     return [
         TrendPointOut(month=r["month"], category=r["root_cause_category"], daysLost=r["days_lost"])
-        for r in store.situation_analysis["trend"]
+        for r in dashboard_service.get_situation_analysis(store)["trend"]
     ]
 
 
@@ -54,23 +55,24 @@ def get_drilldown(store: DataStore = Depends(get_store)) -> list[DrillDownItemOu
             urgency=r["urgency"],
             sessionId=r["session_id"],
         )
-        for r in store.situation_analysis["drilldown"]
+        for r in dashboard_service.get_situation_analysis(store)["drilldown"]
     ]
 
 
 @router.get("/kpi-summary", response_model=SituationKpiSummaryOut)
 def get_kpi_summary(store: DataStore = Depends(get_store)) -> SituationKpiSummaryOut:
-    buckets = sorted(store.situation_analysis["aging"], key=lambda b: b["sequence_order"])
+    situation = dashboard_service.get_situation_analysis(store)
+    buckets = sorted(situation["aging"], key=lambda b: b["sequence_order"])
     total_open_prs = sum(b["count"] for b in buckets)
     over30_index = next((i for i, b in enumerate(buckets) if b["bucket"] == "30-60 days"), 0)
     pr_over_30 = sum(b["count"] for b in buckets[over30_index:])
 
-    po_rows = store.situation_analysis["po_detail"]
+    po_rows = situation["po_detail"]
     total_open_pos = sum(r["count"] for r in po_rows)
     total_open_po_value = sum(r["value_zar"] for r in po_rows)
     service_po_value = sum(r["value_zar"] for r in po_rows if r["type"] == "Service")
 
-    top_drivers = store.situation_analysis["root_cause"][:2]
+    top_drivers = situation["root_cause"][:2]
 
     return SituationKpiSummaryOut(
         totalOpenPrs=total_open_prs,

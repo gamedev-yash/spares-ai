@@ -10,6 +10,18 @@ from app.services.csv_store import DataStore
 router = APIRouter(prefix="/audit", tags=["audit"])
 
 
+@router.get("/facets", response_model=dict[str, list[str]])
+def get_audit_facets(store: DataStore = Depends(get_store)) -> dict[str, list[str]]:
+    """Distinct entity_type/action values actually present in audit_logs.csv -- lets the
+    frontend's filter dropdowns track whatever the app has actually written, instead of a
+    static list that can miss real values (e.g. approval actions, AI tool actions)."""
+    logs = store.audit_logs.all()
+    return {
+        "entity_types": sorted({a["entity_type"] for a in logs}),
+        "actions": sorted({a["action"] for a in logs}),
+    }
+
+
 @router.get("", response_model=Page[AuditLogOut])
 def list_audit_logs(
     store: DataStore = Depends(get_store),
