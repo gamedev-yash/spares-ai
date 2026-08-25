@@ -75,7 +75,10 @@ function toRegisterRow(r: Record<string, string>): RepairRegisterRow {
     (sum, c) => sum + c.quantityUnderRepair,
     0
   )
-  const maxDaysOpen = chains.reduce((max, c) => Math.max(max, c.daysOpen), 0)
+  // Received chains are already resolved -- their historical daysOpen
+  // shouldn't inflate how overdue this row's still-active repairs look.
+  const openChains = chains.filter((c) => c.status !== "Received")
+  const maxDaysOpen = openChains.reduce((max, c) => Math.max(max, c.daysOpen), 0)
   // Only one chain per material in this dataset ever has outstanding
   // quantity at once, so the "earliest" outstanding delivery is just that
   // chain's -- no date parsing required.
