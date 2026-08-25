@@ -397,3 +397,63 @@ export interface SituationKpiSummary {
   /** the 2 biggest root causes by days lost, for the KPI card */
   topDrivers: FishboneRootCause[]
 }
+
+// ---- Shared platform (Initiatives 7, 8, 13) ----
+
+export type DecisionOption = {
+  id: string
+  icon: IconKey
+  label: string
+  description: string
+  tone?: "default" | "success" | "warning" | "danger"
+}
+
+export type TimelineEvent = {
+  id: string
+  label: string
+  timestamp?: string
+  actor?: string
+  detail?: string
+  state: "done" | "active" | "pending"
+  tone?: "default" | "warning" | "danger"
+}
+
+/** Named ComparisonPane (not ComparisonSide) to avoid a clash with the
+ * chat's existing ComparisonSide (ComparisonCardData) above. */
+export type ComparisonPane = {
+  label: string
+  title: string
+  subtitle?: string
+  primaryValue: string
+  primaryTone?: "default" | "success" | "danger"
+  meta?: string
+  highlight?: boolean
+}
+
+export type DemoRole =
+  | "Requester"
+  | "Engineering Manager"
+  | "Commercial Manager"
+  | "Warehouse Supervisor"
+  | "Inventory Control"
+  | "HOD"
+
+export type PlatformAlertKind =
+  | "duplicate-repair-chain"
+  | "declaration-pending"
+  | "parameter-exception"
+  | "approval-aging"
+  | "oar-aging"
+  | "pattern-exception"
+
+export type PlatformAlert = {
+  id: string
+  kind: PlatformAlertKind
+  initiative: "I7" | "I8" | "I13"
+  severity: "info" | "warning" | "critical"
+  title: string
+  detail: string
+  raisedAt: string
+  href: string
+  daysOpen?: number
+}
