@@ -10,10 +10,10 @@ import { AdvisoryNotice } from "@/components/shared/advisory-notice"
 import { ContextPanel } from "@/components/shared/context-panel"
 import { DecisionControls } from "@/components/shared/decision-controls"
 import { PageHeader } from "@/components/shared/page-header"
+import type { ExtendedMaterial } from "@/lib/material-data"
 import type {
   ConditionAttestation,
   DecisionOption,
-  ExtendedMaterial,
   RepairChain,
   RepairVsNewEvaluation,
 } from "@/lib/types"
