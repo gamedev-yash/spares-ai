@@ -143,9 +143,25 @@ USERS_TYPES = {"id": int, "active": bool}
 MATERIALS_COLUMNS = [
     "id", "material_code", "description", "material_group", "material_type", "plant", "storage_location",
     "unit_of_measure", "criticality", "lifecycle_status", "service_code", "manufacturer", "manufacturer_part_no",
-    "last_po_price", "last_vendor", "stock_level", "lead_time_days", "active", "created_at", "updated_at",
+    "last_po_price", "last_vendor", "stock_level", "reorder_point", "lead_time_days", "repair_cost_factor",
+    "active", "created_at", "updated_at",
 ]
-MATERIALS_TYPES = {"id": int, "last_po_price": float, "stock_level": int, "lead_time_days": int, "active": bool}
+MATERIALS_TYPES = {
+    "id": int, "last_po_price": float, "stock_level": int, "reorder_point": int, "lead_time_days": int,
+    "repair_cost_factor": float, "active": bool,
+}
+
+# --- Initiative 8: repairable identification -------------------------------
+# Repairable spares are identified by a material-code convention, mirroring the
+# 80-series convention VZI already uses in SAP ECC (see Initiative 8 SS3.1). The
+# convention -- not a separate boolean column -- is deliberately the single source
+# of truth, because it is what the real solution keys off; every guard, declaration
+# and register lookup resolves repairability through this one helper.
+REPAIRABLE_CODE_PREFIX = "80-"
+
+
+def is_repairable_code(material_code: Any) -> bool:
+    return bool(material_code) and str(material_code).startswith(REPAIRABLE_CODE_PREFIX)
 
 SUPPLIERS_COLUMNS = ["id", "supplier_code", "supplier_name", "country", "category", "rating", "active"]
 SUPPLIERS_TYPES = {"id": int, "rating": float, "active": bool}
@@ -153,9 +169,12 @@ SUPPLIERS_TYPES = {"id": int, "rating": float, "active": bool}
 RR_COLUMNS = [
     "id", "rr_number", "requester_id", "plant", "department", "area", "trigger_type", "creation_date",
     "required_date", "purpose", "status", "priority", "total_estimated_value", "source_system",
-    "created_at", "updated_at",
+    "duplicate_flag", "duplicate_context", "created_at", "updated_at",
 ]
-RR_TYPES = {"id": int, "requester_id": int, "total_estimated_value": float}
+RR_TYPES = {
+    "id": int, "requester_id": int, "total_estimated_value": float,
+    "duplicate_flag": bool, "duplicate_context": JSON_TYPE,
+}
 
 # `area` groups a department into the same Plant/Mining/Other buckets the VZI dashboard uses.
 DEPARTMENT_AREA = {
@@ -181,9 +200,18 @@ RR_LINE_ITEMS_TYPES = {"id": int, "rr_id": int, "line_number": int, "material_id
 
 PR_COLUMNS = [
     "id", "pr_number", "rr_id", "creation_date", "required_date", "status", "buyer_id", "plant",
-    "total_value", "source_system",
+    "total_value", "source_system", "doc_type", "duplicate_flag", "duplicate_context",
 ]
-PR_TYPES = {"id": int, "rr_id": int, "buyer_id": int, "total_value": float}
+PR_TYPES = {
+    "id": int, "rr_id": int, "buyer_id": int, "total_value": float,
+    "duplicate_flag": bool, "duplicate_context": JSON_TYPE,
+}
+
+# Initiative 8: a repair document is distinct from a new-unit document for the same
+# material (Initiative 8 SS2.1). An *active repair chain* is an open, undelivered
+# REPAIR pr/po for a (material, plant) pair -- see services/repair_service.py.
+DOC_TYPE_NEW_BUY = "NEW_BUY"
+DOC_TYPE_REPAIR = "REPAIR"
 
 PR_LINE_ITEMS_COLUMNS = [
     "id", "pr_id", "material_id", "quantity", "unit_price", "service_code", "description", "line_status", "quality_flags",
@@ -191,7 +219,8 @@ PR_LINE_ITEMS_COLUMNS = [
 PR_LINE_ITEMS_TYPES = {"id": int, "pr_id": int, "material_id": int, "quantity": float, "unit_price": float}
 
 PO_COLUMNS = [
-    "id", "po_number", "pr_id", "supplier_id", "creation_date", "expected_delivery", "status", "total_value", "buyer_id",
+    "id", "po_number", "pr_id", "supplier_id", "creation_date", "expected_delivery", "status", "total_value",
+    "buyer_id", "doc_type",
 ]
 PO_TYPES = {"id": int, "pr_id": int, "supplier_id": int, "total_value": float, "buyer_id": int}
 
@@ -222,6 +251,35 @@ NOTIFICATIONS_COLUMNS = [
     "created_at", "read_at",
 ]
 NOTIFICATIONS_TYPES = {"id": int, "recipient_id": int, "related_entity_id": int}
+
+# --- Initiative 8: condition-to-repair attestations -------------------------
+# The ONE piece of state the platform owns outright (Initiative 8 SS3.4 -- everything
+# else in the real solution is a read-only projection of SAP). Kept as its own table
+# rather than columns on `rr` so the MRP "saved but declaration still pending" case
+# stays expressible, and so the declaration log is independently auditable.
+#
+# origin: MANUAL (requisitioner declared at creation) | MRP (auto-raised, planner must
+#         declare before the RR can pass DOA) | CHAT (declared through the assistant)
+# status: COMPLETE | PENDING
+ATTESTATIONS_COLUMNS = [
+    "id", "rr_id", "material_id", "plant", "origin", "status", "statement",
+    "declared_by", "declared_at", "chain_snapshot", "created_at",
+]
+ATTESTATIONS_TYPES = {
+    "id": int, "rr_id": int, "material_id": int, "declared_by": int, "chain_snapshot": JSON_TYPE,
+}
+
+ATTESTATION_ORIGIN_MANUAL = "MANUAL"
+ATTESTATION_ORIGIN_MRP = "MRP"
+ATTESTATION_ORIGIN_CHAT = "CHAT"
+ATTESTATION_STATUS_COMPLETE = "COMPLETE"
+ATTESTATION_STATUS_PENDING = "PENDING"
+
+# The exact sentence a requisitioner signs. Placeholder wording pending VZI's own --
+# see the Initiative 8 build plan, input #5.
+ATTESTATION_STATEMENT = (
+    "I confirm the existing item has been assessed and cannot be repaired."
+)
 
 
 class ChatStore:
@@ -288,6 +346,7 @@ class DataStore:
         self.approvals = Table(data_dir / "approvals.csv", APPROVALS_COLUMNS, APPROVALS_TYPES)
         self.audit_logs = Table(data_dir / "audit_logs.csv", AUDIT_LOGS_COLUMNS, AUDIT_LOGS_TYPES)
         self.notifications = Table(data_dir / "notifications.csv", NOTIFICATIONS_COLUMNS, NOTIFICATIONS_TYPES)
+        self.attestations = Table(data_dir / "attestations.csv", ATTESTATIONS_COLUMNS, ATTESTATIONS_TYPES)
 
         self.chat = ChatStore()
 

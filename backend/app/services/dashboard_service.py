@@ -19,8 +19,13 @@ from collections import defaultdict
 from datetime import date, datetime, timezone
 
 from app.services.csv_store import DataStore, Row
+from app.services.repair_service import is_new_buy_document
 
 AGING_BUCKETS = ["0-7 days", "7-15 days", "15-30 days", "30-60 days", "60-90 days", "90-120 days", "More than 120 days"]
+
+# Initiative 8 put repair documents in the same pr/po tables. Both views in this module
+# report the OPEN NEW-PROCUREMENT position, so repair documents are filtered out -- see the
+# matching note in analytics_service. The repair position has its own register.
 
 OPEN_RR_STATUSES = {"WAITING_DOA", "MRP_PROCESSING", "ESCALATED"}
 OPEN_PR_STATUSES = {"OPEN", "AWAITING_RFQ", "AWAITING_ARIBA", "AWAITING_NFA", "AWAITING_PO"}
@@ -160,7 +165,7 @@ def _collect_open_items(store: DataStore, today: date) -> list[_OpenItem]:
 
     # --- PR-level open items ---
     for pr in store.pr.all():
-        if pr["status"] not in OPEN_PR_STATUSES:
+        if pr["status"] not in OPEN_PR_STATUSES or not is_new_buy_document(pr):
             continue
         rr = rr_by_id.get(pr.get("rr_id"))
         group = _dominant_group(pr_lines_by_pr.get(pr["id"], []), materials_by_id)
@@ -204,7 +209,7 @@ def _open_pos(store: DataStore, today: date) -> list[dict]:
 
     out = []
     for po in store.po.all():
-        if po["status"] not in OPEN_PO_STATUSES:
+        if po["status"] not in OPEN_PO_STATUSES or not is_new_buy_document(po):
             continue
         pr = pr_by_id.get(po.get("pr_id"))
         rr = rr_by_id.get(pr.get("rr_id")) if pr else None

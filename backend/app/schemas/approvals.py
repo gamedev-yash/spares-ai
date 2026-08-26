@@ -26,6 +26,14 @@ class ApprovalOut(ORMBase):
     requester_name: str | None = None
     material_description: str | None = None
     total_value: float | None = None
+    # Initiative 8: the duplicate context and the requisitioner's condition-to-repair
+    # declaration travel with the document, so the approver sees both at decision time.
+    duplicate_flag: bool = False
+    duplicate_context: dict | None = None
+    attestation: dict | None = None
+    # True when the requisition was auto-raised and is still awaiting a planner's
+    # declaration -- approval is blocked until it is completed.
+    attestation_pending: bool = False
 
 
 class ApprovalActionRequest(BaseModel):

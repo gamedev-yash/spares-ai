@@ -1,5 +1,5 @@
 import sys
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -26,6 +26,7 @@ TABLE_SCHEMAS = {
     "approvals": (cs.APPROVALS_COLUMNS, cs.APPROVALS_TYPES),
     "audit_logs": (cs.AUDIT_LOGS_COLUMNS, cs.AUDIT_LOGS_TYPES),
     "notifications": (cs.NOTIFICATIONS_COLUMNS, cs.NOTIFICATIONS_TYPES),
+    "attestations": (cs.ATTESTATIONS_COLUMNS, cs.ATTESTATIONS_TYPES),
 }
 
 
@@ -67,7 +68,17 @@ def make_user(store: DataStore, *, employee_code: str, role: str, plant: str = "
     )
 
 
-def make_material(store: DataStore, *, material_code: str = "500-99001", price: float = 1000.0, group: str = "Bearings", active: bool = True) -> Row:
+def make_material(
+    store: DataStore,
+    *,
+    material_code: str = "500-99001",
+    price: float = 1000.0,
+    group: str = "Bearings",
+    active: bool = True,
+    stock_level: int = 10,
+    reorder_point: int = 3,
+    repair_cost_factor: float | None = None,
+) -> Row:
     now = datetime.now(timezone.utc).isoformat()
     return store.materials.insert(
         {
@@ -86,13 +97,86 @@ def make_material(store: DataStore, *, material_code: str = "500-99001", price: 
             "manufacturer_part_no": None,
             "last_po_price": price,
             "last_vendor": None,
-            "stock_level": 10,
+            "stock_level": stock_level,
+            "reorder_point": reorder_point,
             "lead_time_days": 14,
+            "repair_cost_factor": repair_cost_factor,
             "active": active,
             "created_at": now,
             "updated_at": now,
         }
     )
+
+
+def make_repairable_material(store: DataStore, *, material_code: str = "80-99001", **kwargs) -> Row:
+    """Initiative 8: a material carrying the 80-series repairable convention."""
+    kwargs.setdefault("group", "Pumps")
+    kwargs.setdefault("repair_cost_factor", 0.35)
+    return make_material(store, material_code=material_code, **kwargs)
+
+
+def make_repair_chain(
+    store: DataStore,
+    material: Row,
+    *,
+    plant: str = "Gamsberg",
+    quantity: float = 2,
+    repair_value: float = 400.0,
+    days_ago: int = 10,
+    expected_in_days: int = 20,
+    delivered: bool = False,
+    with_po: bool = True,
+    supplier_id: int | None = None,
+) -> dict:
+    """Insert a repair PR (+ optional repair PO) for a material at a plant.
+
+    `delivered=True` closes the chain, which is how the tests prove detection is live
+    rather than 'this material was repaired at some point'."""
+    opened = date.today() - timedelta(days=days_ago)
+    expected = opened + timedelta(days=expected_in_days)
+
+    pr_id = store.pr.next_id()
+    store.pr.insert(
+        {
+            "id": pr_id, "pr_number": f"RPR-{9000 + pr_id}", "rr_id": None,
+            "creation_date": opened.isoformat(), "required_date": expected.isoformat(),
+            "status": "PO_CREATED" if with_po else "AWAITING_PO",
+            "buyer_id": None, "plant": plant, "total_value": repair_value,
+            "source_system": "test", "doc_type": cs.DOC_TYPE_REPAIR,
+            "duplicate_flag": False, "duplicate_context": None,
+        }
+    )
+    store.pr_line_items.insert(
+        {
+            "id": store.pr_line_items.next_id(), "pr_id": pr_id, "material_id": material["id"],
+            "quantity": quantity, "unit_price": repair_value / quantity, "service_code": None,
+            "description": f"Repair - {material['description']}",
+            "line_status": "CLOSED" if delivered else "OPEN", "quality_flags": None,
+        }
+    )
+
+    po_id = None
+    if with_po:
+        po_id = store.po.next_id()
+        store.po.insert(
+            {
+                "id": po_id, "po_number": f"RPO-{9000 + po_id}", "pr_id": pr_id,
+                "supplier_id": supplier_id, "creation_date": opened.isoformat(),
+                "expected_delivery": expected.isoformat(),
+                "status": "COMPLETED" if delivered else "OPEN",
+                "total_value": repair_value, "buyer_id": None, "doc_type": cs.DOC_TYPE_REPAIR,
+            }
+        )
+        store.po_line_items.insert(
+            {
+                "id": store.po_line_items.next_id(), "po_id": po_id, "material_id": material["id"],
+                "quantity": quantity, "unit_price": repair_value / quantity,
+                "line_total": repair_value, "delivery_date": expected.isoformat(),
+                "status": "DELIVERED" if delivered else "OPEN",
+            }
+        )
+
+    return {"pr_id": pr_id, "po_id": po_id, "expected_return": expected.isoformat()}
 
 
 def auth_headers(client: TestClient, employee_code: str, password: str = "unused") -> dict:

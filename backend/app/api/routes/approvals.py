@@ -4,9 +4,15 @@ from app.api.deps import get_current_user, get_store
 from app.schemas.approvals import ApprovalActionRequest, ApprovalOut
 from app.schemas.common import Page
 from app.services import approval_service
-from app.services.csv_store import DataStore, Row
+from app.services.csv_store import ATTESTATION_STATUS_PENDING, DataStore, Row
 
 router = APIRouter(prefix="/approvals", tags=["approvals"])
+
+
+DERIVED_APPROVAL_FIELDS = (
+    "rr_number", "requester_name", "material_description", "total_value",
+    "duplicate_flag", "duplicate_context", "attestation", "attestation_pending",
+)
 
 
 def _hydrate(store: DataStore, approvals: list[Row]) -> list[ApprovalOut]:
@@ -18,19 +24,48 @@ def _hydrate(store: DataStore, approvals: list[Row]) -> list[ApprovalOut]:
     }
     materials_by_id = {m["id"]: m for m in store.materials.all()}
 
+    # Initiative 8 SS3.3: the approver alert carries the duplicate context AND the
+    # requisitioner's declaration, so the approval decision is made with both in view.
+    # Joined here rather than copied onto the approval row -- the RR remains the record.
+    attestations_by_rr: dict[int, list[Row]] = {}
+    for row in store.attestations.all():
+        attestations_by_rr.setdefault(row.get("rr_id"), []).append(row)
+
     out: list[ApprovalOut] = []
     for a in approvals:
         rr = rr_by_id.get(a["rr_id"]) if a.get("rr_id") else None
         requester = users_by_id.get(rr["requester_id"]) if rr else None
         material_id = first_lines.get(a["rr_id"]) if a.get("rr_id") else None
         material = materials_by_id.get(material_id) if material_id else None
+
+        rr_attestations = attestations_by_rr.get(a.get("rr_id"), [])
+        pending = [x for x in rr_attestations if x.get("status") == ATTESTATION_STATUS_PENDING]
+        declared = next((x for x in rr_attestations if x.get("status") != ATTESTATION_STATUS_PENDING), None)
+
+        attestation_summary = None
+        if rr_attestations:
+            source = declared or rr_attestations[0]
+            declarer = users_by_id.get(source.get("declared_by"))
+            attestation_summary = {
+                "id": source["id"],
+                "status": source.get("status"),
+                "origin": source.get("origin"),
+                "statement": source.get("statement"),
+                "declared_by_name": declarer.get("name") if declarer else None,
+                "declared_at": source.get("declared_at"),
+            }
+
         out.append(
             ApprovalOut(
-                **{k: a.get(k) for k in ApprovalOut.model_fields if k not in ("rr_number", "requester_name", "material_description", "total_value")},
+                **{k: a.get(k) for k in ApprovalOut.model_fields if k not in DERIVED_APPROVAL_FIELDS},
                 rr_number=rr["rr_number"] if rr else None,
                 requester_name=requester["name"] if requester else None,
                 material_description=material["description"] if material else None,
                 total_value=float(rr["total_estimated_value"]) if rr else None,
+                duplicate_flag=bool(rr.get("duplicate_flag")) if rr else False,
+                duplicate_context=rr.get("duplicate_context") if rr else None,
+                attestation=attestation_summary,
+                attestation_pending=bool(pending),
             )
         )
     return out

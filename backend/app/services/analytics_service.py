@@ -11,9 +11,16 @@ from collections import defaultdict
 from datetime import date, datetime, timezone
 
 from app.services.csv_store import DataStore
+from app.services.repair_service import is_new_buy_document
 
 OPEN_PR_STATUSES = {"OPEN", "AWAITING_RFQ", "AWAITING_ARIBA", "AWAITING_NFA", "AWAITING_PO"}
 OPEN_PO_STATUSES = {"OPEN", "PARTIALLY_DELIVERED"}
+
+# Initiative 8 added repair documents to the same pr/po tables. Everything in this module
+# measures the NEW-PROCUREMENT cycle (RR -> DOA -> MRP -> PR -> ... -> PO), so repair
+# documents are excluded throughout -- letting refurbishment into these numbers would
+# silently change what every existing analytic and dashboard means. Repair activity has its
+# own view: services/repair_register_service.py.
 
 
 def _parse_dt(value: str) -> datetime:
@@ -128,7 +135,7 @@ def get_open_pr_po(store: DataStore, page: int, page_size: int) -> dict:
 
     open_prs = []
     for pr in store.pr.all():
-        if pr.get("status") not in OPEN_PR_STATUSES:
+        if pr.get("status") not in OPEN_PR_STATUSES or not is_new_buy_document(pr):
             continue
         buyer = users_by_id.get(pr.get("buyer_id"))
         open_prs.append(
@@ -145,7 +152,7 @@ def get_open_pr_po(store: DataStore, page: int, page_size: int) -> dict:
 
     open_pos = []
     for po in store.po.all():
-        if po.get("status") not in OPEN_PO_STATUSES:
+        if po.get("status") not in OPEN_PO_STATUSES or not is_new_buy_document(po):
             continue
         buyer = users_by_id.get(po.get("buyer_id"))
         open_pos.append(
@@ -185,7 +192,9 @@ def get_dashboard_summary(store: DataStore) -> dict:
     today = date.today()
     over_30_count = sum(
         1 for pr in store.pr.all()
-        if pr.get("status") in OPEN_PR_STATUSES and (today - _parse_date(pr["creation_date"])).days > 30
+        if pr.get("status") in OPEN_PR_STATUSES
+        and is_new_buy_document(pr)
+        and (today - _parse_date(pr["creation_date"])).days > 30
     )
 
     return {

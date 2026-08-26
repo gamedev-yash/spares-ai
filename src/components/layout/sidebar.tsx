@@ -9,6 +9,7 @@ import { LogoutButton } from "@/components/shared/logout-button"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { searchApprovals } from "@/lib/api/approvals"
 import { listChatSessions, type ChatSessionSummary } from "@/lib/api/chat"
+import { listPendingDeclarations } from "@/lib/api/repair"
 import {
   MATERIAL_CATEGORIES,
   DASHBOARD_LINKS,
@@ -37,6 +38,7 @@ function NavSection({
 export function Sidebar() {
   const pathname = usePathname()
   const [pendingApprovals, setPendingApprovals] = useState<number | null>(null)
+  const [pendingDeclarations, setPendingDeclarations] = useState<number | null>(null)
   const [sessions, setSessions] = useState<ChatSessionSummary[]>([])
 
   useEffect(() => {
@@ -44,6 +46,9 @@ export function Sidebar() {
     searchApprovals({ status: "PENDING", page_size: 1 })
       .then((result) => setPendingApprovals(result.total))
       .catch(() => setPendingApprovals(null))
+    listPendingDeclarations()
+      .then((items) => setPendingDeclarations(items.length))
+      .catch(() => setPendingDeclarations(null))
     listChatSessions()
       .then(setSessions)
       .catch(() => setSessions([]))
@@ -157,7 +162,12 @@ export function Sidebar() {
               <Icon className="size-4 shrink-0" />
               {action.label}
               {(() => {
-                const badge = action.href === "/approvals" ? pendingApprovals : action.badge
+                const badge =
+                  action.href === "/approvals"
+                    ? pendingApprovals
+                    : action.href === "/declarations"
+                      ? pendingDeclarations
+                      : action.badge
                 return (
                   badge != null &&
                   badge > 0 && (

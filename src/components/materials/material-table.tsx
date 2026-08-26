@@ -62,8 +62,15 @@ export function MaterialTable({ materials }: { materials: Material[] }) {
                 {material.material_code}
               </Link>
             </TableCell>
-            <TableCell className="max-w-[220px] truncate text-foreground">
-              {material.description}
+            <TableCell className="max-w-[220px]">
+              <div className="truncate text-foreground">{material.description}</div>
+              {/* Initiative 8: repairability comes from the 80-series code convention, so the
+                  population is visible on the code itself as well as here. */}
+              {material.is_repairable && (
+                <StatusBadge tone="warning" className="mt-1">
+                  Repairable
+                </StatusBadge>
+              )}
             </TableCell>
             <TableCell className="text-muted-foreground">
               {material.manufacturer_part_no}

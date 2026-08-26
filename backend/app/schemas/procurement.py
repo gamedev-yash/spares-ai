@@ -22,6 +22,12 @@ class RequestRequisitionOut(ORMBase):
     requester_id: int
     plant: str
     department: str
+    # `area` and `trigger_type` live on the RR row but were previously not declared here,
+    # so `_hydrate` (which filters to declared fields) dropped them before they reached the
+    # frontend. Initiative 8's MRP path keys off trigger_type == MIN_MAX_AUTO, so both are
+    # now exposed.
+    area: str | None = None
+    trigger_type: str | None = None
     creation_date: date
     required_date: date
     purpose: str
@@ -29,6 +35,8 @@ class RequestRequisitionOut(ORMBase):
     priority: str
     total_estimated_value: float
     source_system: str
+    duplicate_flag: bool | None = None
+    duplicate_context: dict | None = None
     created_at: datetime
     updated_at: datetime
     line_items: list[RRLineItemOut] = Field(default_factory=list)
@@ -48,6 +56,11 @@ class RequestRequisitionCreate(ORMBase):
     purpose: str
     priority: str = "Normal"
     line_items: list[RRLineItemCreate]
+    # Initiative 8: the condition-to-repair declaration. Required (hard gate) when any
+    # line references a repairable 80-series material -- see services/rr_service.py.
+    # Ignored entirely for non-repairable requisitions, so existing callers are unaffected.
+    attestation_confirmed: bool = False
+    attestation_note: str | None = None
 
 
 class PRLineItemOut(ORMBase):
@@ -72,6 +85,9 @@ class PurchaseRequisitionOut(ORMBase):
     plant: str
     total_value: float
     source_system: str
+    doc_type: str | None = None
+    duplicate_flag: bool | None = None
+    duplicate_context: dict | None = None
     line_items: list[PRLineItemOut] = Field(default_factory=list)
 
 
@@ -95,6 +111,7 @@ class PurchaseOrderOut(ORMBase):
     status: str
     total_value: float
     buyer_id: int | None
+    doc_type: str | None = None
     line_items: list[POLineItemOut] = Field(default_factory=list)
 
 

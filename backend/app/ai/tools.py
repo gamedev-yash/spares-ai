@@ -13,7 +13,7 @@ from typing import Any
 
 from app.ai.provider_base import ToolSpec
 from app.core.exceptions import AppError
-from app.services import analytics_service, rr_service
+from app.services import analytics_service, repair_register_service, repair_service, rr_service
 from app.services.audit_service import record_audit
 from app.services.csv_store import DataStore, Row
 from app.schemas.procurement import RequestRequisitionCreate, RRLineItemCreate
@@ -45,7 +45,17 @@ def _get_material(ctx: ToolContext, material_id: int) -> Any:
     return {"id": m["id"], "material_code": m["material_code"], "description": m["description"], "material_group": m["material_group"], "criticality": m["criticality"], "last_po_price": float(m.get("last_po_price") or 0), "lead_time_days": m["lead_time_days"]}
 
 
-def _create_rr(ctx: ToolContext, plant: str, department: str, required_date: str, purpose: str, line_items: list[dict], priority: str = "Normal") -> Any:
+def _create_rr(
+    ctx: ToolContext,
+    plant: str,
+    department: str,
+    required_date: str,
+    purpose: str,
+    line_items: list[dict],
+    priority: str = "Normal",
+    attestation_confirmed: bool = False,
+    attestation_note: str | None = None,
+) -> Any:
     try:
         payload = RequestRequisitionCreate(
             plant=plant,
@@ -54,6 +64,8 @@ def _create_rr(ctx: ToolContext, plant: str, department: str, required_date: str
             purpose=purpose,
             priority=priority,
             line_items=[RRLineItemCreate(**line) for line in line_items],
+            attestation_confirmed=attestation_confirmed,
+            attestation_note=attestation_note,
         )
         rr = rr_service.create_rr(ctx.store, ctx.current_user, payload, source_system="chat_assistant")
         return {"rr_id": rr["id"], "rr_number": rr["rr_number"], "status": rr["status"], "total_estimated_value": float(rr["total_estimated_value"])}
@@ -105,6 +117,61 @@ def _get_approval_status(ctx: ToolContext, rr_id: int) -> Any:
     return [{"id": a["id"], "approval_type": a["approval_type"], "status": a["status"], "approver_role": a["approver_role"]} for a in approvals]
 
 
+def _check_repair_chain(ctx: ToolContext, material_id: int, plant: str | None = None) -> Any:
+    """Initiative 8 Layer 2: the duplicate guard on the conversational path. Read-only and
+    advisory -- it reports what is already in flight; the user decides."""
+    result = repair_service.check_duplicate(ctx.store, material_id, plant)
+    return {
+        "material_code": result.get("material_code"),
+        "material_description": result.get("material_description"),
+        "is_repairable": result["is_repairable"],
+        "has_active_chain": result["has_active_chain"],
+        "total_quantity_under_repair": result.get("total_quantity_under_repair", 0),
+        "earliest_expected_return": result.get("earliest_expected_return"),
+        "chains": [
+            {
+                "repair_pr_number": c["repair_pr_number"],
+                "repair_po_number": c["repair_po_number"],
+                "vendor": c["vendor"],
+                "quantity_under_repair": c["quantity_under_repair"],
+                "expected_return": c["expected_return"],
+                "days_open": c["days_open"],
+                "overdue": c["overdue"],
+            }
+            for c in result["chains"]
+        ],
+    }
+
+
+def _compare_repair_vs_new(ctx: ToolContext, material_id: int, plant: str | None = None) -> Any:
+    result = repair_service.economic_evaluation(ctx.store, material_id, plant)
+    if result is None:
+        return {"error": "No active repair chain for this material, so there is nothing to compare."}
+    return result
+
+
+def _get_repair_register(ctx: ToolContext, plant: str | None = None, status: str | None = None, limit: int = 10) -> Any:
+    register = repair_register_service.get_register(ctx.store, plant=plant, status=status)
+    return {
+        "summary": register["summary"],
+        "items": [
+            {
+                "material_code": r["material_code"],
+                "material_description": r["material_description"],
+                "plant": r["plant"],
+                "stock_on_hand": r["stock_on_hand"],
+                "reorder_point": r["reorder_point"],
+                "quantity_under_repair": r["quantity_under_repair"],
+                "vendor": r["vendor"],
+                "expected_return": r["expected_return"],
+                "days_open": r["days_open"],
+                "overdue": r["overdue"],
+            }
+            for r in register["items"][:limit]
+        ],
+    }
+
+
 def _get_audit_history(ctx: ToolContext, entity_type: str, entity_id: int) -> Any:
     rows = sorted(
         ctx.store.audit_logs.filter(lambda a: a.get("entity_type") == entity_type and a.get("entity_id") == entity_id),
@@ -139,11 +206,44 @@ TOOLS: dict[str, tuple[ToolSpec, Any]] = {
                         "type": "array",
                         "items": {"type": "object", "properties": {"material_id": {"type": "integer"}, "quantity": {"type": "number"}}, "required": ["material_id", "quantity"]},
                     },
+                    "attestation_confirmed": {
+                        "type": "boolean",
+                        "description": (
+                            "Required for repairable (80-series) materials: set true ONLY after the "
+                            "user has explicitly confirmed the existing item cannot be repaired. "
+                            "Never assume this -- ask, and wait for the answer."
+                        ),
+                    },
+                    "attestation_note": {"type": "string", "description": "Optional reason the user gave."},
                 },
                 "required": ["plant", "department", "required_date", "purpose", "line_items"],
             },
         ),
         _create_rr,
+    ),
+    "check_repair_chain": (
+        ToolSpec(
+            "check_repair_chain",
+            "Check whether a material is repairable and whether a repair is already in progress for it at a plant. Call this BEFORE creating a requisition for any material.",
+            {"type": "object", "properties": {"material_id": {"type": "integer"}, "plant": {"type": "string"}}, "required": ["material_id"]},
+        ),
+        _check_repair_chain,
+    ),
+    "compare_repair_vs_new": (
+        ToolSpec(
+            "compare_repair_vs_new",
+            "Compare an in-progress repair against buying a new unit: cost, lead time, and expected return date.",
+            {"type": "object", "properties": {"material_id": {"type": "integer"}, "plant": {"type": "string"}}, "required": ["material_id"]},
+        ),
+        _compare_repair_vs_new,
+    ),
+    "get_repair_register": (
+        ToolSpec(
+            "get_repair_register",
+            "List parts currently out for repair, with stock on hand and expected return dates. Optional status filter: OVERDUE, IN_FLIGHT, REORDER_TRIGGERED.",
+            {"type": "object", "properties": {"plant": {"type": "string"}, "status": {"type": "string"}, "limit": {"type": "integer"}}},
+        ),
+        _get_repair_register,
     ),
     "get_rr": (ToolSpec("get_rr", "Get an RR by id.", {"type": "object", "properties": {"rr_id": {"type": "integer"}}, "required": ["rr_id"]}), _get_rr),
     "get_pr": (ToolSpec("get_pr", "Get a PR by id.", {"type": "object", "properties": {"pr_id": {"type": "integer"}}, "required": ["pr_id"]}), _get_pr),

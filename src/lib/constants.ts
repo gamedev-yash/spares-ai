@@ -27,6 +27,7 @@ import {
   EllipsisVertical,
   CircleCheck,
   Layers,
+  ShieldCheck,
   type LucideIcon,
 } from "lucide-react"
 
@@ -61,6 +62,7 @@ export const ICONS: Record<IconKey, LucideIcon> = {
   "ellipsis-vertical": EllipsisVertical,
   "check-circle": CircleCheck,
   layers: Layers,
+  "shield-check": ShieldCheck,
 }
 
 export const CATEGORIES: { label: Category; icon: IconKey }[] = [
@@ -115,6 +117,8 @@ export const DASHBOARD_LINKS: { label: string; icon: IconKey; href: string }[] =
     icon: "layers",
     href: "/dashboard/situation-analysis",
   },
+  // Initiative 8 -- the refurbishment loop, made visible next to stock.
+  { label: "Repair register", icon: "wrench", href: "/repair-register" },
 ]
 
 export const QUICK_ACTIONS: {
@@ -129,6 +133,12 @@ export const QUICK_ACTIONS: {
     icon: "clipboard-check",
     href: "/approvals",
     // badge is overridden with a live count from the backend -- see Sidebar.
+  },
+  {
+    label: "Declarations",
+    icon: "shield-check",
+    href: "/declarations",
+    // badge is overridden with the live pending-declaration count -- see Sidebar.
   },
   { label: "Audit trail", icon: "history", href: "/audit" },
   { label: "Notifications", icon: "mail", href: "/notifications" },

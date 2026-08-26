@@ -5,7 +5,8 @@ descriptive metadata (who *should* act) rather than an enforced gate.
 
 from datetime import datetime, timezone
 
-from app.core.exceptions import ConflictError, NotFoundError
+from app.core.exceptions import ConflictError, NotFoundError, ValidationAppError
+from app.services import attestation_service
 from app.services.audit_service import record_audit
 from app.services.csv_store import DataStore, Row
 from app.services.notification_service import notify
@@ -33,6 +34,25 @@ def approve(store: DataStore, approval_id: int, user: Row, comments: str | None)
     approval = _get_approval(store, approval_id)
     if approval["status"] != "PENDING":
         raise ConflictError(f"Approval {approval_id} is already {approval['status']}")
+
+    # --- Initiative 8: the MRP-path declaration gate --------------------------------
+    # MRP cannot attest, so an auto-raised requisition for a repairable material is saved
+    # with a PENDING declaration. It cannot progress until a planner or buyer completes it
+    # (Initiative 8 SS3.2). This is the only other hard block in the initiative.
+    rr_id = approval.get("rr_id")
+    if rr_id is not None and attestation_service.rr_has_pending_declaration(store, rr_id):
+        pending = attestation_service.pending_for_rr(store, rr_id)
+        rr_row = store.rr.get(rr_id)
+        raise ValidationAppError(
+            f"{rr_row['rr_number'] if rr_row else f'RR {rr_id}'} was raised automatically for a "
+            "repairable material and is still awaiting its condition-to-repair declaration. "
+            "A planner or buyer must complete the declaration before this approval can proceed.",
+            details={
+                "code": "attestation_pending",
+                "rr_id": rr_id,
+                "attestation_ids": [a["id"] for a in pending],
+            },
+        )
 
     now = datetime.now(timezone.utc)
     approval = store.approvals.update(approval_id, status="APPROVED", action_at=now.isoformat(), comments=comments)

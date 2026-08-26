@@ -39,7 +39,13 @@ export interface Material {
   last_po_price: number | null
   last_vendor: string | null
   stock_level: number
+  /** Initiative 8: min/max trigger level -- how close stock is to raising a fresh demand. */
+  reorder_point: number | null
   lead_time_days: number
+  /** Initiative 8: repair cost as a fraction of a new unit. Null for non-repairables. */
+  repair_cost_factor: number | null
+  /** Initiative 8: derived from the 80-series material-code convention, never stored. */
+  is_repairable: boolean
   active: boolean
 }
 
@@ -133,6 +139,7 @@ export type IconKey =
   | "ellipsis-vertical"
   | "check-circle"
   | "layers"
+  | "shield-check"
 
 export interface ChatOption {
   id: string

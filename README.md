@@ -1,22 +1,25 @@
-# Spares AI — Initiative 9: PR-to-PO Cycle Time Reduction
+# Spares AI — Initiative 9 (PR-to-PO Cycle Time) + Initiative 8 (Refurbishable Spares)
 
 Vedanta's procurement platform for measuring — and starting to automate — the mining
 spares procurement lifecycle: **RR → DOA → MRP → PR → RFQ → Ariba → Auction → NFA → PO**.
 
-> **The procurement data in this repository is synthetic.** It is generated locally by
+> **Every number in this repository is synthetic.** All data is generated locally by
 > `backend/scripts/generate_synthetic_data.py` and does **not** represent live SAP ECC,
-> Ariba, or SharePoint data. The VZI dashboard (`/dashboard`) and its slide-deck reference
-> constants, and the Situation Analysis root-cause CSV (`backend/data/situation_analysis.csv`),
-> are the one exception — those numbers are real, transcribed verbatim from an actual VZI
-> review-slides workbook; see [Two data lanes](#3-two-data-lanes-real-reference-vs-synthetic-demo)
-> below.
+> Ariba, or SharePoint data. That includes the VZI dashboard (`/dashboard`) and the
+> Situation Analysis page — both are computed live from the generated dataset by
+> `backend/app/services/dashboard_service.py`. Re-running the generator with a different
+> seed changes every figure on every page.
 
 ## 1. Project purpose
 
-Initiative 9 instruments the procurement lifecycle so bottlenecks can be measured: PR/PO
+**Initiative 9** instruments the procurement lifecycle so bottlenecks can be measured: PR/PO
 process visibility, cycle-time analytics, open PR/PO monitoring, bottleneck identification,
 AI-guided RR creation, PR line-item/service-code quality checks, an approval workflow,
 audit, notifications, and dashboards.
+
+**Initiative 8** adds refurbishable-spares tracking on top: it stops VZI paying twice for
+one requirement by buying a new unit while the same part is already out for repair. See
+[§14](#14-initiative-8--refurbishable-spares-tracking).
 
 This is a **demo/dev build, deliberately not production infrastructure**: there is no
 database, no authentication, and no Docker. **CSV files under `backend/data/` are the
@@ -41,16 +44,25 @@ Chat session/message state is the one thing that is **not** CSV-backed — it li
 in memory (`ChatStore` in `csv_store.py`) and does not survive a backend restart. Everything
 else (materials, RR/PR/PO, approvals, audit, notifications) does.
 
-## 3. Two data lanes: real reference vs. synthetic demo
+## 3. One data lane: everything is computed from the generated dataset
 
-The VZI "Open PR & PO Position" dashboard (`/dashboard`) is fed by fixed reference numbers
-transcribed from an actual review-slides workbook (`backend/app/services/vzi_reference_data.py`)
-and the Situation Analysis root-cause page (`/dashboard/situation-analysis`) is fed by
-`backend/data/situation_analysis.csv` (also transcribed, not synthetic) — these are **not**
-regenerated or "corrected" by the data generator. The Initiative-9 procurement dataset
-(rr/pr/po/approvals/audit/notifications/process_stage_events) is fully **synthetic**,
-regenerated fresh whenever you run the seed script, and powers `/api/analytics/*` and the
-dashboard's **"Live cycle time"** tab. Never conflate the two.
+Earlier builds served the VZI dashboard and Situation Analysis page from fixed,
+hand-transcribed reference numbers. **That is no longer the case** — nothing on any page is
+hardcoded. `backend/app/services/dashboard_service.py` computes both views live from the
+same rr/pr/po/materials/users CSVs that power `/api/analytics/*`, so a different
+`SYNTHETIC_DATA_SEED` changes them exactly as it changes everything else.
+
+**Two document types share the pr/po tables.** Initiative 8 introduced `doc_type` on `pr`
+and `po`, distinguishing `NEW_BUY` from `REPAIR`. This matters when reading the code:
+
+| Lane | Documents | Served by |
+|---|---|---|
+| New procurement (Initiative 9) | `doc_type = NEW_BUY` | `analytics_service`, `dashboard_service` — both filter repairs out |
+| Refurbishment (Initiative 8) | `doc_type = REPAIR` | `repair_register_service` |
+
+Repair documents are deliberately excluded from every Initiative 9 analytic. Letting a
+refurbishment into the RR→PO cycle-time or the open-PR position would silently change what
+those numbers mean.
 
 ## 4. Technology stack
 
@@ -68,7 +80,8 @@ dashboard's **"Live cycle time"** tab. Never conflate the two.
 ```
 spares-ai/
   src/                      Next.js app (App Router)
-    app/                    routes: /materials /audit /dashboard /approvals /notifications /chat/... /login
+    app/                    routes: /materials /audit /dashboard /approvals /notifications
+                            /repair-register /declarations /chat/... /login
     components/             UI components
     lib/
       api/                  frontend API client (one file per backend domain)
@@ -78,7 +91,8 @@ spares-ai/
     app/
       api/routes/           one FastAPI router per domain
       schemas/              Pydantic request/response schemas
-      services/              business logic (csv_store, approvals, RR creation, analytics, audit, quality rules, vzi reference data)
+      services/              business logic (csv_store, approvals, RR creation, analytics, audit,
+                             quality rules, dashboards, repair detection/register/attestations)
       ai/                     LLM provider abstraction, tool registry, chat orchestrator
       core/                   structured logging, error envelope
     data/                    CSV files -- the source of truth, committed to the repo
@@ -141,16 +155,23 @@ python scripts/generate_synthetic_data.py            # default seed (12345)
 python scripts/generate_synthetic_data.py --seed 777  # a different, still-deterministic dataset
 ```
 
-This **overwrites** every generated CSV under `backend/data/` (users, materials, suppliers,
-rr, rr_line_items, pr, pr_line_items, po, po_line_items, process_stage_events, approvals,
-audit_logs, notifications) — `situation_analysis.csv` is untouched (it's real reference
-data, not regenerated). The generator is deterministic and produces, by default: 24 users,
-220 materials, 40 suppliers, 650 RRs, ~1,500 RR line items, ~550 PRs, ~1,300 PR line items,
-~465 POs, ~1,100 PO line items, ~3,850 process-stage events, 646 approvals (mixing PENDING/
-APPROVED/REJECTED/ESCALATED), ~2,900 audit rows, and ~1,100 notifications — built from named
-scenarios (normal flow, DOA/MRP/RFQ/Ariba/NFA bottlenecks, multi-line PRs, missing service
+This **overwrites** every generated CSV under `backend/data/`. The generator is
+deterministic and produces, by default: 24 users, 220 materials (32 of them repairable),
+40 suppliers, 650 RRs, ~1,420 RR line items, ~594 PRs, ~1,280 PR line items, ~507 POs,
+~1,100 PO line items, ~3,790 process-stage events, 640 approvals, ~2,960 audit rows,
+~1,100 notifications, and 174 attestations.
+
+It is built from **18 named scenarios**, not uniform randomness, so the analytics have real
+signal: normal flow, DOA/MRP/RFQ/Ariba/NFA bottlenecks, multi-line PRs, missing service
 codes, vague descriptions, long-open PRs, cancellations, rejections, escalations, aged
-pending approvals), not uniform randomness, so the analytics have real signal.
+pending approvals — plus the Initiative 8 set: repair chains in flight, overdue, and
+returned, and duplicate requisitions raised both manually and by MRP against a part already
+out for repair.
+
+The run ends with a **dataset self-check** (`verify_initiative_8_dataset`). It fails loudly
+if the generated data could not actually demonstrate the initiative — no open repair chains,
+no seeded duplicates, or no pending declarations — rather than letting you discover an empty
+register later.
 
 Materials and suppliers are curated, category-consistent mining-spares data (bearings,
 pumps, valves, motors, conveyor/crusher/milling/flotation components, electrical spares,
@@ -184,9 +205,11 @@ running. Highlights:
 - **Approvals**: `GET /api/approvals`, `POST /api/approvals/{id}/{approve,reject,escalate}`
 - **Audit**: `GET /api/audit` (filter by entity type/action/user/date range)
 - **Notifications**: `GET /api/notifications`
-- **Analytics (synthetic lane)**: `GET /api/analytics/{cycle-time,bottlenecks,open-pr-po,dashboard-summary}`
-- **VZI (reference lane)**: `GET /api/vzi/dashboard`
-- **Situation Analysis (reference lane)**: `GET /api/situation-analysis/{aging,root-causes,trend,drilldown,kpi-summary}`
+- **Analytics**: `GET /api/analytics/{cycle-time,bottlenecks,open-pr-po,dashboard-summary}`
+- **VZI dashboard**: `GET /api/vzi/dashboard`
+- **Situation Analysis**: `GET /api/situation-analysis/{aging,root-causes,trend,drilldown,kpi-summary}`
+- **Repair (Initiative 8)**: `GET /api/repair/{register,register/plants,chain-check,economics}`,
+  `GET /api/repair/attestations{,/pending}`, `POST /api/repair/attestations/{id}/declare`
 - **Chat**: `POST /api/chat`, `GET /api/chat/sessions`, `GET /api/chat/sessions/{id}/messages`
 - **Users**: `GET /api/users`, `GET /api/users/{id}`
 
@@ -262,6 +285,112 @@ fastest sanity check after a change.
 - **No email/Teams notification channel** — `notifications.type` is the seam for one, but
   only in-app notifications are implemented.
 - **No real SAP/Ariba/SharePoint integration** — the procurement dataset is entirely
-  synthetic; there is no ingestion abstraction/provider layer in this build.
-- **Initiative 7, Initiative 8, and Initiative 13 are not implemented.** This repo covers
-  Initiative 9 only.
+  synthetic; there is no ingestion abstraction/provider layer in this build. Initiative 8's
+  real design reads SAP over OData v4; nothing here connects to SAP.
+- **Initiative 7 and Initiative 13 are not implemented.** This repo covers Initiatives 9
+  and 8.
+
+---
+
+## 14. Initiative 8 — Refurbishable spares tracking
+
+Stops duplicate spend: buying a new unit while the same part is already out for repair.
+Implemented as a working mockup on synthetic data — no SAP, no OData, no BAdI.
+
+### 14.1 The four mechanisms
+
+**1 · Identification.** A material is repairable if its code carries the **80-series
+convention** (`80-10051`). Nothing is stored — `csv_store.is_repairable_code()` is the single
+place that decision is made, exactly as the real solution keys off the SAP material code.
+32 of the 220 generated materials are repairable, drawn from the categories genuinely
+refurbished rather than replaced (pumps, motors, valves, seals, crusher and milling
+components).
+
+**2 · Active chain detection.** A repair chain is active for a (material, plant) pair when
+an open, undelivered `REPAIR` requisition or purchase order exists for it. It is derived
+live on every lookup rather than cached — the real solution reads EBAN/EKKO/EKPO in real
+time, and a materialised copy could drift from the documents it summarises. Plant is part of
+the key: a unit under repair for Gamsberg does nothing for a shortage at BMM.
+
+**3 · Condition-to-repair declaration.** The one hard gate in the initiative.
+
+| Path | Where the gate sits | Behaviour |
+|---|---|---|
+| Manual (`OAR_MANUAL`) | RR creation | The requisition **cannot be created** without the declaration |
+| MRP (`MIN_MAX_AUTO`) | DOA approval | The RR saves with a `PENDING` declaration; **approval is blocked** until a planner completes it |
+| Chat | RR creation | Same as manual — the assistant must ask, and cannot set the flag itself |
+
+**4 · Two-layer duplicate guard — advisory, never blocking.** A genuine second failure of
+the same part is legitimate, so the guard flags and warns but always lets the user proceed.
+The goal is not "no duplicates", it is *no duplicate goes unnoticed*.
+
+- **Layer 1 (SAP-native path)** — `POST /api/rr` returns the requisition flagged, with the
+  open repair references, vendor and expected return date stored in `duplicate_context`.
+- **Layer 2 (conversational path)** — the assistant surfaces the chain plus an economic
+  comparison and asks *"Do you still wish to proceed?"* before continuing.
+
+Either way the flag and the declaration travel with the document and appear on the
+approver's row, so the approval decision is made with both in view.
+
+### 14.2 Where the enforcement lives
+
+`rr_service.create_rr()` is the **single write path** for requisitions — the REST route and
+the AI tool both funnel through it. The declaration gate and the chain check sit inside that
+one function, so both layers are enforced by the same code and neither can bypass the other.
+`tests/test_repair.py::TestLayer2ConversationalGuard::test_assistant_cannot_create_without_the_user_confirming`
+asserts exactly this.
+
+### 14.3 Economic evaluation
+
+Repair-vs-new is **derived, never seeded**. Repair cost comes from the actual open repair
+PO's value; new cost and lead time come from the material master; the return date comes from
+the repair PO. The material's `repair_cost_factor` is a fallback used only when a chain is
+still at requisition stage. An overdue chain never reports as "arrives sooner" — its date has
+already passed.
+
+### 14.4 Data model additions
+
+| Table | Change |
+|---|---|
+| `materials` | `80-` code prefix for repairables; `reorder_point`; `repair_cost_factor` |
+| `pr`, `po` | `doc_type` (`NEW_BUY` \| `REPAIR`) |
+| `pr`, `rr` | `duplicate_flag`, `duplicate_context` |
+| `attestations` *(new)* | The declaration log — the only state the platform owns outright |
+
+`RequestRequisitionOut` now also exposes `trigger_type` and `area`, which were on the row but
+undeclared in the schema and therefore invisible to the frontend. The MRP path depends on
+`trigger_type`, so this had to be fixed first.
+
+### 14.5 Screens
+
+| Route | Shows |
+|---|---|
+| `/repair-register` | Every part out for repair, with stock on hand and reorder point beside it. Rows at or below the reorder point while still at the vendor are highlighted — the condition that produces a duplicate order. |
+| `/declarations` | The queue of auto-raised requisitions awaiting a planner's declaration, and the full declaration log |
+| `/approvals` | Duplicate context and the requisitioner's declaration, inline on the approval |
+| `/materials` | A "Repairable" badge on the 80-series population |
+| `/chat/assistant` | The Layer 2 conversational guard |
+
+### 14.6 Tests
+
+`backend/tests/test_repair.py` — 31 tests organised around the **six pilot scenarios** in the
+Initiative 8 document, so each success criterion there maps onto something executable, plus a
+`TestExistingBehaviourPreserved` class guarding the thing most likely to break quietly:
+repair documents must stay out of the Initiative 9 analytics lane.
+
+### 14.7 Pending VZI input
+
+Four values are placeholders and are marked as such in the code:
+
+1. **Which categories are genuinely refurbished** — currently pumps, motors, valves, seals,
+   crusher and milling components (`REPAIRABLE_GROUPS`)
+2. **Repair turnaround** — currently 21–60 days (`REPAIR_TURNAROUND_DAYS`)
+3. **Repair cost as a share of new** — currently 28–45% (`REPAIR_COST_FACTOR_RANGE`)
+4. **The exact declaration wording** — currently "I confirm the existing item has been
+   assessed and cannot be repaired." (`ATTESTATION_STATEMENT`)
+
+### 14.8 Out of scope
+
+Gate pass administration, closure and lifecycle automation, vendor follow-up, and end-to-end
+repair tracking — all excluded by the Initiative 8 brief itself. MRP behaviour is simulated,
+not real: auto-triggered requisitions are generated, and the gate is demonstrated on them.

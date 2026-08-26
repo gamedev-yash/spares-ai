@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import random
 import sys
+from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
@@ -42,7 +43,7 @@ ROLE_WEIGHTS = {
 }
 
 PATH_SCENARIO_WEIGHTS = {
-    "normal": 0.44,
+    "normal": 0.38,
     "doa_bottleneck": 0.08,
     "mrp_bottleneck": 0.06,
     "rfq_bottleneck": 0.06,
@@ -54,6 +55,12 @@ PATH_SCENARIO_WEIGHTS = {
     "rejected": 0.03,
     "escalated": 0.03,
     "aged_pending_approval": 0.07,
+    # --- Initiative 8: duplicate-spend scenarios -------------------------------
+    # Both raise a NEW-BUY requisition for a material that already has an open repair
+    # chain at the same plant -- the exact condition the duplicate guard exists to catch
+    # (Initiative 8 test scenarios 4 and 3 respectively).
+    "duplicate_manual": 0.04,
+    "duplicate_mrp": 0.02,
 }
 
 TARGET_COUNTS = {
@@ -61,6 +68,29 @@ TARGET_COUNTS = {
     "materials": 220,
     "suppliers": 40,
     "rr": 650,
+    "repair_chains": 46,
+}
+
+# --- Initiative 8: the repairable population -------------------------------
+# Only categories that are genuinely refurbished rather than replaced. Bearings,
+# electrical spares, instrumentation and conveyor components stay new-buy.
+# PENDING VZI CONFIRMATION -- see the Initiative 8 build plan, input #1.
+REPAIRABLE_GROUPS = {
+    "Pumps", "Motors", "Valves", "Mechanical Seals", "Crusher Components", "Milling Components",
+}
+# Share of materials *within* those groups that carry the 80-series convention. Tuned so
+# the repairable population lands near 16% of the catalogue overall.
+REPAIRABLE_SHARE_WITHIN_GROUP = 0.35
+# Repair cost as a fraction of a new unit -- fallback only; the economic evaluation
+# prefers the actual repair PO value where one exists. PENDING VZI (build plan input #3).
+REPAIR_COST_FACTOR_RANGE = (0.28, 0.45)
+# Vendor turnaround. PENDING VZI (build plan input #2).
+REPAIR_TURNAROUND_DAYS = (21, 60)
+
+REPAIR_CHAIN_OUTCOME_WEIGHTS = {
+    "in_flight": 0.44,   # open repair PO, unit due back in the future
+    "overdue": 0.16,     # open repair PO, expected return already passed
+    "returned": 0.40,    # chain closed -- proves detection is live, not historical
 }
 
 
@@ -166,10 +196,22 @@ def generate_materials(rng: random.Random, now_iso: str, rows: Rows) -> list[dic
         description = tmpl["stem"].format(variant=variant, variant_code=variant_code)
         low, high = tmpl["price"]
         price = round(rng.uniform(low, high), 2)
+
+        # Initiative 8: repairables carry the 80-series code convention. Repairability is
+        # never stored as a flag -- the code IS the identifier, exactly as it is in SAP.
+        repairable = category in REPAIRABLE_GROUPS and rng.random() < REPAIRABLE_SHARE_WITHIN_GROUP
+        code_prefix = "80" if repairable else "500"
+
+        stock_level = rng.randint(0, 40) if tmpl["uom"] == "EA" else rng.randint(0, 500)
+        # Reorder point straddles stock on hand, so a meaningful share of repairables sit
+        # at or below the trigger -- those are the ones MRP would re-raise while a repair
+        # is still out, which is the whole failure mode.
+        reorder_point = max(0, stock_level + rng.randint(-8, 5))
+
         materials.append(
             {
                 "id": material_id,
-                "material_code": f"500-{10000 + material_id}",
+                "material_code": f"{code_prefix}-{10000 + material_id}",
                 "description": description,
                 "material_group": category,
                 "material_type": tmpl["stem"].split(",")[0].format(variant="", variant_code="").strip(),
@@ -183,8 +225,10 @@ def generate_materials(rng: random.Random, now_iso: str, rows: Rows) -> list[dic
                 "manufacturer_part_no": f"MP-{material_id:06d}",
                 "last_po_price": price,
                 "last_vendor": None,
-                "stock_level": rng.randint(0, 40) if tmpl["uom"] == "EA" else rng.randint(0, 500),
+                "stock_level": stock_level,
+                "reorder_point": reorder_point,
                 "lead_time_days": rng.choice([7, 10, 14, 21, 30, 45, 60]),
+                "repair_cost_factor": round(rng.uniform(*REPAIR_COST_FACTOR_RANGE), 3) if repairable else None,
                 "active": True,
                 "created_at": now_iso,
                 "updated_at": now_iso,
@@ -216,7 +260,9 @@ def generate_materials(rng: random.Random, now_iso: str, rows: Rows) -> list[dic
                 "last_po_price": round(rng.uniform(3500, 45000), 2),
                 "last_vendor": None,
                 "stock_level": 0,
+                "reorder_point": 0,
                 "lead_time_days": rng.choice([3, 5, 7, 10]),
+                "repair_cost_factor": None,  # services are never a repairable population
                 "active": True,
                 "created_at": now_iso,
                 "updated_at": now_iso,
@@ -332,27 +378,179 @@ def generate_pipeline(rng: random.Random, now: datetime, users: list[dict], user
 
     quality_reasons_vague = ["spares as required", "misc parts", "items per attached list", "as discussed"]
 
+    # ================= Initiative 8: repair chains =============================
+    # Repair documents are raised directly against a failed unit -- they do not originate
+    # from an RR, so `rr_id` is null (mirroring SAP, where a repair PR is its own document
+    # with its own number range). They deliberately produce NO process_stage_events: the
+    # RR->PO cycle-time instrumentation measures new procurement, and mixing refurbishment
+    # into it would silently change what every existing analytic means.
+    repairable_materials = [m for m in materials if cs.is_repairable_code(m["material_code"])]
+    open_chain_pool: list[dict] = []  # (material, plant) pairs with a chain open RIGHT NOW
+
+    for _ in range(TARGET_COUNTS["repair_chains"] if repairable_materials else 0):
+        material = rng.choice(repairable_materials)
+        chain_plant = material["plant"]
+        supplier = rng.choice(suppliers)
+        repair_buyer = rng.choice(users_by_role["PROCUREMENT"])
+        outcome = weighted_choice(rng, REPAIR_CHAIN_OUTCOME_WEIGHTS)
+        qty = rng.randint(1, 3)
+        unit_repair_cost = round(float(material["last_po_price"]) * float(material["repair_cost_factor"]), 2)
+        turnaround = rng.randint(*REPAIR_TURNAROUND_DAYS)
+
+        if outcome == "in_flight":
+            opened_days_ago = rng.randint(3, turnaround - 3)
+        elif outcome == "overdue":
+            opened_days_ago = turnaround + rng.randint(8, 45)
+        else:  # returned -- chain closed, unit is back on the shelf
+            opened_days_ago = turnaround + rng.randint(20, 160)
+
+        opened_at = now - timedelta(days=opened_days_ago, hours=rng.randint(0, 23))
+
+        # A minority of in-flight chains are still at requisition stage with no PO yet --
+        # an open repair PR is just as much an active chain as an open repair PO.
+        pr_only = outcome == "in_flight" and rng.random() < 0.18
+
+        repair_pr_id = pr_seq.next()
+        repair_pr_number = f"RPR-{2000 + repair_pr_id}"
+        rows.add(
+            "pr",
+            {
+                "id": repair_pr_id, "pr_number": repair_pr_number, "rr_id": None,
+                "creation_date": opened_at.date().isoformat(),
+                "required_date": (opened_at.date() + timedelta(days=turnaround)).isoformat(),
+                "status": "AWAITING_PO" if pr_only else "PO_CREATED",
+                "buyer_id": repair_buyer["id"], "plant": chain_plant,
+                "total_value": round(qty * unit_repair_cost, 2), "source_system": "synthetic",
+                "doc_type": cs.DOC_TYPE_REPAIR, "duplicate_flag": False, "duplicate_context": None,
+            },
+        )
+        rows.add(
+            "pr_line_items",
+            {
+                "id": prline_seq.next(), "pr_id": repair_pr_id, "material_id": material["id"],
+                "quantity": qty, "unit_price": unit_repair_cost, "service_code": None,
+                "description": f"Repair / refurbishment - {material['description']}",
+                "line_status": "OPEN" if outcome != "returned" else "CLOSED", "quality_flags": None,
+            },
+        )
+        add_audit(repair_buyer["id"], "REPAIR_PR_CREATED", "PR", repair_pr_id, opened_at,
+                  {"pr_number": repair_pr_number, "material_code": material["material_code"]})
+
+        repair_po_number = None
+        repair_po_id = None
+        expected_return = None
+        if not pr_only:
+            repair_po_id = po_seq.next()
+            repair_po_number = f"RPO-{3000 + repair_po_id}"
+            po_created = opened_at + timedelta(days=rng.randint(1, 5))
+            expected_return = po_created.date() + timedelta(days=turnaround)
+            returned = outcome == "returned"
+            rows.add(
+                "po",
+                {
+                    "id": repair_po_id, "po_number": repair_po_number, "pr_id": repair_pr_id,
+                    "supplier_id": supplier["id"], "creation_date": po_created.date().isoformat(),
+                    "expected_delivery": expected_return.isoformat(),
+                    "status": "COMPLETED" if returned else "OPEN",
+                    "total_value": round(qty * unit_repair_cost, 2), "buyer_id": repair_buyer["id"],
+                    "doc_type": cs.DOC_TYPE_REPAIR,
+                },
+            )
+            rows.add(
+                "po_line_items",
+                {
+                    "id": poline_seq.next(), "po_id": repair_po_id, "material_id": material["id"],
+                    "quantity": qty, "unit_price": unit_repair_cost,
+                    "line_total": round(qty * unit_repair_cost, 2),
+                    "delivery_date": expected_return.isoformat(),
+                    "status": "DELIVERED" if returned else "OPEN",
+                },
+            )
+            add_audit(repair_buyer["id"], "REPAIR_PO_CREATED", "PO", repair_po_id, po_created,
+                      {"po_number": repair_po_number, "vendor": supplier["supplier_name"]})
+
+        if outcome in ("in_flight", "overdue"):
+            # Shaped EXACTLY like repair_service.collect_open_chains() emits, so a seeded
+            # duplicate_context and one written at runtime are the same structure and the
+            # UI has a single shape to render.
+            open_chain_pool.append(
+                {
+                    "material": material,
+                    "plant": chain_plant,
+                    "chain": {
+                        "material_id": material["id"],
+                        "material_code": material["material_code"],
+                        "material_description": material["description"],
+                        "material_group": material["material_group"],
+                        "plant": chain_plant,
+                        "repair_pr_number": repair_pr_number,
+                        "repair_pr_id": repair_pr_id,
+                        "repair_po_number": repair_po_number,
+                        "repair_po_id": repair_po_id if not pr_only else None,
+                        "supplier_id": supplier["id"] if not pr_only else None,
+                        "vendor": supplier["supplier_name"] if not pr_only else None,
+                        "quantity_under_repair": float(qty),
+                        "repair_value": round(qty * unit_repair_cost, 2),
+                        "opened_at": opened_at.date().isoformat(),
+                        "expected_return": expected_return.isoformat() if expected_return else None,
+                        "days_open": (now.date() - opened_at.date()).days,
+                        "days_overdue": max((now.date() - expected_return).days, 0) if expected_return else 0,
+                        "overdue": outcome == "overdue",
+                        "stage": "AWAITING_VENDOR_DISPATCH" if pr_only else "AT_VENDOR",
+                    },
+                }
+            )
+
     for _ in range(TARGET_COUNTS["rr"]):
         rr_id = rr_seq.next()
         scenario = weighted_choice(rng, PATH_SCENARIO_WEIGHTS)
-        requester = rng.choice(users)
-        plant, department = requester["plant"], requester["department"]
 
-        days_ago = rng.randint(20, 150) if scenario in ("long_open_pr", "aged_pending_approval") else rng.randint(1, 270)
+        # A duplicate scenario is only meaningful if there is a chain to collide with.
+        duplicate_chain = None
+        if scenario in ("duplicate_manual", "duplicate_mrp"):
+            if open_chain_pool:
+                duplicate_chain = rng.choice(open_chain_pool)
+            else:
+                scenario = "normal"
+
+        if duplicate_chain is not None:
+            same_plant = [u for u in users if u["plant"] == duplicate_chain["plant"]] or users
+            requester = rng.choice(same_plant)
+            plant = duplicate_chain["plant"]
+            department = requester["department"]
+        else:
+            requester = rng.choice(users)
+            plant, department = requester["plant"], requester["department"]
+
+        if duplicate_chain is not None:
+            days_ago = rng.randint(1, 25)  # recent, so the collision reads as live
+        else:
+            days_ago = rng.randint(20, 150) if scenario in ("long_open_pr", "aged_pending_approval") else rng.randint(1, 270)
         creation_dt = now - timedelta(days=days_ago, hours=rng.randint(0, 23))
         creation_date = creation_dt.date()
         required_date = creation_date + timedelta(days=rng.randint(14, 60))
         priority = rng.choices(["Normal", "High", "Critical"], weights=[0.65, 0.25, 0.10])[0]
 
-        is_service_rr = rng.random() < 0.18
+        is_service_rr = duplicate_chain is None and rng.random() < 0.18
         line_pool = service_materials if is_service_rr else physical_materials
-        trigger_type = "OAR_MANUAL" if rng.random() < 0.45 else "MIN_MAX_AUTO"
 
-        line_count = rng.randint(5, 12) if scenario == "multi_line_pr" else rng.randint(1, 3)
+        if scenario == "duplicate_manual":
+            trigger_type = "OAR_MANUAL"      # a requisitioner raised it by hand
+        elif scenario == "duplicate_mrp":
+            trigger_type = "MIN_MAX_AUTO"    # stock fell below ROP while the unit was out
+        else:
+            trigger_type = "OAR_MANUAL" if rng.random() < 0.45 else "MIN_MAX_AUTO"
+
+        if duplicate_chain is not None:
+            line_count = 1
+        else:
+            line_count = rng.randint(5, 12) if scenario == "multi_line_pr" else rng.randint(1, 3)
         pr_line_rows: list[dict] = []
         total_value = 0.0
         for line_no in range(1, line_count + 1):
-            material = rng.choice(line_pool)
+            # A duplicate requisition is, by definition, for the very material already out
+            # for repair -- that identity is what the guard joins on.
+            material = duplicate_chain["material"] if duplicate_chain is not None else rng.choice(line_pool)
             qty = rng.randint(1, 20)
             unit_price = round(float(material["last_po_price"]) * rng.uniform(0.92, 1.15), 2)
             description = material["description"]
@@ -383,8 +581,34 @@ def generate_pipeline(rng: random.Random, now: datetime, users: list[dict], user
             "creation_date": creation_date.isoformat(), "required_date": required_date.isoformat(),
             "purpose": f"{department} spares replenishment - {pr_line_rows[0]['description']}", "status": "IN_PROGRESS",
             "priority": priority, "total_estimated_value": round(total_value, 2), "source_system": "synthetic",
+            "duplicate_flag": False, "duplicate_context": None,
             "created_at": creation_dt.isoformat(), "updated_at": creation_dt.isoformat(),
         }
+
+        # Initiative 8: the guard fires at creation and the requisition is FLAGGED, never
+        # blocked -- the duplicate context then travels with the document to the approver.
+        if duplicate_chain is not None:
+            chain = duplicate_chain["chain"]
+            rr_row["duplicate_flag"] = True
+            rr_row["duplicate_context"] = {
+                "detected_at": creation_dt.isoformat(),
+                "plant": duplicate_chain["plant"],
+                "chain_count": 1,
+                "materials": [
+                    {
+                        "material_id": chain["material_id"],
+                        "material_code": chain["material_code"],
+                        "material_description": chain["material_description"],
+                        "plant": duplicate_chain["plant"],
+                        "is_repairable": True,
+                        "has_active_chain": True,
+                        "total_quantity_under_repair": chain["quantity_under_repair"],
+                        "earliest_expected_return": chain["expected_return"],
+                        "chains": [chain],
+                    }
+                ],
+            }
+
         rows.add("rr", rr_row)
         add_audit(requester["id"], "RR_CREATED", "RR", rr_id, creation_dt, {"rr_number": rr_row["rr_number"]})
 
@@ -422,7 +646,13 @@ def generate_pipeline(rng: random.Random, now: datetime, users: list[dict], user
             finalize_rr("ESCALATED")
             continue
 
-        doa_pending_now = scenario == "aged_pending_approval" or (scenario == "doa_bottleneck" and doa_completed > now)
+        doa_pending_now = (
+            scenario in ("aged_pending_approval", "duplicate_mrp")
+            or (scenario == "doa_bottleneck" and doa_completed > now)
+            # Keep a good share of manual duplicates sitting in the approval queue, so the
+            # approver-alert path always has live content to demonstrate.
+            or (scenario == "duplicate_manual" and rng.random() < 0.45)
+        )
         if doa_pending_now:
             add_stage_event("RR", rr_id, "DOA", "DOA Approval", doa_started, None, "IN_PROGRESS", doa_approver["id"])
             add_approval("DOA", rr_id, doa_approver, "PENDING", priority, doa_started, None, None)
@@ -461,6 +691,9 @@ def generate_pipeline(rng: random.Random, now: datetime, users: list[dict], user
             "id": pr_id, "pr_number": f"PR-{2000 + pr_id}", "rr_id": rr_id, "creation_date": pr_created_at.date().isoformat(),
             "required_date": required_date.isoformat(), "status": "OPEN", "buyer_id": buyer["id"], "plant": plant,
             "total_value": round(pr_total, 2), "source_system": "synthetic",
+            "doc_type": cs.DOC_TYPE_NEW_BUY,
+            "duplicate_flag": rr_row["duplicate_flag"],
+            "duplicate_context": rr_row["duplicate_context"],
         }
         rows.add("pr", pr_row)
         for line in pr_line_rows:
@@ -559,6 +792,7 @@ def generate_pipeline(rng: random.Random, now: datetime, users: list[dict], user
                     "id": po_id, "po_number": f"PO-{3000 + po_id}", "pr_id": pr_id, "supplier_id": selected_supplier["id"],
                     "creation_date": po_created.date().isoformat(), "expected_delivery": (po_created.date() + timedelta(days=rng.randint(14, 60))).isoformat(),
                     "status": po_status, "total_value": round(po_total, 2), "buyer_id": buyer["id"],
+                    "doc_type": cs.DOC_TYPE_NEW_BUY,
                 },
             )
             for pl in po_lines:
@@ -573,14 +807,18 @@ def generate_pipeline(rng: random.Random, now: datetime, users: list[dict], user
 
 def backfill_material_last_purchase(materials: list[dict], suppliers: list[dict], rows: Rows) -> None:
     """Set last_vendor/last_po_price from the most recent PO line actually generated,
-    mirroring how a real material master reflects the latest purchase, not a static seed value."""
+    mirroring how a real material master reflects the latest purchase, not a static seed value.
+
+    Repair POs are excluded on purpose: a refurbishment costs a fraction of a new unit, so
+    letting one land in `last_po_price` would corrupt the new-buy price the economic
+    evaluation compares against -- and would make every repair look free."""
     supplier_name_by_id = {s["id"]: s["supplier_name"] for s in suppliers}
     po_by_id = {po["id"]: po for po in rows.data.get("po", [])}
     latest_by_material: dict[int, tuple] = {}
 
     for line in rows.data.get("po_line_items", []):
         po = po_by_id.get(line["po_id"])
-        if po is None:
+        if po is None or po.get("doc_type") == cs.DOC_TYPE_REPAIR:
             continue
         key = (po["creation_date"], line["id"])
         current = latest_by_material.get(line["material_id"])
@@ -593,6 +831,70 @@ def backfill_material_last_purchase(materials: list[dict], suppliers: list[dict]
             _, supplier_id, unit_price = hit
             material["last_vendor"] = supplier_name_by_id.get(supplier_id)
             material["last_po_price"] = unit_price
+
+
+def generate_attestations(
+    rng: random.Random, now: datetime, materials: list[dict], users_by_role: dict[str, list[dict]], rows: Rows
+) -> None:
+    """Initiative 8 SS3.2 -- the condition-to-repair declaration.
+
+    Runs as a post-pass over the finished RR set so the MRP rule can be applied to each
+    requisition's FINAL state rather than guessed mid-flight:
+
+      * manual (OAR_MANUAL) requisitions are declared by the requisitioner at creation --
+        the RR could not have been raised otherwise, so these are always COMPLETE;
+      * auto-raised (MIN_MAX_AUTO) requisitions cannot be declared by MRP. Those that have
+        already moved past DOA were declared by a planner on the way through; those still
+        sitting at DOA carry a PENDING declaration that BLOCKS approval until completed.
+    """
+    material_by_id = {m["id"]: m for m in materials}
+    lines_by_rr: dict[int, list[dict]] = defaultdict(list)
+    for line in rows.data.get("rr_line_items", []):
+        lines_by_rr[line["rr_id"]].append(line)
+
+    planners = users_by_role.get("PROCUREMENT") or []
+    seq = IdSequence(1)
+
+    for rr in rows.data.get("rr", []):
+        repairable_lines = [
+            line for line in lines_by_rr.get(rr["id"], [])
+            if cs.is_repairable_code((material_by_id.get(line["material_id"]) or {}).get("material_code"))
+        ]
+        if not repairable_lines:
+            continue
+
+        primary = repairable_lines[0]
+        created_at = datetime.fromisoformat(rr["created_at"])
+        is_mrp = rr.get("trigger_type") == "MIN_MAX_AUTO"
+        pending = is_mrp and rr["status"] in ("WAITING_DOA", "ESCALATED")
+
+        if pending:
+            origin, status = cs.ATTESTATION_ORIGIN_MRP, cs.ATTESTATION_STATUS_PENDING
+            declared_by, declared_at = None, None
+        else:
+            status = cs.ATTESTATION_STATUS_COMPLETE
+            if is_mrp:
+                origin = cs.ATTESTATION_ORIGIN_MRP
+                declarer = rng.choice(planners) if planners else None
+                declared_by = declarer["id"] if declarer else rr["requester_id"]
+                declared_at = (created_at + timedelta(days=rng.randint(1, 4))).isoformat()
+            else:
+                origin = cs.ATTESTATION_ORIGIN_MANUAL
+                declared_by = rr["requester_id"]
+                declared_at = created_at.isoformat()
+
+        rows.add(
+            "attestations",
+            {
+                "id": seq.next(), "rr_id": rr["id"], "material_id": primary["material_id"],
+                "plant": rr["plant"], "origin": origin, "status": status,
+                "statement": cs.ATTESTATION_STATEMENT if status == cs.ATTESTATION_STATUS_COMPLETE else None,
+                "declared_by": declared_by, "declared_at": declared_at,
+                # What the guard saw at the moment of creation, frozen against the record.
+                "chain_snapshot": rr.get("duplicate_context"),
+                "created_at": created_at.isoformat(),
+            },
+        )
 
 
 TABLE_SCHEMAS = {
@@ -609,9 +911,49 @@ TABLE_SCHEMAS = {
     "approvals": (cs.APPROVALS_COLUMNS, cs.APPROVALS_TYPES),
     "audit_logs": (cs.AUDIT_LOGS_COLUMNS, cs.AUDIT_LOGS_TYPES),
     "notifications": (cs.NOTIFICATIONS_COLUMNS, cs.NOTIFICATIONS_TYPES),
+    "attestations": (cs.ATTESTATIONS_COLUMNS, cs.ATTESTATIONS_TYPES),
 }
 
 WRITE_ORDER = list(TABLE_SCHEMAS.keys())
+
+
+def verify_initiative_8_dataset(materials: list[dict], rows: Rows) -> None:
+    """Fail loudly if the generated dataset can't actually demonstrate Initiative 8.
+
+    A run that produces zero open repair chains, or zero seeded duplicates, still writes
+    perfectly valid CSVs -- and the problem only surfaces later as an empty register. This
+    turns that into an immediate, obvious failure at generation time."""
+    repairables = [m for m in materials if cs.is_repairable_code(m["material_code"])]
+    repair_prs = [p for p in rows.data.get("pr", []) if p.get("doc_type") == cs.DOC_TYPE_REPAIR]
+    repair_pos = [p for p in rows.data.get("po", []) if p.get("doc_type") == cs.DOC_TYPE_REPAIR]
+    open_repair_pos = [p for p in repair_pos if p["status"] in ("OPEN", "PARTIALLY_DELIVERED")]
+    flagged_rrs = [r for r in rows.data.get("rr", []) if r.get("duplicate_flag")]
+    attestations = rows.data.get("attestations", [])
+    pending = [a for a in attestations if a["status"] == cs.ATTESTATION_STATUS_PENDING]
+
+    problems = []
+    if not repairables:
+        problems.append("no repairable (80-series) materials were generated")
+    if not repair_prs:
+        problems.append("no repair PRs were generated")
+    if len(open_repair_pos) < 5:
+        problems.append(f"only {len(open_repair_pos)} open repair POs -- the register would be near-empty")
+    if len(flagged_rrs) < 5:
+        problems.append(f"only {len(flagged_rrs)} duplicate-flagged RRs -- the guard has nothing to show")
+    if not pending:
+        problems.append("no PENDING attestations -- the MRP declaration gate cannot be demonstrated")
+
+    if problems:
+        raise SystemExit("Initiative 8 dataset check FAILED:\n  - " + "\n  - ".join(problems))
+
+    print(
+        f"\nInitiative 8 checks passed:"
+        f"\n  repairable materials       {len(repairables):>6}  ({len(repairables) / len(materials) * 100:.1f}% of catalogue)"
+        f"\n  repair PRs / POs           {len(repair_prs):>6} / {len(repair_pos)}"
+        f"\n  open repair chains (PO)    {len(open_repair_pos):>6}"
+        f"\n  duplicate-flagged RRs      {len(flagged_rrs):>6}"
+        f"\n  attestations (pending)     {len(attestations):>6}  ({len(pending)} pending)"
+    )
 
 
 def persist(rows: Rows, data_dir: Path) -> None:
@@ -645,7 +987,10 @@ def main() -> None:
     users_by_role = pick_users_by_role(users)
 
     generate_pipeline(rng, now, users, users_by_role, materials, suppliers, rows)
+    generate_attestations(rng, now, materials, users_by_role, rows)
     backfill_material_last_purchase(materials, suppliers, rows)
+
+    verify_initiative_8_dataset(materials, rows)
 
     print("Writing CSV files ...")
     persist(rows, settings.data_dir)

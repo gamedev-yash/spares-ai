@@ -1,9 +1,10 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
-import { Check, EllipsisVertical, TriangleAlert, X } from "lucide-react"
+import { Fragment, useCallback, useEffect, useState } from "react"
+import { Check, EllipsisVertical, ShieldCheck, TriangleAlert, X } from "lucide-react"
 import { toast } from "sonner"
 
+import { DuplicateContextAlert } from "@/components/repair/duplicate-alert"
 import { StatusBadge } from "@/components/shared/status-badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -159,9 +160,24 @@ export function ApprovalsTable() {
             </TableHeader>
             <TableBody>
               {approvals.map((item) => (
-                <TableRow key={item.id}>
+                <Fragment key={item.id}>
+                <TableRow>
                   <TableCell className="font-medium text-foreground">
-                    {item.rr_number ?? "-"}
+                    <div>{item.rr_number ?? "-"}</div>
+                    {/* Initiative 8: the duplicate flag and the declaration travel with the
+                        document, so the approver decides with both in view. */}
+                    {(item.duplicate_flag || item.attestation) && (
+                      <div className="mt-1 flex flex-col items-start gap-1">
+                        {item.duplicate_flag && (
+                          <StatusBadge tone="warning">Repair in progress</StatusBadge>
+                        )}
+                        {item.attestation_pending ? (
+                          <StatusBadge tone="danger">Declaration pending</StatusBadge>
+                        ) : item.attestation?.status === "COMPLETE" ? (
+                          <StatusBadge tone="success">Declared</StatusBadge>
+                        ) : null}
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell className="max-w-[220px] truncate text-foreground">
                     {item.material_description ?? "-"}
@@ -225,6 +241,58 @@ export function ApprovalsTable() {
                     </div>
                   </TableCell>
                 </TableRow>
+
+                {/* Initiative 8: the approver alert -- what is already in flight, plus the
+                    requisitioner's declaration, both visible at the moment of decision. */}
+                {(item.duplicate_context || item.attestation) && (
+                  <TableRow className="hover:bg-transparent">
+                    <TableCell colSpan={9} className="pt-0">
+                      <div className="flex flex-col gap-2">
+                        {item.duplicate_context && (
+                          <DuplicateContextAlert context={item.duplicate_context} />
+                        )}
+                        {item.attestation && (
+                          <div className="rounded-xl border border-border bg-card p-3">
+                            <div className="flex items-start gap-2">
+                              <ShieldCheck
+                                className={
+                                  item.attestation.status === "COMPLETE"
+                                    ? "mt-0.5 size-4 shrink-0 text-success"
+                                    : "mt-0.5 size-4 shrink-0 text-warning"
+                                }
+                              />
+                              <div className="min-w-0">
+                                <p className="text-sm font-medium text-foreground">
+                                  Condition-to-repair declaration
+                                </p>
+                                {item.attestation.status === "COMPLETE" ? (
+                                  <>
+                                    <p className="mt-1 text-sm text-muted-foreground italic">
+                                      &ldquo;{item.attestation.statement}&rdquo;
+                                    </p>
+                                    <p className="mt-1 text-xs text-muted-foreground">
+                                      Declared by {item.attestation.declared_by_name ?? "—"}
+                                      {item.attestation.declared_at
+                                        ? ` on ${new Date(item.attestation.declared_at).toLocaleDateString()}`
+                                        : ""}
+                                    </p>
+                                  </>
+                                ) : (
+                                  <p className="mt-1 text-xs text-muted-foreground">
+                                    This requisition was raised automatically by min/max stock
+                                    levels, so no declaration was made at creation. Approval is
+                                    blocked until a planner completes it on the Declarations page.
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+                </Fragment>
               ))}
             </TableBody>
           </Table>

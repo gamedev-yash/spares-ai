@@ -1,41 +1,41 @@
 id,supplier_code,supplier_name,country,category,rating,active
-1,SUP-1001,Karoo Industrial Distributors (Pty) Ltd,Germany,Valves & Piping,4.1,true
-2,SUP-1002,Kuruman Industrial Supplies (Pty) Ltd,South Africa,Conveyor Equipment,4.5,true
-3,SUP-1003,Vaal Valve & Fittings (Pty) Ltd,South Africa,Conveyor Equipment,4.3,true
-4,SUP-1004,Escarpment Valve & Fittings (Pty) Ltd,South Africa,Pumps & Fluid Handling,4.6,true
-5,SUP-1005,Lowveld Mining Equipment Traders (Pty) Ltd,South Africa,Electrical & Instrumentation,4.2,true
-6,SUP-1006,Copperton Engineering Supplies (Pty) Ltd,Namibia,General Mining Consumables,3.7,true
-7,SUP-1007,Northern Cape Industrial Distributors (Pty) Ltd,Namibia,Valves & Piping,3.5,true
-8,SUP-1008,Springbok Valve & Fittings (Pty) Ltd,China,Pumps & Fluid Handling,3.3,true
-9,SUP-1009,Orange River Industrial Supplies (Pty) Ltd,Namibia,Bearings & Power Transmission,4.5,true
-10,SUP-1010,Namaqua Seals & Sealing Systems (Pty) Ltd,Namibia,General Mining Consumables,3.2,true
-11,SUP-1011,Orange River Industrial Distributors (Pty) Ltd,Germany,Electrical & Instrumentation,3.9,true
-12,SUP-1012,Springbok Industrial Supplies (Pty) Ltd,South Africa,Bearings & Power Transmission,3.2,true
-13,SUP-1013,Highveld Mining Equipment Traders (Pty) Ltd,South Africa,Conveyor Equipment,4.2,true
-14,SUP-1014,Bushveld Pump Solutions (Pty) Ltd,South Africa,General Mining Consumables,4.8,true
-15,SUP-1015,Escarpment Electromechanical Ltd (Pty) Ltd,Zambia,Valves & Piping,4.5,false
-16,SUP-1016,Postmasburg Valve & Fittings (Pty) Ltd,Germany,Mechanical Seals,3.8,true
-17,SUP-1017,Drakensberg Spares & Components (Pty) Ltd,South Africa,General Mining Consumables,3.7,true
-18,SUP-1018,Kuruman Pump Solutions (Pty) Ltd,China,Conveyor Equipment,3.6,true
-19,SUP-1019,Escarpment Seals & Sealing Systems (Pty) Ltd,Zambia,General Mining Consumables,3.5,true
-20,SUP-1020,Vaal Mining Equipment Traders (Pty) Ltd,South Africa,Bearings & Power Transmission,3.2,true
-21,SUP-1021,Kalahari Bearing & Drive Co (Pty) Ltd,South Africa,General Mining Consumables,4.1,true
-22,SUP-1022,Springbok Bearing & Drive Co (Pty) Ltd,Zambia,Pumps & Fluid Handling,4.8,true
-23,SUP-1023,Escarpment Mining Equipment Traders (Pty) Ltd,Namibia,Conveyor Equipment,3.1,true
-24,SUP-1024,Bushveld Electromechanical Ltd (Pty) Ltd,South Africa,General Mining Consumables,4.0,true
-25,SUP-1025,Upington Valve & Fittings (Pty) Ltd,Namibia,Pumps & Fluid Handling,4.8,true
-26,SUP-1026,Lowveld Valve & Fittings (Pty) Ltd,Zambia,Bearings & Power Transmission,3.6,true
-27,SUP-1027,Lowveld Electromechanical Ltd (Pty) Ltd,China,Crusher & Mill Wear Parts,3.0,true
-28,SUP-1028,Highveld Industrial Supplies (Pty) Ltd,Namibia,General Mining Consumables,4.9,true
-29,SUP-1029,Bushveld Engineering Supplies (Pty) Ltd,Germany,Crusher & Mill Wear Parts,4.4,true
-30,SUP-1030,Orange River Electromechanical Ltd (Pty) Ltd,South Africa,General Mining Consumables,4.6,true
-31,SUP-1031,Waterberg Bearing & Drive Co (Pty) Ltd,China,Pumps & Fluid Handling,3.0,true
-32,SUP-1032,Bushveld Spares & Components (Pty) Ltd,South Africa,Mechanical Seals,4.5,true
-33,SUP-1033,Aggeneys Pump Solutions (Pty) Ltd,South Africa,Mechanical Seals,4.7,true
-34,SUP-1034,Springbok Seals & Sealing Systems (Pty) Ltd,China,General Mining Consumables,4.1,true
-35,SUP-1035,Kimberley Pump Solutions (Pty) Ltd,South Africa,Mechanical Seals,3.4,true
-36,SUP-1036,Orange River Engineering Supplies (Pty) Ltd,South Africa,General Mining Consumables,4.0,true
-37,SUP-1037,Orange River Bearing & Drive Co (Pty) Ltd,Germany,Electrical & Instrumentation,3.1,true
-38,SUP-1038,Kuruman Spares & Components (Pty) Ltd,South Africa,General Mining Consumables,4.9,true
-39,SUP-1039,Northern Cape Engineering Supplies (Pty) Ltd,South Africa,Bearings & Power Transmission,4.4,false
-40,SUP-1040,Upington Mining Equipment Traders (Pty) Ltd,Namibia,Bearings & Power Transmission,3.6,true
+1,SUP-1001,Vaal Industrial Supplies (Pty) Ltd,Namibia,Bearings & Power Transmission,4.4,true
+2,SUP-1002,Aggeneys Pump Solutions (Pty) Ltd,South Africa,General Mining Consumables,3.1,true
+3,SUP-1003,Springbok Engineering Supplies (Pty) Ltd,Zambia,Mechanical Seals,3.1,true
+4,SUP-1004,Postmasburg Electromechanical Ltd (Pty) Ltd,South Africa,Pumps & Fluid Handling,3.6,true
+5,SUP-1005,Northern Cape Valve & Fittings (Pty) Ltd,China,Crusher & Mill Wear Parts,4.9,true
+6,SUP-1006,Aggeneys Spares & Components (Pty) Ltd,South Africa,Mechanical Seals,4.0,true
+7,SUP-1007,Vaal Mining Equipment Traders (Pty) Ltd,South Africa,Electrical & Instrumentation,4.9,true
+8,SUP-1008,Waterberg Mining Equipment Traders (Pty) Ltd,Namibia,Crusher & Mill Wear Parts,4.7,true
+9,SUP-1009,Aggeneys Engineering Supplies (Pty) Ltd,Namibia,Conveyor Equipment,4.4,true
+10,SUP-1010,Upington Industrial Supplies (Pty) Ltd,South Africa,General Mining Consumables,4.6,true
+11,SUP-1011,Waterberg Valve & Fittings (Pty) Ltd,South Africa,Mechanical Seals,4.0,true
+12,SUP-1012,Kimberley Seals & Sealing Systems (Pty) Ltd,South Africa,Valves & Piping,4.1,true
+13,SUP-1013,Namaqua Seals & Sealing Systems (Pty) Ltd,Namibia,Bearings & Power Transmission,4.4,true
+14,SUP-1014,Bushveld Industrial Supplies (Pty) Ltd,China,Crusher & Mill Wear Parts,4.4,true
+15,SUP-1015,Kimberley Industrial Supplies (Pty) Ltd,Zambia,Conveyor Equipment,3.8,true
+16,SUP-1016,Escarpment Mining Equipment Traders (Pty) Ltd,South Africa,Electrical & Instrumentation,4.3,true
+17,SUP-1017,Sutherland Pump Solutions (Pty) Ltd,South Africa,Electrical & Instrumentation,3.9,true
+18,SUP-1018,Karoo Electromechanical Ltd (Pty) Ltd,South Africa,General Mining Consumables,3.1,true
+19,SUP-1019,Bushveld Electromechanical Ltd (Pty) Ltd,South Africa,Bearings & Power Transmission,4.6,true
+20,SUP-1020,Aggeneys Bearing & Drive Co (Pty) Ltd,South Africa,Crusher & Mill Wear Parts,4.2,true
+21,SUP-1021,Kimberley Valve & Fittings (Pty) Ltd,South Africa,Valves & Piping,4.3,true
+22,SUP-1022,Lowveld Valve & Fittings (Pty) Ltd,South Africa,Pumps & Fluid Handling,4.4,true
+23,SUP-1023,Karoo Pump Solutions (Pty) Ltd,Zambia,Crusher & Mill Wear Parts,4.2,true
+24,SUP-1024,Namaqua Electromechanical Ltd (Pty) Ltd,South Africa,Crusher & Mill Wear Parts,4.5,true
+25,SUP-1025,Kalahari Industrial Supplies (Pty) Ltd,South Africa,Mechanical Seals,3.8,true
+26,SUP-1026,Karoo Bearing & Drive Co (Pty) Ltd,South Africa,Bearings & Power Transmission,4.4,true
+27,SUP-1027,Lowveld Electromechanical Ltd (Pty) Ltd,Namibia,Valves & Piping,3.5,true
+28,SUP-1028,Postmasburg Spares & Components (Pty) Ltd,China,Mechanical Seals,3.4,true
+29,SUP-1029,Kuruman Bearing & Drive Co (Pty) Ltd,China,Pumps & Fluid Handling,4.7,true
+30,SUP-1030,Aggeneys Mining Equipment Traders (Pty) Ltd,Germany,Bearings & Power Transmission,3.8,true
+31,SUP-1031,Northern Cape Mining Equipment Traders (Pty) Ltd,South Africa,Crusher & Mill Wear Parts,4.4,true
+32,SUP-1032,Copperton Pump Solutions (Pty) Ltd,South Africa,General Mining Consumables,3.3,true
+33,SUP-1033,Orange River Bearing & Drive Co (Pty) Ltd,Germany,Pumps & Fluid Handling,4.8,true
+34,SUP-1034,Namaqua Spares & Components (Pty) Ltd,China,Mechanical Seals,3.7,true
+35,SUP-1035,Lowveld Engineering Supplies (Pty) Ltd,South Africa,Bearings & Power Transmission,4.1,true
+36,SUP-1036,Highveld Bearing & Drive Co (Pty) Ltd,China,Mechanical Seals,4.0,true
+37,SUP-1037,Northern Cape Seals & Sealing Systems (Pty) Ltd,Zambia,General Mining Consumables,3.9,true
+38,SUP-1038,Northern Cape Pump Solutions (Pty) Ltd,South Africa,Pumps & Fluid Handling,3.1,true
+39,SUP-1039,Highveld Electromechanical Ltd (Pty) Ltd,South Africa,Bearings & Power Transmission,3.4,true
+40,SUP-1040,Drakensberg Valve & Fittings (Pty) Ltd,South Africa,General Mining Consumables,5.0,true

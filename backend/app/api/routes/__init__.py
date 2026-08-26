@@ -9,6 +9,7 @@ from app.api.routes.materials import router as materials_router
 from app.api.routes.notifications import router as notifications_router
 from app.api.routes.po import router as po_router
 from app.api.routes.pr import router as pr_router
+from app.api.routes.repair import router as repair_router
 from app.api.routes.rr import router as rr_router
 from app.api.routes.situation_analysis import router as situation_analysis_router
 from app.api.routes.users import router as users_router
@@ -30,6 +31,7 @@ router.include_router(analytics_router)
 router.include_router(rr_router)
 router.include_router(pr_router)
 router.include_router(po_router)
+router.include_router(repair_router)
 router.include_router(users_router)
 router.include_router(notifications_router)
 router.include_router(chat_router)

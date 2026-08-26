@@ -22,16 +22,24 @@ from app.services.csv_store import DataStore, Row
 SYSTEM_PROMPT = (
     "You are the Spares AI procurement assistant for a mining company. You help users create "
     "requisitions (RRs), and look up materials, requisitions, purchase orders, cycle-time, "
-    "bottlenecks, and approval status. Always use the provided tools to look up or create real "
-    "data -- never invent numbers or IDs. Keep replies concise (2-4 sentences) and procurement-"
-    "appropriate. You cannot approve/reject anything yourself; direct users to the Approvals page "
-    "for that."
+    "bottlenecks, approval status, and repair status. Always use the provided tools to look up "
+    "or create real data -- never invent numbers or IDs. Keep replies concise (2-4 sentences) and "
+    "procurement-appropriate. You cannot approve/reject anything yourself; direct users to the "
+    "Approvals page for that.\n\n"
+    "REPAIRABLE SPARES (Initiative 8) -- before creating any requisition, call "
+    "check_repair_chain for the material. If a repair is already in progress, tell the user what "
+    "is in flight, use compare_repair_vs_new to show the cost and lead-time trade-off, and ask "
+    "whether they still wish to proceed. They are always allowed to proceed -- a genuine second "
+    "failure is legitimate -- but they must decide knowingly. If the material is repairable you "
+    "must also ask the user to confirm the existing item cannot be repaired, and only then pass "
+    "attestation_confirmed=true to create_rr. Never set that flag on the user's behalf."
 )
 
 FALLBACK_OPTIONS = [
     {"id": "menu_open_prs", "label": "Show open PRs", "description": "Currently open purchase requisitions"},
     {"id": "menu_open_pos", "label": "Show open POs", "description": "Currently open purchase orders"},
     {"id": "menu_cycle_time", "label": "Cycle time", "description": "RR-to-PO cycle time stats"},
+    {"id": "menu_repair_register", "label": "Parts out for repair", "description": "Live repair register with expected return dates"},
     {"id": "menu_create_rr", "label": "Create a requisition", "description": "Start a new RR"},
 ]
 
@@ -55,6 +63,23 @@ def _run_demo_menu_shortcut(ctx: ToolContext, option_id: str) -> str | None:
     if option_id == "menu_cycle_time":
         result = execute_tool(ctx, "get_cycle_time", {})
         return f"Average RR-to-PO cycle time is {result['average_days']} days (median {result['median_days']}, P90 {result['p90_days']}). The slowest stage is {result['bottleneck_stage']}."
+    if option_id == "menu_repair_register":
+        result = execute_tool(ctx, "get_repair_register", {"limit": 5})
+        summary = result["summary"]
+        if not summary["open_chain_count"]:
+            return "Nothing is currently out for repair."
+        head = (
+            f"{summary['open_chain_count']} part(s) are out for repair "
+            f"(R{summary['total_value_under_repair']:,.2f} in flight, {summary['overdue_count']} overdue). "
+            f"{summary['duplicate_risk_count']} are at or below their reorder point while still at the vendor "
+            "-- those are the ones at risk of being ordered twice."
+        )
+        rows = "; ".join(
+            f"{i['material_code']} at {i['vendor'] or 'vendor'} due {i['expected_return'] or 'TBC'}"
+            + (" (overdue)" if i["overdue"] else "")
+            for i in result["items"][:5]
+        )
+        return f"{head} Oldest: {rows}"
     return None
 
 
@@ -96,12 +121,19 @@ def handle_chat_turn(store: DataStore, user: Row, session_id: int | None, messag
                     "required_date": turn.state.required_date,
                     "purpose": turn.state.purpose or turn.state.material_label or "Requested via AI assistant",
                     "line_items": [{"material_id": turn.state.material_id, "quantity": turn.state.quantity}],
+                    # Initiative 8: only ever true once the user has explicitly confirmed the
+                    # declaration in the conversation -- rr_service rejects the create otherwise.
+                    "attestation_confirmed": turn.state.attested,
                 },
             )
             if "error" in result:
                 reply_text = f"I couldn't create that requisition: {result['error']}"
             else:
                 reply_text = f"Done -- **{result['rr_number']}** has been created and sent for DOA approval (estimated value R{result['total_estimated_value']:,.2f})."
+                if turn.state.attested:
+                    reply_text += " Your condition-to-repair declaration has been recorded against it."
+                if turn.state.duplicate_ack:
+                    reply_text += " It is flagged with the active repair, and the approver will see that context."
             session["assistant_state"] = None
         else:
             reply_text = turn.text
