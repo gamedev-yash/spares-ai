@@ -435,6 +435,161 @@ class TestRegisterAccuracy:
         assert body["items"][0]["material_code"] == material["material_code"]
 
 
+# ------------------------------------------ Initiative 10 (scoped) -- register queries
+class TestConversationalRegisterQueries:
+    """Initiative 8 SS3.4/SS5.2 require the register to be queryable through the chatbot.
+
+    That is the only Initiative 10 capability Initiative 8 depends on, so it is tested
+    here rather than as part of a wider Initiative 10 suite.
+    """
+
+    def _ask(self, client, headers, text):
+        resp = client.post("/api/chat", json={"message": text}, headers=headers)
+        assert resp.status_code == 200, resp.text
+        return resp.json()["message"]
+
+    def test_classifier_separates_questions_from_requests(self):
+        from app.ai.repair_queries import looks_like_repair_query
+
+        # Questions about repairs
+        assert looks_like_repair_query("What is out for repair?")
+        assert looks_like_repair_query("Which repairs are overdue?")
+        assert looks_like_repair_query("Is the impeller under repair?")
+        assert looks_like_repair_query("Show me the repair register")
+        # The phrasing that used to start a requisition by accident
+        assert looks_like_repair_query("I need to know what's out for repair")
+
+        # The reorder-point view is a register question. "reorder" contains the RR keyword
+        # "order", so this has to win on the multi-word phrase.
+        assert looks_like_repair_query("Anything at the reorder point?")
+
+        # Requests for parts -- must NOT be treated as questions
+        assert not looks_like_repair_query("I need 2 pump seals")
+        assert not looks_like_repair_query("I need a repair kit for the pump")
+        assert not looks_like_repair_query("Please order 3 ball valves")
+        assert not looks_like_repair_query("Order a new impeller")
+        assert not looks_like_repair_query("")
+
+    def test_reorder_point_question_lists_the_duplicate_risk_set(self, client, store):
+        make_user(store, employee_code="T001", role="END_USER")
+        at_risk = make_repairable_material(store, material_code="80-99001", stock_level=1, reorder_point=5)
+        healthy = make_repairable_material(store, material_code="80-99002", stock_level=40, reorder_point=2)
+        make_repair_chain(store, at_risk)
+        make_repair_chain(store, healthy)
+
+        text = self._ask(client, auth_headers(client, "T001"), "Anything at the reorder point?")["text"]
+        assert "reorder point" in text
+        assert "80-99001" in text
+        assert "80-99002" not in text
+
+    def test_general_query_summarises_the_register(self, client, store):
+        make_user(store, employee_code="T001", role="END_USER")
+        material = make_repairable_material(store)
+        make_repair_chain(store, material)
+
+        text = self._ask(client, auth_headers(client, "T001"), "What is out for repair?")["text"]
+        assert "Currently out for repair" in text
+        assert material["material_code"] in text
+
+    def test_overdue_query_narrows_to_overdue_chains(self, client, store):
+        make_user(store, employee_code="T001", role="END_USER")
+        late = make_repairable_material(store, material_code="80-99001")
+        ontime = make_repairable_material(store, material_code="80-99002")
+        make_repair_chain(store, late, days_ago=60, expected_in_days=10)
+        make_repair_chain(store, ontime, days_ago=2, expected_in_days=40)
+
+        text = self._ask(client, auth_headers(client, "T001"), "Which repairs are overdue?")["text"]
+        assert "Overdue repairs" in text
+        assert "80-99001" in text
+        assert "80-99002" not in text
+
+    def test_material_query_reports_that_material_only(self, client, store):
+        make_user(store, employee_code="T001", role="END_USER")
+        material = make_repairable_material(store, material_code="80-99001", price=1000.0)
+        make_repair_chain(store, material, quantity=2, repair_value=400.0)
+
+        text = self._ask(client, auth_headers(client, "T001"), "Is 80-99001 under repair?")["text"]
+        assert "80-99001" in text
+        assert "repair chain open" in text
+        # The economic comparison rides along, as it does in the Layer 2 alert.
+        assert "R400" in text and "R2,000" in text
+
+    def test_material_with_no_open_chain_says_so(self, client, store):
+        make_user(store, employee_code="T001", role="END_USER")
+        make_repairable_material(store, material_code="80-99001")
+
+        text = self._ask(client, auth_headers(client, "T001"), "Is 80-99001 under repair?")["text"]
+        assert "Nothing is currently out for repair" in text
+
+    def test_non_repairable_material_is_explained_not_guessed(self, client, store):
+        make_user(store, employee_code="T001", role="END_USER")
+        make_material(store, material_code="500-99001")
+
+        text = self._ask(client, auth_headers(client, "T001"), "Is 500-99001 under repair?")["text"]
+        assert "not a repairable item" in text
+
+    def test_plant_is_honoured_in_the_question(self, client, store):
+        make_user(store, employee_code="T001", role="END_USER")
+        a = make_repairable_material(store, material_code="80-99001")
+        b = make_repairable_material(store, material_code="80-99002")
+        make_repair_chain(store, a, plant="Gamsberg")
+        make_repair_chain(store, b, plant="BMM")
+
+        text = self._ask(client, auth_headers(client, "T001"), "What is out for repair at BMM?")["text"]
+        assert "at BMM" in text
+        assert "80-99002" in text
+        assert "80-99001" not in text
+
+    def test_a_question_never_starts_a_requisition(self, client, store):
+        """The regression this routing exists to prevent."""
+        make_user(store, employee_code="T001", role="END_USER")
+        material = make_repairable_material(store)
+        make_repair_chain(store, material)
+        headers = auth_headers(client, "T001")
+
+        message = self._ask(client, headers, "I need to know what's out for repair")
+        assert "Currently out for repair" in message["text"]
+        assert "Which material do you need" not in message["text"]
+        assert store.rr.all() == []
+
+    def test_a_real_request_still_starts_a_requisition(self, client, store):
+        make_user(store, employee_code="T001", role="END_USER")
+        make_material(store, material_code="500-99001")
+
+        message = self._ask(client, auth_headers(client, "T001"), "I need 2 Test material 500-99001")
+        assert "out for repair" not in message["text"].lower()
+
+    def test_a_draft_in_progress_is_not_hijacked(self, client, store):
+        """A half-finished requisition wins -- answering a question mid-draft would lose it."""
+        make_user(store, employee_code="T001", role="END_USER")
+        make_material(store, material_code="500-99001")
+        make_repairable_material(store, material_code="80-99001")
+        headers = auth_headers(client, "T001")
+
+        first = client.post(
+            "/api/chat", json={"message": "I need 2 Test material 500-99001"}, headers=headers
+        ).json()
+        session_id = first["session_id"]
+
+        follow = client.post(
+            "/api/chat",
+            json={"session_id": session_id, "message": "what is out for repair?"},
+            headers=headers,
+        ).json()
+        # Still collecting the draft, not answering the question.
+        assert "Currently out for repair" not in follow["message"]["text"]
+
+    def test_query_is_read_only(self, client, store):
+        make_user(store, employee_code="T001", role="END_USER")
+        material = make_repairable_material(store)
+        make_repair_chain(store, material)
+        before = (len(store.rr.all()), len(store.attestations.all()), len(store.pr.all()))
+
+        self._ask(client, auth_headers(client, "T001"), "What is out for repair?")
+
+        assert (len(store.rr.all()), len(store.attestations.all()), len(store.pr.all())) == before
+
+
 # ------------------------------------------------------- regression guard
 class TestExistingBehaviourPreserved:
     """Initiative 8 put repair documents in the same pr/po tables the Initiative 9

@@ -1425,3 +1425,4 @@ id,rr_id,line_number,material_id,quantity,estimated_unit_price,service_code,desc
 1424,650,2,75,12.0,71355.13,,"TEFC Induction Motor, 22kW, 4-pole, IE3",OK
 1425,651,1,51,5.0,142107.21,,"Mill Trunnion Bearing Liner, discharge end",OK
 1426,652,1,70,4.0,27566.56,,"Jaw Crusher Fixed Jaw Plate, wave-profile, manganese steel",OK
+1427,653,1,187,2.0,23124.38,,"Ball Mill Grinding Media, 40mm, forged steel balls",OK

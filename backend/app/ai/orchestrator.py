@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from app.ai import rr_assistant
+from app.ai import repair_queries, rr_assistant
 from app.ai.factory import get_llm_provider, is_demo_mode
 from app.ai.rr_assistant import RRDraftState
 from app.ai.tools import ToolContext, execute_tool, get_tool_specs
@@ -63,23 +63,14 @@ def _run_demo_menu_shortcut(ctx: ToolContext, option_id: str) -> str | None:
     if option_id == "menu_cycle_time":
         result = execute_tool(ctx, "get_cycle_time", {})
         return f"Average RR-to-PO cycle time is {result['average_days']} days (median {result['median_days']}, P90 {result['p90_days']}). The slowest stage is {result['bottleneck_stage']}."
+    # Initiative 8 register shortcuts. Each maps onto the same deterministic answers the
+    # natural-language path produces, so clicking and typing agree.
     if option_id == "menu_repair_register":
-        result = execute_tool(ctx, "get_repair_register", {"limit": 5})
-        summary = result["summary"]
-        if not summary["open_chain_count"]:
-            return "Nothing is currently out for repair."
-        head = (
-            f"{summary['open_chain_count']} part(s) are out for repair "
-            f"(R{summary['total_value_under_repair']:,.2f} in flight, {summary['overdue_count']} overdue). "
-            f"{summary['duplicate_risk_count']} are at or below their reorder point while still at the vendor "
-            "-- those are the ones at risk of being ordered twice."
-        )
-        rows = "; ".join(
-            f"{i['material_code']} at {i['vendor'] or 'vendor'} due {i['expected_return'] or 'TBC'}"
-            + (" (overdue)" if i["overdue"] else "")
-            for i in result["items"][:5]
-        )
-        return f"{head} Oldest: {rows}"
+        return repair_queries.answer(ctx.store, ctx.current_user, "what is out for repair")[0]
+    if option_id == "menu_repair_overdue":
+        return repair_queries.answer(ctx.store, ctx.current_user, "which repairs are overdue")[0]
+    if option_id == "menu_repair_risk":
+        return repair_queries.answer(ctx.store, ctx.current_user, "which repairs are at the reorder point")[0]
     return None
 
 
@@ -107,9 +98,28 @@ def handle_chat_turn(store: DataStore, user: Row, session_id: int | None, messag
     reply_text: str
     reply_options: list[dict] | None = None
 
-    in_rr_flow = state.stage not in ("collecting", "done") or bool(message and rr_assistant.looks_like_rr_request(message))
+    mid_draft = state.stage not in ("collecting", "done")
 
-    if in_rr_flow:
+    # Initiative 8 SS3.4/SS5.2: the register must be queryable through the chatbot. This is
+    # checked BEFORE the RR flow because several natural phrasings of the question ("I need
+    # to know what's out for repair") contain RR-intent keywords and would otherwise start a
+    # requisition the user never asked for. A draft already in progress still wins -- we
+    # don't hijack a half-finished requisition to answer a question.
+    is_repair_query = (
+        demo_mode
+        and not mid_draft
+        and bool(message)
+        and repair_queries.looks_like_repair_query(message)
+    )
+
+    in_rr_flow = not is_repair_query and (
+        mid_draft or bool(message and rr_assistant.looks_like_rr_request(message))
+    )
+
+    if is_repair_query:
+        reply_text, reply_options = repair_queries.answer(store, user, message)
+        session["assistant_state"] = None
+    elif in_rr_flow:
         turn = rr_assistant.advance(store, user, state, message, option_id)
         if turn.ready_to_create:
             result = execute_tool(
@@ -142,6 +152,9 @@ def handle_chat_turn(store: DataStore, user: Row, session_id: int | None, messag
     elif option_id and option_id.startswith("menu_"):
         shortcut_reply = _run_demo_menu_shortcut(ctx, option_id)
         reply_text = shortcut_reply or "Sorry, I couldn't run that lookup."
+        # Keep the register shortcuts conversational -- the same follow-ups the typed path offers.
+        if shortcut_reply and option_id.startswith("menu_repair"):
+            reply_options = repair_queries.FOLLOW_UPS
         session["assistant_state"] = None
     elif demo_mode:
         reply_text = (

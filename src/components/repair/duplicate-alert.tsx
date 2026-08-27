@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { TriangleAlert } from "lucide-react"
 
 import { EconomicComparison } from "@/components/repair/economic-comparison"
@@ -46,9 +47,20 @@ export function DuplicateAlert({
                 className="rounded-lg border border-border bg-card px-2.5 py-2 text-xs"
               >
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                  <span className="font-medium text-foreground">
-                    {chain.repair_po_number ?? chain.repair_pr_number ?? "Repair document"}
-                  </span>
+                  {/* The document reference is the handle on this chain -- link it to the
+                      register row so "what is this?" is one click, not a search. */}
+                  {chain.repair_po_number ?? chain.repair_pr_number ? (
+                    <Link
+                      href={`/repair-register?search=${encodeURIComponent(
+                        chain.repair_po_number ?? chain.repair_pr_number ?? ""
+                      )}`}
+                      className="font-medium text-primary hover:underline"
+                    >
+                      {chain.repair_po_number ?? chain.repair_pr_number}
+                    </Link>
+                  ) : (
+                    <span className="font-medium text-foreground">Repair document</span>
+                  )}
                   {chain.overdue ? (
                     <StatusBadge tone="danger">{chain.days_overdue}d overdue</StatusBadge>
                   ) : chain.expected_return ? (
@@ -58,7 +70,12 @@ export function DuplicateAlert({
                 <p className="mt-1 text-muted-foreground">
                   {chain.quantity_under_repair}
                   {chain.quantity_under_repair === 1 ? " unit" : " units"} of{" "}
-                  <span className="text-foreground">{chain.material_code}</span>
+                  <Link
+                    href={`/repair-register?search=${encodeURIComponent(chain.material_code ?? "")}`}
+                    className="text-foreground hover:underline"
+                  >
+                    {chain.material_code}
+                  </Link>
                   {chain.vendor ? ` at ${chain.vendor}` : " awaiting dispatch to a vendor"}
                   {chain.days_open != null ? ` · open ${chain.days_open} days` : ""}
                 </p>

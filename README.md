@@ -369,16 +369,49 @@ undeclared in the schema and therefore invisible to the frontend. The MRP path d
 | `/declarations` | The queue of auto-raised requisitions awaiting a planner's declaration, and the full declaration log |
 | `/approvals` | Duplicate context and the requisitioner's declaration, inline on the approval |
 | `/materials` | A "Repairable" badge on the 80-series population |
-| `/chat/assistant` | The Layer 2 conversational guard |
+| `/chat/assistant` | The Layer 2 conversational guard, and register queries in plain language |
 
-### 14.6 Tests
+### 14.6 The one piece of Initiative 10 this needed
 
-`backend/tests/test_repair.py` — 31 tests organised around the **six pilot scenarios** in the
-Initiative 8 document, so each success criterion there maps onto something executable, plus a
-`TestExistingBehaviourPreserved` class guarding the thing most likely to break quietly:
-repair documents must stay out of the Initiative 9 analytics lane.
+Initiative 8 requires the register to be *"queryable through the chatbot"* (§3.4, §5.2).
+That conversational surface is the **only** Initiative 10 capability Initiative 8 depends
+on — roughly 5–10% of that initiative. It is implemented in
+`backend/app/ai/repair_queries.py` as deterministic intent routing, no LLM call.
 
-### 14.7 Pending VZI input
+```
+"What is out for repair?"              -> register summary + oldest chains
+"Which repairs are overdue at BMM?"    -> overdue subset, plant-scoped
+"Anything at the reorder point?"       -> the duplicate-risk set
+"Is 80-10059 under repair?"            -> that material's chains + the cost comparison
+```
+
+**Routing order matters.** The classifier runs *before* the RR-creation flow, because
+several natural phrasings of a question contain requisition keywords — `"I need to know
+what's out for repair"` used to start a requisition nobody asked for. Conversely a request
+(`"I need a repair kit"`, `"Please order 3 ball valves"`) still creates one, and a draft
+already in progress is never hijacked to answer a question.
+
+Deliberately **not** implemented, because Initiative 8 does not need any of it: alternate
+part matching (Tier 1/2/3), supplier recommendation, index-based price benchmarking,
+document ingestion/OCR, material-master enrichment, or reservation/lead-time estimation.
+
+The classifier is keyword-based and therefore bounded — unusual phrasings fall through to
+the menu. In provider mode the model reaches the same data through the read-only tools
+(`get_repair_register`, `check_repair_chain`, `compare_repair_vs_new`) and handles free
+phrasing directly.
+
+### 14.7 Tests
+
+`backend/tests/test_repair.py` — 43 tests. The first six classes mirror the **six pilot
+scenarios** in the Initiative 8 document, so each success criterion there maps onto something
+executable. Then `TestConversationalRegisterQueries` covers the chat routing (§14.6),
+including the case that motivated it: a question must never start a requisition. Finally
+`TestExistingBehaviourPreserved` guards the thing most likely to break quietly — repair
+documents must stay out of the Initiative 9 analytics lane.
+
+Whole suite: **87 passing** (44 pre-existing + 43 Initiative 8).
+
+### 14.8 Pending VZI input
 
 Four values are placeholders and are marked as such in the code:
 
@@ -389,8 +422,9 @@ Four values are placeholders and are marked as such in the code:
 4. **The exact declaration wording** — currently "I confirm the existing item has been
    assessed and cannot be repaired." (`ATTESTATION_STATEMENT`)
 
-### 14.8 Out of scope
+### 14.9 Out of scope
 
 Gate pass administration, closure and lifecycle automation, vendor follow-up, and end-to-end
 repair tracking — all excluded by the Initiative 8 brief itself. MRP behaviour is simulated,
 not real: auto-triggered requisitions are generated, and the gate is demonstrated on them.
+

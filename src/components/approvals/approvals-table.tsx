@@ -1,12 +1,13 @@
 "use client"
 
 import { Fragment, useCallback, useEffect, useState } from "react"
+import Link from "next/link"
 import { Check, EllipsisVertical, ShieldCheck, TriangleAlert, X } from "lucide-react"
 import { toast } from "sonner"
 
 import { DuplicateContextAlert } from "@/components/repair/duplicate-alert"
 import { StatusBadge } from "@/components/shared/status-badge"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,7 +38,7 @@ import {
   searchApprovals,
   type ApprovalRecord,
 } from "@/lib/api/approvals"
-import { formatZAR } from "@/lib/utils"
+import { cn, formatZAR } from "@/lib/utils"
 
 const ALL_FILTER = "all"
 const URGENCIES = ["Normal", "High", "Critical"] as const
@@ -47,6 +48,11 @@ const URGENCY_TONE: Record<(typeof URGENCIES)[number], "default" | "warning" | "
   Normal: "default",
   High: "warning",
   Critical: "danger",
+}
+
+/** The material the duplicate guard actually fired on -- used to link back to its chain. */
+function duplicateMaterialCode(item: ApprovalRecord): string | null {
+  return item.duplicate_context?.materials?.[0]?.material_code ?? null
 }
 
 export function ApprovalsTable() {
@@ -169,12 +175,52 @@ export function ApprovalsTable() {
                     {(item.duplicate_flag || item.attestation) && (
                       <div className="mt-1 flex flex-col items-start gap-1">
                         {item.duplicate_flag && (
-                          <StatusBadge tone="warning">Repair in progress</StatusBadge>
+                          <Link
+                            href={`/repair-register?search=${encodeURIComponent(
+                              duplicateMaterialCode(item) ?? ""
+                            )}`}
+                            className="inline-flex rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                            title="See this repair on the register"
+                          >
+                            <StatusBadge
+                              tone="warning"
+                              className="cursor-pointer hover:bg-warning/25"
+                            >
+                              Repair in progress
+                            </StatusBadge>
+                          </Link>
                         )}
+                        {/* A blocked approval links to the one place it can be unblocked. */}
                         {item.attestation_pending ? (
-                          <StatusBadge tone="danger">Declaration pending</StatusBadge>
+                          <Link
+                            href={`/declarations?rr=${encodeURIComponent(
+                              item.rr_number ?? ""
+                            )}&tab=pending`}
+                            className="inline-flex rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                            title="Go and complete this declaration"
+                          >
+                            <StatusBadge
+                              tone="danger"
+                              className="cursor-pointer hover:bg-destructive/20"
+                            >
+                              Declaration pending
+                            </StatusBadge>
+                          </Link>
                         ) : item.attestation?.status === "COMPLETE" ? (
-                          <StatusBadge tone="success">Declared</StatusBadge>
+                          <Link
+                            href={`/declarations?rr=${encodeURIComponent(
+                              item.rr_number ?? ""
+                            )}&tab=log`}
+                            className="inline-flex rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                            title="View this declaration in the log"
+                          >
+                            <StatusBadge
+                              tone="success"
+                              className="cursor-pointer hover:bg-success/25"
+                            >
+                              Declared
+                            </StatusBadge>
+                          </Link>
                         ) : null}
                       </div>
                     )}
@@ -278,11 +324,25 @@ export function ApprovalsTable() {
                                     </p>
                                   </>
                                 ) : (
-                                  <p className="mt-1 text-xs text-muted-foreground">
-                                    This requisition was raised automatically by min/max stock
-                                    levels, so no declaration was made at creation. Approval is
-                                    blocked until a planner completes it on the Declarations page.
-                                  </p>
+                                  <>
+                                    <p className="mt-1 text-xs text-muted-foreground">
+                                      This requisition was raised automatically by min/max stock
+                                      levels, so no declaration was made at creation. Approval is
+                                      blocked until a planner completes it.
+                                    </p>
+                                    <Link
+                                      href={`/declarations?rr=${encodeURIComponent(
+                                        item.rr_number ?? ""
+                                      )}&tab=pending`}
+                                      className={cn(
+                                        buttonVariants({ variant: "outline", size: "xs" }),
+                                        "mt-2 border-warning/40 text-warning hover:bg-warning/10"
+                                      )}
+                                    >
+                                      <ShieldCheck className="size-3.5" />
+                                      Declare now
+                                    </Link>
+                                  </>
                                 )}
                               </div>
                             </div>

@@ -1,7 +1,9 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
-import { Check, ShieldCheck } from "lucide-react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Check, ExternalLink, ShieldCheck, X } from "lucide-react"
 import { toast } from "sonner"
 
 import { DuplicateContextAlert } from "@/components/repair/duplicate-alert"
@@ -32,6 +34,7 @@ import {
   type Attestation,
   type PendingDeclaration,
 } from "@/lib/api/repair"
+import { cn } from "@/lib/utils"
 
 const ALL_FILTER = "all"
 const ORIGINS = ["MANUAL", "MRP", "CHAT"] as const
@@ -42,14 +45,60 @@ const ORIGIN_LABEL: Record<string, string> = {
   CHAT: "AI assistant",
 }
 
+/** A deep link from the register or the approvals page narrows both tabs to one thing. */
+interface TargetFilter {
+  material: string | null
+  plant: string | null
+  rr: string | null
+}
+
+function hasTarget(t: TargetFilter) {
+  return Boolean(t.material || t.plant || t.rr)
+}
+
+function describeTarget(t: TargetFilter) {
+  const bits: string[] = []
+  if (t.rr) bits.push(t.rr)
+  if (t.material) bits.push(t.material)
+  if (t.plant) bits.push(t.plant)
+  return bits.join(" · ")
+}
+
+function TargetChip({ target, onClear }: { target: TargetFilter; onClear: () => void }) {
+  if (!hasTarget(target)) return null
+  return (
+    <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2">
+      <span className="text-xs text-muted-foreground">Showing declarations for</span>
+      <span className="text-sm font-medium text-foreground">{describeTarget(target)}</span>
+      <button
+        type="button"
+        onClick={onClear}
+        className="ml-auto inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      >
+        <X className="size-3.5" />
+        Show all
+      </button>
+    </div>
+  )
+}
+
 /** The queue of auto-raised requisitions blocked at DOA until a planner declares. */
-function PendingQueue({ onDeclared }: { onDeclared: () => void }) {
+function PendingQueue({
+  target,
+  onClearTarget,
+  onDeclared,
+}: {
+  target: TargetFilter
+  onClearTarget: () => void
+  onDeclared: () => void
+}) {
   const [items, setItems] = useState<PendingDeclaration[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [openRow, setOpenRow] = useState<number | null>(null)
   const [note, setNote] = useState("")
   const [busy, setBusy] = useState<number | null>(null)
+  const firstMatchRef = useRef<HTMLDivElement | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -66,6 +115,24 @@ function PendingQueue({ onDeclared }: { onDeclared: () => void }) {
   useEffect(() => {
     load()
   }, [load])
+
+  const visible = useMemo(() => {
+    return items.filter((i) => {
+      if (target.rr && i.rr_number !== target.rr) return false
+      if (target.material && i.material_code !== target.material) return false
+      if (target.plant && i.plant !== target.plant) return false
+      return true
+    })
+  }, [items, target])
+
+  // Arriving from a deep link to a single item: open its declare form straight away and
+  // scroll to it, so the click that got here lands on the action rather than a list.
+  useEffect(() => {
+    if (!loading && hasTarget(target) && visible.length === 1) {
+      setOpenRow(visible[0].attestation_id)
+      firstMatchRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" })
+    }
+  }, [loading, target, visible])
 
   async function declare(item: PendingDeclaration) {
     setBusy(item.attestation_id)
@@ -91,32 +158,61 @@ function PendingQueue({ onDeclared }: { onDeclared: () => void }) {
       </div>
     )
   }
-  if (items.length === 0) {
+
+  if (visible.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-        No requisitions are waiting on a declaration.
+      <div className="flex flex-col gap-3">
+        <TargetChip target={target} onClear={onClearTarget} />
+        <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+          {hasTarget(target)
+            ? `Nothing is awaiting a declaration for ${describeTarget(target)}.`
+            : "No requisitions are waiting on a declaration."}
+          {hasTarget(target) && items.length > 0 && (
+            <div className="mt-2">
+              <Button variant="outline" size="sm" onClick={onClearTarget}>
+                Show all {items.length} pending
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     )
   }
 
   return (
     <div className="flex flex-col gap-3">
+      <TargetChip target={target} onClear={onClearTarget} />
       <p className="text-xs text-muted-foreground">
-        {items.length} auto-raised {items.length === 1 ? "requisition" : "requisitions"} cannot
+        {visible.length} auto-raised {visible.length === 1 ? "requisition" : "requisitions"} cannot
         be approved until a planner confirms the existing item is beyond repair.
       </p>
-      {items.map((item) => (
-        <div key={item.attestation_id} className="rounded-xl border border-border bg-card p-3">
+      {visible.map((item, index) => (
+        <div
+          key={item.attestation_id}
+          ref={index === 0 ? firstMatchRef : undefined}
+          className={cn(
+            "rounded-xl border bg-card p-3",
+            openRow === item.attestation_id ? "border-foreground/40" : "border-border"
+          )}
+        >
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-medium text-foreground">{item.rr_number}</span>
                 <StatusBadge tone="warning">Declaration pending</StatusBadge>
-                <StatusBadge tone="default">{ORIGIN_LABEL[item.origin ?? ""] ?? item.origin}</StatusBadge>
+                <StatusBadge tone="default">
+                  {ORIGIN_LABEL[item.origin ?? ""] ?? item.origin}
+                </StatusBadge>
                 {item.duplicate_flag && <StatusBadge tone="danger">Duplicate risk</StatusBadge>}
               </div>
               <p className="mt-1 text-sm text-foreground">
-                {item.material_code} — {item.material_description}
+                <Link
+                  href={`/repair-register?search=${encodeURIComponent(item.material_code ?? "")}`}
+                  className="text-primary hover:underline"
+                >
+                  {item.material_code}
+                </Link>{" "}
+                — {item.material_description}
               </p>
               <p className="mt-0.5 text-xs text-muted-foreground">
                 {item.plant} · {item.department} · raised by {item.requester ?? "MRP"} ·{" "}
@@ -152,6 +248,7 @@ function PendingQueue({ onDeclared }: { onDeclared: () => void }) {
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Optional — why it can't be repaired"
                   className="h-9"
+                  autoFocus
                 />
                 <Button
                   size="sm"
@@ -165,7 +262,7 @@ function PendingQueue({ onDeclared }: { onDeclared: () => void }) {
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
                 Recorded against {item.rr_number} with your name and the time, and shown to the
-                approver.
+                approver. This unblocks its approval.
               </p>
             </div>
           )}
@@ -176,7 +273,15 @@ function PendingQueue({ onDeclared }: { onDeclared: () => void }) {
 }
 
 /** The full declaration log — who declared what, when, against which requisition. */
-function DeclarationLog({ refreshKey }: { refreshKey: number }) {
+function DeclarationLog({
+  target,
+  onClearTarget,
+  refreshKey,
+}: {
+  target: TargetFilter
+  onClearTarget: () => void
+  refreshKey: number
+}) {
   const [status, setStatus] = useState<string>(ALL_FILTER)
   const [origin, setOrigin] = useState<string>(ALL_FILTER)
   const [items, setItems] = useState<Attestation[]>([])
@@ -191,6 +296,7 @@ function DeclarationLog({ refreshKey }: { refreshKey: number }) {
         await listAttestations({
           status: status === ALL_FILTER ? undefined : status,
           origin: origin === ALL_FILTER ? undefined : origin,
+          plant: target.plant ?? undefined,
         })
       )
     } catch (err) {
@@ -198,14 +304,23 @@ function DeclarationLog({ refreshKey }: { refreshKey: number }) {
     } finally {
       setLoading(false)
     }
-  }, [status, origin])
+  }, [status, origin, target.plant])
 
   useEffect(() => {
     load()
   }, [load, refreshKey])
 
+  const visible = useMemo(() => {
+    return items.filter((a) => {
+      if (target.rr && a.rr_number !== target.rr) return false
+      if (target.material && a.material_code !== target.material) return false
+      return true
+    })
+  }, [items, target])
+
   return (
     <div className="flex flex-col gap-3">
+      <TargetChip target={target} onClear={onClearTarget} />
       <div className="flex flex-col gap-2 sm:flex-row">
         <Select value={status} onValueChange={(v) => setStatus((v as string) ?? ALL_FILTER)}>
           <SelectTrigger className="h-9 w-full sm:w-44">
@@ -244,13 +359,13 @@ function DeclarationLog({ refreshKey }: { refreshKey: number }) {
         </div>
       ) : loading ? (
         <Skeleton className="h-80 rounded-xl" />
-      ) : items.length === 0 ? (
+      ) : visible.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
           No declarations match these filters.
         </div>
       ) : (
         <>
-          <p className="text-xs text-muted-foreground">{items.length} declarations</p>
+          <p className="text-xs text-muted-foreground">{visible.length} declarations</p>
           <Table>
             <TableHeader>
               <TableRow>
@@ -265,13 +380,18 @@ function DeclarationLog({ refreshKey }: { refreshKey: number }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {items.map((a) => (
+              {visible.map((a) => (
                 <TableRow key={a.id}>
                   <TableCell className="font-medium text-foreground">
                     {a.rr_number ?? "—"}
                   </TableCell>
                   <TableCell className="max-w-[260px]">
-                    <div className="text-foreground">{a.material_code}</div>
+                    <Link
+                      href={`/repair-register?search=${encodeURIComponent(a.material_code ?? "")}`}
+                      className="text-primary hover:underline"
+                    >
+                      {a.material_code}
+                    </Link>
                     <div className="truncate text-xs text-muted-foreground">
                       {a.material_description}
                     </div>
@@ -311,12 +431,40 @@ function DeclarationLog({ refreshKey }: { refreshKey: number }) {
 }
 
 export function AttestationPanel() {
-  const [tab, setTab] = useState<"pending" | "log">("pending")
+  const router = useRouter()
+  const params = useSearchParams()
+
+  const target: TargetFilter = useMemo(
+    () => ({
+      material: params.get("material"),
+      plant: params.get("plant"),
+      rr: params.get("rr"),
+    }),
+    [params]
+  )
+
+  const [tab, setTab] = useState<"pending" | "log">(() =>
+    params.get("tab") === "log" ? "log" : "pending"
+  )
   const [refreshKey, setRefreshKey] = useState(0)
+
+  function clearTarget() {
+    router.replace(`/declarations?tab=${tab}`, { scroll: false })
+  }
+
+  function selectTab(next: "pending" | "log") {
+    setTab(next)
+    const q = new URLSearchParams()
+    if (target.material) q.set("material", target.material)
+    if (target.plant) q.set("plant", target.plant)
+    if (target.rr) q.set("rr", target.rr)
+    q.set("tab", next)
+    router.replace(`/declarations?${q.toString()}`, { scroll: false })
+  }
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex gap-1 border-b border-border">
+      <div className="flex items-center gap-1 border-b border-border">
         {(
           [
             ["pending", "Awaiting declaration"],
@@ -326,7 +474,7 @@ export function AttestationPanel() {
           <button
             key={key}
             type="button"
-            onClick={() => setTab(key)}
+            onClick={() => selectTab(key)}
             className={
               tab === key
                 ? "-mb-px border-b-2 border-foreground px-3 py-2 text-sm font-medium text-foreground"
@@ -336,12 +484,27 @@ export function AttestationPanel() {
             {label}
           </button>
         ))}
+        <Link
+          href="/repair-register"
+          className="ml-auto inline-flex items-center gap-1 px-3 py-2 text-sm text-muted-foreground hover:text-foreground"
+        >
+          Repair register
+          <ExternalLink className="size-3.5" />
+        </Link>
       </div>
 
       {tab === "pending" ? (
-        <PendingQueue onDeclared={() => setRefreshKey((k) => k + 1)} />
+        <PendingQueue
+          target={target}
+          onClearTarget={clearTarget}
+          onDeclared={() => setRefreshKey((k) => k + 1)}
+        />
       ) : (
-        <DeclarationLog refreshKey={refreshKey} />
+        <DeclarationLog
+          target={target}
+          onClearTarget={clearTarget}
+          refreshKey={refreshKey}
+        />
       )}
     </div>
   )

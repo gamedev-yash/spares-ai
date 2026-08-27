@@ -1,6 +1,8 @@
+import { Suspense } from "react"
 import type { Metadata } from "next"
 
 import { AttestationPanel } from "@/components/repair/attestation-panel"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export const metadata: Metadata = {
   title: "Condition-to-repair declarations — Spares AI",
@@ -24,7 +26,19 @@ export default function DeclarationsPage() {
           </p>
         </div>
 
-        <AttestationPanel />
+        {/* Reads ?material / ?plant / ?rr / ?tab so the register and the approvals page can
+            link straight to the item that needs declaring. */}
+        <Suspense
+          fallback={
+            <div className="flex flex-col gap-4">
+              <Skeleton className="h-9 w-72" />
+              <Skeleton className="h-28 rounded-xl" />
+              <Skeleton className="h-28 rounded-xl" />
+            </div>
+          }
+        >
+          <AttestationPanel />
+        </Suspense>
       </div>
     </div>
   )

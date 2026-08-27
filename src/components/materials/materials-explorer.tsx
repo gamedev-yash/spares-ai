@@ -16,9 +16,12 @@ const PAGE_SIZE = 25
 export function MaterialsExplorer() {
   const searchParams = useSearchParams()
   const categoryParam = searchParams.get("category")
+  // `?q=` lets other pages link straight to a material -- the repair register and the
+  // declaration log both link here by material code.
+  const queryParam = searchParams.get("q")
 
-  const [query, setQuery] = useState("")
-  const [debouncedQuery, setDebouncedQuery] = useState("")
+  const [query, setQuery] = useState(queryParam ?? "")
+  const [debouncedQuery, setDebouncedQuery] = useState(queryParam ?? "")
   const [category, setCategory] = useState<string>(ALL_FILTER)
   const [categoryOptions, setCategoryOptions] = useState<string[]>([])
   const [lifecycle, setLifecycle] = useState<LifecycleStatus | typeof ALL_FILTER>(ALL_FILTER)
@@ -40,6 +43,11 @@ export function MaterialsExplorer() {
       setCategory(categoryParam)
     }
   }, [categoryParam, categoryOptions])
+
+  // Arriving from another page with a new ?q= while already mounted here.
+  useEffect(() => {
+    if (queryParam) setQuery(queryParam)
+  }, [queryParam])
 
   useEffect(() => {
     const timeout = setTimeout(() => setDebouncedQuery(query), 300)
