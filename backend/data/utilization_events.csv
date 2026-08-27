@@ -1,0 +1,91 @@
+id,tracking_id,stage,status,quantity,actor_id,source,note,timestamp
+1,UTL-2026-1001,PLAN_CREATED,COMPLETED,2.0,1,synthetic_seed,Consumption plan captured (procurement leg).,2026-08-07T07:00:00+00:00
+2,UTL-2026-1001,DUPLICATE_CHECK,COMPLETED,,1,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2026-08-07T07:00:00+00:00
+3,UTL-2026-1001,MRP_ALLOCATED,COMPLETED,,1,synthetic_seed,MRP allocation created.,2026-08-09T09:00:00+00:00
+4,UTL-2026-1001,PR_GENERATED,COMPLETED,,1,synthetic_seed,PR-90552 generated.,2026-08-09T09:00:00+00:00
+5,UTL-2026-1001,PO_CREATED,COMPLETED,,1,synthetic_seed,PO-90473 created.,2026-08-12T09:00:00+00:00
+6,UTL-2026-1001,GOODS_RECEIVED,COMPLETED,,1,synthetic_seed,Goods receipt recorded.,2026-08-21T09:00:00+00:00
+7,UTL-2026-1001,GOODS_ISSUED,COMPLETED,,1,synthetic_seed,Goods issue recorded.,2026-08-21T09:00:00+00:00
+8,UTL-2026-1001,CONSUMED,COMPLETED,,1,synthetic_seed,Requester confirmed consumption on schedule.,2026-08-22T09:00:00+00:00
+9,UTL-2026-1002,PLAN_CREATED,COMPLETED,4.0,7,synthetic_seed,Consumption plan captured (procurement leg).,2026-07-26T07:00:00+00:00
+10,UTL-2026-1002,DUPLICATE_CHECK,COMPLETED,,7,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2026-07-26T07:00:00+00:00
+11,UTL-2026-1002,GOODS_RECEIVED,COMPLETED,4.0,7,synthetic_seed,Goods receipt recorded.,2026-08-13T09:00:00+00:00
+12,UTL-2026-1002,GOODS_ISSUED,COMPLETED,4.0,7,synthetic_seed,Goods issue recorded.,2026-08-14T09:00:00+00:00
+13,UTL-2026-1002,PLAN_BREACHED,COMPLETED,,,system,Planned consumption date breached.,2026-08-15T08:00:00+00:00
+14,UTL-2026-1002,REMINDER_SENT,COMPLETED,,,system,Requester reminder generated.,2026-08-15T08:01:00+00:00
+15,UTL-2026-1003,PLAN_CREATED,COMPLETED,1.0,9,synthetic_seed,Consumption plan captured (procurement leg).,2026-07-31T07:00:00+00:00
+16,UTL-2026-1003,DUPLICATE_CHECK,COMPLETED,,9,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2026-07-31T07:00:00+00:00
+17,UTL-2026-1003,GOODS_ISSUED,COMPLETED,1.0,9,synthetic_seed,Goods issue recorded.,2026-08-18T09:00:00+00:00
+18,UTL-2026-1003,PLAN_BREACHED,COMPLETED,,,system,Planned consumption date breached.,2026-08-24T08:00:00+00:00
+19,UTL-2026-1003,REPLANNED,COMPLETED,,9,manual,Re-planned from 2026-08-24 to 2026-09-16.,2026-08-26T11:17:00+00:00
+20,UTL-2026-1003,REPLAN_REASON,COMPLETED,,9,manual,Reason: shutdown postponed,2026-08-26T11:17:00+00:00
+21,UTL-2026-1004,PLAN_CREATED,COMPLETED,1.0,14,synthetic_seed,Consumption plan captured (procurement leg).,2026-07-08T07:00:00+00:00
+22,UTL-2026-1004,DUPLICATE_CHECK,COMPLETED,,14,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2026-07-08T07:00:00+00:00
+23,UTL-2026-1004,GOODS_ISSUED,COMPLETED,1.0,14,synthetic_seed,Goods issue recorded.,2026-08-02T09:00:00+00:00
+24,UTL-2026-1004,RELEASED,COMPLETED,1.0,14,manual,Reason: Contingency no longer required -- P-204 rebuild deferred. Released for redeployment.,2026-08-21T14:00:00+00:00
+25,UTL-2026-1005,PLAN_CREATED,COMPLETED,1.0,10,synthetic_seed,Consumption plan captured (procurement leg).,2026-08-27T08:00:55.563350+00:00
+26,UTL-2026-1005,DUPLICATE_CHECK,COMPLETED,,10,synthetic_seed,"Duplicate-demand check completed -- 1 potential match(es), est. avoided value R26,241.14.",2026-08-27T08:00:55.564579+00:00
+27,UTL-2026-1005,STOCK_MATCH_FOUND,COMPLETED,1.0,,system,"Released stock detected at Gamsberg -- recommend inter-plant transfer instead of new purchase (est. avoided value R26,241.14).",2026-08-27T08:00:55.583473+00:00
+28,UTL-2026-1006,PLAN_CREATED,COMPLETED,1.0,16,synthetic_seed,Consumption plan captured (procurement leg).,2026-08-27T08:00:55.670279+00:00
+29,UTL-2026-1006,DUPLICATE_CHECK,COMPLETED,,16,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2026-08-27T08:00:55.671385+00:00
+30,UTL-2026-1006,STOCK_MATCH_FOUND,COMPLETED,,,system,"No exact stock, but a Tier 1 direct-equivalent bearing is available unused at Gamsberg.",2026-08-27T08:00:55.691778+00:00
+31,UTL-2026-1007,PLAN_CREATED,COMPLETED,2.0,1,synthetic_seed,Consumption plan captured (stores leg).,2026-08-05T07:00:00+00:00
+32,UTL-2026-1007,PLAN_CREATED,COMPLETED,3.0,1,synthetic_seed,Consumption plan captured (procurement leg).,2026-08-05T07:00:00+00:00
+33,UTL-2026-1007,DUPLICATE_CHECK,COMPLETED,,1,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2026-08-05T07:00:00+00:00
+34,UTL-2026-1007,STORES_DRAW,COMPLETED,2.0,4,synthetic_seed,2 units issued immediately from stores stock.,2026-08-25T10:00:00+00:00
+35,UTL-2026-1007,GOODS_RECEIVED,COMPLETED,3.0,1,synthetic_seed,3 units received against PO (procurement leg).,2026-08-22T09:00:00+00:00
+36,UTL-2026-1007,GOODS_ISSUED,COMPLETED,3.0,1,synthetic_seed,3 units issued (procurement leg).,2026-08-23T09:00:00+00:00
+37,UTL-2026-1008,PLAN_CREATED,COMPLETED,2.0,1,synthetic_seed,Consumption plan captured (procurement leg).,2026-08-09T07:00:00+00:00
+38,UTL-2026-1008,DUPLICATE_CHECK,COMPLETED,,1,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2026-08-09T07:00:00+00:00
+39,UTL-2026-1009,PLAN_CREATED,COMPLETED,3.0,7,synthetic_seed,Consumption plan captured (procurement leg).,2026-08-09T07:00:00+00:00
+40,UTL-2026-1009,DUPLICATE_CHECK,COMPLETED,,7,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2026-08-09T07:00:00+00:00
+41,UTL-2026-1010,PLAN_CREATED,COMPLETED,1.0,9,synthetic_seed,Consumption plan captured (procurement leg).,2026-08-09T07:00:00+00:00
+42,UTL-2026-1010,DUPLICATE_CHECK,COMPLETED,,9,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2026-08-09T07:00:00+00:00
+43,UTL-2026-1008,MRP_CONSOLIDATED,COMPLETED,2.0,,system,"Daily MRP consolidated this reservation into PR-90557 (Qty 6 total, FIFO allocation by requirement date).",2026-08-27T08:00:56.410830+00:00
+44,UTL-2026-1008,GOODS_ISSUED,COMPLETED,2.0,1,synthetic_seed,Issued against consolidated PO.,2026-08-26T09:00:00+00:00
+45,UTL-2026-1009,MRP_CONSOLIDATED,COMPLETED,3.0,,system,"Daily MRP consolidated this reservation into PR-90557 (Qty 6 total, FIFO allocation by requirement date).",2026-08-27T08:00:56.536075+00:00
+46,UTL-2026-1009,GOODS_ISSUED,COMPLETED,3.0,7,synthetic_seed,Issued against consolidated PO.,2026-08-26T09:00:00+00:00
+47,UTL-2026-1010,MRP_CONSOLIDATED,COMPLETED,1.0,,system,"Daily MRP consolidated this reservation into PR-90557 (Qty 6 total, FIFO allocation by requirement date).",2026-08-27T08:00:56.654406+00:00
+48,UTL-2026-1010,GOODS_ISSUED,COMPLETED,1.0,9,synthetic_seed,Issued against consolidated PO.,2026-08-26T09:00:00+00:00
+49,UTL-2026-1011,PLAN_CREATED,COMPLETED,6.0,7,synthetic_seed,Consumption plan captured (procurement leg).,2026-08-27T08:00:56.744854+00:00
+50,UTL-2026-1011,DUPLICATE_CHECK,COMPLETED,,7,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2026-08-27T08:00:56.746050+00:00
+51,UTL-2026-1011,RISK_ASSESSED,COMPLETED,,,system,NM/SM risk: LOW (30%). Drivers: Only 2 prior requisitions for this material,2026-08-27T08:00:56.763461+00:00
+52,UTL-2026-1012,PLAN_CREATED,COMPLETED,1.0,1,synthetic_seed,Consumption plan captured (procurement leg).,2025-09-28T07:00:00+00:00
+53,UTL-2026-1012,DUPLICATE_CHECK,COMPLETED,,1,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2025-09-28T07:00:00+00:00
+54,UTL-2026-1012,CONSUMED,COMPLETED,1.0,1,synthetic_seed,Routine PM consumption.,2025-10-01T09:00:00+00:00
+55,UTL-2026-1013,PLAN_CREATED,COMPLETED,1.0,7,synthetic_seed,Consumption plan captured (procurement leg).,2025-11-27T07:00:00+00:00
+56,UTL-2026-1013,DUPLICATE_CHECK,COMPLETED,,7,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2025-11-27T07:00:00+00:00
+57,UTL-2026-1013,CONSUMED,COMPLETED,1.0,7,synthetic_seed,Routine PM consumption.,2025-11-30T09:00:00+00:00
+58,UTL-2026-1014,PLAN_CREATED,COMPLETED,1.0,9,synthetic_seed,Consumption plan captured (procurement leg).,2026-01-26T07:00:00+00:00
+59,UTL-2026-1014,DUPLICATE_CHECK,COMPLETED,,9,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2026-01-26T07:00:00+00:00
+60,UTL-2026-1014,CONSUMED,COMPLETED,1.0,9,synthetic_seed,Routine PM consumption.,2026-01-29T09:00:00+00:00
+61,UTL-2026-1015,PLAN_CREATED,COMPLETED,1.0,10,synthetic_seed,Consumption plan captured (procurement leg).,2026-03-27T07:00:00+00:00
+62,UTL-2026-1015,DUPLICATE_CHECK,COMPLETED,,10,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2026-03-27T07:00:00+00:00
+63,UTL-2026-1015,CONSUMED,COMPLETED,1.0,10,synthetic_seed,Routine PM consumption.,2026-03-30T09:00:00+00:00
+64,UTL-2026-1016,PLAN_CREATED,COMPLETED,1.0,14,synthetic_seed,Consumption plan captured (procurement leg).,2026-05-26T07:00:00+00:00
+65,UTL-2026-1016,DUPLICATE_CHECK,COMPLETED,,14,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2026-05-26T07:00:00+00:00
+66,UTL-2026-1016,CONSUMED,COMPLETED,1.0,14,synthetic_seed,Routine PM consumption.,2026-05-29T09:00:00+00:00
+67,UTL-2026-1017,PLAN_CREATED,COMPLETED,1.0,9,synthetic_seed,Consumption plan captured (procurement leg).,2026-07-16T07:00:00+00:00
+68,UTL-2026-1017,DUPLICATE_CHECK,COMPLETED,,9,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2026-07-16T07:00:00+00:00
+69,UTL-2026-1018,PLAN_CREATED,COMPLETED,1.0,14,synthetic_seed,Consumption plan captured (procurement leg).,2026-06-11T07:00:00+00:00
+70,UTL-2026-1018,DUPLICATE_CHECK,COMPLETED,,14,synthetic_seed,Duplicate-demand check completed -- no existing unused stock found.,2026-06-11T07:00:00+00:00
+71,UTL-2026-1019,HISTORICAL_IMPORT,COMPLETED,,,system,Historical / No Original Consumption Plan -- aged using goods-receipt date plus category grace period.,2026-08-27T08:00:58.203541+00:00
+72,UTL-2026-1005,REDEPLOYMENT_ACCEPTED,COMPLETED,1.0,1,manual,"Transfer recommendation accepted -- purchase avoided (est. R26,241.14).",2026-08-27T08:01:41.953179+00:00
+73,UTL-2026-1008,CONSUMED,COMPLETED,2.0,1,manual,Confirmed via smoke test,2026-08-27T08:01:55.118263+00:00
+74,UTL-2026-1009,REPLANNED,COMPLETED,,1,manual,Re-planned from 2026-08-26 to 2026-09-30.,2026-08-27T08:01:55.483861+00:00
+75,UTL-2026-1009,REPLAN_REASON,COMPLETED,,1,manual,Reason: Equipment not available,2026-08-27T08:01:55.485305+00:00
+76,UTL-2026-1010,RELEASED,COMPLETED,1.0,1,manual,Reason: No longer required. Released for redeployment -- awaiting SAP action by inventory personnel.,2026-08-27T08:01:55.850042+00:00
+77,UTL-2026-1020,PLAN_CREATED,COMPLETED,1.0,1,chat_assistant,Consumption plan captured (procurement leg).,2026-08-27T08:07:54.747307+00:00
+78,UTL-2026-1020,DUPLICATE_CHECK,COMPLETED,,1,chat_assistant,Duplicate-demand check completed -- no existing unused stock found.,2026-08-27T08:07:54.751297+00:00
+79,UTL-2026-1021,PLAN_CREATED,COMPLETED,1.0,1,chat_assistant,Consumption plan captured (procurement leg).,2026-08-27T08:09:11.806785+00:00
+80,UTL-2026-1021,DUPLICATE_CHECK,COMPLETED,,1,chat_assistant,Duplicate-demand check completed -- no existing unused stock found.,2026-08-27T08:09:11.808075+00:00
+81,UTL-2026-1009,CONSUMED,COMPLETED,3.0,1,manual,Requester confirmed consumption.,2026-08-27T08:26:33.682502+00:00
+82,UTL-2026-1006,REDEPLOYMENT_ACCEPTED,COMPLETED,2.0,1,manual,"Use Existing recommendation accepted -- purchase avoided (est. R4,814.48).",2026-08-27T08:27:11.173947+00:00
+83,UTL-2026-1022,PLAN_CREATED,COMPLETED,1.0,1,chat_assistant,Consumption plan captured (procurement leg).,2026-08-27T08:31:02.192163+00:00
+84,UTL-2026-1022,DUPLICATE_CHECK,COMPLETED,,1,chat_assistant,Duplicate-demand check completed -- no existing unused stock found.,2026-08-27T08:31:02.194477+00:00
+85,UTL-2026-1019,CONSUMED,COMPLETED,3.0,1,manual,Consumed,2026-08-27T08:52:09.996779+00:00
+86,UTL-2026-1023,PLAN_CREATED,COMPLETED,9.0,1,chat_assistant,Consumption plan captured (procurement leg).,2026-08-27T08:54:02.755656+00:00
+87,UTL-2026-1023,DUPLICATE_CHECK,COMPLETED,,1,chat_assistant,Duplicate-demand check completed -- no existing unused stock found.,2026-08-27T08:54:02.764786+00:00
+88,UTL-2026-1002,MANUAL_ISSUE_MATCHED,COMPLETED,2.0,1,manual,"Unreferenced goods issue (2 units, Gamsberg) matched and confirmed by inventory control.",2026-08-27T08:55:47.829175+00:00
+89,UTL-2026-1024,PLAN_CREATED,COMPLETED,6.0,1,chat_assistant,Consumption plan captured (procurement leg).,2026-08-27T12:11:01.096391+00:00
+90,UTL-2026-1024,DUPLICATE_CHECK,COMPLETED,,1,chat_assistant,Duplicate-demand check completed -- no existing unused stock found.,2026-08-27T12:11:01.100446+00:00

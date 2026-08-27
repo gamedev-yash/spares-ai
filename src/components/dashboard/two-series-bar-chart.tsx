@@ -36,7 +36,7 @@ export function TwoSeriesBarChart({
   data: object[]
   categoryKey: string
   seriesA: BarSeries
-  seriesB: BarSeries
+  seriesB?: BarSeries
   orientation?: "vertical" | "horizontal"
   stacked?: boolean
   height?: number
@@ -138,31 +138,35 @@ export function TwoSeriesBarChart({
               maxBarSize={isHorizontal ? 22 : 36}
               isAnimationActive={false}
             />
-            <Bar
-              dataKey={seriesB.key}
-              name={seriesB.name}
-              fill={seriesB.color}
-              stackId={stacked ? "stack" : undefined}
-              stroke={stacked ? "var(--card)" : undefined}
-              strokeWidth={stacked ? 2 : 0}
-              radius={barRadius}
-              maxBarSize={isHorizontal ? 22 : 36}
-              isAnimationActive={false}
-            />
+            {seriesB && (
+              <Bar
+                dataKey={seriesB.key}
+                name={seriesB.name}
+                fill={seriesB.color}
+                stackId={stacked ? "stack" : undefined}
+                stroke={stacked ? "var(--card)" : undefined}
+                strokeWidth={stacked ? 2 : 0}
+                radius={barRadius}
+                maxBarSize={isHorizontal ? 22 : 36}
+                isAnimationActive={false}
+              />
+            )}
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <div className="mt-2 flex justify-center gap-4 text-xs text-muted-foreground">
-        {[seriesA, seriesB].map((s) => (
-          <div key={s.key} className="flex items-center gap-1.5">
-            <span
-              className="size-2.5 shrink-0 rounded-xs"
-              style={{ backgroundColor: s.color }}
-            />
-            {s.name}
-          </div>
-        ))}
-      </div>
+      {seriesB && (
+        <div className="mt-2 flex justify-center gap-4 text-xs text-muted-foreground">
+          {[seriesA, seriesB].map((s) => (
+            <div key={s.key} className="flex items-center gap-1.5">
+              <span
+                className="size-2.5 shrink-0 rounded-xs"
+                style={{ backgroundColor: s.color }}
+              />
+              {s.name}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

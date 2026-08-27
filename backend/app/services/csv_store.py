@@ -223,6 +223,67 @@ NOTIFICATIONS_COLUMNS = [
 ]
 NOTIFICATIONS_TYPES = {"id": int, "recipient_id": int, "related_entity_id": int}
 
+# ---------------------------------------------------------------------------
+# Initiative 13 -- Spares Utilization Tracking. Same Table/CSV pattern as above,
+# layered on top of RR/PR/PO/materials rather than replacing anything. See
+# backend/app/services/utilization_service.py for the business logic that reads
+# and writes these tables.
+# ---------------------------------------------------------------------------
+
+CONSUMPTION_PLANS_COLUMNS = [
+    "id", "rr_id", "rr_line_id", "reservation_number", "reservation_type", "material_id", "plant",
+    "department", "requester_id", "quantity", "purpose", "job_card_number", "project", "equipment",
+    "criticality", "planned_consumption_date", "notes", "created_at",
+]
+CONSUMPTION_PLANS_TYPES = {"id": int, "rr_id": int, "rr_line_id": int, "material_id": int, "requester_id": int, "quantity": float}
+
+UTILIZATION_TRACKING_COLUMNS = [
+    "id", "tracking_id", "consumption_plan_id", "rr_id", "rr_line_id", "material_id", "plant", "department",
+    "requester_id", "fulfilment_leg", "qty_requested", "qty_fulfilled", "qty_consumed", "pr_id", "po_id",
+    "stage", "planned_consumption_date", "actual_consumption_date", "replan_count", "previous_planned_date",
+    "replan_reason", "release_reason", "risk_score", "risk_level", "risk_drivers", "historical",
+    "created_at", "updated_at",
+]
+UTILIZATION_TRACKING_TYPES = {
+    "id": int, "consumption_plan_id": int, "rr_id": int, "rr_line_id": int, "material_id": int,
+    "requester_id": int, "qty_requested": float, "qty_fulfilled": float, "qty_consumed": float,
+    "pr_id": int, "po_id": int, "replan_count": int, "risk_score": int, "risk_drivers": JSON_TYPE,
+    "historical": bool,
+}
+
+UTILIZATION_EVENTS_COLUMNS = ["id", "tracking_id", "stage", "status", "quantity", "actor_id", "source", "note", "timestamp"]
+UTILIZATION_EVENTS_TYPES = {"id": int, "quantity": float, "actor_id": int}
+
+UNUSED_STOCK_COLUMNS = [
+    "id", "material_id", "plant", "quantity", "source", "source_tracking_id", "status", "created_at", "updated_at",
+]
+UNUSED_STOCK_TYPES = {"id": int, "material_id": int, "quantity": float}
+
+REDEPLOYMENT_RECOMMENDATIONS_COLUMNS = [
+    "id", "requested_tracking_id", "requested_material_id", "requested_qty", "requested_plant", "match_type",
+    "unused_stock_id", "matched_material_id", "matched_plant", "matched_qty", "avoided_value", "decision",
+    "decision_by", "decision_at", "created_at",
+]
+REDEPLOYMENT_RECOMMENDATIONS_TYPES = {
+    "id": int, "requested_material_id": int, "requested_qty": float, "unused_stock_id": int,
+    "matched_material_id": int, "matched_qty": float, "avoided_value": float, "decision_by": int,
+}
+
+UTILIZATION_EXCEPTIONS_COLUMNS = [
+    "id", "tracking_id", "type", "severity", "plant", "department", "requester_id", "status",
+    "created_at", "resolved_at", "resolved_by", "note",
+]
+UTILIZATION_EXCEPTIONS_TYPES = {"id": int, "requester_id": int, "resolved_by": int}
+
+ESCALATIONS_COLUMNS = ["id", "tracking_id", "level", "owner_id", "waiting_since", "reminder_count", "status", "escalated_at"]
+ESCALATIONS_TYPES = {"id": int, "owner_id": int, "reminder_count": int}
+
+UNMATCHED_ISSUES_COLUMNS = [
+    "id", "material_id", "plant", "quantity", "issue_date", "suggested_tracking_id", "confidence",
+    "signals", "status", "resolved_at",
+]
+UNMATCHED_ISSUES_TYPES = {"id": int, "material_id": int, "quantity": float, "confidence": int, "signals": JSON_TYPE}
+
 
 class ChatStore:
     """Ephemeral, in-memory chat session/message state. Not written to disk -- see module
@@ -288,6 +349,18 @@ class DataStore:
         self.approvals = Table(data_dir / "approvals.csv", APPROVALS_COLUMNS, APPROVALS_TYPES)
         self.audit_logs = Table(data_dir / "audit_logs.csv", AUDIT_LOGS_COLUMNS, AUDIT_LOGS_TYPES)
         self.notifications = Table(data_dir / "notifications.csv", NOTIFICATIONS_COLUMNS, NOTIFICATIONS_TYPES)
+
+        # Initiative 13 -- Spares Utilization Tracking
+        self.consumption_plans = Table(data_dir / "consumption_plans.csv", CONSUMPTION_PLANS_COLUMNS, CONSUMPTION_PLANS_TYPES)
+        self.utilization_tracking = Table(data_dir / "utilization_tracking.csv", UTILIZATION_TRACKING_COLUMNS, UTILIZATION_TRACKING_TYPES)
+        self.utilization_events = Table(data_dir / "utilization_events.csv", UTILIZATION_EVENTS_COLUMNS, UTILIZATION_EVENTS_TYPES)
+        self.unused_stock = Table(data_dir / "unused_stock.csv", UNUSED_STOCK_COLUMNS, UNUSED_STOCK_TYPES)
+        self.redeployment_recommendations = Table(
+            data_dir / "redeployment_recommendations.csv", REDEPLOYMENT_RECOMMENDATIONS_COLUMNS, REDEPLOYMENT_RECOMMENDATIONS_TYPES
+        )
+        self.utilization_exceptions = Table(data_dir / "utilization_exceptions.csv", UTILIZATION_EXCEPTIONS_COLUMNS, UTILIZATION_EXCEPTIONS_TYPES)
+        self.escalations = Table(data_dir / "escalations.csv", ESCALATIONS_COLUMNS, ESCALATIONS_TYPES)
+        self.unmatched_issues = Table(data_dir / "unmatched_issues.csv", UNMATCHED_ISSUES_COLUMNS, UNMATCHED_ISSUES_TYPES)
 
         self.chat = ChatStore()
 

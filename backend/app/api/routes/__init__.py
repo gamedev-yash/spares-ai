@@ -12,6 +12,7 @@ from app.api.routes.pr import router as pr_router
 from app.api.routes.rr import router as rr_router
 from app.api.routes.situation_analysis import router as situation_analysis_router
 from app.api.routes.users import router as users_router
+from app.api.routes.utilization import router as utilization_router
 from app.api.routes.vzi import router as vzi_router
 
 router = APIRouter()
@@ -33,3 +34,4 @@ router.include_router(po_router)
 router.include_router(users_router)
 router.include_router(notifications_router)
 router.include_router(chat_router)
+router.include_router(utilization_router)

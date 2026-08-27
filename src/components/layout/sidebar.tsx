@@ -9,11 +9,13 @@ import { LogoutButton } from "@/components/shared/logout-button"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { searchApprovals } from "@/lib/api/approvals"
 import { listChatSessions, type ChatSessionSummary } from "@/lib/api/chat"
+import { listExceptions } from "@/lib/api/utilization"
 import {
   MATERIAL_CATEGORIES,
   DASHBOARD_LINKS,
   ICONS,
   QUICK_ACTIONS,
+  UTILIZATION_LINKS,
 } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 
@@ -38,6 +40,7 @@ export function Sidebar() {
   const pathname = usePathname()
   const [pendingApprovals, setPendingApprovals] = useState<number | null>(null)
   const [sessions, setSessions] = useState<ChatSessionSummary[]>([])
+  const [criticalExceptions, setCriticalExceptions] = useState<number | null>(null)
 
   useEffect(() => {
     if (pathname === "/login") return
@@ -47,6 +50,9 @@ export function Sidebar() {
     listChatSessions()
       .then(setSessions)
       .catch(() => setSessions([]))
+    listExceptions({ severity: "CRITICAL", status: "OPEN", page_size: 1 })
+      .then((result) => setCriticalExceptions(result.total))
+      .catch(() => setCriticalExceptions(null))
   }, [pathname])
 
   if (pathname === "/login") return null
@@ -134,6 +140,34 @@ export function Sidebar() {
             >
               <Icon className="size-4 shrink-0" />
               {link.label}
+            </Link>
+          )
+        })}
+      </NavSection>
+
+      <NavSection title="Utilization">
+        {UTILIZATION_LINKS.map((link) => {
+          const Icon = ICONS[link.icon]
+          const isActive = pathname === link.href
+          const badge = link.href === "/utilization" ? criticalExceptions : null
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={cn(
+                "mx-2 my-0.5 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] transition-colors",
+                isActive
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              <Icon className="size-4 shrink-0" />
+              {link.label}
+              {badge != null && badge > 0 && (
+                <span className="ml-auto shrink-0 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[11px] font-medium text-destructive">
+                  {badge}
+                </span>
+              )}
             </Link>
           )
         })}

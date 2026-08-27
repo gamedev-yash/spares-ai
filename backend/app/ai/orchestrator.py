@@ -87,21 +87,50 @@ def handle_chat_turn(store: DataStore, user: Row, session_id: int | None, messag
     if in_rr_flow:
         turn = rr_assistant.advance(store, user, state, message, option_id)
         if turn.ready_to_create:
-            result = execute_tool(
-                ctx,
-                "create_rr",
-                {
-                    "plant": user["plant"],
-                    "department": user["department"],
-                    "required_date": turn.state.required_date,
-                    "purpose": turn.state.purpose or turn.state.material_label or "Requested via AI assistant",
-                    "line_items": [{"material_id": turn.state.material_id, "quantity": turn.state.quantity}],
-                },
-            )
-            if "error" in result:
-                reply_text = f"I couldn't create that requisition: {result['error']}"
+            if turn.state.is_oar:
+                result = execute_tool(
+                    ctx,
+                    "create_consumption_plan",
+                    {
+                        "plant": user["plant"],
+                        "department": user["department"],
+                        "required_date": turn.state.required_date,
+                        "priority": "Normal",
+                        "material_id": turn.state.material_id,
+                        "quantity": turn.state.quantity,
+                        "reservation_type": turn.state.reservation_type,
+                        "purpose": turn.state.purpose or turn.state.material_label or "Requested via AI assistant",
+                        "planned_consumption_date": turn.state.planned_consumption_date,
+                        "job_card_number": turn.state.job_card_number,
+                        "project": turn.state.project,
+                        "equipment": turn.state.equipment,
+                    },
+                )
+                if "error" in result:
+                    reply_text = f"I couldn't create that reservation: {result['error']}"
+                else:
+                    reply_text = (
+                        f"Done -- **{result['rr_number']}** created and routed for DOA approval. "
+                        f"Tracking ID **{result['tracking_id']}** -- follow it end-to-end from the Utilization Tracker. "
+                        f"NM/SM risk: {result['risk_level']}."
+                        + (f" {result['stock_matches']} existing/alternate stock match(es) found -- check Redeployment." if result["stock_matches"] else "")
+                    )
             else:
-                reply_text = f"Done -- **{result['rr_number']}** has been created and sent for DOA approval (estimated value R{result['total_estimated_value']:,.2f})."
+                result = execute_tool(
+                    ctx,
+                    "create_rr",
+                    {
+                        "plant": user["plant"],
+                        "department": user["department"],
+                        "required_date": turn.state.required_date,
+                        "purpose": turn.state.purpose or turn.state.material_label or "Requested via AI assistant",
+                        "line_items": [{"material_id": turn.state.material_id, "quantity": turn.state.quantity}],
+                    },
+                )
+                if "error" in result:
+                    reply_text = f"I couldn't create that requisition: {result['error']}"
+                else:
+                    reply_text = f"Done -- **{result['rr_number']}** has been created and sent for DOA approval (estimated value R{result['total_estimated_value']:,.2f})."
             session["assistant_state"] = None
         else:
             reply_text = turn.text

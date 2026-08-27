@@ -1,0 +1,25 @@
+id,rr_id,rr_line_id,reservation_number,reservation_type,material_id,plant,department,requester_id,quantity,purpose,job_card_number,project,equipment,criticality,planned_consumption_date,notes,created_at
+1,651,1515,70010001,JOB_CARD,4,Gamsberg,Instrumentation & Electrical,1,2.0,Shaft seal replacement during scheduled pump overhaul,JC-44210,,,MEDIUM,2026-08-22,,2026-08-07T07:00:00+00:00
+2,652,1516,70010002,STRAIGHT,24,Gamsberg,Mining Operations,7,4.0,"Gland packing replacement, slurry pump train 2 shutdown",,,Slurry Pump Train 2,HIGH,2026-08-15,,2026-07-26T07:00:00+00:00
+3,653,1517,70010003,JOB_CARD,1,Gamsberg,Processing / Plant Operations,9,1.0,Pressure transmitter swap during flotation shutdown,JC-44288,,,CRITICAL,2026-08-24,,2026-07-31T07:00:00+00:00
+4,654,1518,70010004,STRAIGHT,13,Gamsberg,Procurement,14,1.0,Standby impeller for slurry pump P-204 contingency,,,Slurry Pump P-204,HIGH,2026-08-07,,2026-07-08T07:00:00+00:00
+5,655,1519,70010005,STRAIGHT,13,BMM,Mechanical Engineering,10,1.0,Replacement impeller for BMM slurry pump maintenance,,,BMM Slurry Pump P-118,HIGH,2026-09-11,,2026-08-27T08:00:55.560489+00:00
+6,656,1520,70010006,STRAIGHT,16,Gamsberg,Mining Operations,16,1.0,Bearing replacement for conveyor CV-12 gearbox,,,Conveyor CV-12 Gearbox,MEDIUM,2026-09-06,,2026-08-27T08:00:55.666902+00:00
+7,657,1521,70010007,JOB_CARD,3,Gamsberg,Instrumentation & Electrical,1,5.0,"MCC contactor replacement bank, plant shutdown",JC-44305,,,CRITICAL,2026-08-25,,2026-08-05T07:00:00+00:00
+8,658,1522,70010008,STRAIGHT,12,Gamsberg,Instrumentation & Electrical,1,2.0,"Idler set replacement, conveyor CV-7 routine wear",,,Conveyor CV-7,MEDIUM,2026-08-26,,2026-08-09T07:00:00+00:00
+9,659,1523,70010009,STRAIGHT,12,Gamsberg,Mining Operations,7,3.0,"Idler set replacement, conveyor CV-8 routine wear",,,Conveyor CV-8,MEDIUM,2026-08-26,,2026-08-09T07:00:00+00:00
+10,660,1524,70010010,STRAIGHT,12,Gamsberg,Processing / Plant Operations,9,1.0,"Idler set replacement, conveyor CV-9 routine wear",,,Conveyor CV-9,MEDIUM,2026-08-26,,2026-08-09T07:00:00+00:00
+11,661,1525,70010011,STRAIGHT,22,Gamsberg,Mining Operations,7,6.0,Standby liner set ahead of Q4 mill reline campaign,,,SAG Mill,HIGH,2026-10-11,,2026-08-27T08:00:56.741877+00:00
+12,662,1526,70010012,JOB_CARD,27,Gamsberg,Instrumentation & Electrical,1,1.0,"Routine mechanical seal replacement, scheduled PM",JC-44100,,,MEDIUM,2025-10-01,,2025-09-28T07:00:00+00:00
+13,663,1527,70010013,JOB_CARD,27,Gamsberg,Mining Operations,7,1.0,"Routine mechanical seal replacement, scheduled PM",JC-44101,,,MEDIUM,2025-11-30,,2025-11-27T07:00:00+00:00
+14,664,1528,70010014,JOB_CARD,27,Gamsberg,Processing / Plant Operations,9,1.0,"Routine mechanical seal replacement, scheduled PM",JC-44102,,,MEDIUM,2026-01-29,,2026-01-26T07:00:00+00:00
+15,665,1529,70010015,JOB_CARD,27,BMM,Mechanical Engineering,10,1.0,"Routine mechanical seal replacement, scheduled PM",JC-44103,,,MEDIUM,2026-03-30,,2026-03-27T07:00:00+00:00
+16,666,1530,70010016,JOB_CARD,27,Gamsberg,Procurement,14,1.0,"Routine mechanical seal replacement, scheduled PM",JC-44104,,,MEDIUM,2026-05-29,,2026-05-26T07:00:00+00:00
+17,667,1531,70010017,STRAIGHT,1,Gamsberg,Processing / Plant Operations,9,1.0,"Level transmitter swap, tailings thickener",,,Tailings Thickener TK-3,CRITICAL,2026-08-05,,2026-07-16T07:00:00+00:00
+18,668,1532,70010018,STRAIGHT,4,Gamsberg,Procurement,14,1.0,"Mechanical seal, secondary crusher lubrication pump",,,Secondary Crusher Lube Pump,MEDIUM,2026-07-03,,2026-06-11T07:00:00+00:00
+19,1,1,70010019,STRAIGHT,126,Gamsberg,Mining Operations,20,3.0,Historical / No Original Consumption Plan,,,,MEDIUM,2026-04-28,Predates Initiative 13 consumption-plan capture.,2026-08-27T08:00:58.200118+00:00
+20,669,1533,70010020,STRAIGHT,1,Gamsberg,Instrumentation & Electrical,1,1.0,I need  density meter for the shutdown,,,Nuclear density meter swap on flotation feed line during Q3 shutdown,CRITICAL,2026-09-17,,2026-08-27T08:07:54.742536+00:00
+21,670,1534,70010021,STRAIGHT,1,Gamsberg,Instrumentation & Electrical,1,1.0,Nuclear density meter swap on flotation feed line during Q3 shutdown,,,Flotation feed line,CRITICAL,2026-09-17,,2026-08-27T08:09:11.803718+00:00
+22,672,1536,70010022,STRAIGHT,161,Gamsberg,Instrumentation & Electrical,1,1.0,Replacing failed transmitter ahead of planned Q4 thickener shutdown,,,Tailings Thickener TK-2 pressure line,HIGH,2026-09-10,,2026-08-27T08:31:02.185820+00:00
+23,673,1537,70010023,STRAIGHT,86,Gamsberg,Instrumentation & Electrical,1,9.0,for induction,,,"Vedanta,Slip Ring Induction Motor",CRITICAL,2026-09-03,,2026-08-27T08:54:02.739041+00:00
+24,674,1538,70010024,STRAIGHT,119,Gamsberg,Instrumentation & Electrical,1,6.0,for friction,,,"VZImining,Tapered Roller Bearing",MEDIUM,2026-09-25,,2026-08-27T12:11:01.086977+00:00

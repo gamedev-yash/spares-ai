@@ -117,6 +117,14 @@ export const DASHBOARD_LINKS: { label: string; icon: IconKey; href: string }[] =
   },
 ]
 
+/** Initiative 13 -- Spares Utilization Tracking. */
+export const UTILIZATION_LINKS: { label: string; icon: IconKey; href: string }[] = [
+  { label: "Utilization Tracker", icon: "arrows-right-left", href: "/utilization" },
+  { label: "Exceptions", icon: "alert-triangle", href: "/utilization/exceptions" },
+  { label: "Redeployment", icon: "trending-down", href: "/utilization/redeployment" },
+  { label: "Utilization Analytics", icon: "gauge", href: "/utilization/analytics" },
+]
+
 export const QUICK_ACTIONS: {
   label: string
   icon: IconKey

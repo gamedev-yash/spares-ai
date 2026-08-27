@@ -1,0 +1,6 @@
+id,tracking_id,type,severity,plant,department,requester_id,status,created_at,resolved_at,resolved_by,note
+1,UTL-2026-1004,RELEASED_AWAITING_REDEPLOYMENT,MEDIUM,Gamsberg,Procurement,14,RESOLVED,2026-08-27T08:00:55.473346+00:00,2026-08-27T09:02:33.527912+00:00,1,Released stock awaiting a redeployment or SAP disposition decision.
+2,UTL-2026-1009,CONSOLIDATED_PR_REVIEW,LOW,Gamsberg,Mining Operations,7,RESOLVED,2026-08-27T08:00:56.656837+00:00,2026-08-27T08:01:55.486760+00:00,1,PR-90557 consolidates 3 reservations -- review FIFO allocation.
+3,UTL-2026-1011,HIGH_RISK,HIGH,Gamsberg,Mining Operations,7,OPEN,2026-08-27T08:00:56.768034+00:00,,,High NM/SM risk score at request time -- recommend planning review before approval.
+4,UTL-2026-1017,NO_RESPONSE,CRITICAL,Gamsberg,Processing / Plant Operations,9,OPEN,2026-08-27T08:00:57.941736+00:00,,,Requester has not responded to consumption confirmation reminders -- escalated to HOD2.
+5,UTL-2026-1019,MISSING_LINKAGE,MEDIUM,Gamsberg,Mining Operations,20,RESOLVED,2026-08-27T08:00:58.205106+00:00,2026-08-27T08:52:10.004140+00:00,1,Historical stock with no captured project/equipment linkage.

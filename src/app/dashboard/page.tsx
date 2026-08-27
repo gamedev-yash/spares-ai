@@ -1,18 +1,28 @@
+import Link from "next/link"
 import type { Metadata } from "next"
 
 import { AgingStrip } from "@/components/dashboard/aging-strip"
 import { KpiRow } from "@/components/dashboard/kpi-row"
 import { PrPoTabs } from "@/components/dashboard/pr-po-tabs"
 import { StatusBadge } from "@/components/shared/status-badge"
+import { getUtilizationDashboard } from "@/lib/api/utilization"
 import { getVziDashboard } from "@/lib/api/vzi"
+import { formatZAR } from "@/lib/utils"
 
 export const metadata: Metadata = {
   title: "Open PR & PO position — Spares AI",
 }
 
 export default async function DashboardPage() {
-  const dashboard = await getVziDashboard()
+  const [dashboard, utilization] = await Promise.all([getVziDashboard(), getUtilizationDashboard()])
   const summary = dashboard.kpiSummary
+
+  const utilizationKpis = [
+    { label: "Unutilized OAR value", figure: formatZAR(utilization.unutilizedPosition.kpis.unutilizedOarValue) },
+    { label: "Overdue consumption", figure: formatZAR(utilization.unutilizedPosition.kpis.overdueValue), danger: true },
+    { label: "Released stock", figure: formatZAR(utilization.unutilizedPosition.kpis.releasedForRedeployment) },
+    { label: "Purchase avoidance", figure: formatZAR(utilization.redeployment.kpis.purchaseAvoidanceValue), success: true },
+  ]
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto p-6">
@@ -36,6 +46,21 @@ export default async function DashboardPage() {
         </div>
 
         <KpiRow summary={summary} />
+
+        <Link
+          href="/utilization/analytics"
+          className="grid grid-cols-2 gap-3 rounded-xl border border-dashed border-border p-3 transition-colors hover:border-primary/40 sm:grid-cols-4"
+        >
+          {utilizationKpis.map((card) => (
+            <div key={card.label}>
+              <div className="text-xs font-medium text-muted-foreground">{card.label} (Initiative 13)</div>
+              <div className={`mt-1 text-lg font-semibold ${card.danger ? "text-destructive" : card.success ? "text-success" : "text-foreground"}`}>
+                {card.figure}
+              </div>
+            </div>
+          ))}
+        </Link>
+
         <AgingStrip buckets={dashboard.aging} over30={summary.prOver30} />
         <PrPoTabs dashboard={dashboard} />
 

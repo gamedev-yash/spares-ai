@@ -1,0 +1,470 @@
+{"method": "GET", "path": "/api/utilization/10", "status_code": 200, "duration_ms": 81.22, "user_id": null, "event": "request_completed", "request_id": "93e57aba-ba31-411f-b03c-ed2d08f9f251", "timestamp": "2026-08-27T12:07:00.381583Z", "level": "info"}
+INFO:     127.0.0.1:50617 - "GET /api/utilization/10 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 0.67, "user_id": null, "event": "request_completed", "request_id": "1e6383f4-0d38-4867-80fe-7a86537c6dc3", "timestamp": "2026-08-27T12:07:15.708842Z", "level": "info"}
+INFO:     127.0.0.1:60231 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 1.72, "user_id": null, "event": "request_completed", "request_id": "2fcc4367-907b-4849-b44d-668a981898f2", "timestamp": "2026-08-27T12:07:15.710281Z", "level": "info"}
+INFO:     127.0.0.1:60284 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 2.81, "user_id": null, "event": "request_completed", "request_id": "7d49db06-6854-4e90-b41e-b278b4748112", "timestamp": "2026-08-27T12:07:15.711464Z", "level": "info"}
+INFO:     127.0.0.1:51320 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 4.12, "user_id": null, "event": "request_completed", "request_id": "d8d941bb-de5d-4539-9c4e-0b1027e44ec8", "timestamp": "2026-08-27T12:07:15.712785Z", "level": "info"}
+INFO:     127.0.0.1:55159 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 5.19, "user_id": null, "event": "request_completed", "request_id": "f43ea931-e840-4c9e-8c8a-c2cb50044659", "timestamp": "2026-08-27T12:07:15.713895Z", "level": "info"}
+INFO:     127.0.0.1:56481 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 6.42, "user_id": null, "event": "request_completed", "request_id": "f58f149c-4c89-469d-a366-e34f2b1cb3ef", "timestamp": "2026-08-27T12:07:15.715174Z", "level": "info"}
+INFO:     127.0.0.1:49214 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 1.96, "user_id": null, "event": "request_completed", "request_id": "01e18876-6400-4092-b2ea-9129a3d10ea6", "timestamp": "2026-08-27T12:07:15.719121Z", "level": "info"}
+INFO:     127.0.0.1:60231 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 0.92, "user_id": null, "event": "request_completed", "request_id": "1c021ab4-9cc7-479f-85b4-04ff23a4458c", "timestamp": "2026-08-27T12:07:15.723430Z", "level": "info"}
+INFO:     127.0.0.1:60231 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 1.02, "user_id": null, "event": "request_completed", "request_id": "13d6885c-b3b3-4d96-a5f3-4719fd9a6677", "timestamp": "2026-08-27T12:07:15.726412Z", "level": "info"}
+INFO:     127.0.0.1:60231 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 1.67, "user_id": null, "event": "request_completed", "request_id": "c2a3b0ab-e20c-47f1-a39a-1c4a8e2bbd32", "timestamp": "2026-08-27T12:07:15.730073Z", "level": "info"}
+INFO:     127.0.0.1:60231 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 1.01, "user_id": null, "event": "request_completed", "request_id": "77aeb434-9be1-49df-b069-6244363fbffc", "timestamp": "2026-08-27T12:07:15.732999Z", "level": "info"}
+INFO:     127.0.0.1:60231 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 2.14, "user_id": null, "event": "request_completed", "request_id": "0f1c68b2-739c-42e2-95a5-b8af242f17b4", "timestamp": "2026-08-27T12:07:15.737760Z", "level": "info"}
+INFO:     127.0.0.1:60231 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 0.2, "user_id": null, "event": "request_completed", "request_id": "7ef966e6-4ac2-4ec3-854d-82d0fa197e4f", "timestamp": "2026-08-27T12:07:17.871038Z", "level": "info"}
+INFO:     127.0.0.1:60231 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 1.38, "user_id": null, "event": "request_completed", "request_id": "1a981ad4-aae5-44da-894b-b815fc4205d4", "timestamp": "2026-08-27T12:07:17.874642Z", "level": "info"}
+INFO:     127.0.0.1:57473 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 2.79, "user_id": null, "event": "request_completed", "request_id": "172117f8-5244-4ed7-bee1-4bf0b23f2c09", "timestamp": "2026-08-27T12:07:17.877288Z", "level": "info"}
+INFO:     127.0.0.1:56840 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 4.44, "user_id": null, "event": "request_completed", "request_id": "912cda31-17bc-463d-87fe-ab18a4ac0a39", "timestamp": "2026-08-27T12:07:17.878999Z", "level": "info"}
+INFO:     127.0.0.1:60002 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 4.61, "user_id": null, "event": "request_completed", "request_id": "e05e123e-415a-4c34-9e87-de83bca2bd41", "timestamp": "2026-08-27T12:07:17.881302Z", "level": "info"}
+INFO:     127.0.0.1:57803 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 6.69, "user_id": null, "event": "request_completed", "request_id": "84f67182-6c91-42d0-9716-6acd6798ff2c", "timestamp": "2026-08-27T12:07:17.883477Z", "level": "info"}
+INFO:     127.0.0.1:49847 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 5.77, "user_id": null, "event": "request_completed", "request_id": "5f9c3c47-a82f-4103-9d9a-0013abf4733c", "timestamp": "2026-08-27T12:07:17.894252Z", "level": "info"}
+INFO:     127.0.0.1:60002 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 8.67, "user_id": null, "event": "request_completed", "request_id": "e5393ac3-5cd1-406a-8a95-371d92791fba", "timestamp": "2026-08-27T12:07:17.895713Z", "level": "info"}
+INFO:     127.0.0.1:57473 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 7.34, "user_id": null, "event": "request_completed", "request_id": "0eb981a2-6fd6-4734-bcc1-aa6f59e522cb", "timestamp": "2026-08-27T12:07:17.898629Z", "level": "info"}
+INFO:     127.0.0.1:49847 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 13.75, "user_id": null, "event": "request_completed", "request_id": "e121ac83-7b22-4ad2-a79e-7de8110779c9", "timestamp": "2026-08-27T12:07:17.902050Z", "level": "info"}
+INFO:     127.0.0.1:60231 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 4.27, "user_id": null, "event": "request_completed", "request_id": "c8475ed4-057e-4423-889e-e83d2ba060e7", "timestamp": "2026-08-27T12:07:17.906133Z", "level": "info"}
+INFO:     127.0.0.1:57473 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 6.35, "user_id": null, "event": "request_completed", "request_id": "4365b4ea-ca35-48ba-a4d4-d09f921b14c2", "timestamp": "2026-08-27T12:07:17.907180Z", "level": "info"}
+INFO:     127.0.0.1:60002 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 0.24, "user_id": null, "event": "request_completed", "request_id": "8a1647d1-8406-49c0-a70a-f52e05458735", "timestamp": "2026-08-27T12:07:25.019773Z", "level": "info"}
+INFO:     127.0.0.1:54710 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 0.25, "user_id": null, "event": "request_completed", "request_id": "ca984b84-5c50-479a-beb1-39a60f2c07da", "timestamp": "2026-08-27T12:07:25.022286Z", "level": "info"}
+INFO:     127.0.0.1:55621 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 0.3, "user_id": null, "event": "request_completed", "request_id": "db85fe05-f466-4a9a-bd1a-369b12356723", "timestamp": "2026-08-27T12:07:25.024654Z", "level": "info"}
+INFO:     127.0.0.1:54710 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 2.87, "user_id": null, "event": "request_completed", "request_id": "f87fac24-4969-4ff7-a9ea-ed648a04606a", "timestamp": "2026-08-27T12:07:25.029040Z", "level": "info"}
+INFO:     127.0.0.1:55621 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 3.26, "user_id": null, "event": "request_completed", "request_id": "45040f2c-6419-48ea-a789-1d8357dd81f0", "timestamp": "2026-08-27T12:07:25.030548Z", "level": "info"}
+INFO:     127.0.0.1:54710 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 1.83, "user_id": null, "event": "request_completed", "request_id": "45950a05-27ad-4767-97a3-2fff454548a1", "timestamp": "2026-08-27T12:07:25.033595Z", "level": "info"}
+INFO:     127.0.0.1:55621 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization", "status_code": 200, "duration_ms": 0.52, "user_id": null, "event": "request_completed", "request_id": "5039d290-a7a5-4f75-8d18-7d13c8519ff5", "timestamp": "2026-08-27T12:07:25.056826Z", "level": "info"}
+INFO:     127.0.0.1:55621 - "OPTIONS /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization", "status_code": 200, "duration_ms": 2.15, "user_id": null, "event": "request_completed", "request_id": "9120c144-6bec-44c9-a992-78d1de78ea84", "timestamp": "2026-08-27T12:07:25.058712Z", "level": "info"}
+INFO:     127.0.0.1:54710 - "OPTIONS /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization", "status_code": 200, "duration_ms": 5.14, "user_id": null, "event": "request_completed", "request_id": "9683ecc8-422f-48a1-8517-f935f601e947", "timestamp": "2026-08-27T12:07:25.066347Z", "level": "info"}
+INFO:     127.0.0.1:54710 - "GET /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization", "status_code": 200, "duration_ms": 8.14, "user_id": null, "event": "request_completed", "request_id": "054d1da9-82f8-4124-bd3c-54c1f39f312c", "timestamp": "2026-08-27T12:07:25.069956Z", "level": "info"}
+INFO:     127.0.0.1:55621 - "GET /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 0.46, "user_id": null, "event": "request_completed", "request_id": "cc96a972-3002-41fe-a9c8-e5cd3bf232ee", "timestamp": "2026-08-27T12:07:31.146804Z", "level": "info"}
+INFO:     127.0.0.1:54158 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 2.83, "user_id": null, "event": "request_completed", "request_id": "edacc77c-2fde-4077-8337-ea814d9f2c23", "timestamp": "2026-08-27T12:07:31.149506Z", "level": "info"}
+INFO:     127.0.0.1:59834 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 5.0, "user_id": null, "event": "request_completed", "request_id": "ab330eac-9780-4dc8-b361-980e99077826", "timestamp": "2026-08-27T12:07:31.151792Z", "level": "info"}
+INFO:     127.0.0.1:60246 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 4.9, "user_id": null, "event": "request_completed", "request_id": "1bf5c49c-1348-4f5d-8c4f-4e0a58bf63df", "timestamp": "2026-08-27T12:07:31.159723Z", "level": "info"}
+INFO:     127.0.0.1:54158 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 6.39, "user_id": null, "event": "request_completed", "request_id": "57953f29-afc0-42ea-9196-f049088a8fc7", "timestamp": "2026-08-27T12:07:31.162423Z", "level": "info"}
+INFO:     127.0.0.1:60246 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/10", "status_code": 200, "duration_ms": 0.39, "user_id": null, "event": "request_completed", "request_id": "82e5524e-8122-4673-8fa6-7f8e68669efe", "timestamp": "2026-08-27T12:07:31.168898Z", "level": "info"}
+INFO:     127.0.0.1:60246 - "OPTIONS /api/utilization/10 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 5.83, "user_id": null, "event": "request_completed", "request_id": "1d8e3070-d403-4439-9f4f-cd0dbe3018a4", "timestamp": "2026-08-27T12:07:31.171875Z", "level": "info"}
+INFO:     127.0.0.1:54158 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/10", "status_code": 200, "duration_ms": 0.13, "user_id": null, "event": "request_completed", "request_id": "9cae5a90-d61b-460a-8f4b-271e395fe050", "timestamp": "2026-08-27T12:07:31.174606Z", "level": "info"}
+INFO:     127.0.0.1:60246 - "OPTIONS /api/utilization/10 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/10", "status_code": 200, "duration_ms": 3.01, "user_id": null, "event": "request_completed", "request_id": "6c4fda00-d18d-4831-92be-a8e531668c28", "timestamp": "2026-08-27T12:07:31.179981Z", "level": "info"}
+INFO:     127.0.0.1:54158 - "GET /api/utilization/10 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/10", "status_code": 200, "duration_ms": 6.58, "user_id": null, "event": "request_completed", "request_id": "46396bc9-6bf1-4337-aa30-601d18c42de3", "timestamp": "2026-08-27T12:07:31.185308Z", "level": "info"}
+INFO:     127.0.0.1:60246 - "GET /api/utilization/10 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization", "status_code": 200, "duration_ms": 5.89, "user_id": null, "event": "request_completed", "request_id": "356325a5-fa25-4f74-8f36-5bd10c5c8390", "timestamp": "2026-08-27T12:07:47.337741Z", "level": "info"}
+INFO:     127.0.0.1:56014 - "GET /api/utilization?page_size=30 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 0.89, "user_id": null, "event": "request_completed", "request_id": "f9a2675a-5da0-485d-ae4c-0203365c7f0a", "timestamp": "2026-08-27T12:07:52.428254Z", "level": "info"}
+INFO:     127.0.0.1:54734 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 7.35, "user_id": null, "event": "request_completed", "request_id": "82a61cf2-a47a-4d89-aaa8-2d60f2c10892", "timestamp": "2026-08-27T12:07:52.435377Z", "level": "info"}
+INFO:     127.0.0.1:56277 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 1.0, "user_id": null, "event": "request_completed", "request_id": "e1b0e897-1ebf-439d-beac-72f5dd16fc2b", "timestamp": "2026-08-27T12:07:52.439573Z", "level": "info"}
+INFO:     127.0.0.1:54218 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization", "status_code": 200, "duration_ms": 3.96, "user_id": null, "event": "request_completed", "request_id": "92f5ca7c-4ffa-4608-b2fd-3ec27cdbba79", "timestamp": "2026-08-27T12:07:52.442719Z", "level": "info"}
+INFO:     127.0.0.1:63320 - "OPTIONS /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization", "status_code": 200, "duration_ms": 6.99, "user_id": null, "event": "request_completed", "request_id": "b808eb19-5992-4ce8-a6e3-948606a622e6", "timestamp": "2026-08-27T12:07:52.445897Z", "level": "info"}
+INFO:     127.0.0.1:54734 - "OPTIONS /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 2.45, "user_id": null, "event": "request_completed", "request_id": "c2135f30-56be-4316-baaa-9fad1d4081af", "timestamp": "2026-08-27T12:07:52.450971Z", "level": "info"}
+INFO:     127.0.0.1:56277 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 4.21, "user_id": null, "event": "request_completed", "request_id": "d23bdee7-de99-4e0a-bcdb-76ab5d025220", "timestamp": "2026-08-27T12:07:52.458613Z", "level": "info"}
+INFO:     127.0.0.1:54734 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 10.57, "user_id": null, "event": "request_completed", "request_id": "9db48243-ca14-4c01-be5f-2a30d6ed7155", "timestamp": "2026-08-27T12:07:52.464822Z", "level": "info"}
+INFO:     127.0.0.1:63320 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization", "status_code": 200, "duration_ms": 12.73, "user_id": null, "event": "request_completed", "request_id": "cafadf63-a442-4e13-b99b-3c44b88bc7e4", "timestamp": "2026-08-27T12:07:52.468928Z", "level": "info"}
+INFO:     127.0.0.1:56277 - "GET /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization", "status_code": 200, "duration_ms": 8.85, "user_id": null, "event": "request_completed", "request_id": "4b5e2f27-c00c-447a-b016-f70aabbbcd4f", "timestamp": "2026-08-27T12:07:52.473587Z", "level": "info"}
+INFO:     127.0.0.1:54734 - "GET /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 0.32, "user_id": null, "event": "request_completed", "request_id": "dc35ecf0-5dbb-401c-9be2-048b22b808fe", "timestamp": "2026-08-27T12:07:58.455421Z", "level": "info"}
+INFO:     127.0.0.1:63350 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 0.57, "user_id": null, "event": "request_completed", "request_id": "9c64d9c4-91ec-4a3b-bdb5-7c50fad37f9a", "timestamp": "2026-08-27T12:07:58.459260Z", "level": "info"}
+INFO:     127.0.0.1:55173 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 3.03, "user_id": null, "event": "request_completed", "request_id": "63dc3810-d305-4f5f-a86a-14c32e5fc0f1", "timestamp": "2026-08-27T12:07:58.461939Z", "level": "info"}
+INFO:     127.0.0.1:60035 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/7", "status_code": 200, "duration_ms": 0.32, "user_id": null, "event": "request_completed", "request_id": "2f7bb8fd-7fc0-47c9-8941-73bcb03f98b0", "timestamp": "2026-08-27T12:07:58.465677Z", "level": "info"}
+INFO:     127.0.0.1:63350 - "OPTIONS /api/utilization/7 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/7", "status_code": 200, "duration_ms": 0.35, "user_id": null, "event": "request_completed", "request_id": "2a13ae67-c29b-450b-99bf-8e684af86a6b", "timestamp": "2026-08-27T12:07:58.469443Z", "level": "info"}
+INFO:     127.0.0.1:60035 - "OPTIONS /api/utilization/7 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 4.23, "user_id": null, "event": "request_completed", "request_id": "67b627a8-e4e0-4bb0-92a7-63939fa4ca16", "timestamp": "2026-08-27T12:07:58.476923Z", "level": "info"}
+INFO:     127.0.0.1:63350 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 7.98, "user_id": null, "event": "request_completed", "request_id": "eb21f381-f62e-4e31-aaca-ac2b9ac062f5", "timestamp": "2026-08-27T12:07:58.481900Z", "level": "info"}
+INFO:     127.0.0.1:60035 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 3.91, "user_id": null, "event": "request_completed", "request_id": "fb0b275f-d027-4101-938c-0298d1d123ba", "timestamp": "2026-08-27T12:07:58.485487Z", "level": "info"}
+INFO:     127.0.0.1:63350 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/7", "status_code": 200, "duration_ms": 5.95, "user_id": null, "event": "request_completed", "request_id": "1a13299c-9b2d-4314-8ae6-bc17db69e66e", "timestamp": "2026-08-27T12:07:58.493699Z", "level": "info"}
+INFO:     127.0.0.1:60035 - "GET /api/utilization/7 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/7", "status_code": 200, "duration_ms": 7.7, "user_id": null, "event": "request_completed", "request_id": "80d891be-d2c1-486f-a08a-6f6796b98139", "timestamp": "2026-08-27T12:07:58.497166Z", "level": "info"}
+INFO:     127.0.0.1:63350 - "GET /api/utilization/7 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 0.31, "user_id": null, "event": "request_completed", "request_id": "7c8dea7c-9a18-405d-a8b1-aeb1ee2c291c", "timestamp": "2026-08-27T12:08:13.192368Z", "level": "info"}
+INFO:     127.0.0.1:61058 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 0.87, "user_id": null, "event": "request_completed", "request_id": "160be361-c2ec-49dd-87b0-58b5b9e800dd", "timestamp": "2026-08-27T12:08:13.197204Z", "level": "info"}
+INFO:     127.0.0.1:63379 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 2.2, "user_id": null, "event": "request_completed", "request_id": "d9339f5e-093c-468c-979d-1651bb306a35", "timestamp": "2026-08-27T12:08:13.199017Z", "level": "info"}
+INFO:     127.0.0.1:65339 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 3.43, "user_id": null, "event": "request_completed", "request_id": "784e1214-e7f9-43ce-a53d-06694e91658d", "timestamp": "2026-08-27T12:08:13.200390Z", "level": "info"}
+INFO:     127.0.0.1:64868 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 1.05, "user_id": null, "event": "request_completed", "request_id": "1aa2e075-8f9c-4893-8de1-02e85469dfb6", "timestamp": "2026-08-27T12:08:13.204332Z", "level": "info"}
+INFO:     127.0.0.1:61058 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 2.88, "user_id": null, "event": "request_completed", "request_id": "55541805-5f16-4df1-a1a6-2ddd2be48a86", "timestamp": "2026-08-27T12:08:13.206751Z", "level": "info"}
+INFO:     127.0.0.1:63379 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 7.92, "user_id": null, "event": "request_completed", "request_id": "95cb537a-2700-48a8-9d1b-02469bcbecdb", "timestamp": "2026-08-27T12:08:13.216823Z", "level": "info"}
+INFO:     127.0.0.1:64868 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 9.85, "user_id": null, "event": "request_completed", "request_id": "38fd75fc-f340-4f72-8547-223378191011", "timestamp": "2026-08-27T12:08:13.221069Z", "level": "info"}
+INFO:     127.0.0.1:63379 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 15.35, "user_id": null, "event": "request_completed", "request_id": "7e0c1f34-1ed4-4f7f-811d-e9cfe91ccf8e", "timestamp": "2026-08-27T12:08:13.225638Z", "level": "info"}
+INFO:     127.0.0.1:61058 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 27.23, "user_id": null, "event": "request_completed", "request_id": "b9f70de1-0e39-478f-b293-83bbba2e2e9e", "timestamp": "2026-08-27T12:08:13.252234Z", "level": "info"}
+INFO:     127.0.0.1:64868 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 26.59, "user_id": null, "event": "request_completed", "request_id": "d3451ed0-4f0a-4777-ae3c-4ee77b208dbf", "timestamp": "2026-08-27T12:08:13.255701Z", "level": "info"}
+INFO:     127.0.0.1:63379 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 27.37, "user_id": null, "event": "request_completed", "request_id": "f0a5bac5-fffb-411f-b887-0abeb48fe770", "timestamp": "2026-08-27T12:08:13.257922Z", "level": "info"}
+INFO:     127.0.0.1:61058 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 0.89, "user_id": null, "event": "request_completed", "request_id": "bbc6ec0b-dcde-477d-9854-247c62141a13", "timestamp": "2026-08-27T12:08:19.366180Z", "level": "info"}
+INFO:     127.0.0.1:50377 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 7.01, "user_id": null, "event": "request_completed", "request_id": "58e2a1cb-c5b6-484f-8499-15ae1874df4e", "timestamp": "2026-08-27T12:08:19.373034Z", "level": "info"}
+INFO:     127.0.0.1:53611 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 9.49, "user_id": null, "event": "request_completed", "request_id": "ca600134-a29e-4adf-aba9-ea2baa6bd524", "timestamp": "2026-08-27T12:08:19.375666Z", "level": "info"}
+INFO:     127.0.0.1:49951 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 5.84, "user_id": null, "event": "request_completed", "request_id": "f47d6045-ab8b-4dd2-b0e3-bae075b1477a", "timestamp": "2026-08-27T12:08:19.385930Z", "level": "info"}
+INFO:     127.0.0.1:50377 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 7.65, "user_id": null, "event": "request_completed", "request_id": "cf032ad1-0649-4de1-8813-f7b92775ddeb", "timestamp": "2026-08-27T12:08:19.390117Z", "level": "info"}
+INFO:     127.0.0.1:49951 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization", "status_code": 200, "duration_ms": 0.25, "user_id": null, "event": "request_completed", "request_id": "1d49b981-82bf-414c-8128-575e13017b89", "timestamp": "2026-08-27T12:08:19.394498Z", "level": "info"}
+INFO:     127.0.0.1:49951 - "OPTIONS /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 4.78, "user_id": null, "event": "request_completed", "request_id": "79e29c29-3c54-40c1-9702-ea2dcd667d24", "timestamp": "2026-08-27T12:08:19.397768Z", "level": "info"}
+INFO:     127.0.0.1:50377 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization", "status_code": 200, "duration_ms": 0.33, "user_id": null, "event": "request_completed", "request_id": "cd029e54-7e97-4da7-8a2e-56f27e5638f7", "timestamp": "2026-08-27T12:08:19.401821Z", "level": "info"}
+INFO:     127.0.0.1:49951 - "OPTIONS /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization", "status_code": 200, "duration_ms": 5.81, "user_id": null, "event": "request_completed", "request_id": "dacc0350-1e47-4f59-a3ba-945928d0f5b3", "timestamp": "2026-08-27T12:08:19.410522Z", "level": "info"}
+INFO:     127.0.0.1:50377 - "GET /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization", "status_code": 200, "duration_ms": 9.16, "user_id": null, "event": "request_completed", "request_id": "3494a9c7-d098-4741-8841-0f3d82dc3226", "timestamp": "2026-08-27T12:08:19.417919Z", "level": "info"}
+INFO:     127.0.0.1:49951 - "GET /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 0.84, "user_id": null, "event": "request_completed", "request_id": "c08c4ee5-f214-4ef7-95d1-68aa9284e681", "timestamp": "2026-08-27T12:08:21.233948Z", "level": "info"}
+INFO:     127.0.0.1:49951 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 3.68, "user_id": null, "event": "request_completed", "request_id": "445d9aa9-10fe-4cf3-99a6-994b53ad010a", "timestamp": "2026-08-27T12:08:21.237427Z", "level": "info"}
+INFO:     127.0.0.1:50377 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 5.89, "user_id": null, "event": "request_completed", "request_id": "56b5db1d-2e24-48ce-b426-9aa314640e11", "timestamp": "2026-08-27T12:08:21.239785Z", "level": "info"}
+INFO:     127.0.0.1:52112 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 4.84, "user_id": null, "event": "request_completed", "request_id": "76081f3b-adba-422b-88ce-5e2c33dbce35", "timestamp": "2026-08-27T12:08:21.247562Z", "level": "info"}
+INFO:     127.0.0.1:49951 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 7.82, "user_id": null, "event": "request_completed", "request_id": "f91e11ff-8b49-4f44-8f9a-fb1bb62e207b", "timestamp": "2026-08-27T12:08:21.252085Z", "level": "info"}
+INFO:     127.0.0.1:52112 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 11.82, "user_id": null, "event": "request_completed", "request_id": "a0282b7f-641c-4fad-a878-4628fc46c774", "timestamp": "2026-08-27T12:08:21.254591Z", "level": "info"}
+INFO:     127.0.0.1:60842 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 0.64, "user_id": null, "event": "request_completed", "request_id": "c1648fe6-5f36-4940-a00e-ed58d7a3c02c", "timestamp": "2026-08-27T12:08:21.264933Z", "level": "info"}
+INFO:     127.0.0.1:60842 - "OPTIONS /api/approvals?status=PENDING&page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 3.31, "user_id": null, "event": "request_completed", "request_id": "e88ee168-38a3-4e93-a851-7e0708eebe28", "timestamp": "2026-08-27T12:08:21.268011Z", "level": "info"}
+INFO:     127.0.0.1:52112 - "OPTIONS /api/approvals?status=PENDING&page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 3.04, "user_id": null, "event": "request_completed", "request_id": "fe99d0cd-0785-44ee-addb-8f1510d7919f", "timestamp": "2026-08-27T12:08:21.273899Z", "level": "info"}
+INFO:     127.0.0.1:60842 - "GET /api/approvals?status=PENDING&page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 2.74, "user_id": null, "event": "request_completed", "request_id": "491610bb-b0f9-4267-afdf-1135e2699219", "timestamp": "2026-08-27T12:08:21.275762Z", "level": "info"}
+INFO:     127.0.0.1:52112 - "GET /api/approvals?status=PENDING&page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 0.74, "user_id": null, "event": "request_completed", "request_id": "a2d363fd-1ae1-4c10-a65f-ddf7b439d311", "timestamp": "2026-08-27T12:08:49.887698Z", "level": "info"}
+INFO:     127.0.0.1:64118 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 6.77, "user_id": null, "event": "request_completed", "request_id": "c0cd5291-251f-4b95-8be0-24b1555f732a", "timestamp": "2026-08-27T12:08:49.894106Z", "level": "info"}
+INFO:     127.0.0.1:63887 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 9.12, "user_id": null, "event": "request_completed", "request_id": "66ac7429-d406-4641-a724-d8ef1d63204e", "timestamp": "2026-08-27T12:08:49.896550Z", "level": "info"}
+INFO:     127.0.0.1:63853 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization", "status_code": 200, "duration_ms": 0.65, "user_id": null, "event": "request_completed", "request_id": "c60f28eb-892d-4dbf-bb54-84ce9431d53d", "timestamp": "2026-08-27T12:08:49.899777Z", "level": "info"}
+INFO:     127.0.0.1:64118 - "OPTIONS /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 9.44, "user_id": null, "event": "request_completed", "request_id": "8cf8b54f-40ae-45e5-9a83-99e1e3716228", "timestamp": "2026-08-27T12:08:49.909070Z", "level": "info"}
+INFO:     127.0.0.1:63887 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 7.76, "user_id": null, "event": "request_completed", "request_id": "12bc0ee6-c280-409a-8650-58e73953a6d3", "timestamp": "2026-08-27T12:08:49.912615Z", "level": "info"}
+INFO:     127.0.0.1:64118 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 15.3, "user_id": null, "event": "request_completed", "request_id": "5c958cf2-8671-4de6-98ca-cfb9934cfd32", "timestamp": "2026-08-27T12:08:49.915003Z", "level": "info"}
+INFO:     127.0.0.1:63853 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization", "status_code": 200, "duration_ms": 7.2, "user_id": null, "event": "request_completed", "request_id": "1a3e580f-ab72-453d-848f-1cdefd5e156f", "timestamp": "2026-08-27T12:08:49.925174Z", "level": "info"}
+INFO:     127.0.0.1:63887 - "GET /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 1.36, "user_id": null, "event": "request_completed", "request_id": "d8859b9e-190c-4e10-beee-e0fe7209c5bd", "timestamp": "2026-08-27T12:08:57.269657Z", "level": "info"}
+INFO:     127.0.0.1:62781 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 4.57, "user_id": null, "event": "request_completed", "request_id": "13077a37-094e-494f-a50f-91eb86917879", "timestamp": "2026-08-27T12:08:57.273537Z", "level": "info"}
+INFO:     127.0.0.1:53530 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 6.73, "user_id": null, "event": "request_completed", "request_id": "84c86716-5c73-4ee3-a991-4bd1ccb648a3", "timestamp": "2026-08-27T12:08:57.275963Z", "level": "info"}
+INFO:     127.0.0.1:50060 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 6.53, "user_id": null, "event": "request_completed", "request_id": "f1cc3660-77b0-4efd-8a62-8080bfb2c2c1", "timestamp": "2026-08-27T12:08:57.286192Z", "level": "info"}
+INFO:     127.0.0.1:62781 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 8.26, "user_id": null, "event": "request_completed", "request_id": "82efab6a-205c-4679-accc-c579aa2a357e", "timestamp": "2026-08-27T12:08:57.290358Z", "level": "info"}
+INFO:     127.0.0.1:50060 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 10.02, "user_id": null, "event": "request_completed", "request_id": "74b60d62-da93-45dc-a110-279d91f979c7", "timestamp": "2026-08-27T12:08:57.291938Z", "level": "info"}
+INFO:     127.0.0.1:53530 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/6", "status_code": 200, "duration_ms": 0.63, "user_id": null, "event": "request_completed", "request_id": "8b91399d-327e-4b4e-ae04-8ccd88b8a151", "timestamp": "2026-08-27T12:08:57.565166Z", "level": "info"}
+INFO:     127.0.0.1:53530 - "OPTIONS /api/utilization/6 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/6", "status_code": 200, "duration_ms": 4.96, "user_id": null, "event": "request_completed", "request_id": "1441460d-837b-4c31-b247-98a0edf69f46", "timestamp": "2026-08-27T12:08:57.570016Z", "level": "info"}
+INFO:     127.0.0.1:50060 - "OPTIONS /api/utilization/6 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/6", "status_code": 200, "duration_ms": 5.17, "user_id": null, "event": "request_completed", "request_id": "0b2a3b0c-d82d-4104-8fcc-8ea381b44be6", "timestamp": "2026-08-27T12:08:57.581700Z", "level": "info"}
+INFO:     127.0.0.1:53530 - "GET /api/utilization/6 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/6", "status_code": 200, "duration_ms": 10.17, "user_id": null, "event": "request_completed", "request_id": "e89b0124-a4ff-454c-ae23-2aa6fc954890", "timestamp": "2026-08-27T12:08:57.585393Z", "level": "info"}
+INFO:     127.0.0.1:62781 - "GET /api/utilization/6 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 2.94, "user_id": null, "event": "request_completed", "request_id": "c013a8b1-418a-4638-9503-c3e4c9db79c2", "timestamp": "2026-08-27T12:09:04.078627Z", "level": "info"}
+INFO:     127.0.0.1:62131 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 5.24, "user_id": null, "event": "request_completed", "request_id": "ac9d4248-3d6f-4b2b-9ffd-efebcf505898", "timestamp": "2026-08-27T12:09:04.081600Z", "level": "info"}
+INFO:     127.0.0.1:56140 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 7.07, "user_id": null, "event": "request_completed", "request_id": "85eaa9bf-8393-4357-aa86-649c9ea9b8df", "timestamp": "2026-08-27T12:09:04.083585Z", "level": "info"}
+INFO:     127.0.0.1:62333 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 4.61, "user_id": null, "event": "request_completed", "request_id": "f2b16a5c-82eb-428f-9d6a-afed50ea6b6f", "timestamp": "2026-08-27T12:09:04.092932Z", "level": "info"}
+INFO:     127.0.0.1:62333 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 7.85, "user_id": null, "event": "request_completed", "request_id": "c8d03083-e64d-4b79-b970-48f5514a733b", "timestamp": "2026-08-27T12:09:04.094580Z", "level": "info"}
+INFO:     127.0.0.1:62131 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 8.96, "user_id": null, "event": "request_completed", "request_id": "42275c87-2ed9-4c8b-a668-7936e8f2ec50", "timestamp": "2026-08-27T12:09:04.097104Z", "level": "info"}
+INFO:     127.0.0.1:56140 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat", "status_code": 200, "duration_ms": 0.43, "user_id": null, "event": "request_completed", "request_id": "fcb24a14-6ac6-4daa-a2ca-e75dc20c0d40", "timestamp": "2026-08-27T12:09:07.979914Z", "level": "info"}
+INFO:     127.0.0.1:56140 - "OPTIONS /api/chat HTTP/1.1" 200 OK
+{"method": "POST", "path": "/api/chat", "status_code": 200, "duration_ms": 6.43, "user_id": null, "event": "request_completed", "request_id": "a69e3b75-ec8c-4e48-a1ef-4274c8f1bd6f", "timestamp": "2026-08-27T12:09:07.994635Z", "level": "info"}
+INFO:     127.0.0.1:62131 - "POST /api/chat HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions/1/messages", "status_code": 200, "duration_ms": 2.51, "user_id": null, "event": "request_completed", "request_id": "cdadc4c2-c0b4-4c1c-81ab-9a058ab5e79e", "timestamp": "2026-08-27T12:09:08.683757Z", "level": "info"}
+INFO:     127.0.0.1:62392 - "GET /api/chat/sessions/1/messages HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 1.19, "user_id": null, "event": "request_completed", "request_id": "e78957bb-e539-41a7-9197-1f54069537b7", "timestamp": "2026-08-27T12:09:08.765271Z", "level": "info"}
+INFO:     127.0.0.1:62131 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 4.49, "user_id": null, "event": "request_completed", "request_id": "29ed39eb-6025-4c73-bbdf-85170bc66c26", "timestamp": "2026-08-27T12:09:08.769081Z", "level": "info"}
+INFO:     127.0.0.1:56140 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 6.51, "user_id": null, "event": "request_completed", "request_id": "f043c658-c22c-4fa4-bb1c-e31da4f7ae92", "timestamp": "2026-08-27T12:09:08.771573Z", "level": "info"}
+INFO:     127.0.0.1:62333 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 6.06, "user_id": null, "event": "request_completed", "request_id": "36848dbd-7074-429e-a3c3-95876c45c87b", "timestamp": "2026-08-27T12:09:08.779521Z", "level": "info"}
+INFO:     127.0.0.1:56476 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 7.42, "user_id": null, "event": "request_completed", "request_id": "b6c393b6-ea97-4742-8cc0-6e3188433c47", "timestamp": "2026-08-27T12:09:08.781924Z", "level": "info"}
+INFO:     127.0.0.1:56140 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 11.33, "user_id": null, "event": "request_completed", "request_id": "ef7985ac-9c36-4735-8315-7dd9c0c9520c", "timestamp": "2026-08-27T12:09:08.785422Z", "level": "info"}
+INFO:     127.0.0.1:62131 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat", "status_code": 200, "duration_ms": 0.46, "user_id": null, "event": "request_completed", "request_id": "afd44b0a-0017-42a5-87d6-a9ee58fb1728", "timestamp": "2026-08-27T12:09:09.607427Z", "level": "info"}
+INFO:     127.0.0.1:62131 - "OPTIONS /api/chat HTTP/1.1" 200 OK
+{"method": "POST", "path": "/api/chat", "status_code": 200, "duration_ms": 4.02, "user_id": null, "event": "request_completed", "request_id": "203bd11d-48b8-485b-aaf7-0ae4d29f070e", "timestamp": "2026-08-27T12:09:09.616773Z", "level": "info"}
+INFO:     127.0.0.1:56140 - "POST /api/chat HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat", "status_code": 200, "duration_ms": 0.58, "user_id": null, "event": "request_completed", "request_id": "35174d1d-fbd6-44b8-bdbb-cd83bba31049", "timestamp": "2026-08-27T12:09:14.482979Z", "level": "info"}
+INFO:     127.0.0.1:56140 - "OPTIONS /api/chat HTTP/1.1" 200 OK
+{"method": "POST", "path": "/api/chat", "status_code": 200, "duration_ms": 5.48, "user_id": null, "event": "request_completed", "request_id": "bba82104-4f02-4a98-8832-3c0e710d6372", "timestamp": "2026-08-27T12:09:14.495508Z", "level": "info"}
+INFO:     127.0.0.1:62131 - "POST /api/chat HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat", "status_code": 200, "duration_ms": 0.42, "user_id": null, "event": "request_completed", "request_id": "0c569985-11f8-428e-82a8-e1508deb69cf", "timestamp": "2026-08-27T12:09:16.536446Z", "level": "info"}
+INFO:     127.0.0.1:62131 - "OPTIONS /api/chat HTTP/1.1" 200 OK
+{"method": "POST", "path": "/api/chat", "status_code": 200, "duration_ms": 5.58, "user_id": null, "event": "request_completed", "request_id": "45475c69-269d-4dbc-9b27-3799dbf817aa", "timestamp": "2026-08-27T12:09:16.552344Z", "level": "info"}
+INFO:     127.0.0.1:56140 - "POST /api/chat HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat", "status_code": 200, "duration_ms": 0.43, "user_id": null, "event": "request_completed", "request_id": "9efed7f4-9bdd-4dbe-80b5-b93c4c64024e", "timestamp": "2026-08-27T12:09:38.934542Z", "level": "info"}
+INFO:     127.0.0.1:60504 - "OPTIONS /api/chat HTTP/1.1" 200 OK
+{"method": "POST", "path": "/api/chat", "status_code": 200, "duration_ms": 5.84, "user_id": null, "event": "request_completed", "request_id": "d5477dd9-6972-4b32-9eef-8dc78daf9824", "timestamp": "2026-08-27T12:09:38.951828Z", "level": "info"}
+INFO:     127.0.0.1:62390 - "POST /api/chat HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat", "status_code": 200, "duration_ms": 0.38, "user_id": null, "event": "request_completed", "request_id": "4f58ea42-953d-435e-a0c2-fd8b3da00709", "timestamp": "2026-08-27T12:10:12.047473Z", "level": "info"}
+INFO:     127.0.0.1:61288 - "OPTIONS /api/chat HTTP/1.1" 200 OK
+{"method": "POST", "path": "/api/chat", "status_code": 200, "duration_ms": 4.23, "user_id": null, "event": "request_completed", "request_id": "25830594-5c51-4944-bd52-089e06d262ce", "timestamp": "2026-08-27T12:10:12.058832Z", "level": "info"}
+INFO:     127.0.0.1:61288 - "POST /api/chat HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat", "status_code": 200, "duration_ms": 0.79, "user_id": null, "event": "request_completed", "request_id": "cb1f9844-c259-4841-a644-2d06facd55f1", "timestamp": "2026-08-27T12:10:26.578553Z", "level": "info"}
+INFO:     127.0.0.1:52446 - "OPTIONS /api/chat HTTP/1.1" 200 OK
+{"method": "POST", "path": "/api/chat", "status_code": 200, "duration_ms": 5.32, "user_id": null, "event": "request_completed", "request_id": "7a992830-1da0-429d-8236-f19c6b6fe0d2", "timestamp": "2026-08-27T12:10:26.593605Z", "level": "info"}
+INFO:     127.0.0.1:57236 - "POST /api/chat HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat", "status_code": 200, "duration_ms": 0.42, "user_id": null, "event": "request_completed", "request_id": "593d1b03-0ea7-4d99-99b7-8e3f6214c3b4", "timestamp": "2026-08-27T12:10:43.968973Z", "level": "info"}
+INFO:     127.0.0.1:61077 - "OPTIONS /api/chat HTTP/1.1" 200 OK
+{"method": "POST", "path": "/api/chat", "status_code": 200, "duration_ms": 5.13, "user_id": null, "event": "request_completed", "request_id": "0688f902-cee8-4a8b-9114-666ad74a50fd", "timestamp": "2026-08-27T12:10:43.987897Z", "level": "info"}
+INFO:     127.0.0.1:61077 - "POST /api/chat HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat", "status_code": 200, "duration_ms": 0.4, "user_id": null, "event": "request_completed", "request_id": "1b4f0d76-927a-4050-a0fe-15850a94b3a5", "timestamp": "2026-08-27T12:11:00.869124Z", "level": "info"}
+INFO:     127.0.0.1:61795 - "OPTIONS /api/chat HTTP/1.1" 200 OK
+{"method": "POST", "path": "/api/chat", "status_code": 200, "duration_ms": 276.21, "user_id": null, "event": "request_completed", "request_id": "dcaac2de-e93e-40b6-b9fd-53e4b674b896", "timestamp": "2026-08-27T12:11:01.158308Z", "level": "info"}
+INFO:     127.0.0.1:58544 - "POST /api/chat HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 0.49, "user_id": null, "event": "request_completed", "request_id": "61e6e7a5-95c3-4287-8583-c68acbfb514f", "timestamp": "2026-08-27T12:11:05.790114Z", "level": "info"}
+INFO:     127.0.0.1:58544 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 0.56, "user_id": null, "event": "request_completed", "request_id": "c5b8e8da-6b35-4539-832a-a3f03dfe44f0", "timestamp": "2026-08-27T12:11:05.797324Z", "level": "info"}
+INFO:     127.0.0.1:61795 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 0.9, "user_id": null, "event": "request_completed", "request_id": "d78b8e6c-986b-47c0-8d5a-307865a011b1", "timestamp": "2026-08-27T12:11:05.801844Z", "level": "info"}
+INFO:     127.0.0.1:58544 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization", "status_code": 200, "duration_ms": 4.06, "user_id": null, "event": "request_completed", "request_id": "4ba2997f-af47-4447-adcd-683f2a3b10ad", "timestamp": "2026-08-27T12:11:05.805790Z", "level": "info"}
+INFO:     127.0.0.1:61795 - "OPTIONS /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization", "status_code": 200, "duration_ms": 1.17, "user_id": null, "event": "request_completed", "request_id": "cd4a6df0-d9e0-4465-8b01-19169e5050c0", "timestamp": "2026-08-27T12:11:05.809788Z", "level": "info"}
+INFO:     127.0.0.1:58544 - "OPTIONS /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 9.21, "user_id": null, "event": "request_completed", "request_id": "4faae934-2e7c-486c-b3ce-be1fabb4f041", "timestamp": "2026-08-27T12:11:05.818347Z", "level": "info"}
+INFO:     127.0.0.1:61795 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 9.79, "user_id": null, "event": "request_completed", "request_id": "d27ad4ce-5030-4c31-92f6-9b818ecb05b1", "timestamp": "2026-08-27T12:11:05.823726Z", "level": "info"}
+INFO:     127.0.0.1:58544 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 7.27, "user_id": null, "event": "request_completed", "request_id": "72f5ce0d-5715-4165-8701-44503cb9f5aa", "timestamp": "2026-08-27T12:11:05.829245Z", "level": "info"}
+INFO:     127.0.0.1:61795 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization", "status_code": 200, "duration_ms": 18.66, "user_id": null, "event": "request_completed", "request_id": "21a0f2e0-31ac-4a84-9788-88d941a61979", "timestamp": "2026-08-27T12:11:05.846478Z", "level": "info"}
+INFO:     127.0.0.1:58544 - "GET /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization", "status_code": 200, "duration_ms": 18.15, "user_id": null, "event": "request_completed", "request_id": "ffc995cb-9bb5-4b3f-a571-4192cb8fad10", "timestamp": "2026-08-27T12:11:05.852057Z", "level": "info"}
+INFO:     127.0.0.1:61795 - "GET /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 1.08, "user_id": null, "event": "request_completed", "request_id": "26451478-3b78-4626-a190-e7ff3d089f02", "timestamp": "2026-08-27T12:11:07.434301Z", "level": "info"}
+INFO:     127.0.0.1:61795 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 5.7, "user_id": null, "event": "request_completed", "request_id": "e9de8e9d-6c1d-4506-96fa-ba00d0831b86", "timestamp": "2026-08-27T12:11:07.439754Z", "level": "info"}
+INFO:     127.0.0.1:58544 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 4.78, "user_id": null, "event": "request_completed", "request_id": "95ad5b70-82f7-45d9-abb2-ea0d0df43cab", "timestamp": "2026-08-27T12:11:07.443212Z", "level": "info"}
+INFO:     127.0.0.1:60556 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/25", "status_code": 200, "duration_ms": 7.43, "user_id": null, "event": "request_completed", "request_id": "499906ce-4a03-4578-ab46-de4fc4300360", "timestamp": "2026-08-27T12:11:07.446102Z", "level": "info"}
+INFO:     127.0.0.1:58502 - "OPTIONS /api/utilization/25 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/25", "status_code": 200, "duration_ms": 9.67, "user_id": null, "event": "request_completed", "request_id": "6f2f63fb-1c2e-4bd1-a808-5642785235a3", "timestamp": "2026-08-27T12:11:07.448375Z", "level": "info"}
+INFO:     127.0.0.1:49941 - "OPTIONS /api/utilization/25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 23.97, "user_id": null, "event": "request_completed", "request_id": "f63c8fc2-9c88-4349-8728-29b696a8ae43", "timestamp": "2026-08-27T12:11:07.466919Z", "level": "info"}
+INFO:     127.0.0.1:50960 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/25", "status_code": 200, "duration_ms": 18.6, "user_id": null, "event": "request_completed", "request_id": "d96e6783-3e45-40e1-a273-d0429e35e770", "timestamp": "2026-08-27T12:11:07.472309Z", "level": "info"}
+INFO:     127.0.0.1:60556 - "GET /api/utilization/25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/25", "status_code": 200, "duration_ms": 15.36, "user_id": null, "event": "request_completed", "request_id": "cddce752-0ff6-441a-a0b4-af8ca0fd0f4f", "timestamp": "2026-08-27T12:11:07.474862Z", "level": "info"}
+INFO:     127.0.0.1:58502 - "GET /api/utilization/25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 24.52, "user_id": null, "event": "request_completed", "request_id": "1f401982-7d09-4436-a38b-9e55ce2542c7", "timestamp": "2026-08-27T12:11:07.477094Z", "level": "info"}
+INFO:     127.0.0.1:58544 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 28.03, "user_id": null, "event": "request_completed", "request_id": "0e23c452-f465-4078-b80a-7d8882ec1e30", "timestamp": "2026-08-27T12:11:07.480427Z", "level": "info"}
+INFO:     127.0.0.1:61795 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 1.41, "user_id": null, "event": "request_completed", "request_id": "3093c51f-e7c4-4587-adea-c870f7d1a2cd", "timestamp": "2026-08-27T12:11:22.230817Z", "level": "info"}
+INFO:     127.0.0.1:62430 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 4.43, "user_id": null, "event": "request_completed", "request_id": "910d539c-f9c3-46de-ad00-30ee6f502c8f", "timestamp": "2026-08-27T12:11:22.234452Z", "level": "info"}
+INFO:     127.0.0.1:54664 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 8.49, "user_id": null, "event": "request_completed", "request_id": "e0751d89-d15c-445d-bdc4-eccd6ed28ce2", "timestamp": "2026-08-27T12:11:22.238824Z", "level": "info"}
+INFO:     127.0.0.1:57911 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization", "status_code": 200, "duration_ms": 11.52, "user_id": null, "event": "request_completed", "request_id": "f9c816ae-9dbd-4be4-bf1f-ecc98c1dc64e", "timestamp": "2026-08-27T12:11:22.241834Z", "level": "info"}
+INFO:     127.0.0.1:51713 - "OPTIONS /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization", "status_code": 200, "duration_ms": 13.34, "user_id": null, "event": "request_completed", "request_id": "5b26ece7-9bc7-41c7-919b-0f06645af815", "timestamp": "2026-08-27T12:11:22.244014Z", "level": "info"}
+INFO:     127.0.0.1:61963 - "OPTIONS /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 22.82, "user_id": null, "event": "request_completed", "request_id": "81b089d1-cc66-4b2f-8e50-b066dfdd0c30", "timestamp": "2026-08-27T12:11:22.268822Z", "level": "info"}
+INFO:     127.0.0.1:62430 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 26.38, "user_id": null, "event": "request_completed", "request_id": "fa15c857-3e14-436d-b235-b76d679d8f9c", "timestamp": "2026-08-27T12:11:22.273606Z", "level": "info"}
+INFO:     127.0.0.1:57911 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 28.35, "user_id": null, "event": "request_completed", "request_id": "9855fe80-27ce-4d9c-aafe-8d19dc91f792", "timestamp": "2026-08-27T12:11:22.275481Z", "level": "info"}
+INFO:     127.0.0.1:54664 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization", "status_code": 200, "duration_ms": 31.03, "user_id": null, "event": "request_completed", "request_id": "381454cc-0099-4c74-8835-36a7f8e07f6a", "timestamp": "2026-08-27T12:11:22.279544Z", "level": "info"}
+INFO:     127.0.0.1:51713 - "GET /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization", "status_code": 200, "duration_ms": 33.56, "user_id": null, "event": "request_completed", "request_id": "0872c3f3-8850-4b11-863a-09acf315957a", "timestamp": "2026-08-27T12:11:22.282225Z", "level": "info"}
+INFO:     127.0.0.1:61963 - "GET /api/utilization?page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 0.34, "user_id": null, "event": "request_completed", "request_id": "767a5846-ed40-4484-a172-962df19897b2", "timestamp": "2026-08-27T12:11:30.633553Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 0.32, "user_id": null, "event": "request_completed", "request_id": "ce0c4679-0c09-4a24-8e38-ff75ff6eba0b", "timestamp": "2026-08-27T12:11:30.640229Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 0.3, "user_id": null, "event": "request_completed", "request_id": "6d538944-89f7-4940-b91a-14cd5d77bbfe", "timestamp": "2026-08-27T12:11:30.645568Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 0.33, "user_id": null, "event": "request_completed", "request_id": "5b3514a8-8665-4229-809d-44e02e55ed04", "timestamp": "2026-08-27T12:11:30.650392Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "OPTIONS /api/utilization/exceptions?status=OPEN&page_size=50 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 0.2, "user_id": null, "event": "request_completed", "request_id": "cba70576-a12b-4f26-bbf7-591ccb3ac60d", "timestamp": "2026-08-27T12:11:30.654354Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "OPTIONS /api/utilization/exceptions?status=OPEN&page_size=50 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 2.87, "user_id": null, "event": "request_completed", "request_id": "d147d4dd-707c-4ca9-bf07-4670e9c216f0", "timestamp": "2026-08-27T12:11:30.659937Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 2.49, "user_id": null, "event": "request_completed", "request_id": "468f2f2f-1ae3-4a31-9870-d085ec1e89a0", "timestamp": "2026-08-27T12:11:30.664641Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 2.71, "user_id": null, "event": "request_completed", "request_id": "8cea6d4f-69b1-46f8-8b23-448e774bb132", "timestamp": "2026-08-27T12:11:30.669602Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 2.17, "user_id": null, "event": "request_completed", "request_id": "68752521-b3c4-4a76-9b3b-c594481230bd", "timestamp": "2026-08-27T12:11:30.674595Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "GET /api/utilization/exceptions?status=OPEN&page_size=50 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 2.66, "user_id": null, "event": "request_completed", "request_id": "e57a3875-af60-4e27-b139-c12821553ec8", "timestamp": "2026-08-27T12:11:30.679597Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "GET /api/utilization/exceptions?status=OPEN&page_size=50 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 0.49, "user_id": null, "event": "request_completed", "request_id": "969b6cc8-e174-4f72-906b-5b0225708e72", "timestamp": "2026-08-27T12:11:32.622950Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 1.33, "user_id": null, "event": "request_completed", "request_id": "1b16f332-ed9b-4da4-ab94-a8e7c084c8d7", "timestamp": "2026-08-27T12:11:32.627209Z", "level": "info"}
+INFO:     127.0.0.1:49340 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 2.7, "user_id": null, "event": "request_completed", "request_id": "bf553884-8956-465f-a9b7-8263b0cf213d", "timestamp": "2026-08-27T12:11:32.629472Z", "level": "info"}
+INFO:     127.0.0.1:52996 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 16.88, "user_id": null, "event": "request_completed", "request_id": "e87d88a6-348d-4e74-a514-f2a7e02590bd", "timestamp": "2026-08-27T12:11:32.644043Z", "level": "info"}
+INFO:     127.0.0.1:63921 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 14.3, "user_id": null, "event": "request_completed", "request_id": "0d34e3a1-f18d-4f3c-b1a1-5fa34382d396", "timestamp": "2026-08-27T12:11:32.647596Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 11.1, "user_id": null, "event": "request_completed", "request_id": "94a672eb-6582-4e61-a994-2f3f663b35ea", "timestamp": "2026-08-27T12:11:32.649216Z", "level": "info"}
+INFO:     127.0.0.1:49340 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/dashboard", "status_code": 200, "duration_ms": 1.08, "user_id": null, "event": "request_completed", "request_id": "08c9247f-8ef0-44e7-bd17-f5e8615518a4", "timestamp": "2026-08-27T12:11:32.921970Z", "level": "info"}
+INFO:     127.0.0.1:49340 - "OPTIONS /api/utilization/dashboard HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/dashboard", "status_code": 200, "duration_ms": 4.35, "user_id": null, "event": "request_completed", "request_id": "14daca89-8e20-4501-9432-3d6e180edd45", "timestamp": "2026-08-27T12:11:32.926020Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "OPTIONS /api/utilization/dashboard HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/dashboard", "status_code": 200, "duration_ms": 6.37, "user_id": null, "event": "request_completed", "request_id": "96f0cdca-400a-4226-97c5-ed967f98a199", "timestamp": "2026-08-27T12:11:32.935738Z", "level": "info"}
+INFO:     127.0.0.1:63921 - "GET /api/utilization/dashboard HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/dashboard", "status_code": 200, "duration_ms": 9.59, "user_id": null, "event": "request_completed", "request_id": "722727b3-8974-4818-bdd6-c0ef524a3296", "timestamp": "2026-08-27T12:11:32.940068Z", "level": "info"}
+INFO:     127.0.0.1:49340 - "GET /api/utilization/dashboard HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 1.83, "user_id": null, "event": "request_completed", "request_id": "303e3932-a8e9-4acd-8142-02fe92c9ef25", "timestamp": "2026-08-27T12:11:33.628629Z", "level": "info"}
+INFO:     127.0.0.1:49340 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 5.32, "user_id": null, "event": "request_completed", "request_id": "f4bf5b57-fa7c-4b5f-b69b-ede7e065cfae", "timestamp": "2026-08-27T12:11:33.633188Z", "level": "info"}
+INFO:     127.0.0.1:63921 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 8.22, "user_id": null, "event": "request_completed", "request_id": "9ee7d0e2-2091-4c48-baee-7939222ed8e7", "timestamp": "2026-08-27T12:11:33.636334Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/redeployment/recommendations", "status_code": 200, "duration_ms": 1.64, "user_id": null, "event": "request_completed", "request_id": "6b2fd16d-df99-4ef1-9578-8b8a1229456f", "timestamp": "2026-08-27T12:11:33.641146Z", "level": "info"}
+INFO:     127.0.0.1:52996 - "OPTIONS /api/utilization/redeployment/recommendations HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/unused-stock", "status_code": 200, "duration_ms": 3.27, "user_id": null, "event": "request_completed", "request_id": "bbc9271e-2eb3-4a80-be4f-d0e89df91e9e", "timestamp": "2026-08-27T12:11:33.643441Z", "level": "info"}
+INFO:     127.0.0.1:49340 - "OPTIONS /api/utilization/unused-stock HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/unmatched-issues", "status_code": 200, "duration_ms": 4.77, "user_id": null, "event": "request_completed", "request_id": "edb53b80-16cf-4ab9-b23b-87d7f0deed0a", "timestamp": "2026-08-27T12:11:33.645057Z", "level": "info"}
+INFO:     127.0.0.1:53722 - "OPTIONS /api/utilization/unmatched-issues HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/redeployment/recommendations", "status_code": 200, "duration_ms": 6.26, "user_id": null, "event": "request_completed", "request_id": "68e35964-d0d6-4e7d-ae3c-89ffa4e0bb4c", "timestamp": "2026-08-27T12:11:33.647284Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "OPTIONS /api/utilization/redeployment/recommendations HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/unused-stock", "status_code": 200, "duration_ms": 2.08, "user_id": null, "event": "request_completed", "request_id": "4f71468b-fc75-42f2-b9d4-b37f15208f7e", "timestamp": "2026-08-27T12:11:33.651529Z", "level": "info"}
+INFO:     127.0.0.1:52996 - "OPTIONS /api/utilization/unused-stock HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/unmatched-issues", "status_code": 200, "duration_ms": 4.06, "user_id": null, "event": "request_completed", "request_id": "7d912188-d25e-4f17-b464-2623c8d85c32", "timestamp": "2026-08-27T12:11:33.654421Z", "level": "info"}
+INFO:     127.0.0.1:49340 - "OPTIONS /api/utilization/unmatched-issues HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 19.72, "user_id": null, "event": "request_completed", "request_id": "4254bb33-c2fe-43bf-af7b-8ba2ec78cb26", "timestamp": "2026-08-27T12:11:33.659773Z", "level": "info"}
+INFO:     127.0.0.1:55545 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 22.59, "user_id": null, "event": "request_completed", "request_id": "1fb67034-e679-4be8-b783-0609b86d00a7", "timestamp": "2026-08-27T12:11:33.663535Z", "level": "info"}
+INFO:     127.0.0.1:63921 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 14.85, "user_id": null, "event": "request_completed", "request_id": "a54c7171-924c-4a37-bb5a-ac7a6cacbf8f", "timestamp": "2026-08-27T12:11:33.665337Z", "level": "info"}
+INFO:     127.0.0.1:53722 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/redeployment/recommendations", "status_code": 200, "duration_ms": 16.01, "user_id": null, "event": "request_completed", "request_id": "0f80dfa7-1d4e-49bf-a202-f0556dffbbfd", "timestamp": "2026-08-27T12:11:33.670087Z", "level": "info"}
+INFO:     127.0.0.1:55732 - "GET /api/utilization/redeployment/recommendations HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/unmatched-issues", "status_code": 200, "duration_ms": 16.04, "user_id": null, "event": "request_completed", "request_id": "7a75f7bb-bdca-413e-ae77-0187702bffb5", "timestamp": "2026-08-27T12:11:33.674568Z", "level": "info"}
+INFO:     127.0.0.1:49340 - "GET /api/utilization/unmatched-issues HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/unused-stock", "status_code": 200, "duration_ms": 19.26, "user_id": null, "event": "request_completed", "request_id": "f92ce629-7fbb-4323-ae50-6800d258a4bd", "timestamp": "2026-08-27T12:11:33.676684Z", "level": "info"}
+INFO:     127.0.0.1:52996 - "GET /api/utilization/unused-stock HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/redeployment/recommendations", "status_code": 200, "duration_ms": 15.22, "user_id": null, "event": "request_completed", "request_id": "8eb834ce-33ad-41f0-bd53-e43bbc312b0a", "timestamp": "2026-08-27T12:11:33.680317Z", "level": "info"}
+INFO:     127.0.0.1:55545 - "GET /api/utilization/redeployment/recommendations HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/unused-stock", "status_code": 200, "duration_ms": 11.83, "user_id": null, "event": "request_completed", "request_id": "c8dea932-34f2-4c16-8e93-a1c47a7a69d8", "timestamp": "2026-08-27T12:11:33.681599Z", "level": "info"}
+INFO:     127.0.0.1:63921 - "GET /api/utilization/unused-stock HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/unmatched-issues", "status_code": 200, "duration_ms": 11.32, "user_id": null, "event": "request_completed", "request_id": "8ccc91a1-9183-4de4-ab2a-2d2c524a3732", "timestamp": "2026-08-27T12:11:33.684371Z", "level": "info"}
+INFO:     127.0.0.1:53722 - "GET /api/utilization/unmatched-issues HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 0.95, "user_id": null, "event": "request_completed", "request_id": "f362b7be-655c-4fea-958c-43ab25b0766c", "timestamp": "2026-08-27T12:11:40.978345Z", "level": "info"}
+INFO:     127.0.0.1:54395 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 8.46, "user_id": null, "event": "request_completed", "request_id": "439e2d50-c16c-4039-a431-ca392ee966f4", "timestamp": "2026-08-27T12:11:40.986047Z", "level": "info"}
+INFO:     127.0.0.1:64420 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 11.92, "user_id": null, "event": "request_completed", "request_id": "8d127c11-c1c2-4acb-b144-2241ccb52214", "timestamp": "2026-08-27T12:11:40.990110Z", "level": "info"}
+INFO:     127.0.0.1:50467 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 1.25, "user_id": null, "event": "request_completed", "request_id": "94f08d2e-a811-488f-a897-06bce705d587", "timestamp": "2026-08-27T12:11:40.995522Z", "level": "info"}
+INFO:     127.0.0.1:54395 - "OPTIONS /api/approvals?status=PENDING&page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 1.24, "user_id": null, "event": "request_completed", "request_id": "289fbf13-6fbd-412c-b447-a42d2cf48d66", "timestamp": "2026-08-27T12:11:41.000233Z", "level": "info"}
+INFO:     127.0.0.1:50467 - "OPTIONS /api/approvals?status=PENDING&page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 13.49, "user_id": null, "event": "request_completed", "request_id": "7dcf21f5-02b0-4e2e-98fc-82e6157fa779", "timestamp": "2026-08-27T12:11:41.007968Z", "level": "info"}
+INFO:     127.0.0.1:64420 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 6.34, "user_id": null, "event": "request_completed", "request_id": "2f6d9110-f4d6-4b76-8dd0-6f0eab0ca01b", "timestamp": "2026-08-27T12:11:41.012513Z", "level": "info"}
+INFO:     127.0.0.1:50467 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 11.92, "user_id": null, "event": "request_completed", "request_id": "7a664709-2110-4919-998c-8c3ab07a4e47", "timestamp": "2026-08-27T12:11:41.017125Z", "level": "info"}
+INFO:     127.0.0.1:54395 - "GET /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 10.87, "user_id": null, "event": "request_completed", "request_id": "2d2ffd17-a49e-4a92-854d-ecea8a6a0eed", "timestamp": "2026-08-27T12:11:41.022282Z", "level": "info"}
+INFO:     127.0.0.1:64420 - "GET /api/approvals?status=PENDING&page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 7.41, "user_id": null, "event": "request_completed", "request_id": "ac3819aa-0f6d-452b-9895-8878c35a1030", "timestamp": "2026-08-27T12:11:41.027221Z", "level": "info"}
+INFO:     127.0.0.1:50467 - "GET /api/approvals?status=PENDING&page=1&page_size=25 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/approvals", "status_code": 200, "duration_ms": 1.95, "user_id": null, "event": "request_completed", "request_id": "feebf8ac-745e-4571-98e3-4bed8a00e81d", "timestamp": "2026-08-27T12:11:41.621773Z", "level": "info"}
+INFO:     127.0.0.1:50467 - "OPTIONS /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 6.08, "user_id": null, "event": "request_completed", "request_id": "9863de89-aa4c-4131-873f-feecf3290bf3", "timestamp": "2026-08-27T12:11:41.627054Z", "level": "info"}
+INFO:     127.0.0.1:64420 - "OPTIONS /api/chat/sessions HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 8.68, "user_id": null, "event": "request_completed", "request_id": "4245f03d-9ad1-4f0d-8029-ec1fb16107b4", "timestamp": "2026-08-27T12:11:41.629831Z", "level": "info"}
+INFO:     127.0.0.1:54395 - "OPTIONS /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/dashboard", "status_code": 200, "duration_ms": 12.17, "user_id": null, "event": "request_completed", "request_id": "570718f6-61e1-4e5c-93ed-4e29ce16dada", "timestamp": "2026-08-27T12:11:41.633590Z", "level": "info"}
+INFO:     127.0.0.1:61560 - "OPTIONS /api/utilization/dashboard HTTP/1.1" 200 OK
+{"method": "OPTIONS", "path": "/api/utilization/dashboard", "status_code": 200, "duration_ms": 11.15, "user_id": null, "event": "request_completed", "request_id": "2afd284f-6b9a-4a1c-803d-da2fa7a03100", "timestamp": "2026-08-27T12:11:41.637354Z", "level": "info"}
+INFO:     127.0.0.1:55257 - "OPTIONS /api/utilization/dashboard HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/dashboard", "status_code": 200, "duration_ms": 12.71, "user_id": null, "event": "request_completed", "request_id": "49f7a692-62eb-42b7-8fdd-008d9de26124", "timestamp": "2026-08-27T12:11:41.657287Z", "level": "info"}
+INFO:     127.0.0.1:61560 - "GET /api/utilization/dashboard HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/dashboard", "status_code": 200, "duration_ms": 16.77, "user_id": null, "event": "request_completed", "request_id": "865fa03c-aea7-44d1-80a5-923e35b6c3db", "timestamp": "2026-08-27T12:11:41.661060Z", "level": "info"}
+INFO:     127.0.0.1:54395 - "GET /api/utilization/dashboard HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/approvals", "status_code": 200, "duration_ms": 27.53, "user_id": null, "event": "request_completed", "request_id": "94f28e71-16c4-4e65-92ff-8d1717ec3b83", "timestamp": "2026-08-27T12:11:41.664019Z", "level": "info"}
+INFO:     127.0.0.1:62944 - "GET /api/approvals?status=PENDING&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/utilization/exceptions", "status_code": 200, "duration_ms": 24.29, "user_id": null, "event": "request_completed", "request_id": "4b3b4d95-6607-4653-a6a9-12aebc4ef9b2", "timestamp": "2026-08-27T12:11:41.666601Z", "level": "info"}
+INFO:     127.0.0.1:64420 - "GET /api/utilization/exceptions?severity=CRITICAL&status=OPEN&page_size=1 HTTP/1.1" 200 OK
+{"method": "GET", "path": "/api/chat/sessions", "status_code": 200, "duration_ms": 29.48, "user_id": null, "event": "request_completed", "request_id": "6b5d16b6-d8db-45a9-ad92-d62232b1f32b", "timestamp": "2026-08-27T12:11:41.670813Z", "level": "info"}
+INFO:     127.0.0.1:50467 - "GET /api/chat/sessions HTTP/1.1" 200 OK

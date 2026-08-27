@@ -13,10 +13,11 @@ from typing import Any
 
 from app.ai.provider_base import ToolSpec
 from app.core.exceptions import AppError
-from app.services import analytics_service, rr_service
+from app.services import analytics_service, rr_service, utilization_service
 from app.services.audit_service import record_audit
 from app.services.csv_store import DataStore, Row
 from app.schemas.procurement import RequestRequisitionCreate, RRLineItemCreate
+from app.schemas.utilization import ConsumptionPlanCreate
 
 
 @dataclass
@@ -57,6 +58,27 @@ def _create_rr(ctx: ToolContext, plant: str, department: str, required_date: str
         )
         rr = rr_service.create_rr(ctx.store, ctx.current_user, payload, source_system="chat_assistant")
         return {"rr_id": rr["id"], "rr_number": rr["rr_number"], "status": rr["status"], "total_estimated_value": float(rr["total_estimated_value"])}
+    except AppError as e:
+        return {"error": e.message}
+
+
+def _create_consumption_plan(
+    ctx: ToolContext, plant: str, department: str, required_date: str, priority: str, material_id: int, quantity: float,
+    reservation_type: str, purpose: str, planned_consumption_date: str, job_card_number: str | None = None,
+    project: str | None = None, equipment: str | None = None,
+) -> Any:
+    try:
+        payload = ConsumptionPlanCreate(
+            plant=plant, department=department, required_date=date.fromisoformat(required_date), priority=priority,
+            material_id=material_id, quantity=quantity, reservation_type=reservation_type, purpose=purpose,
+            job_card_number=job_card_number, project=project, equipment=equipment,
+            planned_consumption_date=date.fromisoformat(planned_consumption_date),
+        )
+        result = utilization_service.create_consumption_plan(ctx.store, ctx.current_user, payload, source_system="chat_assistant")
+        return {
+            "tracking_id": result["tracking_id"], "rr_id": result["rr_id"], "rr_number": result["rr_number"],
+            "risk_level": result["risk"]["level"], "stock_matches": len(result["stock_check"]["matches"]),
+        }
     except AppError as e:
         return {"error": e.message}
 
@@ -144,6 +166,33 @@ TOOLS: dict[str, tuple[ToolSpec, Any]] = {
             },
         ),
         _create_rr,
+    ),
+    "create_consumption_plan": (
+        ToolSpec(
+            "create_consumption_plan",
+            "Create an OAR (order-as-required) requisition with its mandatory Initiative 13 consumption plan -- use this "
+            "instead of create_rr once the material has been classified OAR and the reservation type, purpose, "
+            "equipment/job-card, and planned consumption date are all known and confirmed by the user.",
+            {
+                "type": "object",
+                "properties": {
+                    "plant": {"type": "string"},
+                    "department": {"type": "string"},
+                    "required_date": {"type": "string", "description": "ISO date YYYY-MM-DD"},
+                    "priority": {"type": "string", "enum": ["Normal", "High", "Critical"]},
+                    "material_id": {"type": "integer"},
+                    "quantity": {"type": "number"},
+                    "reservation_type": {"type": "string", "enum": ["JOB_CARD", "STRAIGHT"]},
+                    "purpose": {"type": "string"},
+                    "planned_consumption_date": {"type": "string", "description": "ISO date YYYY-MM-DD"},
+                    "job_card_number": {"type": "string"},
+                    "project": {"type": "string"},
+                    "equipment": {"type": "string"},
+                },
+                "required": ["plant", "department", "required_date", "material_id", "quantity", "reservation_type", "purpose", "planned_consumption_date"],
+            },
+        ),
+        _create_consumption_plan,
     ),
     "get_rr": (ToolSpec("get_rr", "Get an RR by id.", {"type": "object", "properties": {"rr_id": {"type": "integer"}}, "required": ["rr_id"]}), _get_rr),
     "get_pr": (ToolSpec("get_pr", "Get a PR by id.", {"type": "object", "properties": {"pr_id": {"type": "integer"}}, "required": ["pr_id"]}), _get_pr),
