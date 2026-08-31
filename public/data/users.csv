@@ -1,0 +1,25 @@
+id,employee_code,name,email,department,role,plant,active
+1,DEMO001,Demo End User,demo.end_user@spares-ai-demo.local,Instrumentation & Electrical,END_USER,Gamsberg,true
+2,DEMO002,Demo Engineering Manager,demo.engineering_manager@spares-ai-demo.local,Warehouse & Stores,ENGINEERING_MANAGER,BMM,true
+3,DEMO003,Demo Commercial Manager,demo.commercial_manager@spares-ai-demo.local,Processing / Plant Operations,COMMERCIAL_MANAGER,BMM,true
+4,DEMO004,Demo Warehouse Supervisor,demo.warehouse_supervisor@spares-ai-demo.local,Instrumentation & Electrical,WAREHOUSE_SUPERVISOR,Gamsberg,true
+5,DEMO005,Demo Procurement Officer,demo.procurement@spares-ai-demo.local,Procurement,PROCUREMENT,Gamsberg,true
+6,DEMO006,Demo System Admin,demo.admin@spares-ai-demo.local,Instrumentation & Electrical,ADMIN,BMM,true
+7,EMP00007,Robert Smith,robert.smith7@spares-ai-demo.local,Mining Operations,END_USER,Gamsberg,true
+8,EMP00008,Mandy Evans,mandy.evans8@spares-ai-demo.local,Plant Maintenance,WAREHOUSE_SUPERVISOR,BMM,true
+9,EMP00009,Miguel Lee,miguel.lee9@spares-ai-demo.local,Processing / Plant Operations,END_USER,Gamsberg,true
+10,EMP00010,Ashlee Martin,ashlee.martin10@spares-ai-demo.local,Mechanical Engineering,END_USER,BMM,true
+11,EMP00011,David Hamilton,david.hamilton11@spares-ai-demo.local,Instrumentation & Electrical,WAREHOUSE_SUPERVISOR,Gamsberg,false
+12,EMP00012,Anna Thompson,anna.thompson12@spares-ai-demo.local,Mining Operations,PROCUREMENT,Gamsberg,true
+13,EMP00013,Angela Kelly,angela.kelly13@spares-ai-demo.local,Plant Maintenance,PROCUREMENT,Gamsberg,true
+14,EMP00014,Susan Davis,susan.davis14@spares-ai-demo.local,Procurement,END_USER,Gamsberg,true
+15,EMP00015,Tiffany Jenkins,tiffany.jenkins15@spares-ai-demo.local,Processing / Plant Operations,COMMERCIAL_MANAGER,Gamsberg,true
+16,EMP00016,William Hernandez,william.hernandez16@spares-ai-demo.local,Mining Operations,END_USER,Gamsberg,true
+17,EMP00017,Jennifer Lee,jennifer.lee17@spares-ai-demo.local,Mechanical Engineering,END_USER,Gamsberg,true
+18,EMP00018,Matthew Johnson,matthew.johnson18@spares-ai-demo.local,Procurement,END_USER,Gamsberg,true
+19,EMP00019,Matthew Ponce,matthew.ponce19@spares-ai-demo.local,Mechanical Engineering,END_USER,BMM,true
+20,EMP00020,Tiffany Garner,tiffany.garner20@spares-ai-demo.local,Mining Operations,ADMIN,Gamsberg,true
+21,EMP00021,Adam Bentley,adam.bentley21@spares-ai-demo.local,Plant Maintenance,END_USER,BMM,true
+22,EMP00022,Monica Townsend,monica.townsend22@spares-ai-demo.local,Safety & SHEQ,END_USER,BMM,true
+23,EMP00023,Harold Garcia,harold.garcia23@spares-ai-demo.local,Processing / Plant Operations,WAREHOUSE_SUPERVISOR,BMM,true
+24,EMP00024,Robert Mcclure,robert.mcclure24@spares-ai-demo.local,Mining Operations,PROCUREMENT,Gamsberg,true

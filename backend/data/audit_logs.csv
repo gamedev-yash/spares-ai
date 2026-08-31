@@ -2931,3 +2931,5 @@ id,user_id,action,entity_type,entity_id,old_value,new_value,timestamp,ip_address
 2930,12,PO_CREATED,PO,472,,"{""po_number"": ""PO-3472""}",2026-09-02T00:46:36.003322+00:00,,synthetic-seed
 2931,21,RR_CREATED,RR,650,,"{""rr_number"": ""RR-1650""}",2026-04-05T07:46:36.003322+00:00,,synthetic-seed
 2932,1,APPROVAL_APPROVED,APPROVAL,632,,"{""status"": ""APPROVED""}",2026-08-25T10:14:47.768090+00:00,,
+2933,1,APPROVAL_APPROVED,APPROVAL,470,,"{""status"": ""APPROVED""}",2026-08-27T15:46:00.145129+00:00,,
+2934,1,APPROVAL_APPROVED,APPROVAL,174,,"{""status"": ""APPROVED""}",2026-08-27T15:46:27.266987+00:00,,

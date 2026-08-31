@@ -1,0 +1,73 @@
+/* Initiative 7's own color system, scoped to /inventory/* only. The neutrals (bg/card/
+   border/text) are still ported from the approved mockup, but the semantic accent colors
+   (primary/accent/warning/danger/coral/purple) are pinned to the SAME tokens the rest of
+   spares-ai already charts with -- src/app/globals.css's --chart-1..5/--success/--warning/
+   --destructive (see AgingStrip / PoValueDonut on /dashboard/situation-analysis) -- so every
+   Initiative-7 chart, badge, and status dot reads as one consistent app-wide palette instead
+   of a one-off. Dark-mode values swap in under spares-ai's existing `.dark` class strategy
+   (see src/app/globals.css's `@custom-variant dark`), so Initiative 7 follows the same
+   light/dark toggle as the rest of the app rather than carrying its own separate switch. */
+
+:root {
+  --i7-bg: #f8f9fb;
+  --i7-card: #ffffff;
+  --i7-primary: #2a78d6; /* = --chart-1 */
+  --i7-primary-light: #dbeafe;
+  --i7-accent: #1d9e75; /* = --success */
+  --i7-accent-light: #d1fae5;
+  --i7-warning: #b45309; /* = --warning */
+  --i7-warning-light: #fef3c7;
+  --i7-warning-border: #fde68a;
+  --i7-warning-text-strong: #92400e;
+  --i7-danger: #dc2626; /* = --destructive */
+  --i7-danger-light: #fee2e2;
+  --i7-coral: #eb6834; /* = --chart-2 */
+  --i7-coral-light: #ffedd5;
+  --i7-coral-border: #fed7aa;
+  --i7-purple: #4a3aa7; /* = --chart-5 */
+  --i7-purple-light: #ede9fe;
+  --i7-border: #e5e8ec;
+  --i7-text: #2c3e50;
+  --i7-text-muted: #7f8c8d;
+  --i7-text-light: #95a5a6;
+  --i7-table-header-bg: #f4f6f8;
+  --i7-chip-bg: #eef0f2;
+  --i7-impact-bg: #eef2f7;
+  --i7-overlay: rgba(20, 30, 40, 0.6);
+  --i7-shadow: rgba(0, 0, 0, 0.28);
+  --i7-muted-bg: #eaecee;
+  --i7-gray-solid: #909a9e;
+  --i7-gray-text: #566573;
+}
+
+.dark {
+  --i7-bg: #0e1621;
+  --i7-card: #16202b;
+  --i7-primary: #3987e5; /* = --chart-1 (dark) */
+  --i7-primary-light: rgba(57, 135, 229, 0.16);
+  --i7-accent: #22b989; /* = --success (dark) */
+  --i7-accent-light: rgba(34, 185, 137, 0.14);
+  --i7-warning: #fbbf24; /* = --warning (dark) */
+  --i7-warning-light: rgba(251, 191, 36, 0.14);
+  --i7-warning-border: rgba(251, 191, 36, 0.35);
+  --i7-warning-text-strong: #fcd34d;
+  --i7-danger: #f87171; /* = --destructive (dark) */
+  --i7-danger-light: rgba(248, 113, 113, 0.14);
+  --i7-coral: #fb923c; /* = --chart-2, lightened for dark-mode contrast */
+  --i7-coral-light: rgba(251, 146, 60, 0.14);
+  --i7-coral-border: rgba(251, 146, 60, 0.35);
+  --i7-purple: #9085e9; /* = --chart-5 (dark) */
+  --i7-purple-light: rgba(144, 133, 233, 0.16);
+  --i7-border: #283848;
+  --i7-text: #e8edf2;
+  --i7-text-muted: #9fb0bd;
+  --i7-text-light: #71838f;
+  --i7-table-header-bg: #1b2733;
+  --i7-chip-bg: #1e2a37;
+  --i7-impact-bg: #1b2733;
+  --i7-overlay: rgba(0, 0, 0, 0.75);
+  --i7-shadow: rgba(0, 0, 0, 0.5);
+  --i7-muted-bg: #24313f;
+  --i7-gray-solid: #8494a3;
+  --i7-gray-text: #b6c2cc;
+}

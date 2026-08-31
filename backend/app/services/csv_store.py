@@ -140,12 +140,28 @@ class Table:
 USERS_COLUMNS = ["id", "employee_code", "name", "email", "department", "role", "plant", "active"]
 USERS_TYPES = {"id": int, "active": bool}
 
+# Initiative-7 (predictive inventory / safety stock optimization) columns -- appended
+# rather than interleaved so the base Initiative-9 column set stays stable; populated by
+# scripts/generate_synthetic_data.py's extend_materials_initiative7(), see that module for
+# the generation rules. service_level_target_pct is intentionally always blank -- it
+# requires client sign-off, not synthetic fabrication (see criticality_policy.csv).
+INITIATIVE7_MATERIALS_COLUMNS = [
+    "equipment_id", "equipment_type", "circuit", "current_rop", "current_safety_stock",
+    "current_max_stock", "oar_flag", "service_level_target_pct",
+]
+INITIATIVE7_MATERIALS_TYPES = {
+    "current_rop": int, "current_safety_stock": int, "current_max_stock": int, "oar_flag": bool,
+}
+
 MATERIALS_COLUMNS = [
     "id", "material_code", "description", "material_group", "material_type", "plant", "storage_location",
     "unit_of_measure", "criticality", "lifecycle_status", "service_code", "manufacturer", "manufacturer_part_no",
     "last_po_price", "last_vendor", "stock_level", "lead_time_days", "active", "created_at", "updated_at",
-]
-MATERIALS_TYPES = {"id": int, "last_po_price": float, "stock_level": int, "lead_time_days": int, "active": bool}
+] + INITIATIVE7_MATERIALS_COLUMNS
+MATERIALS_TYPES = {
+    "id": int, "last_po_price": float, "stock_level": int, "lead_time_days": int, "active": bool,
+    **INITIATIVE7_MATERIALS_TYPES,
+}
 
 SUPPLIERS_COLUMNS = ["id", "supplier_code", "supplier_name", "country", "category", "rating", "active"]
 SUPPLIERS_TYPES = {"id": int, "rating": float, "active": bool}

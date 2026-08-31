@@ -3,7 +3,15 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Plus } from "lucide-react"
+import {
+  Plus,
+  Boxes,
+  ListChecks,
+  ClipboardCheck,
+  AlertTriangle,
+  ShieldCheck,
+  FileBarChart,
+} from "lucide-react"
 
 import { LogoutButton } from "@/components/shared/logout-button"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
@@ -16,6 +24,23 @@ import {
   QUICK_ACTIONS,
 } from "@/lib/constants"
 import { cn } from "@/lib/utils"
+
+/** Initiative 7 -- predictive inventory & safety stock optimization (client-side mockup,
+ * see src/lib/inventory/). Kept as a self-contained icon set rather than the ICONS registry
+ * since these routes/icons are specific to this one nav section. */
+const INITIATIVE7_LINKS: {
+  label: string
+  href: string
+  icon: typeof Boxes
+  exact?: boolean
+}[] = [
+  { label: "Overview", href: "/inventory", icon: Boxes, exact: true },
+  { label: "My Actions / Approvals", href: "/inventory/approvals", icon: ClipboardCheck },
+  { label: "Recommendations", href: "/inventory/recommendations", icon: ListChecks },
+  { label: "Exceptions", href: "/inventory/exceptions", icon: AlertTriangle },
+  { label: "Policies", href: "/inventory/policies", icon: ShieldCheck },
+  { label: "Reports", href: "/inventory/reports", icon: FileBarChart },
+]
 
 function NavSection({
   title,
@@ -57,8 +82,8 @@ export function Sidebar() {
   const isOnNewSession = pathname?.startsWith(newSessionHref) ?? false
 
   return (
-    <aside className="flex w-[240px] shrink-0 flex-col overflow-y-auto border-r border-border bg-card">
-      <div className="border-b border-border p-4">
+    <aside className="flex w-[240px] shrink-0 flex-col border-r border-border bg-card">
+      <div className="shrink-0 border-b border-border p-4">
         <h3 className="flex items-center gap-1.5 text-[15px] font-medium text-foreground">
           <CpuIcon className="size-[18px]" />
           Spares AI
@@ -68,6 +93,10 @@ export function Sidebar() {
         </p>
       </div>
 
+      {/* Only this middle section scrolls -- the header above and the theme
+          toggle/logout footer below stay pinned in view regardless of how many
+          nav sections/sessions are listed. */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
       <div className="px-2 pt-3 pb-1">
         <Link
           href={newSessionHref}
@@ -139,6 +168,28 @@ export function Sidebar() {
         })}
       </NavSection>
 
+      <NavSection title="Initiative 7">
+        {INITIATIVE7_LINKS.map((link) => {
+          const Icon = link.icon
+          const isActive = link.exact ? pathname === link.href : pathname?.startsWith(link.href)
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={cn(
+                "mx-2 my-0.5 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] transition-colors",
+                isActive
+                  ? "bg-[var(--i7-primary-light)] text-[var(--i7-primary)]"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              <Icon className="size-4 shrink-0" />
+              {link.label}
+            </Link>
+          )
+        })}
+      </NavSection>
+
       <NavSection title="Quick actions">
         {QUICK_ACTIONS.map((action) => {
           const Icon = ICONS[action.icon]
@@ -187,8 +238,9 @@ export function Sidebar() {
           )
         })}
       </NavSection>
+      </div>
 
-      <div className="mt-auto border-t border-border py-1">
+      <div className="shrink-0 border-t border-border py-1">
         <ThemeToggle />
         <LogoutButton />
       </div>

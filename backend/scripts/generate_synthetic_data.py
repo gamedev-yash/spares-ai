@@ -7,8 +7,18 @@ sub-steps (RFQ/Ariba/Auction/NFA) are simulated to produce realistic stage timin
 supplier selection, but only their process_stage_events + resulting PR/PO rows are
 persisted -- those sub-entities aren't part of the required CSV file set.
 
+Also generates the Initiative-7 (predictive inventory / safety stock optimization)
+extension tables -- see the "Initiative-7 extensions" section below and
+Initiative_7_Data_Requirement_Sheet.pdf for the field-level rationale. These are additive:
+consumption_history/goods_receipt/current_inventory/criticality_policy/maintenance_orders/
+equipment_utilization/equipment are new files, and materials.csv gains new columns, but
+none of rr/pr/po/approvals/audit_logs/notifications/process_stage_events are touched.
+
 Usage:
     python scripts/generate_synthetic_data.py [--seed 12345]
+    python scripts/generate_synthetic_data.py --only-initiative-7   # regenerate just the
+        Initiative-7 tables + materials.csv's Initiative-7 columns, reusing the existing
+        Initiative-9 procurement data on disk (requires a prior full run)
 
 Suppliers and manufacturers are deliberately fictional (see catalog.py) -- this is fabricated
 transaction/rating history and must never be attached to a real company's name.
@@ -595,6 +605,386 @@ def backfill_material_last_purchase(materials: list[dict], suppliers: list[dict]
             material["last_po_price"] = unit_price
 
 
+# ---------------------------------------------------------------------------
+# Initiative-7 extensions: predictive inventory & safety stock optimization.
+#
+# Everything below is additive on top of the Initiative-9 procurement dataset above -- see
+# Initiative_7_Data_Requirement_Sheet.pdf for the field-level rationale. None of it is
+# derived from rr/pr/po (those are procurement *events*); this section synthesizes the
+# consumption/inventory/maintenance data those tables never captured, standing in for SAP
+# tables (MSEG, EKBE, MARD, AFKO/RESB) that don't exist as extracts in this environment.
+# ---------------------------------------------------------------------------
+
+CIRCUITS = ["Crushing", "Milling", "Pumping", "Filtration"]
+
+# material_group -> circuit, for the categories with an obvious real-world link. Everything
+# else (Bearings, Valves, Motors, Conveyor Components, Electrical Spares, Instrumentation,
+# Mechanical Seals, Services) is unbiased and gets balanced across all four circuits below.
+CIRCUIT_GROUP_BIAS = {
+    "Crusher Components": "Crushing",
+    "Milling Components": "Milling",
+    "Pumps": "Pumping",
+    "Flotation Components": "Filtration",
+}
+
+EQUIPMENT_TYPES_BY_CIRCUIT = {
+    "Crushing": ["Jaw Crusher", "Cone Crusher", "Gyratory Crusher"],
+    "Milling": ["Ball Mill", "SAG Mill", "Rod Mill"],
+    "Pumping": ["Slurry Pump", "Centrifugal Pump", "Diaphragm Pump"],
+    "Filtration": ["Vacuum Filter", "Pressure Filter", "Belt Filter"],
+}
+
+DEMAND_PROFILE_WEIGHTS = {"smooth": 0.40, "erratic": 0.20, "intermittent": 0.25, "lumpy": 0.15}
+MAINTENANCE_TYPE_WEIGHTS = {"Preventive": 0.50, "Corrective": 0.35, "Shutdown": 0.15}
+MONTHS_OF_HISTORY = 24
+
+
+def month_sequence(now: datetime, count: int = MONTHS_OF_HISTORY) -> list[str]:
+    """count consecutive "YYYY-MM" periods ending at now's month, oldest first."""
+    months = []
+    year, month = now.year, now.month
+    for offset in range(count - 1, -1, -1):
+        m = month - offset
+        y = year
+        while m <= 0:
+            m += 12
+            y -= 1
+        months.append(f"{y:04d}-{m:02d}")
+    return months
+
+
+def assign_circuits(rng: random.Random, materials: list[dict]) -> dict[int, str]:
+    """circuit -> Crushing/Milling/Pumping/Filtration, biased by material_group where a
+    real-world link exists (Crusher/Milling/Pumps/Flotation Components), evenly spread
+    otherwise. The unbiased materials are allocated by quota (largest-remainder method) so
+    the *final* per-circuit mix lands within ~10% of an even split regardless of how the
+    biased categories happen to be sized -- mirrors how a Circuit custom field would
+    actually get populated/reviewed against SAP, not pure chance."""
+    target = len(materials) / len(CIRCUITS)
+    biased_counts = {c: 0 for c in CIRCUITS}
+    assignment: dict[int, str] = {}
+    flexible: list[int] = []
+
+    for m in materials:
+        circuit = CIRCUIT_GROUP_BIAS.get(m["material_group"])
+        if circuit is None:
+            flexible.append(m["id"])
+        else:
+            assignment[m["id"]] = circuit
+            biased_counts[circuit] += 1
+
+    remaining = {c: max(0.0, target - biased_counts[c]) for c in CIRCUITS}
+    total_remaining = sum(remaining.values())
+
+    if total_remaining > 0 and flexible:
+        raw = {c: (remaining[c] / total_remaining) * len(flexible) for c in CIRCUITS}
+        bag = [c for c in CIRCUITS for _ in range(int(raw[c]))]
+        shortfall = len(flexible) - len(bag)
+        by_fraction = sorted(CIRCUITS, key=lambda c: raw[c] - int(raw[c]), reverse=True)
+        bag.extend(by_fraction[:shortfall])
+    else:
+        bag = [rng.choice(CIRCUITS) for _ in flexible]
+
+    rng.shuffle(bag)
+    for material_id, circuit in zip(flexible, bag):
+        assignment[material_id] = circuit
+
+    return assignment
+
+
+def select_oar_materials(rng: random.Random, physical_materials: list[dict]) -> set[int]:
+    """~10-15% of physical materials flagged One-and-Alike/non-moving, weighted toward rows
+    that already look slow-moving/high-value in the existing synthetic data (Obsolete/EOL
+    lifecycle, CRITICAL criticality, above-median price) rather than picked uniformly at
+    random. Uses weighted reservoir sampling (A-Res: key = U^(1/weight), take the top keys)
+    so the result is a proper weighted sample without replacement."""
+    prices = sorted(float(m["last_po_price"]) for m in physical_materials)
+    median_price = prices[len(prices) // 2]
+
+    def weight(m: dict) -> float:
+        w = 1.0
+        if m["lifecycle_status"] in ("Obsolete", "EOL"):
+            w += 3.0
+        if m["criticality"] == "CRITICAL":
+            w += 2.0
+        if float(m["last_po_price"]) > median_price:
+            w += 1.0
+        return w
+
+    target_count = round(len(physical_materials) * rng.uniform(0.10, 0.15))
+    keyed = sorted(physical_materials, key=lambda m: rng.random() ** (1.0 / weight(m)), reverse=True)
+    return {m["id"] for m in keyed[:target_count]}
+
+
+def generate_equipment(rng: random.Random, rows: Rows) -> list[dict]:
+    """Small equipment master so materials.equipment_id references something real instead
+    of free text. Stands in for SAP EQUI/EQKT (equipment master), not part of this
+    environment's extract."""
+    equipment: list[dict] = []
+    seq = IdSequence(1)
+    per_cell = 6  # 4 circuits x 2 plants x 6 = 48, within the 40-60 target range
+    for circuit in CIRCUITS:
+        for plant in catalog.PLANTS:
+            for _ in range(per_cell):
+                equipment.append(
+                    {
+                        "equipment_id": f"EQ-{circuit[:4].upper()}-{seq.next():04d}",
+                        "equipment_type": rng.choice(EQUIPMENT_TYPES_BY_CIRCUIT[circuit]),
+                        "circuit": circuit,
+                        "plant": plant,
+                    }
+                )
+    rows.data["equipment"] = equipment
+    return equipment
+
+
+def extend_materials_initiative7(rng: random.Random, materials: list[dict], equipment: list[dict], rows: Rows) -> set[int]:
+    """Adds the Initiative-7 columns to every existing material row in place -- ids and
+    descriptions are untouched so existing rr_line_items/pr_line_items/po_line_items links
+    stay valid. Returns the set of material ids flagged OAR."""
+    circuits = assign_circuits(rng, materials)
+    equipment_by_circuit_plant: dict[tuple[str, str], list[dict]] = {}
+    for eq in equipment:
+        equipment_by_circuit_plant.setdefault((eq["circuit"], eq["plant"]), []).append(eq)
+
+    physical_materials = [m for m in materials if m["material_group"] != "Services"]
+    oar_ids = select_oar_materials(rng, physical_materials)
+
+    for m in materials:
+        circuit = circuits[m["id"]]
+        candidates = equipment_by_circuit_plant.get((circuit, m["plant"]), equipment)
+        eq = rng.choice(candidates)
+        m["equipment_id"] = eq["equipment_id"]
+        m["equipment_type"] = eq["equipment_type"]
+        m["circuit"] = circuit
+
+        is_oar = m["id"] in oar_ids
+        m["oar_flag"] = is_oar
+        # Services aren't stock-managed (stock_level is always 0 for them, see
+        # generate_materials) -- ROP/SS/Max only make sense for physical spares.
+        if is_oar or m["material_group"] == "Services":
+            m["current_rop"] = 0
+            m["current_safety_stock"] = 0
+            m["current_max_stock"] = 0
+        else:
+            rop = rng.randint(1, 15)
+            m["current_rop"] = rop
+            m["current_safety_stock"] = max(0, rop - rng.randint(1, 6))
+            m["current_max_stock"] = rop + rng.randint(2, 20)
+        # Requires client sign-off, not synthetic fabrication -- see criticality_policy.csv.
+        m["service_level_target_pct"] = None
+
+    return oar_ids
+
+
+def pick_movement_type(rng: random.Random) -> str:
+    if rng.random() < 0.70:
+        return rng.choice(["261", "262"])  # production goods issue
+    return rng.choice(["201", "202"])  # cost-center goods issue
+
+
+def generate_consumption_history(rng: random.Random, now: datetime, physical_materials: list[dict], oar_ids: set[int], rows: Rows) -> tuple[dict[str, int], int]:
+    """Synthetic MSEG-style goods-issue data -- no real SAP consumption extract exists in
+    this environment. This is the input the Initiative-7 demand classification / SBA
+    baseline / LightGBM challenger all depend on, so each material gets a deliberate hidden
+    demand profile (not uniform randomness) to produce real ADI/CV^2 signal. OAR materials
+    get sparse (0-4 non-zero months) history by design instead of a full profile."""
+    months = month_sequence(now)
+    rows_out: list[dict] = []
+    profile_counts = {k: 0 for k in DEMAND_PROFILE_WEIGHTS}
+    non_oar = [m for m in physical_materials if m["id"] not in oar_ids]
+
+    profile_params = {
+        "smooth": (0.95, 0.85, 1.15),
+        "erratic": (0.92, 0.30, 2.50),
+        "intermittent": (0.55, 0.60, 1.60),
+        "lumpy": (0.35, 0.30, 3.00),
+    }
+
+    for material in non_oar:
+        profile = weighted_choice(rng, DEMAND_PROFILE_WEIGHTS)
+        profile_counts[profile] += 1
+        presence_pct, low, high = profile_params[profile]
+        base = rng.randint(2, 15)
+
+        for period in months:
+            if rng.random() > presence_pct:
+                continue
+            qty = max(1, round(base * rng.uniform(low, high)))
+            rows_out.append(
+                {
+                    "material_id": material["id"], "period_month": period, "qty_consumed": qty,
+                    "movement_type": pick_movement_type(rng), "plant": material["plant"],
+                }
+            )
+
+    oar_physical = [m for m in physical_materials if m["id"] in oar_ids]
+    for material in oar_physical:
+        non_zero_months = rng.randint(0, 4)
+        for period in rng.sample(months, k=non_zero_months) if non_zero_months else []:
+            rows_out.append(
+                {
+                    "material_id": material["id"], "period_month": period, "qty_consumed": rng.randint(1, 3),
+                    "movement_type": pick_movement_type(rng), "plant": material["plant"],
+                }
+            )
+
+    rows.data["consumption_history"] = rows_out
+    return profile_counts, len(non_oar)
+
+
+def generate_goods_receipt(rng: random.Random, now: datetime, physical_materials: list[dict], oar_ids: set[int], suppliers: list[dict], rows: Rows) -> None:
+    """Synthetic actual-delivery data -- stands in for a join of SAP EKKO/EKPO (PO) with
+    EKBE movement-101 (goods receipt). po_line_items.status/delivery_date in the
+    Initiative-9 dataset conflates planned vs actual, so lead-time variability analysis
+    needs its own table with a real planned-vs-actual spread (~15% stddev around each
+    material's assigned planned lead time)."""
+    rows_out: list[dict] = []
+    seq = IdSequence(1)
+    non_oar = [m for m in physical_materials if m["id"] not in oar_ids]
+
+    for material in non_oar:
+        planned_lead_time = rng.randint(45, 150)
+        for _ in range(rng.randint(4, 8)):
+            supplier = rng.choice(suppliers)
+            po_creation = (now - timedelta(days=rng.randint(30, 730))).date()
+            actual_lead_time = max(1, round(rng.gauss(planned_lead_time, planned_lead_time * 0.15)))
+            ordered_qty = rng.randint(1, 20)
+            rows_out.append(
+                {
+                    "po_number": f"GR-PO-{seq.next():06d}", "material_id": material["id"],
+                    "vendor": supplier["supplier_name"], "po_creation_date": po_creation.isoformat(),
+                    "expected_delivery_date": (po_creation + timedelta(days=planned_lead_time)).isoformat(),
+                    "goods_receipt_date": (po_creation + timedelta(days=actual_lead_time)).isoformat(),
+                    "ordered_qty": ordered_qty, "received_qty": ordered_qty, "po_status": "DELIVERED",
+                }
+            )
+    rows.data["goods_receipt"] = rows_out
+
+
+def generate_current_inventory(rng: random.Random, materials: list[dict], rows: Rows) -> None:
+    """Splits the single materials.stock_level figure into a realistic
+    unrestricted/blocked/reserved/open-PO breakdown -- stands in for SAP MARD plus a
+    RESB/EKPO open-quantity rollup, neither of which exist as separate tables here. Where a
+    material has a real open (undelivered) PO line in po.csv/po_line_items.csv, that
+    quantity is reused instead of a random one, for tighter internal consistency."""
+    po_by_id = {po["id"]: po for po in rows.data.get("po", [])}
+    open_po_by_material: dict[int, int] = {}
+    for line in rows.data.get("po_line_items", []):
+        po = po_by_id.get(line["po_id"])
+        if po is None or po["status"] not in ("OPEN", "PARTIALLY_DELIVERED") or line["status"] != "OPEN":
+            continue
+        open_po_by_material[line["material_id"]] = open_po_by_material.get(line["material_id"], 0) + int(line["quantity"])
+
+    rows_out: list[dict] = []
+    for m in materials:
+        if m["material_group"] == "Services":
+            continue
+        blocked = rng.randint(1, 3) if rng.random() < 0.20 else 0
+        reserved = rng.randint(1, 4) if rng.random() < 0.30 else 0
+        open_po_qty = open_po_by_material.get(m["id"])
+        if open_po_qty is None:
+            open_po_qty = rng.randint(1, 10) if rng.random() < 0.40 else 0
+        rows_out.append(
+            {
+                "material_id": m["id"], "plant": m["plant"], "unrestricted_stock": m["stock_level"],
+                "blocked_stock": blocked, "reserved_stock": reserved, "open_po_qty": open_po_qty,
+            }
+        )
+    rows.data["current_inventory"] = rows_out
+
+
+def generate_criticality_policy(materials: list[dict], rows: Rows) -> None:
+    """The governing criticality x circuit -> service-level matrix -- structure only.
+    Targets/Z-factors are LOCKED pending Vedanta business sign-off (see the Initiative-7
+    data requirement sheet, items 38/8) and must never be fabricated here."""
+    criticalities = sorted({m["criticality"] for m in materials if m["material_group"] != "Services"})
+    rows.data["criticality_policy"] = [
+        {"criticality": crit, "circuit": circuit, "service_level_target_pct": None, "z_factor": None, "status": "PENDING_SIGNOFF"}
+        for crit in criticalities
+        for circuit in CIRCUITS
+    ]
+
+
+def generate_maintenance_orders(rng: random.Random, now: datetime, physical_materials: list[dict], rows: Rows) -> None:
+    """Forward-looking demand signal -- stands in for a join of SAP AFKO/AFIH (work order
+    header) with RESB (material reservation), not part of this environment's extract.
+    ~30-35% of materials get one upcoming work order; most don't."""
+    seq = IdSequence(1)
+    rows_out: list[dict] = []
+    for material in physical_materials:
+        if rng.random() >= 0.32:
+            continue
+        planned_date = (now + timedelta(days=rng.randint(30, 120))).date()
+        rows_out.append(
+            {
+                "work_order": f"WO-{seq.next():06d}", "material_id": material["id"],
+                "equipment_id": material["equipment_id"], "planned_date": planned_date.isoformat(),
+                "required_qty": rng.randint(1, 10), "maintenance_type": weighted_choice(rng, MAINTENANCE_TYPE_WEIGHTS),
+            }
+        )
+    rows.data["maintenance_orders"] = rows_out
+
+
+def generate_equipment_utilization(rng: random.Random, now: datetime, equipment: list[dict], rows: Rows) -> None:
+    """Synthetic operating-hours/utilization series -- stands in for an operational
+    system (e.g. a DCS/historian) outside SAP; optional tier per the data requirement
+    sheet, useful for LightGBM wear-based demand features. Each equipment gets a base
+    utilization % with monthly noise, clipped to [20, 100]."""
+    months = month_sequence(now)
+    rows_out: list[dict] = []
+    for eq in equipment:
+        base = rng.uniform(55, 80)
+        for period in months:
+            pct = max(20.0, min(100.0, base + rng.uniform(-8, 8)))
+            rows_out.append(
+                {
+                    "equipment_id": eq["equipment_id"], "period_month": period,
+                    "operating_hours": round(pct * 7.2, 1), "utilization_pct": round(pct, 1),
+                }
+            )
+    rows.data["equipment_utilization"] = rows_out
+
+
+INITIATIVE7_TABLE_SCHEMAS = {
+    "equipment": (["equipment_id", "equipment_type", "circuit", "plant"], {}),
+    "consumption_history": (
+        ["material_id", "period_month", "qty_consumed", "movement_type", "plant"],
+        {"material_id": int, "qty_consumed": int},
+    ),
+    "goods_receipt": (
+        [
+            "po_number", "material_id", "vendor", "po_creation_date", "expected_delivery_date",
+            "goods_receipt_date", "ordered_qty", "received_qty", "po_status",
+        ],
+        {"material_id": int, "ordered_qty": int, "received_qty": int},
+    ),
+    "current_inventory": (
+        ["material_id", "plant", "unrestricted_stock", "blocked_stock", "reserved_stock", "open_po_qty"],
+        {"material_id": int, "unrestricted_stock": int, "blocked_stock": int, "reserved_stock": int, "open_po_qty": int},
+    ),
+    "criticality_policy": (["criticality", "circuit", "service_level_target_pct", "z_factor", "status"], {}),
+    "maintenance_orders": (
+        ["work_order", "material_id", "equipment_id", "planned_date", "required_qty", "maintenance_type"],
+        {"material_id": int, "required_qty": int},
+    ),
+    "equipment_utilization": (
+        ["equipment_id", "period_month", "operating_hours", "utilization_pct"],
+        {"operating_hours": float, "utilization_pct": float},
+    ),
+}
+INITIATIVE7_WRITE_ORDER = list(INITIATIVE7_TABLE_SCHEMAS.keys())
+
+
+def persist_initiative7(rows: Rows, data_dir: Path) -> None:
+    data_dir.mkdir(parents=True, exist_ok=True)
+    for name in INITIATIVE7_WRITE_ORDER:
+        columns, types = INITIATIVE7_TABLE_SCHEMAS[name]
+        table = cs.Table(data_dir / f"{name}.csv", columns, types)
+        table.replace_all(rows.data.get(name, []))
+        print(f"  wrote {len(rows.data.get(name, [])):>6} rows -> {name}.csv")
+
+
 TABLE_SCHEMAS = {
     "users": (cs.USERS_COLUMNS, cs.USERS_TYPES),
     "materials": (cs.MATERIALS_COLUMNS, cs.MATERIALS_TYPES),
@@ -626,6 +1016,16 @@ def persist(rows: Rows, data_dir: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--seed", type=int, default=None, help="Override SYNTHETIC_DATA_SEED")
+    parser.add_argument(
+        "--only-initiative-7",
+        action="store_true",
+        help=(
+            "Regenerate only the Initiative-7 tables (equipment/consumption_history/goods_receipt/"
+            "current_inventory/criticality_policy/maintenance_orders/equipment_utilization) plus the "
+            "Initiative-7 columns on materials.csv, reusing the existing Initiative-9 procurement data "
+            "on disk instead of regenerating it. Requires a prior full run."
+        ),
+    )
     args = parser.parse_args()
 
     settings = get_settings()
@@ -636,23 +1036,74 @@ def main() -> None:
     now = datetime.now(timezone.utc)
     now_iso = now.isoformat()
 
-    print(f"Generating synthetic Initiative-9 dataset with SEED={seed} ...")
     rows = Rows()
 
-    users = generate_users(rng, faker, rows)
-    materials = generate_materials(rng, now_iso, rows)
-    suppliers = generate_suppliers(rng, rows)
-    users_by_role = pick_users_by_role(users)
+    if args.only_initiative_7:
+        print(f"Regenerating Initiative-7 tables only (seed={seed}), reusing existing procurement data ...")
+        materials_path = settings.data_dir / "materials.csv"
+        if not materials_path.exists():
+            raise SystemExit("materials.csv not found -- run a full generation first (without --only-initiative-7).")
+        # Load only the base (Initiative-9) columns -- every Initiative-7 column is
+        # recomputed fresh below, not carried over from a previous run.
+        base_columns = [c for c in cs.MATERIALS_COLUMNS if c not in cs.INITIATIVE7_MATERIALS_COLUMNS]
+        materials = cs.Table(materials_path, base_columns, cs.MATERIALS_TYPES).all()
+        suppliers = cs.Table(settings.data_dir / "suppliers.csv", cs.SUPPLIERS_COLUMNS, cs.SUPPLIERS_TYPES).all()
+        rows.data["po"] = cs.Table(settings.data_dir / "po.csv", cs.PO_COLUMNS, cs.PO_TYPES).all()
+        rows.data["po_line_items"] = cs.Table(settings.data_dir / "po_line_items.csv", cs.PO_LINE_ITEMS_COLUMNS, cs.PO_LINE_ITEMS_TYPES).all()
+    else:
+        print(f"Generating synthetic Initiative-9 dataset with SEED={seed} ...")
+        users = generate_users(rng, faker, rows)
+        materials = generate_materials(rng, now_iso, rows)
+        suppliers = generate_suppliers(rng, rows)
+        users_by_role = pick_users_by_role(users)
 
-    generate_pipeline(rng, now, users, users_by_role, materials, suppliers, rows)
-    backfill_material_last_purchase(materials, suppliers, rows)
+        generate_pipeline(rng, now, users, users_by_role, materials, suppliers, rows)
+        backfill_material_last_purchase(materials, suppliers, rows)
+
+    print("Generating Initiative-7 predictive-inventory tables ...")
+    equipment = generate_equipment(rng, rows)
+    oar_ids = extend_materials_initiative7(rng, materials, equipment, rows)
+    rows.data["materials"] = materials
+    physical_materials = [m for m in materials if m["material_group"] != "Services"]
+
+    profile_counts, non_oar_count = generate_consumption_history(rng, now, physical_materials, oar_ids, rows)
+    generate_goods_receipt(rng, now, physical_materials, oar_ids, suppliers, rows)
+    generate_current_inventory(rng, materials, rows)
+    generate_criticality_policy(materials, rows)
+    generate_maintenance_orders(rng, now, physical_materials, rows)
+    generate_equipment_utilization(rng, now, equipment, rows)
 
     print("Writing CSV files ...")
-    persist(rows, settings.data_dir)
+    if args.only_initiative_7:
+        # Only rewrite materials.csv (Initiative-7 columns updated) -- rr/pr/po/approvals/
+        # audit_logs/notifications/process_stage_events stay untouched on disk.
+        columns, types = TABLE_SCHEMAS["materials"]
+        cs.Table(settings.data_dir / "materials.csv", columns, types).replace_all(materials)
+        print(f"  wrote {len(materials):>6} rows -> materials.csv (Initiative-7 columns updated)")
+    else:
+        persist(rows, settings.data_dir)
+    persist_initiative7(rows, settings.data_dir)
 
-    print("\nDone. Row counts:")
-    for name in WRITE_ORDER:
-        print(f"  {name:<24} {len(rows.data.get(name, [])):>6}")
+    oar_count = len(oar_ids)
+    print("\nInitiative-7 summary:")
+    print(f"  equipment                {len(rows.data.get('equipment', [])):>6}")
+    print(f"  consumption_history      {len(rows.data.get('consumption_history', [])):>6}")
+    print(f"  goods_receipt            {len(rows.data.get('goods_receipt', [])):>6}")
+    print(f"  current_inventory        {len(rows.data.get('current_inventory', [])):>6}")
+    print(f"  criticality_policy       {len(rows.data.get('criticality_policy', [])):>6}")
+    print(f"  maintenance_orders       {len(rows.data.get('maintenance_orders', [])):>6}")
+    print(f"  equipment_utilization    {len(rows.data.get('equipment_utilization', [])):>6}")
+    print(f"  oar_flag materials       {oar_count:>6} / {len(physical_materials)} physical ({oar_count / len(physical_materials):.1%})")
+    print("  demand profile mix (non-OAR physical materials):")
+    for profile, target_weight in DEMAND_PROFILE_WEIGHTS.items():
+        n = profile_counts.get(profile, 0)
+        pct = n / non_oar_count if non_oar_count else 0.0
+        print(f"    {profile:<12} {n:>4} ({pct:.1%}, target {target_weight:.0%})")
+
+    if not args.only_initiative_7:
+        print("\nDone. Row counts:")
+        for name in WRITE_ORDER:
+            print(f"  {name:<24} {len(rows.data.get(name, [])):>6}")
 
 
 if __name__ == "__main__":
