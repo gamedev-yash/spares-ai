@@ -2,12 +2,13 @@
 
 import { useCallback, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
-import { ChevronUp, ChevronDown, RotateCcw, Search } from "lucide-react"
+import { PieChart, Pie, Cell, BarChart, Bar, LineChart, Line, CartesianGrid, Legend, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
+import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, RotateCcw, Search, Boxes, AlertTriangle, CheckCircle2, Clock, FileText } from "lucide-react"
 
 import { useInventory } from "@/lib/inventory/context"
 import { LoadingState, ErrorState } from "@/components/inventory/loading-state"
-import { KPICard, Select, Panel, Badge } from "@/components/inventory/ui/primitives"
+import { Select, Panel, Badge, PillSelect } from "@/components/inventory/ui/primitives"
+import { deriveMonthWindow } from "@/lib/inventory/calc/months"
 import { formatCurrencyCompact } from "@/lib/inventory/format"
 import {
   COLORS,
@@ -15,7 +16,6 @@ import {
   CRIT_SHORT,
   CRIT_COLOR,
   CRIT_ORDER,
-  DEMAND_COLOR,
   RISK_ORDER,
   RISK_META,
   STATUS_COLOR,
@@ -29,6 +29,13 @@ const CRITICALITIES = ["CRITICAL", "HIGH", "MEDIUM"]
 const DEMAND_PATTERNS = ["Smooth", "Erratic", "Intermittent", "Lumpy", "OAR"]
 const RISK_LEVELS = ["Critical", "High", "Medium", "Low"]
 const STATUSES: ApprovalStatus[] = ["NEEDS_REVIEW", "IN_APPROVAL", "APPROVED", "ADJUSTED", "REJECTED"]
+
+/** Smoothing constant for the portfolio-level demand forecast on this page. Deliberately more
+ * responsive than calc/config's SBA_ALPHA (0.1), which is tuned for per-item intermittent
+ * demand -- this series is an aggregate across many materials, where a 0.1 level barely moves. */
+const PORTFOLIO_FORECAST_ALPHA = 0.3
+
+const pctOf = (part: number, whole: number) => (whole > 0 ? `${((part / whole) * 100).toFixed(1)}%` : "--")
 
 interface Filters {
   plant: string
@@ -47,6 +54,9 @@ export default function InventoryOverviewPage() {
   const [filters, setFilters] = useState<Filters>(emptyFilters)
   const [sortKey, setSortKey] = useState<"risk" | "valueChange" | "ropChange" | "crit" | "confidence">("risk")
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc")
+  const [demandMonths, setDemandMonths] = useState(6)
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(100)
 
   // Only physical, stock-managed materials participate in this dashboard -- service lines
   // carry no SS/ROP/Max recommendation (see RecommendationEngine.buildNotStockManaged).
@@ -106,6 +116,50 @@ export default function InventoryOverviewPage() {
     return [...filteredRows].sort((a, b) => (val(a) - val(b)) * (sortDir === "asc" ? 1 : -1))
   }, [filteredRows, sortKey, sortDir, value, curValue])
 
+  /**
+   * Portfolio demand: actual monthly consumption for the materials currently in view, paired
+   * with a one-step-ahead simple-exponential-smoothing forecast of that same series. Each
+   * forecast point is the smoothed level from the PRIOR month only, so the line is a genuine
+   * out-of-sample baseline rather than a curve fitted to the answer. The first month has no
+   * prior data and is therefore left null (recharts skips it via connectNulls).
+   */
+  const demandSeries = useMemo(() => {
+    const months = deriveMonthWindow(data?.consumptionHistory ?? [])
+    if (months.length === 0) return []
+    const inView = new Set(filteredRows.map((r) => r.materialId))
+    if (inView.size === 0) return []
+
+    const actualByMonth = new Map<string, number>()
+    for (const row of data?.consumptionHistory ?? []) {
+      if (!inView.has(row.material_id)) continue
+      actualByMonth.set(row.period_month, (actualByMonth.get(row.period_month) ?? 0) + row.qty_consumed)
+    }
+
+    let level = actualByMonth.get(months[0]) ?? 0
+    const series = months.map((m, i) => {
+      const actual = actualByMonth.get(m) ?? 0
+      const forecast = i === 0 ? null : Math.round(level)
+      if (i > 0) level = PORTFOLIO_FORECAST_ALPHA * actual + (1 - PORTFOLIO_FORECAST_ALPHA) * level
+      const [year, month] = m.split("-").map(Number)
+      return {
+        label: new Date(Date.UTC(year, month - 1, 1)).toLocaleString("en-ZA", { month: "short", timeZone: "UTC" }),
+        actual,
+        forecast,
+      }
+    })
+    return series.slice(-demandMonths)
+  }, [data, filteredRows, demandMonths])
+
+  // Pagination is clamped during render rather than reset via an effect -- narrowing the
+  // filters can shrink the result set below the current page, and clamping keeps the table
+  // showing real rows without an extra render pass.
+  const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize))
+  const safePage = Math.min(page, totalPages)
+  const pageRows = sorted.slice((safePage - 1) * pageSize, safePage * pageSize)
+  const rangeFrom = sorted.length === 0 ? 0 : (safePage - 1) * pageSize + 1
+  const rangeTo = Math.min(safePage * pageSize, sorted.length)
+  const pageNumbers = buildPageNumbers(safePage, totalPages)
+
   // Derived from STATUS_COLOR rather than re-listed, so the donut/legend here always match
   // the status badges on Recommendations and Approvals.
   const STATUS_HEX: Record<string, string> = Object.fromEntries(
@@ -122,7 +176,7 @@ export default function InventoryOverviewPage() {
     <div style={{ minHeight: 0, flex: "1 1 auto", overflowY: "auto", padding: 20 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14, flexWrap: "wrap", gap: 8 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 18, color: COLORS.text }}>Inventory optimization</h2>
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: COLORS.text }}>Inventory optimization</h2>
           <p style={{ margin: "4px 0 0", fontSize: 13, color: COLORS.textMuted }}>
             Portfolio health at a glance -- every filter and chart below is cross-linked
           </p>
@@ -132,20 +186,43 @@ export default function InventoryOverviewPage() {
 
       {/* KPI HEADER */}
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 16 }}>
-        <KPICard label="Materials in scope" value={materialsInScope.toLocaleString()} sub="Plant + circuit + criticality" />
-        <KPICard
-          label="At risk -- critical"
+        <StatCard
+          label="Materials in Scope"
+          value={materialsInScope.toLocaleString()}
+          unit={`/ ${data.materials.length} tracked`}
+          caption="Stock-managed"
+          captionColor={COLORS.textMuted}
+          icon={Boxes}
+          color={COLORS.primary}
+        />
+        <StatCard
+          label="Critical Stockout Risk"
           value={criticalAtRisk}
-          sub="Click to isolate"
+          unit="Materials"
+          caption={`${pctOf(criticalAtRisk, materialsInScope)} of in-scope`}
+          captionColor={COLORS.danger}
+          icon={AlertTriangle}
           color={COLORS.danger}
           active={filters.risk === "Critical"}
           onClick={() => setFilter("risk", "Critical")}
         />
-        <KPICard label="Recommendations" value={filteredRows.length} sub="Matching current filters" color={COLORS.warning} onClick={anyFilterActive ? clearAll : undefined} />
-        <KPICard
-          label="Pending approval"
+        <StatCard
+          label="Recommendations"
+          value={filteredRows.length}
+          unit="Match current filters"
+          caption={`${pctOf(filteredRows.length, materialsInScope)} of in-scope`}
+          captionColor={COLORS.accent}
+          icon={CheckCircle2}
+          color={COLORS.accent}
+          onClick={anyFilterActive ? clearAll : undefined}
+        />
+        <StatCard
+          label="Pending Approval"
           value={pendingCount}
-          sub="Click to isolate"
+          unit="Materials"
+          caption={`${pctOf(pendingCount, filteredRows.length)} of recommendations`}
+          captionColor={COLORS.warning}
+          icon={Clock}
           color={COLORS.warning}
           active={filters.status === "IN_APPROVAL"}
           onClick={() => setFilter("status", "IN_APPROVAL")}
@@ -291,63 +368,103 @@ export default function InventoryOverviewPage() {
             </Panel>
           </div>
 
-          {/* Stockout risk stacked bar */}
-          <Panel title="Stockout risk" style={{ minWidth: "100%", marginBottom: 16 }}>
-            {(() => {
-              const totalRisk = riskData.reduce((s, d) => s + d.count, 0)
-              if (totalRisk === 0) return <div style={{ fontSize: 13, color: COLORS.textMuted, padding: "8px 0" }}>No materials match the current filters.</div>
-              return (
-                <>
-                  <div style={{ display: "flex", height: 30, borderRadius: 6, overflow: "hidden", marginBottom: 10 }}>
-                    {riskData
-                      .filter((d) => d.count > 0)
-                      .map((d) => {
-                        const pct = (d.count / totalRisk) * 100
-                        const active = filters.risk === "All" || filters.risk === d.name
-                        return (
-                          <div
-                            key={d.name}
-                            onClick={() => setFilter("risk", d.name)}
-                            title={`${d.name}: ${d.count}`}
-                            style={{
-                              width: `${pct}%`,
-                              background: RISK_META[d.name].dot,
-                              cursor: "pointer",
-                              opacity: active ? 1 : 0.3,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              transition: "opacity .15s",
-                            }}
-                          >
-                            {pct > 7 && <span style={{ color: "#fff", fontSize: 11, fontWeight: 700 }}>{d.count}</span>}
-                          </div>
-                        )
-                      })}
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 16 }}>
+            {/* Stockout risk -- vertical stacked column + legend */}
+            <Panel title="Stockout Risk Distribution" style={{ flex: "0 1 270px", marginBottom: 0 }}>
+              {(() => {
+                const totalRisk = riskData.reduce((s, d) => s + d.count, 0)
+                if (totalRisk === 0) return <div style={{ fontSize: 13, color: COLORS.textMuted, padding: "8px 0" }}>No materials match the current filters.</div>
+                return (
+                  <div style={{ display: "flex", gap: 14, alignItems: "stretch" }}>
+                    <div style={{ width: 32, height: 150, borderRadius: 6, overflow: "hidden", display: "flex", flexDirection: "column", flexShrink: 0 }}>
+                      {riskData
+                        .filter((d) => d.count > 0)
+                        .map((d) => {
+                          const pct = (d.count / totalRisk) * 100
+                          const active = filters.risk === "All" || filters.risk === d.name
+                          return (
+                            <div
+                              key={d.name}
+                              onClick={() => setFilter("risk", d.name)}
+                              title={`${d.name}: ${d.count}`}
+                              style={{ height: `${pct}%`, background: RISK_META[d.name].dot, cursor: "pointer", opacity: active ? 1 : 0.3, transition: "opacity .15s" }}
+                            />
+                          )
+                        })}
+                    </div>
+                    <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: 10 }}>
+                      {riskData.map((d) => (
+                        <div
+                          key={d.name}
+                          onClick={() => setFilter("risk", d.name)}
+                          style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 12, cursor: "pointer", opacity: filters.risk === "All" || filters.risk === d.name ? 1 : 0.4 }}
+                        >
+                          <span style={{ width: 9, height: 9, borderRadius: 5, background: RISK_META[d.name].dot, display: "inline-block", flexShrink: 0 }} />
+                          <span style={{ color: COLORS.text }}>{d.name}</span>
+                          <span style={{ color: COLORS.textMuted, marginLeft: "auto", whiteSpace: "nowrap" }}>
+                            {`${d.count} (${((d.count / totalRisk) * 100).toFixed(1)}%)`}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
-                    {riskData.map((d) => (
-                      <div
-                        key={d.name}
-                        onClick={() => setFilter("risk", d.name)}
-                        style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, cursor: "pointer", opacity: filters.risk === "All" || filters.risk === d.name ? 1 : 0.4 }}
-                      >
-                        <span style={{ width: 10, height: 10, borderRadius: 5, background: RISK_META[d.name].dot, display: "inline-block" }} />
-                        <span style={{ color: COLORS.text }}>{d.name}</span>
-                        <span style={{ color: COLORS.textMuted, fontWeight: 700 }}>{d.count}</span>
-                      </div>
-                    ))}
+                )
+              })()}
+            </Panel>
+
+            {/* Forecast vs actual demand */}
+            <Panel title="Forecast vs Actual Demand" style={{ flex: "1 1 400px", marginBottom: 0 }}>
+              {demandSeries.length === 0 ? (
+                <div style={{ fontSize: 13, color: COLORS.textMuted, padding: "8px 0" }}>No consumption history for the current filters.</div>
+              ) : (
+                <>
+                  <div style={{ height: 190 }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={demandSeries} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
+                        <CartesianGrid stroke={COLORS.border} strokeDasharray="3 3" vertical={false} />
+                        <XAxis dataKey="label" tick={{ fontSize: 10.5, fill: COLORS.textMuted }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+                        <YAxis
+                          tick={{ fontSize: 10.5, fill: COLORS.textMuted }}
+                          axisLine={false}
+                          tickLine={false}
+                          width={42}
+                          label={{ value: "Units", angle: -90, position: "insideLeft", style: { fontSize: 10.5, fill: COLORS.textMuted } }}
+                        />
+                        <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.card }} />
+                        <Legend wrapperStyle={{ fontSize: 11.5 }} iconType="plainline" />
+                        <Line type="monotone" dataKey="forecast" name="Forecast" stroke={COLORS.primary} strokeWidth={2} strokeDasharray="5 4" dot={false} connectNulls />
+                        <Line type="monotone" dataKey="actual" name="Actual" stroke={COLORS.accent} strokeWidth={2} dot={false} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
+                    <span style={{ fontSize: 11.5, color: COLORS.textMuted }}>Show:</span>
+                    <PillSelect
+                      value={String(demandMonths)}
+                      onChange={(v) => setDemandMonths(Number(v))}
+                      options={[
+                        { value: "6", label: "Last 6 Months" },
+                        { value: "12", label: "Last 12 Months" },
+                        { value: "24", label: "All history" },
+                      ]}
+                    />
+                  </div>
+                  <div style={{ fontSize: 10.5, color: COLORS.textLight, marginTop: 6, lineHeight: 1.4 }}>
+                    {`Actual = consumption for the ${filteredRows.length} material(s) in view. Forecast = one-step-ahead exponential smoothing on that same series, so each point uses only prior months.`}
                   </div>
                 </>
-              )
-            })()}
-          </Panel>
+              )}
+            </Panel>
+          </div>
 
           {/* Detailed report */}
           <div style={{ background: COLORS.card, borderRadius: 10, border: `1px solid ${COLORS.border}`, overflow: "hidden" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", borderBottom: `1px solid ${COLORS.border}`, flexWrap: "wrap", gap: 8 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.text }}>
-                Detailed report -- {sorted.length} material{sorted.length !== 1 ? "s" : ""}
+              <div style={{ fontSize: 13.5, fontWeight: 700, color: COLORS.text }}>
+                Material Recommendations
+                <span style={{ fontWeight: 500, fontSize: 12, color: COLORS.textMuted, marginLeft: 6 }}>
+                  {sorted.length === 0 ? "(none match)" : `(Showing ${rangeFrom} - ${rangeTo} of ${sorted.length})`}
+                </span>
               </div>
               <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
                 <span style={{ fontSize: 11, color: COLORS.textMuted }}>Sort</span>
@@ -374,7 +491,7 @@ export default function InventoryOverviewPage() {
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5, minWidth: 720 }}>
                 <thead>
                   <tr style={{ background: COLORS.tableHeaderBg }}>
-                    {["Material", "Circuit", "Criticality", "Demand", "Value change", "Risk", "Status", ""].map((h) => (
+                    {["Material No.", "Material Description", "Circuit", "Crit.", "Demand Pattern", "Stockout Risk", "Value Change (₹)", "ROP Change", "Status", ""].map((h) => (
                       <th
                         key={h}
                         style={{
@@ -394,31 +511,39 @@ export default function InventoryOverviewPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sorted.slice(0, 100).map((r) => {
+                  {pageRows.map((r) => {
                     const delta = value(r) - curValue(r)
+                    const base = curValue(r)
+                    // Percentage is only meaningful against a non-zero current level; a material
+                    // with no ROP set has no baseline to be a percentage of.
+                    const deltaPctLabel = base > 0 ? `(${delta >= 0 ? "+" : "-"}${Math.abs((delta / base) * 100).toFixed(0)}%)` : "(new)"
+                    const ropDelta = r.current.recommendedROP - r.current.currentROP
                     return (
                       <tr
                         key={r.materialId}
                         onClick={() => router.push(`/inventory/recommendations?focus=${r.materialId}`)}
                         style={{ borderBottom: `1px solid ${COLORS.border}`, cursor: "pointer" }}
                       >
-                        <td style={{ padding: "9px 10px" }}>
-                          <div style={{ fontWeight: 600, color: COLORS.text }}>{r.materialCode}</div>
-                          <div style={{ fontSize: 11, color: COLORS.textMuted, maxWidth: 150, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.description}</div>
+                        <td style={{ padding: "9px 10px", whiteSpace: "nowrap" }}>
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                            <FileText size={12} color={COLORS.textLight} />
+                            <span style={{ fontWeight: 600, color: COLORS.primary }}>{r.materialCode}</span>
+                          </span>
+                        </td>
+                        <td style={{ padding: "9px 10px", color: COLORS.text }}>
+                          <div style={{ maxWidth: 190, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.description}</div>
                         </td>
                         <td style={{ padding: "9px 10px", color: COLORS.text }}>{r.circuit}</td>
-                        <td style={{ padding: "9px 10px" }}>
-                          <Badge color={CRIT_COLOR[r.criticality]}>{CRIT_SHORT[r.criticality]}</Badge>
-                        </td>
-                        <td style={{ padding: "9px 10px" }}>
-                          <Badge color={DEMAND_COLOR[r.demandClass]}>{r.demandClass}</Badge>
-                        </td>
-                        <td style={{ padding: "9px 10px", fontWeight: 600, color: delta > 0 ? COLORS.coral : delta < 0 ? COLORS.accent : COLORS.textMuted }}>
-                          {delta > 0 ? "+" : delta < 0 ? "-" : ""}
-                          {formatCurrencyCompact(Math.abs(delta))}
-                        </td>
+                        <td style={{ padding: "9px 10px", fontWeight: 800, color: colorMap[CRIT_COLOR[r.criticality]].solid }}>{CRIT_SHORT[r.criticality]}</td>
+                        <td style={{ padding: "9px 10px", color: COLORS.text }}>{r.demandClass}</td>
                         <td style={{ padding: "9px 10px" }}>
                           <Badge color={RISK_META[r.riskBefore].color}>{r.riskBefore}</Badge>
+                        </td>
+                        <td style={{ padding: "9px 10px", fontWeight: 600, whiteSpace: "nowrap", color: delta > 0 ? COLORS.coral : delta < 0 ? COLORS.accent : COLORS.textMuted }}>
+                          {`${delta > 0 ? "+" : delta < 0 ? "-" : ""}${formatCurrencyCompact(Math.abs(delta))} ${deltaPctLabel}`}
+                        </td>
+                        <td style={{ padding: "9px 10px", fontWeight: 600, whiteSpace: "nowrap", color: ropDelta > 0 ? COLORS.coral : ropDelta < 0 ? COLORS.accent : COLORS.textMuted }}>
+                          {`${ropDelta > 0 ? "+" : ""}${ropDelta} units`}
                         </td>
                         <td style={{ padding: "9px 10px" }}>
                           <Badge color={STATUS_COLOR[decision(r.materialId)]}>{STATUS_DISPLAY[decision(r.materialId)]}</Badge>
@@ -429,7 +554,7 @@ export default function InventoryOverviewPage() {
                   })}
                   {sorted.length === 0 && (
                     <tr>
-                      <td colSpan={8} style={{ padding: 24, textAlign: "center", color: COLORS.textMuted, fontSize: 13 }}>
+                      <td colSpan={10} style={{ padding: 24, textAlign: "center", color: COLORS.textMuted, fontSize: 13 }}>
                         No materials match the current filters.
                       </td>
                     </tr>
@@ -437,14 +562,180 @@ export default function InventoryOverviewPage() {
                 </tbody>
               </table>
             </div>
-            {sorted.length > 100 && (
-              <div style={{ padding: "8px 16px", fontSize: 11.5, color: COLORS.textLight, borderTop: `1px solid ${COLORS.border}` }}>
-                Showing first 100 of {sorted.length} -- narrow the filters or open the Recommendations page for the full paginated list.
+            {sorted.length > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: 10,
+                  flexWrap: "wrap",
+                  padding: "8px 14px",
+                  borderTop: `1px solid ${COLORS.border}`,
+                }}
+              >
+                <button
+                  onClick={() => router.push("/inventory/recommendations")}
+                  style={{ background: "none", border: "none", padding: 0, color: COLORS.primary, fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+                >
+                  All recommendations -&gt;
+                </button>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <PageButton disabled={safePage === 1} onClick={() => setPage(safePage - 1)}>
+                    <ChevronLeft size={13} />
+                  </PageButton>
+                  {pageNumbers.map((p, i) =>
+                    p === null ? (
+                      <span key={`gap-${i}`} style={{ fontSize: 12, color: COLORS.textLight }}>
+                        ...
+                      </span>
+                    ) : (
+                      <PageButton key={p} active={p === safePage} onClick={() => setPage(p)}>
+                        {p}
+                      </PageButton>
+                    ),
+                  )}
+                  <PageButton disabled={safePage === totalPages} onClick={() => setPage(safePage + 1)}>
+                    <ChevronRight size={13} />
+                  </PageButton>
+                  <PillSelect
+                    value={String(pageSize)}
+                    onChange={(v) => {
+                      setPageSize(Number(v))
+                      setPage(1)
+                    }}
+                    options={[
+                      { value: "25", label: "Show 25" },
+                      { value: "50", label: "Show 50" },
+                      { value: "100", label: "Show 100" },
+                    ]}
+                  />
+                </div>
               </div>
             )}
           </div>
         </div>
       </div>
     </div>
+  )
+}
+
+/** Overview KPI tile: big coloured figure, a unit/qualifier beside it, a percentage caption
+ * underneath, and a tinted icon badge on the right. Local to this page rather than added to
+ * ui/primitives because only the Overview header uses this denser layout. */
+function StatCard({
+  label,
+  value,
+  unit,
+  caption,
+  captionColor,
+  icon: Icon,
+  color,
+  active,
+  onClick,
+}: {
+  label: string
+  value: React.ReactNode
+  unit: string
+  caption: string
+  captionColor: string
+  icon: React.ComponentType<{ size?: number; color?: string }>
+  color: string
+  active?: boolean
+  onClick?: () => void
+}) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        flex: "1 1 190px",
+        textAlign: "left",
+        background: COLORS.card,
+        borderRadius: 10,
+        padding: "14px 16px",
+        border: `1px solid ${active ? color : COLORS.border}`,
+        cursor: onClick ? "pointer" : "default",
+        font: "inherit",
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "space-between",
+        gap: 10,
+      }}
+    >
+      <div style={{ minWidth: 0 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: COLORS.text, marginBottom: 8 }}>{label}</div>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 6, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 26, fontWeight: 800, color, lineHeight: 1 }}>{value}</span>
+          <span style={{ fontSize: 11, color: COLORS.textMuted }}>{unit}</span>
+        </div>
+        <div style={{ fontSize: 11, color: captionColor, marginTop: 6, fontWeight: 600 }}>{caption}</div>
+      </div>
+      <span
+        style={{
+          width: 30,
+          height: 30,
+          borderRadius: 8,
+          flexShrink: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: COLORS.bg,
+        }}
+      >
+        <Icon size={15} color={color} />
+      </span>
+    </button>
+  )
+}
+
+/** Compact page list: always the first page, a window around the current one, and the last,
+ * with nulls standing in for the gaps the caller renders as an ellipsis. */
+function buildPageNumbers(current: number, total: number): (number | null)[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+  const pages = new Set<number>([1, total, current, current - 1, current + 1])
+  const sorted = [...pages].filter((p) => p >= 1 && p <= total).sort((a, b) => a - b)
+  const out: (number | null)[] = []
+  let prev = 0
+  for (const p of sorted) {
+    if (prev && p - prev > 1) out.push(null)
+    out.push(p)
+    prev = p
+  }
+  return out
+}
+
+function PageButton({
+  children,
+  active,
+  disabled,
+  onClick,
+}: {
+  children: React.ReactNode
+  active?: boolean
+  disabled?: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        minWidth: 26,
+        height: 26,
+        padding: "0 6px",
+        borderRadius: 6,
+        border: `1px solid ${active ? COLORS.primary : COLORS.border}`,
+        background: active ? COLORS.primaryLight : COLORS.card,
+        color: disabled ? COLORS.textLight : active ? COLORS.primary : COLORS.text,
+        fontSize: 11.5,
+        fontWeight: active ? 700 : 500,
+        cursor: disabled ? "default" : "pointer",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {children}
+    </button>
   )
 }
