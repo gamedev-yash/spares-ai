@@ -89,7 +89,7 @@ export const RISK_META: Record<string, { color: ColorTone; dot: string }> = {
  * its own tone, distinct from Approved, per the workflow spec ("visually distinguishable
  * ... not just folded into Approved"). */
 export const STATUS_COLOR: Record<string, ColorTone> = {
-  NEEDS_REVIEW: "gray",
+  NEEDS_REVIEW: "primary",
   IN_APPROVAL: "warning",
   APPROVED: "success",
   ADJUSTED: "purple",

@@ -11,6 +11,7 @@ import { KPICard, Select, Panel, Badge } from "@/components/inventory/ui/primiti
 import { formatCurrencyCompact } from "@/lib/inventory/format"
 import {
   COLORS,
+  colorMap,
   CRIT_SHORT,
   CRIT_COLOR,
   CRIT_ORDER,
@@ -105,13 +106,11 @@ export default function InventoryOverviewPage() {
     return [...filteredRows].sort((a, b) => (val(a) - val(b)) * (sortDir === "asc" ? 1 : -1))
   }, [filteredRows, sortKey, sortDir, value, curValue])
 
-  const STATUS_HEX: Record<string, string> = {
-    NEEDS_REVIEW: COLORS.graySolid,
-    IN_APPROVAL: COLORS.warning,
-    ADJUSTED: COLORS.purple,
-    APPROVED: COLORS.accent,
-    REJECTED: COLORS.danger,
-  }
+  // Derived from STATUS_COLOR rather than re-listed, so the donut/legend here always match
+  // the status badges on Recommendations and Approvals.
+  const STATUS_HEX: Record<string, string> = Object.fromEntries(
+    STATUSES.map((s) => [s, colorMap[STATUS_COLOR[s]].solid]),
+  )
   const DEMAND_HEX: Record<string, string> = { Smooth: COLORS.primary, Erratic: COLORS.warning, Intermittent: COLORS.coral, Lumpy: COLORS.danger, OAR: COLORS.graySolid }
 
   if (error) return <ErrorState message={error} />

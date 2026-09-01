@@ -15,6 +15,7 @@ import type { SpareData } from "./data/types"
 import { RecommendationEngine } from "./calc/recommendation"
 import type { Recommendation } from "./calc/types"
 import {
+  APPROVAL_CHAIN,
   defaultApprovalEntry,
   type ApprovalEntry,
   type AdjustableField,
@@ -112,14 +113,34 @@ export function InventoryProvider({ children }: { children: ReactNode }) {
     []
   )
 
-  // Approve is a single terminal decision -- same shape as adjust()/reject() -- not a
-  // multi-click walk through APPROVAL_CHAIN. There's no real auth/session in this mockup to
-  // meaningfully gate "whose turn it is," so one Approve click closes the item out immediately
-  // and it leaves the queue right away, same as Adjust and Reject already do.
+  // Approve signs off ONE stage of APPROVAL_CHAIN and hands the item to the next role. Each
+  // sign-off is recorded against the stage and the person who made it, so the workflow panel
+  // shows real per-user progress instead of assuming the whole chain approved at once. The
+  // item only reaches APPROVED once every stage has signed off.
   const approve = useCallback(
-    (materialId: string, by: string) =>
-      update(materialId, { status: "APPROVED", decidedBy: by, decidedAt: new Date().toISOString() }),
-    [update]
+    (materialId: string, by: string) => {
+      setEntries((prev) => {
+        const current = prev[materialId] ?? defaultApprovalEntry(materialId)
+        if (current.status !== "IN_APPROVAL") return prev
+        const stage = APPROVAL_CHAIN[current.stageIndex]
+        if (!stage) return prev
+        const now = new Date().toISOString()
+        const nextIndex = current.stageIndex + 1
+        const fullyApproved = nextIndex >= APPROVAL_CHAIN.length
+        return {
+          ...prev,
+          [materialId]: {
+            ...current,
+            status: fullyApproved ? "APPROVED" : "IN_APPROVAL",
+            stageIndex: nextIndex,
+            stageApprovals: [...current.stageApprovals, { stage, by, at: now }],
+            decidedBy: fullyApproved ? by : current.decidedBy,
+            decidedAt: fullyApproved ? now : current.decidedAt,
+          },
+        }
+      })
+    },
+    []
   )
 
   const reject = useCallback(

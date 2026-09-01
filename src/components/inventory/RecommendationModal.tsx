@@ -31,7 +31,7 @@ import { useInventory } from "@/lib/inventory/context"
 import { APPROVAL_CHAIN, APPROVAL_STAGE_LABELS, ADJUSTABLE_FIELD_LABELS, STATUS_DISPLAY, type AdjustableField, type ApprovalEntry, type ApprovalStatus } from "@/lib/inventory/approvals"
 import { formatCurrency, formatDate } from "@/lib/inventory/format"
 import { COLORS, colorMap, CRIT_LABEL, CONF_COLOR, CONF_PCT, RISK_META, STATUS_COLOR } from "@/lib/inventory/ui/colors"
-import { requesterFor, deciderFor } from "@/lib/inventory/ui/labels"
+import { requesterFor, approverForStage } from "@/lib/inventory/ui/labels"
 import { Badge, Chip, SectionTitle } from "@/components/inventory/ui/primitives"
 import { AdjustModal } from "@/components/inventory/AdjustModal"
 
@@ -54,9 +54,12 @@ export function RecommendationModal({ rec, mode, onClose }: { rec: Recommendatio
   const entry = approvals.getEntry(rec.materialId)
 
   const increasing = rec.current.recommendedROP > rec.current.currentROP
-  const currentStageLabel = APPROVAL_STAGE_LABELS[APPROVAL_CHAIN[entry.stageIndex]]
-  const decider = deciderFor(rec.materialId, rec.plant, data?.users ?? [])
-  const deciderName = decider?.name ?? currentStageLabel
+  // stageIndex reaches APPROVAL_CHAIN.length once every stage has signed off, so clamp for display.
+  const currentStage = APPROVAL_CHAIN[entry.stageIndex] ?? APPROVAL_CHAIN[APPROVAL_CHAIN.length - 1]
+  const currentStageLabel = APPROVAL_STAGE_LABELS[currentStage]
+  const stageApprover = approverForStage(rec.materialId, rec.plant, data?.users ?? [], currentStage)
+  const approverName = stageApprover?.name ?? currentStageLabel
+  const remainingAfterThis = APPROVAL_CHAIN.length - entry.stageIndex - 1
 
   const itemLabel = `${rec.materialCode} -- ${rec.description}`
 
@@ -66,22 +69,25 @@ export function RecommendationModal({ rec, mode, onClose }: { rec: Recommendatio
     toast.info(`Sent for approval -- ${itemLabel}`)
   }
   const approve = () => {
-    approvals.approve(rec.materialId, deciderName)
-    toast.success(`Approved -- ${itemLabel}`)
-    // Decide-mode only (Approvals page) -- closing returns the user to the queue, which has
-    // already reactively dropped this item and moved the "Approval workflow" panel on to the
-    // next one, so there's nothing left to see behind the modal once this item is decided.
+    approvals.approve(rec.materialId, approverName)
+    toast.success(
+      remainingAfterThis > 0
+        ? `${currentStageLabel} approved -- ${remainingAfterThis} more sign-off(s) needed`
+        : `Fully approved -- ${itemLabel}`,
+    )
+    // Decide-mode only (Approvals page) -- closing reveals the workflow panel behind it, so
+    // the stage that was just signed off is visibly marked and the next one shows as pending.
     if (mode === "decide") onClose()
   }
   const submitAdjust = (changes: { field: AdjustableField; recommended: number; adjusted: number }[], reason: string) => {
-    approvals.adjust(rec.materialId, changes, reason, deciderName)
+    approvals.adjust(rec.materialId, changes, reason, approverName)
     toast.warning(`Adjusted -- ${itemLabel}`)
     setShowAdjustModal(false)
     if (mode === "decide") onClose()
   }
   const submitReject = () => {
     if (!rejectReason.trim()) return
-    approvals.reject(rec.materialId, rejectReason.trim(), deciderName)
+    approvals.reject(rec.materialId, rejectReason.trim(), approverName)
     toast.error(`Rejected -- ${itemLabel}`)
     setShowRejectReason(false)
     if (mode === "decide") onClose()
@@ -375,10 +381,13 @@ export function RecommendationModal({ rec, mode, onClose }: { rec: Recommendatio
               </div>
             ) : (
               <>
-                <div style={{ fontSize: 12.5, color: COLORS.textMuted, marginBottom: 10 }}>Awaiting {currentStageLabel}</div>
+                <div style={{ fontSize: 12.5, color: COLORS.textMuted, marginBottom: 10 }}>
+                  {`Step ${entry.stageIndex + 1} of ${APPROVAL_CHAIN.length} -- awaiting ${currentStageLabel}`}
+                  {stageApprover && <span style={{ color: COLORS.text, fontWeight: 600 }}>{` (${stageApprover.name})`}</span>}
+                </div>
                 <div style={{ display: "flex", gap: 10, marginBottom: 18 }}>
                   <button onClick={approve} style={actionBtnStyle(COLORS.accent, "#fff", false)}>
-                    <CheckCircle2 size={15} /> Approve
+                    <CheckCircle2 size={15} /> Approve as {currentStageLabel}
                   </button>
                   <button onClick={() => setShowAdjustModal(true)} style={actionBtnStyle(COLORS.card, COLORS.warning, false, COLORS.warning)}>
                     <SlidersHorizontal size={15} /> Adjust
@@ -508,13 +517,18 @@ function AuditTrail({ entry }: { entry: ApprovalEntry }) {
   for (const a of entry.adjustments) {
     lines.push({ text: `AI recommended ${a.recommended} -> ${a.by} changed ${ADJUSTABLE_FIELD_LABELS[a.field]} to ${a.adjusted} -- Reason: ${a.reason}`, at: a.at })
   }
+  for (const s of entry.stageApprovals) {
+    lines.push({ text: `${s.by} approved as ${APPROVAL_STAGE_LABELS[s.stage]}`, at: s.at })
+  }
   if (entry.status === "REJECTED" && entry.decidedBy) {
     lines.push({ text: `${entry.decidedBy} rejected this recommendation -- Reason: ${entry.rejectionReason ?? "--"}`, at: entry.decidedAt ?? entry.sentAt ?? "" })
   }
-  if (entry.status === "APPROVED" && entry.decidedBy) {
-    lines.push({ text: `${entry.decidedBy} approved this recommendation`, at: entry.decidedAt ?? entry.sentAt ?? "" })
+  if (entry.status === "APPROVED") {
+    lines.push({ text: `All ${APPROVAL_CHAIN.length} stages signed off -- fully approved`, at: entry.decidedAt ?? entry.sentAt ?? "" })
   }
   if (lines.length === 0) return null
+  // Built in source order (sent -> adjustments -> stage sign-offs), so sort to read chronologically.
+  lines.sort((a, b) => a.at.localeCompare(b.at))
 
   return (
     <div style={{ marginBottom: 22 }}>

@@ -22,18 +22,17 @@ export function requesterFor(materialId: string, plant: string, users: UserRow[]
   return pool[hashString(materialId) % pool.length];
 }
 
-/** Picks a stand-in "decider" (approver/rejecter/adjuster) for the audit ledger -- same
- * deterministic-assignment approach as requesterFor, but drawn from the app's own demo
- * MANAGER/SUPERVISOR accounts rather than END_USER, since those are the roles that actually
- * sit later in APPROVAL_CHAIN. Same materialId always maps to the same person within a
- * session, so "who approved this?" has one stable, real (demo) answer. */
-export function deciderFor(materialId: string, plant: string, users: UserRow[]): UserRow | null {
-  const approverRoles = new Set(["ENGINEERING_MANAGER", "COMMERCIAL_MANAGER", "WAREHOUSE_SUPERVISOR"]);
-  const approvers = users.filter((u) => approverRoles.has(u.role) && u.active);
-  if (approvers.length === 0) return null;
-  const samePlant = approvers.filter((u) => u.plant === plant);
-  const pool = samePlant.length > 0 ? samePlant : approvers;
-  return pool[hashString(materialId + "decider") % pool.length];
+/** The person who signs off a given APPROVAL_CHAIN stage. users.csv's `role` column uses the
+ * same identifiers as APPROVAL_CHAIN (END_USER / ENGINEERING_MANAGER / COMMERCIAL_MANAGER /
+ * WAREHOUSE_SUPERVISOR), so each stage resolves to a real account holding that role --
+ * preferring one at the material's own plant. Deterministic: the same material always shows
+ * the same person for the same stage, so per-stage attribution stays stable across renders. */
+export function approverForStage(materialId: string, plant: string, users: UserRow[], stage: string): UserRow | null {
+  const pool = users.filter((u) => u.role === stage && u.active);
+  if (pool.length === 0) return null;
+  const samePlant = pool.filter((u) => u.plant === plant);
+  const chosen = samePlant.length > 0 ? samePlant : pool;
+  return chosen[hashString(materialId + stage) % chosen.length];
 }
 
 /** A plausible "submitted on" date for the same stand-in requester -- deterministically

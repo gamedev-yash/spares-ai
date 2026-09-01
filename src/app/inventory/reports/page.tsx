@@ -1,14 +1,16 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { History, Send, CheckCircle2, SlidersHorizontal, XCircle } from "lucide-react"
+import { History } from "lucide-react"
 
 import { useInventory } from "@/lib/inventory/context"
 import { LoadingState, ErrorState } from "@/components/inventory/loading-state"
+import { RecommendationModal } from "@/components/inventory/RecommendationModal"
 import { Badge, KPIChip, PillSelect, SearchBox } from "@/components/inventory/ui/primitives"
 import { COLORS, type ColorTone } from "@/lib/inventory/ui/colors"
-import { ADJUSTABLE_FIELD_LABELS } from "@/lib/inventory/approvals"
+import { ADJUSTABLE_FIELD_LABELS, APPROVAL_CHAIN, APPROVAL_STAGE_LABELS } from "@/lib/inventory/approvals"
 import { formatDateTime } from "@/lib/inventory/format"
+import type { Recommendation } from "@/lib/inventory/calc/types"
 
 type LedgerAction = "Sent for approval" | "Approved" | "Adjusted" | "Rejected"
 
@@ -19,92 +21,94 @@ interface LedgerRow {
   description: string
   user: string
   action: LedgerAction
-  field: string | null
-  oldValue: number | null
-  newValue: number | null
+  /** What actually moved, one line per field -- empty when the action changed no numbers. */
+  changes: string[]
   time: string
   reason: string
 }
 
-const ACTION_META: Record<LedgerAction, { color: ColorTone; icon: typeof Send }> = {
-  "Sent for approval": { color: "warning", icon: Send },
-  Approved: { color: "success", icon: CheckCircle2 },
-  Adjusted: { color: "purple", icon: SlidersHorizontal },
-  Rejected: { color: "danger", icon: XCircle },
+const ACTION_COLOR: Record<LedgerAction, ColorTone> = {
+  "Sent for approval": "warning",
+  Approved: "success",
+  Adjusted: "purple",
+  Rejected: "danger",
+}
+
+/** The full SS/ROP/Max movement this recommendation represents -- used for both the
+ * "sent" row (proposed) and the "approved" row (applied), so the ledger always says what
+ * the change actually was rather than leaving the column blank. */
+function proposedChanges(rec: Recommendation): string[] {
+  return [
+    `SS ${rec.current.currentSafetyStock} -> ${rec.current.recommendedSafetyStock}`,
+    `ROP ${rec.current.currentROP} -> ${rec.current.recommendedROP}`,
+    `Max ${rec.current.currentMaxStock} -> ${rec.current.recommendedMaxStockOptionA}`,
+  ]
 }
 
 export default function InventoryReportsPage() {
   const { recommendations, loading, error, approvals } = useInventory()
   const [action, setAction] = useState<"All" | LedgerAction>("All")
   const [search, setSearch] = useState("")
+  const [detailId, setDetailId] = useState<string | null>(null)
+
+  const byId = useMemo(() => new Map(recommendations.map((r) => [r.materialId, r])), [recommendations])
 
   const rows = useMemo(() => {
-    const recByMaterial = new Map(recommendations.map((r) => [r.materialId, r]))
     const out: LedgerRow[] = []
 
     for (const entry of approvals.getAllEntries()) {
-      const rec = recByMaterial.get(entry.materialId)
+      const rec = byId.get(entry.materialId)
       if (!rec) continue
+      const base = { materialId: entry.materialId, materialCode: rec.materialCode, description: rec.description }
 
       if (entry.sentAt && entry.sentBy) {
         out.push({
+          ...base,
           key: `${entry.materialId}-sent`,
-          materialId: entry.materialId,
-          materialCode: rec.materialCode,
-          description: rec.description,
           user: entry.sentBy,
           action: "Sent for approval",
-          field: null,
-          oldValue: null,
-          newValue: null,
+          changes: proposedChanges(rec),
           time: entry.sentAt,
-          reason: "--",
+          reason: "Submitted for approval -- proposed levels above",
         })
       }
 
       entry.adjustments.forEach((a, i) => {
         out.push({
+          ...base,
           key: `${entry.materialId}-adjust-${i}`,
-          materialId: entry.materialId,
-          materialCode: rec.materialCode,
-          description: rec.description,
           user: a.by,
           action: "Adjusted",
-          field: ADJUSTABLE_FIELD_LABELS[a.field],
-          oldValue: a.recommended,
-          newValue: a.adjusted,
+          changes: [`${ADJUSTABLE_FIELD_LABELS[a.field]} ${a.recommended} -> ${a.adjusted}`],
           time: a.at,
           reason: a.reason,
         })
       })
 
-      if (entry.status === "APPROVED" && entry.decidedBy && entry.decidedAt) {
+      // One row per stage sign-off -- the ledger records who approved at which step, rather
+      // than a single "approved" row that hides which roles actually signed.
+      entry.stageApprovals.forEach((s, i) => {
+        const isFinal = i === APPROVAL_CHAIN.length - 1
         out.push({
-          key: `${entry.materialId}-approved`,
-          materialId: entry.materialId,
-          materialCode: rec.materialCode,
-          description: rec.description,
-          user: entry.decidedBy,
+          ...base,
+          key: `${entry.materialId}-stage-${s.stage}`,
+          user: s.by,
           action: "Approved",
-          field: "Reorder Point",
-          oldValue: rec.current.currentROP,
-          newValue: rec.current.recommendedROP,
-          time: entry.decidedAt,
-          reason: "Approved based on recommendation",
+          changes: isFinal ? proposedChanges(rec) : [],
+          time: s.at,
+          reason: isFinal
+            ? `Final sign-off as ${APPROVAL_STAGE_LABELS[s.stage]} -- levels applied`
+            : `Signed off as ${APPROVAL_STAGE_LABELS[s.stage]}`,
         })
-      }
+      })
 
       if (entry.status === "REJECTED" && entry.decidedBy && entry.decidedAt) {
         out.push({
+          ...base,
           key: `${entry.materialId}-rejected`,
-          materialId: entry.materialId,
-          materialCode: rec.materialCode,
-          description: rec.description,
           user: entry.decidedBy,
           action: "Rejected",
-          field: null,
-          oldValue: null,
-          newValue: null,
+          changes: [],
           time: entry.decidedAt,
           reason: entry.rejectionReason ?? "--",
         })
@@ -112,7 +116,7 @@ export default function InventoryReportsPage() {
     }
 
     return out.sort((a, b) => b.time.localeCompare(a.time))
-  }, [recommendations, approvals])
+  }, [byId, approvals])
 
   const filteredRows = useMemo(() => {
     return rows.filter((r) => {
@@ -131,6 +135,8 @@ export default function InventoryReportsPage() {
     return c
   }, [rows])
 
+  const detailRow = detailId ? (byId.get(detailId) ?? null) : null
+
   if (error) return <ErrorState message={error} />
   if (loading) return <LoadingState />
 
@@ -140,13 +146,13 @@ export default function InventoryReportsPage() {
         <div>
           <h2 style={{ margin: 0, fontSize: 20, color: COLORS.text }}>Reports</h2>
           <p style={{ margin: "4px 0 0", fontSize: 13, color: COLORS.textMuted }}>
-            Audit ledger -- every send, approve, adjust, and reject, with who did it, when, and why
+            Audit ledger -- what changed, who did it, when, and why. Open a row for the full recommendation.
           </p>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
           <KPIChip label="Approved" value={counts.Approved} tone="neutral" />
           <KPIChip label="Adjusted" value={counts.Adjusted} tone="neutral" />
-          <KPIChip label="Rejected" value={counts.Rejected} tone="warning" />
+          <KPIChip label="Rejected" value={counts.Rejected} tone="danger" />
         </div>
       </div>
 
@@ -181,7 +187,7 @@ export default function InventoryReportsPage() {
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5, minWidth: 900 }}>
               <thead>
                 <tr style={{ background: COLORS.tableHeaderBg }}>
-                  {["Material", "User", "Action", "Field", "Old -> New", "Time", "Reason"].map((h) => (
+                  {["Material", "User", "Action", "What changed", "Time", "Reason"].map((h) => (
                     <th
                       key={h}
                       style={{ padding: "9px 12px", textAlign: "left", fontWeight: 600, color: COLORS.textMuted, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.3, borderBottom: `1px solid ${COLORS.border}` }}
@@ -192,33 +198,26 @@ export default function InventoryReportsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filteredRows.map((r) => {
-                  const meta = ACTION_META[r.action]
-                  return (
-                    <tr key={r.key} style={{ borderBottom: `1px solid ${COLORS.border}` }}>
-                      <td style={{ padding: "9px 12px" }}>
-                        <div style={{ fontWeight: 700, color: COLORS.text }}>{r.materialCode}</div>
-                        <div style={{ fontSize: 11, color: COLORS.textMuted, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.description}</div>
-                      </td>
-                      <td style={{ padding: "9px 12px", fontWeight: 600, color: COLORS.text, whiteSpace: "nowrap" }}>{r.user}</td>
-                      <td style={{ padding: "9px 12px" }}>
-                        <Badge color={meta.color}>
-                          <meta.icon size={11} style={{ marginRight: 4, verticalAlign: -2 }} />
-                          {r.action}
-                        </Badge>
-                      </td>
-                      <td style={{ padding: "9px 12px", color: COLORS.text, whiteSpace: "nowrap" }}>{r.field ?? "--"}</td>
-                      <td style={{ padding: "9px 12px", color: COLORS.text, whiteSpace: "nowrap" }}>
-                        {r.oldValue !== null && r.newValue !== null ? `${r.oldValue} -> ${r.newValue}` : "--"}
-                      </td>
-                      <td style={{ padding: "9px 12px", color: COLORS.textMuted, whiteSpace: "nowrap" }}>{formatDateTime(r.time)}</td>
-                      <td style={{ padding: "9px 12px", color: COLORS.textMuted, maxWidth: 260 }}>{r.reason}</td>
-                    </tr>
-                  )
-                })}
+                {filteredRows.map((r) => (
+                  <tr key={r.key} onClick={() => setDetailId(r.materialId)} style={{ borderBottom: `1px solid ${COLORS.border}`, cursor: "pointer" }}>
+                    <td style={{ padding: "9px 12px" }}>
+                      <div style={{ fontWeight: 700, color: COLORS.text }}>{r.materialCode}</div>
+                      <div style={{ fontSize: 11, color: COLORS.textMuted, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.description}</div>
+                    </td>
+                    <td style={{ padding: "9px 12px", fontWeight: 600, color: COLORS.text, whiteSpace: "nowrap" }}>{r.user}</td>
+                    <td style={{ padding: "9px 12px" }}>
+                      <Badge color={ACTION_COLOR[r.action]}>{r.action}</Badge>
+                    </td>
+                    <td style={{ padding: "9px 12px", color: COLORS.text, whiteSpace: "nowrap", lineHeight: 1.5, fontSize: 11.5 }}>
+                      {r.changes.length === 0 ? <span style={{ color: COLORS.textMuted }}>No change applied</span> : r.changes.map((c) => <div key={c}>{c}</div>)}
+                    </td>
+                    <td style={{ padding: "9px 12px", color: COLORS.textMuted, whiteSpace: "nowrap" }}>{formatDateTime(r.time)}</td>
+                    <td style={{ padding: "9px 12px", color: COLORS.textMuted, maxWidth: 240 }}>{r.reason}</td>
+                  </tr>
+                ))}
                 {filteredRows.length === 0 && (
                   <tr>
-                    <td colSpan={7} style={{ padding: 24, textAlign: "center", color: COLORS.textMuted, fontSize: 13 }}>
+                    <td colSpan={6} style={{ padding: 24, textAlign: "center", color: COLORS.textMuted, fontSize: 13 }}>
                       No ledger entries match the current filters.
                     </td>
                   </tr>
@@ -228,6 +227,8 @@ export default function InventoryReportsPage() {
           </div>
         )}
       </div>
+
+      {detailRow && <RecommendationModal rec={detailRow} mode="review" onClose={() => setDetailId(null)} />}
     </div>
   )
 }

@@ -8,6 +8,7 @@ import {
   Boxes,
   ListChecks,
   ClipboardCheck,
+  Workflow,
   AlertTriangle,
   ShieldCheck,
   FileBarChart,
@@ -36,6 +37,7 @@ const INITIATIVE7_LINKS: {
 }[] = [
   { label: "Overview", href: "/inventory", icon: Boxes, exact: true },
   { label: "My Actions / Approvals", href: "/inventory/approvals", icon: ClipboardCheck },
+  { label: "Pipeline", href: "/inventory/pipeline", icon: Workflow },
   { label: "Recommendations", href: "/inventory/recommendations", icon: ListChecks },
   { label: "Exceptions", href: "/inventory/exceptions", icon: AlertTriangle },
   { label: "Policies", href: "/inventory/policies", icon: ShieldCheck },

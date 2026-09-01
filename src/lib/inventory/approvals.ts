@@ -53,12 +53,24 @@ export interface AdjustmentRecord {
   at: string
 }
 
+/** One role's sign-off in APPROVAL_CHAIN. Recorded per stage (not just once at the end) so
+ * "who approved this, at which step?" has a real answer -- the panel and audit trail read
+ * from these rather than assuming every stage approved because the item reached APPROVED. */
+export interface StageApproval {
+  stage: ApprovalStage
+  by: string
+  at: string
+}
+
 export interface ApprovalEntry {
   materialId: string
   status: ApprovalStatus
-  stageIndex: number // only meaningful while status === "IN_APPROVAL"
+  /** How many chain stages have signed off. Ranges 0..APPROVAL_CHAIN.length -- equal to the
+   * length once every stage has approved, so it doubles as "index of the stage now pending". */
+  stageIndex: number
   sentAt: string | null
   sentBy: string | null
+  stageApprovals: StageApproval[]
   adjustments: AdjustmentRecord[]
   rejectionReason: string | null
   decidedBy: string | null
@@ -72,6 +84,7 @@ export function defaultApprovalEntry(materialId: string): ApprovalEntry {
     stageIndex: 0,
     sentAt: null,
     sentBy: null,
+    stageApprovals: [],
     adjustments: [],
     rejectionReason: null,
     decidedBy: null,

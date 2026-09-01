@@ -15,7 +15,10 @@ const CIRCUITS = ["Crushing", "Milling", "Pumping", "Filtration"]
 const CRITICALITIES = ["CRITICAL", "HIGH", "MEDIUM"]
 const DEMAND_PATTERNS = ["Smooth", "Erratic", "Intermittent", "Lumpy", "OAR"]
 const RISK_LEVELS = ["Critical", "High", "Medium", "Low"]
-const STATUSES: ApprovalStatus[] = ["NEEDS_REVIEW", "IN_APPROVAL", "APPROVED", "ADJUSTED", "REJECTED"]
+// Only the two "still needs action" states -- anything decided has left this page for the
+// Reports ledger, so offering Approved/Adjusted/Rejected here would filter to nothing.
+const STATUSES: ApprovalStatus[] = ["NEEDS_REVIEW", "IN_APPROVAL"]
+const DECIDED: ApprovalStatus[] = ["APPROVED", "ADJUSTED", "REJECTED"]
 
 interface Filters {
   circuit: string
@@ -58,7 +61,16 @@ function RecommendationsContent() {
   const reviewId = reviewState.reviewId
   const setReviewId = (id: string | null) => setReviewState((s) => ({ ...s, reviewId: id }))
 
-  const rows = useMemo(() => recommendations.filter((r) => !r.notStockManaged), [recommendations])
+  // Decided items (approved/adjusted/rejected) drop off this page -- the work is done and the
+  // permanent record lives on Reports. What's left is what still needs someone to act.
+  const rows = useMemo(
+    () => recommendations.filter((r) => !r.notStockManaged && !DECIDED.includes(approvals.getEntry(r.materialId).status)),
+    [recommendations, approvals],
+  )
+  const decidedCount = useMemo(
+    () => recommendations.filter((r) => !r.notStockManaged && DECIDED.includes(approvals.getEntry(r.materialId).status)).length,
+    [recommendations, approvals],
+  )
 
   const filteredRows = useMemo(() => {
     return rows.filter((r) => {
@@ -77,7 +89,7 @@ function RecommendationsContent() {
 
   const totalCount = rows.length
   const needReviewCount = rows.filter((r) => approvals.getEntry(r.materialId).status === "NEEDS_REVIEW").length
-  const approvedCount = rows.filter((r) => approvals.getEntry(r.materialId).status === "APPROVED").length
+  const inApprovalCount = rows.filter((r) => approvals.getEntry(r.materialId).status === "IN_APPROVAL").length
 
   const reviewRow = rows.find((r) => r.materialId === reviewId) || null
   const clearAll = () => setFilters(emptyFilters)
@@ -91,12 +103,16 @@ function RecommendationsContent() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, marginBottom: 16 }}>
         <div>
           <h2 style={{ margin: 0, fontSize: 20, color: COLORS.text }}>Recommendations</h2>
-          <p style={{ margin: "4px 0 0", fontSize: 13, color: COLORS.textMuted }}>Review what the system recommends for each material</p>
+          <p style={{ margin: "4px 0 0", fontSize: 13, color: COLORS.textMuted }}>
+            {decidedCount > 0
+              ? `Still open -- ${decidedCount} decided item(s) moved to Reports`
+              : "Review what the system recommends for each material"}
+          </p>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-          <KPIChip label="Total" value={totalCount} tone="neutral" />
+          <KPIChip label="Open" value={totalCount} tone="neutral" />
           <KPIChip label="Need review" value={needReviewCount} tone="warning" />
-          <KPIChip label="Approved" value={approvedCount} tone="neutral" />
+          <KPIChip label="In review" value={inApprovalCount} tone="neutral" />
         </div>
       </div>
 
