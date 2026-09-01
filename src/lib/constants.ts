@@ -103,6 +103,7 @@ export const DASHBOARD_LINKS: { label: string; icon: IconKey; href: string }[] =
     icon: "layers",
     href: "/dashboard/situation-analysis",
   },
+  { label: "Utilisation Tracking", icon: "gauge", href: "/utilisation" },
 ]
 
 export const QUICK_ACTIONS: {
