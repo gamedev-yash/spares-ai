@@ -103,6 +103,11 @@ export const DASHBOARD_LINKS: { label: string; icon: IconKey; href: string }[] =
     icon: "layers",
     href: "/dashboard/situation-analysis",
   },
+  {
+    label: "Inventory Optimization",
+    icon: "trending-up",
+    href: "/inventory-optimization",
+  },
 ]
 
 export const QUICK_ACTIONS: {
