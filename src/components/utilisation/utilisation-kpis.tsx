@@ -1,34 +1,34 @@
-import { ArrowLeftRight, Gauge, PackageX, Unlink } from "lucide-react"
+import { ArrowLeftRight, PackageX, Target, Unlink } from "lucide-react"
 
 import type { UtilisationKpiSummary } from "@/lib/utilisation-data"
 import { formatCount, formatZAR, formatZARMillions } from "@/lib/utils"
 
-export function UtilisationKpiRow({ summary }: { summary: UtilisationKpiSummary }) {
+export function UtilisationKpis({ summary }: { summary: UtilisationKpiSummary }) {
   const cards = [
     {
-      label: "GR'd-but-unissued value",
+      label: "Unutilised OAR position",
       icon: PackageX,
-      figure: formatZARMillions(summary.unissuedValueZarMn),
-      sub: "Received into stock, never issued to a job",
+      figure: formatZARMillions(summary.unutilisedValueZarMn),
+      sub: `${formatCount(summary.unutilisedLineCount)} lines received or issued, not yet confirmed used`,
       danger: true,
     },
     {
-      label: "30-day utilisation",
-      icon: Gauge,
-      figure: `${summary.utilisation30dPct}%`,
-      sub: "Issued within 30 days of goods receipt",
+      label: "Plan compliance",
+      icon: Target,
+      figure: `${summary.planCompliancePct}%`,
+      sub: `Consumed by plan date · ${summary.planCaptureCompletePct}% of RRs carry a complete consumption plan`,
     },
     {
-      label: "Redeployment opportunities",
+      label: "Redeployment & avoidance",
       icon: ArrowLeftRight,
-      figure: formatCount(summary.redeploymentOpportunities.count),
-      sub: `${formatZAR(summary.redeploymentOpportunities.valueZar)} in avoided new-buy`,
+      figure: formatCount(summary.redeployment.count),
+      sub: `${formatZAR(summary.redeployment.potentialAvoidanceZar)} potential avoidance — not yet realised`,
     },
     {
-      label: "Broken chain links",
+      label: "Ledger integrity exceptions",
       icon: Unlink,
-      figure: `${summary.brokenChainPct}%`,
-      sub: "Reservation → PO → GR → issue lines that can't be stitched",
+      figure: `${summary.ledgerIntegrityExceptionPct}%`,
+      sub: "Broken or awaiting-reconciliation lines — shared MRP allocations excluded",
       danger: true,
     },
   ]

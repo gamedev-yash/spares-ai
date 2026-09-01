@@ -20,7 +20,9 @@ export default function UtilisationLoading() {
           <Skeleton className="h-56 rounded-xl" />
           <Skeleton className="h-56 rounded-xl" />
         </div>
+        <Skeleton className="h-56 rounded-xl" />
         <Skeleton className="h-64 rounded-xl" />
+        <Skeleton className="h-56 rounded-xl" />
       </div>
     </div>
   )

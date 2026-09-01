@@ -1,43 +1,48 @@
 "use client"
 
-import { useState } from "react"
 import { Check, X } from "lucide-react"
-import { toast } from "sonner"
 
 import { StatusBadge } from "@/components/shared/status-badge"
 import { Button } from "@/components/ui/button"
-import type { RedeploymentRecommendation } from "@/lib/utilisation-data"
+import { PLANT_ABBR, type RedeploymentRecommendation } from "@/lib/utilisation-data"
 import { formatZAR } from "@/lib/utils"
 
-type Decision = "accepted" | "dismissed"
+export type RedeploymentDecision = "accepted" | "dismissed"
 
-export function RedeploymentCard({
+function recommendationText(rec: RedeploymentRecommendation): string {
+  const action =
+    rec.actionType === "Inter-plant transfer"
+      ? `recommend an inter-plant transfer to ${rec.demandPlant} (${PLANT_ABBR[rec.demandPlant]})`
+      : rec.actionType === "Store draw"
+        ? "recommend a store draw instead of a new purchase"
+        : "recommend a reuse review before approving a new purchase"
+
+  const source =
+    rec.sourceType === "Approved alternate (Initiative 10)"
+      ? `Approved Tier 1 alternate for ${rec.alternateOfMaterialCode} — `
+      : ""
+
+  return `${source}${rec.idleUnits} units idle at ${rec.idlePlant} (${PLANT_ABBR[rec.idlePlant]}) ${rec.idleAgingDays} days · open demand under ${rec.demandRef} → ${action}, avoids a new buy of ${formatZAR(rec.avoidedBuyValue)}`
+}
+
+export function RedeploymentRecommendations({
   recommendations,
+  decisions,
+  onDecide,
 }: {
   recommendations: RedeploymentRecommendation[]
+  decisions: Record<string, RedeploymentDecision>
+  onDecide: (rec: RedeploymentRecommendation, decision: RedeploymentDecision) => void
 }) {
-  const [decisions, setDecisions] = useState<Record<string, Decision>>({})
-
-  function decide(rec: RedeploymentRecommendation, decision: Decision) {
-    setDecisions((prev) => ({ ...prev, [rec.id]: decision }))
-    if (decision === "accepted") {
-      toast.success("Transfer recommendation sent for approval", {
-        description: `${rec.description} — ${rec.idlePlant} → ${rec.demandPlant} (${rec.demandRef})`,
-      })
-    } else {
-      toast(`Dismissed — ${rec.description}`)
-    }
-  }
-
   return (
     <div className="rounded-xl border border-border bg-card p-4">
       <div className="mb-1">
         <div className="text-sm font-medium text-foreground">
-          Redeployment recommendations
+          Redeployment &amp; pre-order intelligence
         </div>
         <div className="mt-0.5 text-xs text-muted-foreground">
-          ACT — idle stock at one plant matched against open demand at the other,
-          instead of a new buy
+          ACT — duplicate demand and unused stock checked against the
+          Initiative 10 matching engine before a new purchase is approved
         </div>
       </div>
       <div className="flex flex-col divide-y divide-border">
@@ -50,10 +55,7 @@ export function RedeploymentCard({
             >
               <p className="min-w-0 flex-1 text-[13px] leading-relaxed text-foreground">
                 <span className="font-medium">{rec.description}</span>:{" "}
-                {rec.idleUnits} units idle at {rec.idlePlant} {rec.idleAgingDays}{" "}
-                days · open demand at {rec.demandPlant} ({rec.demandRef}) →
-                recommend inter-plant transfer, avoids new buy of{" "}
-                {formatZAR(rec.avoidedBuyValue)}
+                {recommendationText(rec)}
               </p>
               <div className="flex shrink-0 items-center gap-2">
                 <StatusBadge tone="default">{rec.confidencePct}% confidence</StatusBadge>
@@ -67,12 +69,12 @@ export function RedeploymentCard({
                       size="xs"
                       variant="outline"
                       className="border-success/40 text-success hover:bg-success/10"
-                      onClick={() => decide(rec, "accepted")}
+                      onClick={() => onDecide(rec, "accepted")}
                     >
                       <Check className="size-3.5" />
                       Accept
                     </Button>
-                    <Button size="xs" variant="outline" onClick={() => decide(rec, "dismissed")}>
+                    <Button size="xs" variant="outline" onClick={() => onDecide(rec, "dismissed")}>
                       <X className="size-3.5" />
                       Dismiss
                     </Button>
@@ -84,8 +86,9 @@ export function RedeploymentCard({
         })}
       </div>
       <p className="mt-2.5 border-t border-dashed border-border pt-2.5 text-[11px] text-muted-foreground italic">
-        Recommendations are advisory; stock transfers and postings remain SAP
-        transactions executed by VZI.
+        Recommendations are advisory. Stock issues, transfers, reservation
+        changes and other inventory postings remain SAP transactions executed
+        by authorised VZI users.
       </p>
     </div>
   )
