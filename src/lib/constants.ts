@@ -103,6 +103,7 @@ export const DASHBOARD_LINKS: { label: string; icon: IconKey; href: string }[] =
     icon: "layers",
     href: "/dashboard/situation-analysis",
   },
+  { label: "Refurbishable Spares", icon: "wrench", href: "/refurbishables" },
 ]
 
 export const QUICK_ACTIONS: {
