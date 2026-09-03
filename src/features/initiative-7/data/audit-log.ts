@@ -25,6 +25,17 @@ function extractDaysAgo(meta?: string): number | null {
   return match ? Number(match[1]) : null
 }
 
+/**
+ * Absolute "DD Mon YYYY · HH:MM AM" for one approval step, resolved from its
+ * authored "Xd ago" meta. Shared with the decision history so both readouts
+ * time the same step identically.
+ */
+export function workflowStepTimestamp(rec: Recommendation, index: number): string {
+  const daysAgo = extractDaysAgo(rec.workflow[index]?.meta)
+  if (daysAgo === null) return rec.generatedAt
+  return `${dateFromDaysAgo(daysAgo)} · ${STEP_TIMES[index] ?? STEP_TIMES[0]}`
+}
+
 export function buildAuditTrailForRecommendation(rec: Recommendation): AuditEvent[] {
   const events: AuditEvent[] = []
 

@@ -16,14 +16,14 @@ export const initiative7Manifest: InitiativeManifest = {
         href: "/inventory-optimization/recommendations",
       },
       {
-        label: "Approval Queue",
+        label: "Approvals",
         icon: "clipboard-check",
         href: "/inventory-optimization/approvals",
       },
       {
-        label: "Monitoring",
+        label: "Pipeline",
         icon: "gauge",
-        href: "/inventory-optimization/monitoring",
+        href: "/inventory-optimization/pipeline",
       },
     ],
   },

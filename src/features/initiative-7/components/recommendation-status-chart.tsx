@@ -9,8 +9,10 @@ import {
   type TooltipContentProps,
 } from "recharts"
 
+import { cn } from "@/lib/utils"
+import { RECOMMENDATIONS } from "@/features/initiative-7/data/recommendations"
+import type { Recommendation, RecommendationStatus } from "@/features/initiative-7/types/inventory"
 import { statusDistribution } from "@/features/initiative-7/utils/inventory-calc"
-import type { RecommendationStatus } from "@/features/initiative-7/types/inventory"
 
 const STATUS_COLOR: Record<RecommendationStatus, string> = {
   "Pending Review": "var(--chart-4)",
@@ -33,13 +35,20 @@ function StatusTooltip({ active, payload }: TooltipContentProps) {
   )
 }
 
-export function RecommendationStatusChart() {
-  const data = statusDistribution()
-  const total = data.reduce((sum, d) => sum + d.count, 0)
+export function RecommendationStatusChart({
+  recommendations = RECOMMENDATIONS,
+  activeStatus,
+  onStatusClick,
+}: {
+  recommendations?: Recommendation[]
+  activeStatus?: RecommendationStatus | null
+  onStatusClick?: (status: RecommendationStatus) => void
+}) {
+  const data = statusDistribution(recommendations)
 
   return (
-    <div className="w-full">
-      <div className="relative h-[220px] w-full">
+    <div className="flex items-center gap-4">
+      <div className="h-[160px] w-[160px] shrink-0">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -51,25 +60,46 @@ export function RecommendationStatusChart() {
               paddingAngle={2}
               stroke="none"
               isAnimationActive={false}
+              onClick={(entry) => {
+                const status = (entry as { status?: RecommendationStatus })?.status
+                if (status) onStatusClick?.(status)
+              }}
+              cursor={onStatusClick ? "pointer" : undefined}
             >
               {data.map((d) => (
-                <Cell key={d.status} fill={STATUS_COLOR[d.status]} />
+                <Cell
+                  key={d.status}
+                  fill={STATUS_COLOR[d.status]}
+                  opacity={activeStatus && activeStatus !== d.status ? 0.3 : 1}
+                />
               ))}
             </Pie>
             <Tooltip content={StatusTooltip} />
           </PieChart>
         </ResponsiveContainer>
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-          <div className="text-xl font-semibold text-foreground">{total}</div>
-          <div className="text-[10px] font-medium tracking-[0.5px] text-muted-foreground uppercase">Total</div>
-        </div>
       </div>
-      <div className="mt-2 flex flex-wrap justify-center gap-x-3 gap-y-1.5 text-xs text-muted-foreground">
+      <div className="flex flex-1 flex-col gap-2">
         {data.map((d) => (
-          <div key={d.status} className="flex items-center gap-1.5">
-            <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: STATUS_COLOR[d.status] }} />
-            {d.status} ({d.count})
-          </div>
+          <button
+            key={d.status}
+            type="button"
+            onClick={() => onStatusClick?.(d.status)}
+            disabled={!onStatusClick}
+            className={cn(
+              "flex items-center justify-between gap-3 rounded-md px-1 py-0.5 text-sm transition-colors",
+              onStatusClick && "cursor-pointer hover:bg-muted/50",
+              activeStatus && activeStatus !== d.status && "opacity-40"
+            )}
+          >
+            <span className="flex items-center gap-2 text-foreground">
+              <span
+                className="size-2.5 shrink-0 rounded-full"
+                style={{ backgroundColor: STATUS_COLOR[d.status] }}
+              />
+              {d.status}
+            </span>
+            <span className="tabular-nums text-muted-foreground">{d.count}</span>
+          </button>
         ))}
       </div>
     </div>

@@ -62,7 +62,11 @@ function ParamPair({ current, recommended }: { current: number; recommended: num
   )
 }
 
-export function RecommendationsTable({
+/** Pure table rendering — no filter state of its own, so it can be reused
+ * both by the standalone Recommendations page (which wraps it with its own
+ * filter bar below) and by the Overview page (which drives it from the
+ * page-level dashboard filters instead). */
+export function RecommendationsTableView({
   recommendations,
   highlightRecommendationId,
 }: {
@@ -70,6 +74,92 @@ export function RecommendationsTable({
   highlightRecommendationId?: string
 }) {
   const { openMaterial360 } = useMaterial360()
+
+  useEffect(() => {
+    if (!highlightRecommendationId) return
+    document
+      .getElementById(`rec-row-${highlightRecommendationId}`)
+      ?.scrollIntoView({ block: "center", behavior: "smooth" })
+  }, [highlightRecommendationId])
+
+  if (recommendations.length === 0) {
+    return (
+      <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+        No recommendations match these filters.
+      </div>
+    )
+  }
+
+  return (
+    <div className="overflow-x-auto rounded-xl border border-border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Material</TableHead>
+            <TableHead>Plant</TableHead>
+            <TableHead>Circuit</TableHead>
+            <TableHead>Criticality</TableHead>
+            <TableHead>ROP (cur → rec)</TableHead>
+            <TableHead>Safety Stock (cur → rec)</TableHead>
+            <TableHead>Max Stock (cur → rec)</TableHead>
+            <TableHead>Lead Time</TableHead>
+            <TableHead>Demand Pattern</TableHead>
+            <TableHead>Risk</TableHead>
+            <TableHead>Status</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {recommendations.map((r) => {
+            const isHighlighted = r.id === highlightRecommendationId
+            return (
+              <TableRow
+                key={r.id}
+                id={`rec-row-${r.id}`}
+                className={cn(isHighlighted && "bg-primary/10 hover:bg-primary/15")}
+              >
+                <TableCell>
+                  <MaterialIdentity material={r.material} onOpen={openMaterial360} />
+                </TableCell>
+                <TableCell className="text-muted-foreground">
+                  {getPlantById(r.plantId)?.name ?? r.plantId}
+                </TableCell>
+                <TableCell className="text-muted-foreground">{r.circuit}</TableCell>
+                <TableCell className="text-muted-foreground">{r.criticality}</TableCell>
+                <TableCell>
+                  <ParamPair current={r.current.rop} recommended={r.recommended.rop} />
+                </TableCell>
+                <TableCell>
+                  <ParamPair current={r.current.safetyStock} recommended={r.recommended.safetyStock} />
+                </TableCell>
+                <TableCell>
+                  <ParamPair current={r.current.maxStock} recommended={r.recommended.maxStock} />
+                </TableCell>
+                <TableCell className="text-muted-foreground">{r.leadTimeDays}d</TableCell>
+                <TableCell className="text-muted-foreground">{r.demandPattern}</TableCell>
+                <TableCell>
+                  <RiskBadge level={r.risk} />
+                </TableCell>
+                <TableCell>
+                  <Link href={`/inventory-optimization/recommendations/${r.id}`} className="hover:underline">
+                    <StatusBadge tone={STATUS_TONE[r.status]}>{r.status}</StatusBadge>
+                  </Link>
+                </TableCell>
+              </TableRow>
+            )
+          })}
+        </TableBody>
+      </Table>
+    </div>
+  )
+}
+
+export function RecommendationsTable({
+  recommendations,
+  highlightRecommendationId,
+}: {
+  recommendations: Recommendation[]
+  highlightRecommendationId?: string
+}) {
   const [plant, setPlant] = useState<string>(ALL)
   const [circuit, setCircuit] = useState<string>(ALL)
   const [criticality, setCriticality] = useState<string>(ALL)
@@ -88,13 +178,6 @@ export function RecommendationsTable({
       return true
     })
   }, [recommendations, plant, circuit, criticality, status, risk, demandPattern])
-
-  useEffect(() => {
-    if (!highlightRecommendationId) return
-    document
-      .getElementById(`rec-row-${highlightRecommendationId}`)
-      ?.scrollIntoView({ block: "center", behavior: "smooth" })
-  }, [highlightRecommendationId])
 
   return (
     <div className="flex flex-col gap-3">
@@ -196,71 +279,10 @@ export function RecommendationsTable({
         </Select>
       </FilterBar>
 
-      {filtered.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          No recommendations match these filters.
-        </div>
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Material</TableHead>
-                <TableHead>Plant</TableHead>
-                <TableHead>Circuit</TableHead>
-                <TableHead>Criticality</TableHead>
-                <TableHead>ROP (cur → rec)</TableHead>
-                <TableHead>Safety Stock (cur → rec)</TableHead>
-                <TableHead>Max Stock (cur → rec)</TableHead>
-                <TableHead>Lead Time</TableHead>
-                <TableHead>Demand Pattern</TableHead>
-                <TableHead>Risk</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filtered.map((r) => {
-                const isHighlighted = r.id === highlightRecommendationId
-                return (
-                  <TableRow
-                    key={r.id}
-                    id={`rec-row-${r.id}`}
-                    className={cn(isHighlighted && "bg-primary/10 hover:bg-primary/15")}
-                  >
-                    <TableCell>
-                      <MaterialIdentity material={r.material} onOpen={openMaterial360} />
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {getPlantById(r.plantId)?.name ?? r.plantId}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">{r.circuit}</TableCell>
-                    <TableCell className="text-muted-foreground">{r.criticality}</TableCell>
-                    <TableCell>
-                      <ParamPair current={r.current.rop} recommended={r.recommended.rop} />
-                    </TableCell>
-                    <TableCell>
-                      <ParamPair current={r.current.safetyStock} recommended={r.recommended.safetyStock} />
-                    </TableCell>
-                    <TableCell>
-                      <ParamPair current={r.current.maxStock} recommended={r.recommended.maxStock} />
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">{r.leadTimeDays}d</TableCell>
-                    <TableCell className="text-muted-foreground">{r.demandPattern}</TableCell>
-                    <TableCell>
-                      <RiskBadge level={r.risk} />
-                    </TableCell>
-                    <TableCell>
-                      <Link href={`/inventory-optimization/recommendations/${r.id}`} className="hover:underline">
-                        <StatusBadge tone={STATUS_TONE[r.status]}>{r.status}</StatusBadge>
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+      <RecommendationsTableView
+        recommendations={filtered}
+        highlightRecommendationId={highlightRecommendationId}
+      />
     </div>
   )
 }
