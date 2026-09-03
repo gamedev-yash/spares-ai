@@ -93,7 +93,7 @@ export function Material360Drawer() {
         <div className="flex flex-col gap-4">
           <div className="rounded-lg border border-border p-3">
             <div className="mb-1.5 text-xs font-medium text-foreground">
-              Procurement — Initiative 9
+              Procurement
             </div>
             <dl className="space-y-0.5">
               <div className="flex justify-between gap-2 text-[11px]">
