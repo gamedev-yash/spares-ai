@@ -139,13 +139,11 @@ export const QUICK_ACTIONS: {
     href: "/overview",
   },
   { label: "Search materials", icon: "search", href: "/materials" },
+  // Pending approvals across every module now surface in the Action Center
+  // (which links straight into each module's own approval page) instead of
+  // a separate "Pending approvals" shortcut — /approvals itself still works,
+  // it's just no longer a top-level nav entry point.
   { label: "Action Center", icon: "inbox", href: "/action-center" },
-  {
-    label: "Pending approvals",
-    icon: "clipboard-check",
-    href: "/approvals",
-    badge: 4,
-  },
   { label: "Audit trail", icon: "history", href: "/audit" },
 ]
 

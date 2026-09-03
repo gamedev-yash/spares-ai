@@ -19,11 +19,16 @@ independently.
 
 | Export | Route | Purpose |
 | --- | --- | --- |
-| `InventoryOptimizationOverviewPage` | `/inventory-optimization` | KPI row + health/exposure/status/trend charts + recent recommendations |
+| `InventoryOptimizationOverviewPage` | rendered as the "Inventory Optimization" tab on the global `/overview` (Spares Control Tower) — no standalone route | KPI row + health/exposure/status/trend charts + recent recommendations |
 | `RecommendationsPage` | `/inventory-optimization/recommendations` | Filterable recommendation table workspace (wraps a client workspace in `<Suspense>` because it reads `?reviewMaterial=`) |
 | `RecommendationDetailPage` | `/inventory-optimization/recommendations/[id]` | Explainability workspace: parameter comparison, why-recommended equation + factors, champion/challenger, OAR cold-start panel, interactive approval workflow |
-| `InventoryApprovalQueuePage` | `/inventory-optimization/approvals` | Queue of recommendations currently awaiting a decision, with quick approve/reject |
 | `InventoryMonitoringPage` | `/inventory-optimization/monitoring` | Trend-oriented charts: stockout risk trend, excess inventory opportunity trend, status distribution, circuit exposure |
+
+The former standalone "Approval Queue" page was removed — recommendations
+awaiting a decision surface in the global Action Center instead (via
+`selectors/global-actions.ts`), which links straight into
+`RecommendationDetailPage`'s full workflow rather than a separate quick-action
+table.
 
 Route wrapper files in `src/app/inventory-optimization/**` are thin — they
 just import and render the page components above; they were not modified
