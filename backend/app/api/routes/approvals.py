@@ -71,12 +71,24 @@ def _hydrate(store: DataStore, approvals: list[Row]) -> list[ApprovalOut]:
     return out
 
 
+def _matches(row: ApprovalOut, needle: str) -> bool:
+    haystack = " ".join(
+        str(v or "")
+        for v in (
+            row.rr_number, row.requester_name, row.material_description,
+            row.approver_role, row.approval_type, row.urgency,
+        )
+    )
+    return needle in haystack.lower()
+
+
 @router.get("", response_model=Page[ApprovalOut])
 def list_approvals(
     store: DataStore = Depends(get_store),
     status: str | None = "PENDING",
     urgency: str | None = None,
     approval_type: str | None = None,
+    search: str | None = None,
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=25, ge=1, le=200),
 ) -> Page[ApprovalOut]:
@@ -89,11 +101,24 @@ def list_approvals(
         items = [a for a in items if a.get("approval_type") == approval_type]
 
     items = sorted(items, key=lambda a: a.get("submitted_at") or "")
-    total = len(items)
-    start = (page - 1) * page_size
-    page_items = items[start : start + page_size]
 
-    return Page(items=_hydrate(store, page_items), total=total, page=page, page_size=page_size)
+    needle = (search or "").strip().lower()
+    if not needle:
+        # Fast path -- only hydrate the page being returned.
+        total = len(items)
+        start = (page - 1) * page_size
+        return Page(
+            items=_hydrate(store, items[start : start + page_size]),
+            total=total, page=page, page_size=page_size,
+        )
+
+    # Search spans joined fields (requisition number, requester, material), so the rows have
+    # to be hydrated before they can be matched -- and matched before paging, or the count
+    # and the pages would both be wrong.
+    hydrated = [row for row in _hydrate(store, items) if _matches(row, needle)]
+    total = len(hydrated)
+    start = (page - 1) * page_size
+    return Page(items=hydrated[start : start + page_size], total=total, page=page, page_size=page_size)
 
 
 @router.post("/{approval_id}/approve", response_model=ApprovalOut)

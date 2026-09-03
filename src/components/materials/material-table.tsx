@@ -51,11 +51,17 @@ export function MaterialTable({ materials }: { materials: Material[] }) {
           <TableRow
             key={material.id}
             className="cursor-pointer"
-            onClick={() => router.push(`/chat/new/${material.material_code}`)}
+            // The scripted Initiative 10 session only exists for the hand-authored mock
+            // catalogue, so every real material 404'd here. Go to the assistant, which can
+            // actually act on this part -- and which fires the Initiative 8 repair guard
+            // when the material is an 80-series repairable.
+            onClick={() =>
+              router.push(`/chat/assistant?material=${encodeURIComponent(material.material_code)}`)
+            }
           >
             <TableCell>
               <Link
-                href={`/chat/new/${material.material_code}`}
+                href={`/chat/assistant?material=${encodeURIComponent(material.material_code)}`}
                 onClick={(e) => e.stopPropagation()}
                 className="font-medium text-primary hover:underline"
               >

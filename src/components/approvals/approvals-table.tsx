@@ -2,12 +2,13 @@
 
 import { Fragment, useCallback, useEffect, useState } from "react"
 import Link from "next/link"
-import { Check, EllipsisVertical, ShieldCheck, TriangleAlert, X } from "lucide-react"
+import { Check, EllipsisVertical, Search, ShieldCheck, TriangleAlert, X } from "lucide-react"
 import { toast } from "sonner"
 
 import { DuplicateContextAlert } from "@/components/repair/duplicate-alert"
 import { StatusBadge } from "@/components/shared/status-badge"
 import { Button, buttonVariants } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,12 +58,24 @@ function duplicateMaterialCode(item: ApprovalRecord): string | null {
 
 export function ApprovalsTable() {
   const [urgency, setUrgency] = useState<(typeof URGENCIES)[number] | typeof ALL_FILTER>(ALL_FILTER)
+  const [search, setSearch] = useState("")
+  const [debounced, setDebounced] = useState("")
   const [page, setPage] = useState(1)
   const [approvals, setApprovals] = useState<ApprovalRecord[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [actingOn, setActingOn] = useState<number | null>(null)
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(search), 250)
+    return () => clearTimeout(t)
+  }, [search])
+
+  // A narrowed result set has fewer pages -- staying on page 4 would show nothing.
+  useEffect(() => {
+    setPage(1)
+  }, [debounced, urgency])
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -71,6 +84,7 @@ export function ApprovalsTable() {
       const result = await searchApprovals({
         status: "PENDING",
         urgency: urgency === ALL_FILTER ? undefined : urgency,
+        search: debounced || undefined,
         page,
         page_size: PAGE_SIZE,
       })
@@ -81,7 +95,7 @@ export function ApprovalsTable() {
     } finally {
       setLoading(false)
     }
-  }, [urgency, page])
+  }, [urgency, debounced, page])
 
   useEffect(() => {
     load()
@@ -114,6 +128,15 @@ export function ApprovalsTable() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="relative w-full sm:max-w-xs">
+          <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search RR, requester, or material"
+            className="h-9 pl-8"
+          />
+        </div>
         <Select
           value={urgency}
           onValueChange={(value) => {
@@ -146,6 +169,20 @@ export function ApprovalsTable() {
       ) : approvals.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
           No pending approvals match these filters.
+          {(debounced || urgency !== ALL_FILTER) && (
+            <div className="mt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSearch("")
+                  setUrgency(ALL_FILTER)
+                }}
+              >
+                Clear filters
+              </Button>
+            </div>
+          )}
         </div>
       ) : (
         <>

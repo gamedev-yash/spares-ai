@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Check, ExternalLink, ShieldCheck, X } from "lucide-react"
+import { Check, ExternalLink, Search, ShieldCheck, X } from "lucide-react"
 import { toast } from "sonner"
 
 import { DuplicateContextAlert } from "@/components/repair/duplicate-alert"
@@ -93,6 +93,8 @@ function PendingQueue({
   onDeclared: () => void
 }) {
   const [items, setItems] = useState<PendingDeclaration[]>([])
+  const [search, setSearch] = useState("")
+  const [debounced, setDebounced] = useState("")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [openRow, setOpenRow] = useState<number | null>(null)
@@ -100,17 +102,22 @@ function PendingQueue({
   const [busy, setBusy] = useState<number | null>(null)
   const firstMatchRef = useRef<HTMLDivElement | null>(null)
 
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(search), 250)
+    return () => clearTimeout(t)
+  }, [search])
+
   const load = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      setItems(await listPendingDeclarations())
+      setItems(await listPendingDeclarations(undefined, debounced || undefined))
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Failed to load pending declarations.")
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [debounced])
 
   useEffect(() => {
     load()
@@ -150,11 +157,36 @@ function PendingQueue({
     }
   }
 
-  if (loading) return <Skeleton className="h-56 rounded-xl" />
+  // The search box stays mounted through loading and empty states -- otherwise a search
+  // that matches nothing removes the only control that could undo it.
+  const searchBox = (
+    <div className="relative w-full sm:max-w-xs">
+      <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+      <Input
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Search RR, material, or requester"
+        className="h-9 pl-8"
+      />
+    </div>
+  )
+
   if (error) {
     return (
-      <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-        {error}
+      <div className="flex flex-col gap-3">
+        {searchBox}
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+          {error}
+        </div>
+      </div>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className="flex flex-col gap-3">
+        {searchBox}
+        <Skeleton className="h-56 rounded-xl" />
       </div>
     )
   }
@@ -163,11 +195,21 @@ function PendingQueue({
     return (
       <div className="flex flex-col gap-3">
         <TargetChip target={target} onClear={onClearTarget} />
+        {searchBox}
         <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          {hasTarget(target)
-            ? `Nothing is awaiting a declaration for ${describeTarget(target)}.`
-            : "No requisitions are waiting on a declaration."}
-          {hasTarget(target) && items.length > 0 && (
+          {debounced
+            ? `No requisition awaiting a declaration matches "${debounced}".`
+            : hasTarget(target)
+              ? `Nothing is awaiting a declaration for ${describeTarget(target)}.`
+              : "No requisitions are waiting on a declaration."}
+          {debounced && (
+            <div className="mt-2">
+              <Button variant="outline" size="sm" onClick={() => setSearch("")}>
+                Clear search
+              </Button>
+            </div>
+          )}
+          {!debounced && hasTarget(target) && items.length > 0 && (
             <div className="mt-2">
               <Button variant="outline" size="sm" onClick={onClearTarget}>
                 Show all {items.length} pending
@@ -182,6 +224,7 @@ function PendingQueue({
   return (
     <div className="flex flex-col gap-3">
       <TargetChip target={target} onClear={onClearTarget} />
+      {searchBox}
       <p className="text-xs text-muted-foreground">
         {visible.length} auto-raised {visible.length === 1 ? "requisition" : "requisitions"} cannot
         be approved until a planner confirms the existing item is beyond repair.
@@ -284,9 +327,16 @@ function DeclarationLog({
 }) {
   const [status, setStatus] = useState<string>(ALL_FILTER)
   const [origin, setOrigin] = useState<string>(ALL_FILTER)
+  const [search, setSearch] = useState("")
+  const [debounced, setDebounced] = useState("")
   const [items, setItems] = useState<Attestation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(search), 250)
+    return () => clearTimeout(t)
+  }, [search])
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -297,6 +347,7 @@ function DeclarationLog({
           status: status === ALL_FILTER ? undefined : status,
           origin: origin === ALL_FILTER ? undefined : origin,
           plant: target.plant ?? undefined,
+          search: debounced || undefined,
         })
       )
     } catch (err) {
@@ -304,7 +355,7 @@ function DeclarationLog({
     } finally {
       setLoading(false)
     }
-  }, [status, origin, target.plant])
+  }, [status, origin, target.plant, debounced])
 
   useEffect(() => {
     load()
@@ -322,6 +373,15 @@ function DeclarationLog({
     <div className="flex flex-col gap-3">
       <TargetChip target={target} onClear={onClearTarget} />
       <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="relative w-full sm:max-w-xs">
+          <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search RR, material, or declarer"
+            className="h-9 pl-8"
+          />
+        </div>
         <Select value={status} onValueChange={(v) => setStatus((v as string) ?? ALL_FILTER)}>
           <SelectTrigger className="h-9 w-full sm:w-44">
             <SelectValue placeholder="Status">

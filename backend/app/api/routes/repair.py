@@ -86,16 +86,25 @@ def list_attestations(
     status: str | None = Query(default=None, description="COMPLETE | PENDING"),
     origin: str | None = Query(default=None, description="MANUAL | MRP | CHAT"),
     plant: str | None = None,
+    search: str | None = Query(default=None, description="Requisition, material, or declarer"),
 ) -> list[AttestationOut]:
-    return [AttestationOut.model_validate(a) for a in attestation_service.build_log(store, status, origin, plant)]
+    return [
+        AttestationOut.model_validate(a)
+        for a in attestation_service.build_log(store, status, origin, plant, search)
+    ]
 
 
 @router.get("/attestations/pending", response_model=list[PendingDeclarationOut])
 def list_pending_declarations(
-    store: DataStore = Depends(get_store), plant: str | None = None
+    store: DataStore = Depends(get_store),
+    plant: str | None = None,
+    search: str | None = Query(default=None, description="Requisition, material, or requester"),
 ) -> list[PendingDeclarationOut]:
     """Auto-raised requisitions blocked at DOA until a planner declares."""
-    return [PendingDeclarationOut.model_validate(q) for q in attestation_service.build_pending_queue(store, plant)]
+    return [
+        PendingDeclarationOut.model_validate(q)
+        for q in attestation_service.build_pending_queue(store, plant, search)
+    ]
 
 
 @router.post("/attestations/{attestation_id}/declare", response_model=AttestationOut)

@@ -1098,3 +1098,5 @@ id,recipient_id,type,title,message,status,related_entity_type,related_entity_id,
 1097,9,PO_CREATED,PO-3506 created,A purchase order has been created for your requisition.,READ,PO,506,2026-06-11T00:18:35.097269+00:00,2026-06-11T04:18:35.097269+00:00
 1098,10,APPROVAL_RESULT,RR-1650 approved,Your requisition was approved at DOA.,READ,RR,650,2026-06-01T16:18:35.097269+00:00,2026-06-01T18:18:35.097269+00:00
 1099,10,PO_CREATED,PO-3507 created,A purchase order has been created for your requisition.,READ,PO,507,2026-06-26T16:18:35.097269+00:00,2026-06-26T17:18:35.097269+00:00
+1100,4,APPROVAL_RESULT,RR-1120 approved,Your requisition was approved at DOA stage.,UNREAD,RR,120,2026-08-27T09:35:03.936873+00:00,
+1101,1,APPROVAL_RESULT,RR-1654 approved,Your requisition was approved at DOA stage.,UNREAD,RR,654,2026-08-27T09:43:06.674642+00:00,

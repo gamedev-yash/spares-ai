@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 
 import { AssistantMessageBubble } from "@/components/chat/assistant-message"
@@ -9,6 +9,7 @@ import { ChatHeader } from "@/components/chat/chat-header"
 import { ChatInput } from "@/components/chat/chat-input"
 import { ApiError } from "@/lib/api/client"
 import { sendChatMessage, type AssistantMessage } from "@/lib/api/chat"
+import { searchMaterials } from "@/lib/api/materials"
 
 const WELCOME_MESSAGE: AssistantMessage = {
   id: -1,
@@ -26,6 +27,9 @@ export function AssistantChatWorkspace({
   initialMessages: AssistantMessage[]
 }) {
   const router = useRouter()
+  const params = useSearchParams()
+  const materialParam = params.get("material")
+
   const [sessionId, setSessionId] = useState<number | null>(initialSessionId)
   const [title, setTitle] = useState("AI Assistant")
   const [messages, setMessages] = useState<AssistantMessage[]>(
@@ -33,11 +37,34 @@ export function AssistantChatWorkspace({
   )
   const [sending, setSending] = useState(false)
   const [demoMode, setDemoMode] = useState<boolean | null>(null)
+  // Seeded from ?material= so a material row lands here ready to act on that part.
+  const [draft, setDraft] = useState("")
+  const [draftReady, setDraftReady] = useState(!materialParam)
   const endRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end", behavior: "smooth" })
   }, [messages.length])
+
+  // Resolve ?material=<code> to a description the assistant's material search can match --
+  // it tokenises on words, so a bare code would find nothing.
+  useEffect(() => {
+    if (!materialParam) return
+    let cancelled = false
+    searchMaterials({ q: materialParam, page_size: 1 })
+      .then((result) => {
+        if (cancelled) return
+        const material = result.items[0]
+        setDraft(material ? `I need 1 ${material.description}` : "")
+        setDraftReady(true)
+      })
+      .catch(() => {
+        if (!cancelled) setDraftReady(true)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [materialParam])
 
   async function handleTurn(args: { message?: string; optionId?: string }) {
     setSending(true)
@@ -83,7 +110,14 @@ export function AssistantChatWorkspace({
         {sending && <div className="text-xs text-muted-foreground">Thinking…</div>}
         <div ref={endRef} />
       </div>
-      <ChatInput onSend={(text) => handleTurn({ message: text })} />
+      {/* Wait for ?material= to resolve before mounting, so the composer seeds once. */}
+      {draftReady && (
+        <ChatInput
+          key={draft || "empty"}
+          initialValue={draft}
+          onSend={(text) => handleTurn({ message: text })}
+        />
+      )}
     </div>
   )
 }

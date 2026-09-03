@@ -6,8 +6,15 @@ import { Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
-export function ChatInput({ onSend }: { onSend: (text: string) => void }) {
-  const [value, setValue] = useState("")
+export function ChatInput({
+  onSend,
+  initialValue = "",
+}: {
+  onSend: (text: string) => void
+  /** Seeds the composer once, e.g. arriving from a material row with ?material=. */
+  initialValue?: string
+}) {
+  const [value, setValue] = useState(initialValue)
   const inputRef = useRef<HTMLInputElement>(null)
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {

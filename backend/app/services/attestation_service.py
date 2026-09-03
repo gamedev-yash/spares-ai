@@ -147,7 +147,11 @@ def repairable_lines_in_payload(store: DataStore, line_items) -> list:
     return [line for line in line_items if repair_service.material_is_repairable(store, line.material_id)]
 
 
-def build_pending_queue(store: DataStore, plant: str | None = None) -> list[dict]:
+def _matches(row: dict, needle: str, fields: tuple[str, ...]) -> bool:
+    return needle in " ".join(str(row.get(f) or "") for f in fields).lower()
+
+
+def build_pending_queue(store: DataStore, plant: str | None = None, search: str | None = None) -> list[dict]:
     """Requisitions blocked at DOA waiting on a planner's declaration -- the MRP work queue."""
     rr_by_id = {r["id"]: r for r in store.rr.all()}
     materials_by_id = {m["id"]: m for m in store.materials.all()}
@@ -186,11 +190,20 @@ def build_pending_queue(store: DataStore, plant: str | None = None) -> list[dict
         )
 
     queue.sort(key=lambda q: q.get("created_at") or "")
+
+    needle = (search or "").strip().lower()
+    if needle:
+        fields = ("rr_number", "material_code", "material_description", "requester", "plant", "department")
+        queue = [q for q in queue if _matches(q, needle, fields)]
     return queue
 
 
 def build_log(
-    store: DataStore, status: str | None = None, origin: str | None = None, plant: str | None = None
+    store: DataStore,
+    status: str | None = None,
+    origin: str | None = None,
+    plant: str | None = None,
+    search: str | None = None,
 ) -> list[dict]:
     """The full declaration log -- who declared what, when, and against which requisition."""
     rr_by_id = {r["id"]: r for r in store.rr.all()}
@@ -231,6 +244,11 @@ def build_log(
         )
 
     out.sort(key=lambda a: a.get("created_at") or "", reverse=True)
+
+    needle = (search or "").strip().lower()
+    if needle:
+        fields = ("rr_number", "material_code", "material_description", "declared_by_name", "plant", "statement")
+        out = [a for a in out if _matches(a, needle, fields)]
     return out
 
 

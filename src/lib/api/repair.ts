@@ -178,13 +178,18 @@ export function getRepairEconomics(materialId: number, plant?: string): Promise<
 }
 
 export function listAttestations(
-  params: { status?: string; origin?: string; plant?: string } = {}
+  params: { status?: string; origin?: string; plant?: string; search?: string } = {}
 ): Promise<Attestation[]> {
   return apiFetch<Attestation[]>("/repair/attestations", { params })
 }
 
-export function listPendingDeclarations(plant?: string): Promise<PendingDeclaration[]> {
-  return apiFetch<PendingDeclaration[]>("/repair/attestations/pending", { params: { plant } })
+export function listPendingDeclarations(
+  plant?: string,
+  search?: string
+): Promise<PendingDeclaration[]> {
+  return apiFetch<PendingDeclaration[]>("/repair/attestations/pending", {
+    params: { plant, search },
+  })
 }
 
 export function declareAttestation(id: number, note?: string): Promise<Attestation> {

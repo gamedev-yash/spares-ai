@@ -17,8 +17,9 @@ export default function MaterialsPage() {
             Material search
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Click a row to start a new alternate-sourcing session for that
-            material.
+            Click a row to open the assistant for that material. Repairable
+            (80-series) items are flagged — the assistant checks for a repair already
+            in progress before raising a requisition.
           </p>
         </div>
         <Suspense

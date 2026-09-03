@@ -45,6 +45,8 @@ export interface ApprovalSearchParams {
   status?: string
   urgency?: string
   approval_type?: string
+  /** Matches requisition number, requester, material, approver role, type or urgency. */
+  search?: string
   page?: number
   page_size?: number
   [key: string]: string | number | boolean | undefined
