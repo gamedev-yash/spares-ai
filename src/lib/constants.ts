@@ -127,6 +127,9 @@ export const DEFAULT_SESSION_ID = "SPR-2847"
 /** Hardcoded blank chat opened by the sidebar "New session" button (mock). */
 export const NEW_SESSION_ID = "SPR-2900"
 
+/** Initiative 13 CAPTURE stage — consumption-plan intake, opened from Utilisation Tracking. */
+export const OAR_CAPTURE_SESSION_ID = "SPR-OAR-CAPTURE"
+
 export const WORKFLOW_STEP_LABELS = [
   "Material identified",
   "Application confirmed",

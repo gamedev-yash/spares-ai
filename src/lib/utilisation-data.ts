@@ -840,8 +840,8 @@ export interface UtilisationKpiSummary {
 /** Fixed baseline for the company-wide position, not derived from the small
  * ledger sample below — mirrors how the /dashboard KPI totals are curated
  * separately from the situation-analysis drill-down sample. The live
- * quantities below (redeployment, resolved exceptions, plan capture) are
- * layered on top so KPI cards visibly move as the demo proceeds. */
+ * quantities below (redeployment, resolved exceptions) are layered on top so
+ * KPI cards visibly move as the demo proceeds. */
 const BASE_UNUTILISED_LINE_COUNT = 47
 const BASE_PLAN_COMPLIANCE_PCT = 78.4
 const BASE_PLAN_CAPTURE_COMPLETE_PCT = 94
@@ -852,13 +852,11 @@ export function computeUtilisationKpiSummary({
   recommendationDecisions,
   resolvedExceptionCount,
   resolvedExceptionValueZarMn,
-  planCaptureBoostPct,
 }: {
   recommendations: RedeploymentRecommendation[]
   recommendationDecisions: Record<string, "accepted" | "dismissed">
   resolvedExceptionCount: number
   resolvedExceptionValueZarMn: number
-  planCaptureBoostPct: number
 }): UtilisationKpiSummary {
   const undecided = recommendations.filter((r) => !recommendationDecisions[r.id])
   const baseUnutilisedValueZarMn = idleAgingTotalZarMn() + HISTORICAL_FALLBACK_AGING.valueZarMn
@@ -870,7 +868,7 @@ export function computeUtilisationKpiSummary({
     ),
     unutilisedLineCount: Math.max(0, BASE_UNUTILISED_LINE_COUNT - resolvedExceptionCount),
     planCompliancePct: BASE_PLAN_COMPLIANCE_PCT,
-    planCaptureCompletePct: Math.min(100, BASE_PLAN_CAPTURE_COMPLETE_PCT + planCaptureBoostPct),
+    planCaptureCompletePct: BASE_PLAN_CAPTURE_COMPLETE_PCT,
     redeployment: {
       count: undecided.length,
       potentialAvoidanceZar: undecided.reduce((sum, r) => sum + r.avoidedBuyValue, 0),
@@ -1062,75 +1060,6 @@ export function applyRedeploymentAcceptance(row: UtilisationLedgerRow): Utilisat
 function formatDateInputLabel(value: string): string {
   const [year, month, day] = value.split("-").map(Number)
   return formatDateDMY(new Date(year, month - 1, day))
-}
-
-// ---------------------------------------------------------------------------
-// Consumption-plan capture (CAPTURE stage) — a new OAR request raised
-// through the platform, mandatory-field-enforced per source doc §3.2.
-// ---------------------------------------------------------------------------
-
-export interface CaptureRequestInput {
-  materialCode: string
-  materialDescription: string
-  plant: UtilisationPlant
-  requester: string
-  department: string
-  costCentre: string
-  purpose: string
-  plannedConsumptionDate: string // HTML date input value, "YYYY-MM-DD"
-  quantity: number
-  valueZar: number
-}
-
-let captureSequence = 0
-
-export function createLedgerRowFromCapture(input: CaptureRequestInput): UtilisationLedgerRow {
-  captureSequence += 1
-  const trackingId = `SPR-TRK-4${(300 + captureSequence).toString().padStart(3, "0")}`
-  const plannedLabel = formatDateInputLabel(input.plannedConsumptionDate)
-
-  return {
-    id: `L-CAP-${captureSequence}`,
-    trackingId,
-    reservationNumber: "Awaiting SAP reservation",
-    reservationLine: "—",
-    materialCode: input.materialCode,
-    materialDescription: input.materialDescription,
-    plant: input.plant,
-    requester: input.requester,
-    department: input.department,
-    costCentre: input.costCentre || undefined,
-    purpose: input.purpose,
-    requirementDate: MOCK_TODAY_LABEL,
-    plannedConsumptionDate: plannedLabel,
-    requestedQty: input.quantity,
-    storeIssuedQty: 0,
-    procurementQty: input.quantity,
-    uom: "EA",
-    prNumber: null,
-    prAllocationType: "None",
-    poNumber: null,
-    goodsReceiptDate: null,
-    goodsReceiptQty: 0,
-    goodsIssueDate: null,
-    goodsIssueQty: 0,
-    utilisationStatus: "Not yet due",
-    utilisationConfirmedDate: null,
-    chainStatus: "Fully linked",
-    agingDays: 0,
-    agingBasis: "Not aging",
-    escalationStage: "Not applicable",
-    exceptionLabel: "Not yet due",
-    exceptionTone: "default",
-    valueZar: input.valueZar,
-    events: [
-      {
-        stage: "Requested",
-        date: MOCK_TODAY_LABEL,
-        detail: `RR raised via platform with consumption plan — tracking ID ${trackingId}, awaiting SAP reservation`,
-      },
-    ],
-  }
 }
 
 // ---------------------------------------------------------------------------

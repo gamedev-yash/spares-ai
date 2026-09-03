@@ -1,6 +1,8 @@
+import Link from "next/link"
 import { ChevronRight, Eye, FileText, RotateCcw, Send, Wrench } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
+import { OAR_CAPTURE_SESSION_ID } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 
 const STAGES: { key: string; label: string; icon: LucideIcon; caption: string }[] = [
@@ -30,37 +32,41 @@ const STAGES: { key: string; label: string; icon: LucideIcon; caption: string }[
   },
 ]
 
-export function UtilisationLoop({ onCaptureClick }: { onCaptureClick?: () => void }) {
+const CHIP_CLASS =
+  "flex flex-1 flex-col gap-1 rounded-lg border border-border bg-muted/40 p-3 text-left"
+const CAPTURE_CLASS =
+  "cursor-pointer outline-none transition-colors hover:border-primary/50 hover:bg-accent/40 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+
+export function UtilisationLoop() {
   return (
     <div className="rounded-xl border border-border bg-card p-4">
       <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
         {STAGES.map((stage, i) => {
           const Icon = stage.icon
           const isCapture = stage.key === "capture"
-          const Wrapper = isCapture && onCaptureClick ? "button" : "div"
+          const chip = (
+            <>
+              <div className="flex items-center gap-1.5 text-xs font-semibold tracking-[0.5px] text-foreground">
+                <Icon className="size-3.5 text-primary" />
+                {stage.label}
+              </div>
+              <p className="text-[11px] leading-snug text-muted-foreground">{stage.caption}</p>
+              {isCapture && (
+                <p className="text-[11px] font-medium text-primary">
+                  + New OAR request (via chat)
+                </p>
+              )}
+            </>
+          )
           return (
             <div key={stage.key} className="flex flex-1 items-center gap-2">
-              <Wrapper
-                type={isCapture && onCaptureClick ? "button" : undefined}
-                onClick={isCapture ? onCaptureClick : undefined}
-                className={cn(
-                  "flex flex-1 flex-col gap-1 rounded-lg border border-border bg-muted/40 p-3 text-left",
-                  isCapture &&
-                    onCaptureClick &&
-                    "cursor-pointer outline-none transition-colors hover:border-primary/50 hover:bg-accent/40 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-                )}
-              >
-                <div className="flex items-center gap-1.5 text-xs font-semibold tracking-[0.5px] text-foreground">
-                  <Icon className="size-3.5 text-primary" />
-                  {stage.label}
-                </div>
-                <p className="text-[11px] leading-snug text-muted-foreground">
-                  {stage.caption}
-                </p>
-                {isCapture && onCaptureClick && (
-                  <p className="text-[11px] font-medium text-primary">+ New OAR request</p>
-                )}
-              </Wrapper>
+              {isCapture ? (
+                <Link href={`/chat/${OAR_CAPTURE_SESSION_ID}`} className={cn(CHIP_CLASS, CAPTURE_CLASS)}>
+                  {chip}
+                </Link>
+              ) : (
+                <div className={CHIP_CLASS}>{chip}</div>
+              )}
               {i < STAGES.length - 1 && (
                 <ChevronRight className="hidden size-4 shrink-0 text-muted-foreground sm:block" />
               )}

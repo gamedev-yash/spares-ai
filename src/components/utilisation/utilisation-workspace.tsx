@@ -1,27 +1,25 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import Link from "next/link"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
 
-import { Button } from "@/components/ui/button"
 import { RedeploymentRecommendations } from "@/components/utilisation/redeployment-recommendations"
 import type { RedeploymentDecision } from "@/components/utilisation/redeployment-recommendations"
 import { RequesterAccountability } from "@/components/utilisation/requester-accountability"
 import { UtilisationAging } from "@/components/utilisation/utilisation-aging"
-import { UtilisationCaptureDialog } from "@/components/utilisation/utilisation-capture-dialog"
 import { UtilisationExceptions } from "@/components/utilisation/utilisation-exceptions"
 import { UtilisationKpis } from "@/components/utilisation/utilisation-kpis"
 import { UtilisationLedger } from "@/components/utilisation/utilisation-ledger"
 import { UtilisationLoop } from "@/components/utilisation/utilisation-loop"
 import { UtilisationSignals } from "@/components/utilisation/utilisation-signals"
+import { OAR_CAPTURE_SESSION_ID } from "@/lib/constants"
 import {
   applyExceptionResponse,
   applyRedeploymentAcceptance,
   computeUtilisationKpiSummary,
-  createLedgerRowFromCapture,
   getRequesterExceptions,
-  type CaptureRequestInput,
   type ExceptionResponseAction,
   type RedeploymentRecommendation,
   type UtilisationLedgerRow,
@@ -38,10 +36,8 @@ export function UtilisationWorkspace({
   const [recommendationDecisions, setRecommendationDecisions] = useState<
     Record<string, RedeploymentDecision>
   >({})
-  const [captureOpen, setCaptureOpen] = useState(false)
   const [resolvedExceptionCount, setResolvedExceptionCount] = useState(0)
   const [resolvedExceptionValueZarMn, setResolvedExceptionValueZarMn] = useState(0)
-  const [planCaptureBoostPct, setPlanCaptureBoostPct] = useState(0)
 
   const exceptions = useMemo(() => getRequesterExceptions(ledger), [ledger])
   const kpiSummary = useMemo(
@@ -51,9 +47,8 @@ export function UtilisationWorkspace({
         recommendationDecisions,
         resolvedExceptionCount,
         resolvedExceptionValueZarMn,
-        planCaptureBoostPct,
       }),
-    [recommendations, recommendationDecisions, resolvedExceptionCount, resolvedExceptionValueZarMn, planCaptureBoostPct]
+    [recommendations, recommendationDecisions, resolvedExceptionCount, resolvedExceptionValueZarMn]
   )
 
   function respondToException(
@@ -106,19 +101,9 @@ export function UtilisationWorkspace({
     }
   }
 
-  function captureNewRequest(input: CaptureRequestInput) {
-    const row = createLedgerRowFromCapture(input)
-    setLedger((prev) => [row, ...prev])
-    setPlanCaptureBoostPct((p) => Math.min(6, p + 0.3))
-    setCaptureOpen(false)
-    toast.success("Consumption plan captured", {
-      description: `${row.materialDescription} — tracking ID ${row.trackingId}, planned ${row.plannedConsumptionDate}. Awaiting SAP reservation.`,
-    })
-  }
-
   return (
     <>
-      <UtilisationLoop onCaptureClick={() => setCaptureOpen(true)} />
+      <UtilisationLoop />
       <UtilisationKpis summary={kpiSummary} />
 
       <div className="min-w-0 rounded-xl border border-border bg-card p-4">
@@ -132,10 +117,13 @@ export function UtilisationWorkspace({
               anchored on RSNUM/RSPOS
             </p>
           </div>
-          <Button size="sm" variant="outline" onClick={() => setCaptureOpen(true)}>
+          <Link
+            href={`/chat/${OAR_CAPTURE_SESSION_ID}`}
+            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-medium text-foreground transition-colors hover:bg-muted"
+          >
             <Plus className="size-3.5" />
             New OAR request
-          </Button>
+          </Link>
         </div>
         <UtilisationLedger rows={ledger} />
       </div>
@@ -152,12 +140,6 @@ export function UtilisationWorkspace({
         onDecide={decideRecommendation}
       />
       <UtilisationSignals />
-
-      <UtilisationCaptureDialog
-        open={captureOpen}
-        onOpenChange={setCaptureOpen}
-        onCapture={captureNewRequest}
-      />
     </>
   )
 }

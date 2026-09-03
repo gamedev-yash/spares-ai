@@ -18,7 +18,7 @@ import type {
   VziTotals,
   VziUnitAggregate,
 } from "@/lib/types"
-import { NEW_SESSION_ID } from "@/lib/constants"
+import { NEW_SESSION_ID, OAR_CAPTURE_SESSION_ID } from "@/lib/constants"
 import { formatZAR } from "@/lib/utils"
 
 // ---------------------------------------------------------------------------
@@ -1887,6 +1887,35 @@ export const CHAT_SESSIONS: ChatSession[] = [
       specMatch: "—",
       selectionsDone: 0,
       selectionsTotal: 6,
+    },
+  },
+
+  // 7. Initiative 13 CAPTURE — consumption-plan intake, opened from Utilisation
+  // Tracking. Rendered by a dedicated OarCaptureWorkspace (not the generic
+  // ChatWorkspace) since it collects free-text answers the standard
+  // options/actions message model doesn't support — this entry exists mainly
+  // so the session resolves and shows in the sidebar like any other.
+  {
+    id: OAR_CAPTURE_SESSION_ID,
+    title: "New OAR request — consumption plan",
+    navLabel: "New OAR request",
+    navSubtitle: "Consumption plan",
+    category: "Conveyance",
+    status: "new",
+    materialId: "—",
+    requester: "You",
+    date: "01 Sep 2026",
+    messages: [],
+    workflow: [],
+    emails: [],
+    trace: {
+      tags: [{ label: "Draft", kind: "status" }],
+      material: "—",
+      equipment: "—",
+      requester: "You",
+      specMatch: "—",
+      selectionsDone: 0,
+      selectionsTotal: 0,
     },
   },
 ]

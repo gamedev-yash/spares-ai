@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { ChatWorkspace } from "@/components/chat/chat-workspace"
+import { OarCaptureWorkspace } from "@/components/chat/oar-capture-workspace"
+import { OAR_CAPTURE_SESSION_ID } from "@/lib/constants"
 import { getSessionById } from "@/lib/mock-data"
 
 export async function generateMetadata({
@@ -29,6 +31,10 @@ export default async function ChatSessionPage({
 
   if (!session) {
     notFound()
+  }
+
+  if (session.id === OAR_CAPTURE_SESSION_ID) {
+    return <OarCaptureWorkspace key={session.id} />
   }
 
   return <ChatWorkspace key={session.id} session={session} />
