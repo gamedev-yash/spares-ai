@@ -5,11 +5,13 @@ export const initiative8Manifest: InitiativeManifest = {
   name: "Refurbishable Spares",
   description:
     "Repair-chain visibility and duplicate-procurement guarding for repairable spares",
-  href: "/refurbishable-spares",
+  // Overview now lives as a tab on the global Spares Control Tower
+  // (see src/components/overview/overview-tabs.tsx) instead of its own
+  // route — this href is where the summary card / "open" links go.
+  href: "/overview?tab=initiative-8",
   navSection: {
     title: "Refurbishable Spares",
     items: [
-      { label: "Overview", icon: "rotate-ccw", href: "/refurbishable-spares" },
       {
         label: "Repair Register",
         icon: "wrench",

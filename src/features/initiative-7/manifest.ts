@@ -5,10 +5,15 @@ export const initiative7Manifest: InitiativeManifest = {
   name: "Inventory Optimization",
   description:
     "Criticality-aware ROP, safety-stock and max-stock recommendations",
-  href: "/inventory-optimization",
+  // Overview now lives as a tab on the global Spares Control Tower
+  // (see src/components/overview/overview-tabs.tsx) instead of its own
+  // route — this href is where the summary card / "open" links go.
+  href: "/overview?tab=initiative-7",
   navSection: {
     title: "Inventory Optimization",
     items: [
+      // The Control Tower carries a summary tab for this initiative; this
+      // route is the full filterable dashboard (KPIs, charts, review table).
       { label: "Overview", icon: "package", href: "/inventory-optimization" },
       {
         label: "Recommendations",

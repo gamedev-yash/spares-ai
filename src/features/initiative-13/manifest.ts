@@ -5,11 +5,13 @@ export const initiative13Manifest: InitiativeManifest = {
   name: "OAR Utilization",
   description:
     "End-to-end tracking of OAR spares demand from reservation through utilization",
-  href: "/oar-utilization",
+  // Overview now lives as a tab on the global Spares Control Tower
+  // (see src/components/overview/overview-tabs.tsx) instead of its own
+  // route — this href is where the summary card / "open" links go.
+  href: "/overview?tab=initiative-13",
   navSection: {
     title: "OAR Utilization",
     items: [
-      { label: "Overview", icon: "activity", href: "/oar-utilization" },
       {
         label: "Utilization Ledger",
         icon: "layers",
