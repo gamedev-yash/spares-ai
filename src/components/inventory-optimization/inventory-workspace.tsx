@@ -74,11 +74,11 @@ export function InventoryWorkspace({
     <>
       <section className="rounded-xl border border-border bg-card p-4">
         <h2 className="text-sm font-medium text-foreground">
-          Parameter recommendation workbench
+          Recommended inventory changes
         </h2>
         <p className="text-xs text-muted-foreground">
-          Proposed revisions to the I11 planning parameters. AI recommends, the
-          planner approves — approvals collect into a change proposal.
+          {recommendations.length} materials reviewed for the Sep 2026 planning
+          cycle. Open a row to see the recommendation.
         </p>
         <div className="mt-3">
           <RecommendationWorkbench

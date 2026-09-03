@@ -3,7 +3,6 @@
 import { Fragment, useMemo, useState } from "react"
 import {
   ArrowDown,
-  ArrowRight,
   ArrowUp,
   ChevronDown,
   ChevronRight,
@@ -31,12 +30,15 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   isStockOutRisk,
+  stockOutRiskTier,
+  workingCapitalDeltaPct,
   workingCapitalDeltaZar,
   type InventoryPlant,
   type InventorySegment,
   type ParameterRecommendation,
   type RecommendationDecision,
   type RecommendationStatus,
+  type StockoutRiskTier,
 } from "@/lib/inventory-optimization-data"
 import { formatCount, formatZAR } from "@/lib/utils"
 
@@ -74,50 +76,83 @@ export type SessionDecisions = Record<
   { decision: RecommendationDecision; comment: string }
 >
 
-/**
- * Current vs recommended for one SAP parameter. Colour tracks the direction of
- * the change, not whether it is "good": down releases working capital, up buys
- * risk cover, and both are legitimate outcomes.
- */
-function ParameterCell({
-  current,
-  recommended,
+const STOCKOUT_RISK_TONE: Record<StockoutRiskTier, "success" | "warning" | "danger"> = {
+  Critical: "danger",
+  Moderate: "warning",
+  Low: "success",
+}
+
+function StockoutRiskCell({
+  recommendation,
 }: {
-  current: number
-  recommended: number | undefined
+  recommendation: ParameterRecommendation
 }) {
-  if (recommended === undefined) {
-    return <span className="text-muted-foreground">{formatCount(current)} →&nbsp;—</span>
+  const tier = stockOutRiskTier(recommendation)
+  if (!tier) {
+    return <span className="text-muted-foreground">—</span>
+  }
+  return <StatusBadge tone={STOCKOUT_RISK_TONE[tier]}>{tier}</StatusBadge>
+}
+
+/**
+ * Working-capital impact of the safety-stock change. Colour tracks direction,
+ * not "good": down releases capital, up buys risk cover, both legitimate.
+ */
+function ValueChangeCell({
+  recommendation,
+}: {
+  recommendation: ParameterRecommendation
+}) {
+  if (!recommendation.recommended) {
+    return <span className="text-muted-foreground">—</span>
   }
 
-  const delta = recommended - current
-  const pct = current === 0 ? 0 : Math.round((delta / current) * 100)
+  const delta = workingCapitalDeltaZar(recommendation)
+  if (delta === 0) {
+    return <span className="text-muted-foreground">no change</span>
+  }
+
+  const pct = workingCapitalDeltaPct(recommendation)
   const DeltaIcon = delta < 0 ? ArrowDown : ArrowUp
-  const tone =
-    delta < 0 ? "text-success" : delta > 0 ? "text-warning" : "text-muted-foreground"
+  const tone = delta < 0 ? "text-success" : "text-warning"
 
   return (
-    <div className="tabular-nums">
-      <div className="flex items-center justify-end gap-1.5">
-        <span className="text-muted-foreground">{formatCount(current)}</span>
-        <ArrowRight className="size-3 shrink-0 text-muted-foreground" />
-        <span className="font-medium text-foreground">
-          {formatCount(recommended)}
-        </span>
-      </div>
-      {delta === 0 ? (
-        <div className="mt-0.5 text-right text-[11px] text-muted-foreground">
-          no change
-        </div>
-      ) : (
-        <div
-          className={`mt-0.5 flex items-center justify-end gap-0.5 text-[11px] font-medium ${tone}`}
-        >
-          <DeltaIcon className="size-3 shrink-0" />
-          {formatCount(Math.abs(delta))} ({pct > 0 ? "+" : ""}
-          {pct}%)
-        </div>
-      )}
+    <div
+      className={`flex items-center justify-end gap-1 font-medium tabular-nums ${tone}`}
+    >
+      <DeltaIcon className="size-3 shrink-0" />
+      {formatZAR(Math.abs(delta))}
+      <span className="text-muted-foreground font-normal">
+        ({pct > 0 ? "+" : ""}
+        {pct}%)
+      </span>
+    </div>
+  )
+}
+
+function RopChangeCell({
+  recommendation,
+}: {
+  recommendation: ParameterRecommendation
+}) {
+  if (!recommendation.recommended) {
+    return <span className="text-muted-foreground">—</span>
+  }
+
+  const delta = recommendation.recommended.rop - recommendation.current.rop
+  if (delta === 0) {
+    return <span className="text-muted-foreground">no change</span>
+  }
+
+  const DeltaIcon = delta < 0 ? ArrowDown : ArrowUp
+  const tone = delta < 0 ? "text-success" : "text-warning"
+
+  return (
+    <div
+      className={`flex items-center justify-end gap-1 font-medium tabular-nums ${tone}`}
+    >
+      <DeltaIcon className="size-3 shrink-0" />
+      {formatCount(Math.abs(delta))} units
     </div>
   )
 }
@@ -142,12 +177,16 @@ function ConfidenceCell({ confidence }: { confidence: number | null }) {
   )
 }
 
+const STATUS_LABEL: Partial<Record<RecommendationStatus, string>> = {
+  "Pending review": "Needs review",
+}
+
 function StatusCell({ status }: { status: RecommendationStatus }) {
   const excluded = status === "Excluded — engineering review"
   return (
     <div>
       <StatusBadge tone={STATUS_TONE[status]}>
-        {excluded ? "Excluded" : status}
+        {excluded ? "Excluded" : (STATUS_LABEL[status] ?? status)}
       </StatusBadge>
       {excluded && (
         <div className="mt-0.5 text-[11px] text-muted-foreground">
@@ -175,7 +214,6 @@ function RecommendationRow({
   onDecide: (decision: RecommendationDecision, comment: string) => void
   columnCount: number
 }) {
-  const { current, recommended } = recommendation
   const atRisk = isStockOutRisk(recommendation)
 
   return (
@@ -212,20 +250,17 @@ function RecommendationRow({
         <TableCell>
           <SegmentBadge segment={recommendation.segment} />
         </TableCell>
-        <TableCell className="text-right">
-          <ParameterCell current={current.rop} recommended={recommended?.rop} />
+        <TableCell className="text-muted-foreground">
+          {recommendation.circuit}
+        </TableCell>
+        <TableCell>
+          <StockoutRiskCell recommendation={recommendation} />
         </TableCell>
         <TableCell className="text-right">
-          <ParameterCell
-            current={current.safetyStock}
-            recommended={recommended?.safetyStock}
-          />
+          <ValueChangeCell recommendation={recommendation} />
         </TableCell>
         <TableCell className="text-right">
-          <ParameterCell
-            current={current.maxStock}
-            recommended={recommended?.maxStock}
-          />
+          <RopChangeCell recommendation={recommendation} />
         </TableCell>
         <TableCell>
           <ConfidenceCell confidence={recommendation.confidence} />
@@ -250,7 +285,7 @@ function RecommendationRow({
   )
 }
 
-const COLUMN_COUNT = 9
+const COLUMN_COUNT = 10
 
 export function RecommendationWorkbench({
   recommendations,
@@ -325,9 +360,10 @@ export function RecommendationWorkbench({
               <TableHead>Material</TableHead>
               <TableHead>Plant</TableHead>
               <TableHead>Segment</TableHead>
-              <TableHead className="text-right">Reorder point</TableHead>
-              <TableHead className="text-right">Safety stock</TableHead>
-              <TableHead className="text-right">Max stock</TableHead>
+              <TableHead>Circuit</TableHead>
+              <TableHead>Stockout risk</TableHead>
+              <TableHead className="text-right">Value change</TableHead>
+              <TableHead className="text-right">ROP change</TableHead>
               <TableHead>Confidence</TableHead>
               <TableHead>Status</TableHead>
             </TableRow>

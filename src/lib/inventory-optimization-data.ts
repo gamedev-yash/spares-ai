@@ -43,6 +43,8 @@ export interface ParameterRecommendation {
   manufacturer: string
   plant: InventoryPlant
   segment: InventorySegment
+  /** Process area the material serves, e.g. "Conveying", "Milling" — shown as Circuit in the workbench. */
+  circuit: string
   /** SAP MRP type from the I11 baseline — VB = manual reorder point, V2 = forecast-based. */
   mrpType: "VB" | "V2"
   unitOfMeasure: "EA" | "SET" | "M"
@@ -210,6 +212,35 @@ export function isStockOutRisk(
   return recommendation.recommended.rop > recommendation.current.rop
 }
 
+export type StockoutRiskTier = "Critical" | "Moderate" | "Low"
+
+/**
+ * Planner-facing risk label for the workbench table. Critical = repeat
+ * stock-out history; Moderate = one past stock-out, or the proposal cuts
+ * cover (ROP down) with no history yet to prove that safe; Low = no history
+ * and cover is holding or increasing. Null where there is no proposal
+ * (Z-segment / excluded rows).
+ */
+export function stockOutRiskTier(
+  recommendation: ParameterRecommendation
+): StockoutRiskTier | null {
+  const { recommended } = recommendation
+  if (!recommended) return null
+  if (recommendation.stockOuts24m >= 2) return "Critical"
+  if (recommendation.stockOuts24m === 1) return "Moderate"
+  if (recommended.rop < recommendation.current.rop) return "Moderate"
+  return "Low"
+}
+
+/** Working-capital delta as a percentage of the current safety-stock value. */
+export function workingCapitalDeltaPct(
+  recommendation: ParameterRecommendation
+): number {
+  const baseValue = recommendation.current.safetyStock * recommendation.unitCostZar
+  if (baseValue === 0) return 0
+  return Math.round((workingCapitalDeltaZar(recommendation) / baseValue) * 100)
+}
+
 export function meanMonthlyConsumption(
   recommendation: ParameterRecommendation,
   months = 12
@@ -244,6 +275,7 @@ export const PARAMETER_RECOMMENDATIONS: ParameterRecommendation[] = [
     manufacturer: "SKF",
     plant: "Gamsberg",
     segment: "A-X",
+    circuit: "Conveying",
     mrpType: "VB",
     unitOfMeasure: "EA",
     unitCostZar: 8400,
@@ -274,6 +306,7 @@ export const PARAMETER_RECOMMENDATIONS: ParameterRecommendation[] = [
     manufacturer: "Dunlop",
     plant: "Gamsberg",
     segment: "A-X",
+    circuit: "Conveying",
     mrpType: "V2",
     unitOfMeasure: "SET",
     unitCostZar: 4200,
@@ -304,6 +337,7 @@ export const PARAMETER_RECOMMENDATIONS: ParameterRecommendation[] = [
     manufacturer: "NSK",
     plant: "BMM",
     segment: "B-X",
+    circuit: "Milling",
     mrpType: "VB",
     unitOfMeasure: "EA",
     unitCostZar: 3900,
@@ -334,6 +368,7 @@ export const PARAMETER_RECOMMENDATIONS: ParameterRecommendation[] = [
     manufacturer: "FAG",
     plant: "Gamsberg",
     segment: "B-X",
+    circuit: "Milling",
     mrpType: "VB",
     unitOfMeasure: "EA",
     unitCostZar: 9800,
@@ -363,6 +398,7 @@ export const PARAMETER_RECOMMENDATIONS: ParameterRecommendation[] = [
     manufacturer: "SKF",
     plant: "BMM",
     segment: "B-X",
+    circuit: "Conveying",
     mrpType: "VB",
     unitOfMeasure: "EA",
     unitCostZar: 14600,
@@ -393,6 +429,7 @@ export const PARAMETER_RECOMMENDATIONS: ParameterRecommendation[] = [
     manufacturer: "Endress+Hauser",
     plant: "Gamsberg",
     segment: "C-Y",
+    circuit: "Instrumentation",
     mrpType: "V2",
     unitOfMeasure: "EA",
     unitCostZar: 18900,
@@ -422,6 +459,7 @@ export const PARAMETER_RECOMMENDATIONS: ParameterRecommendation[] = [
     manufacturer: "Flowserve",
     plant: "Gamsberg",
     segment: "A-X",
+    circuit: "Pumping",
     mrpType: "VB",
     unitOfMeasure: "EA",
     unitCostZar: 31400,
@@ -451,6 +489,7 @@ export const PARAMETER_RECOMMENDATIONS: ParameterRecommendation[] = [
     manufacturer: "Weir",
     plant: "BMM",
     segment: "B-X",
+    circuit: "Pumping",
     mrpType: "VB",
     unitOfMeasure: "EA",
     unitCostZar: 47200,
@@ -479,6 +518,7 @@ export const PARAMETER_RECOMMENDATIONS: ParameterRecommendation[] = [
     manufacturer: "Multotec",
     plant: "Gamsberg",
     segment: "A-X",
+    circuit: "Milling",
     mrpType: "V2",
     unitOfMeasure: "EA",
     unitCostZar: 58900,
@@ -509,6 +549,7 @@ export const PARAMETER_RECOMMENDATIONS: ParameterRecommendation[] = [
     manufacturer: "Multotec",
     plant: "Gamsberg",
     segment: "A-X",
+    circuit: "Milling",
     mrpType: "V2",
     unitOfMeasure: "SET",
     unitCostZar: 2650,
@@ -539,6 +580,7 @@ export const PARAMETER_RECOMMENDATIONS: ParameterRecommendation[] = [
     manufacturer: "Dunlop",
     plant: "BMM",
     segment: "C-Y",
+    circuit: "Conveying",
     mrpType: "VB",
     unitOfMeasure: "M",
     unitCostZar: 23800,
@@ -567,6 +609,7 @@ export const PARAMETER_RECOMMENDATIONS: ParameterRecommendation[] = [
     manufacturer: "Timken",
     plant: "Gamsberg",
     segment: "Z",
+    circuit: "Milling",
     mrpType: "VB",
     unitOfMeasure: "EA",
     unitCostZar: 142000,
@@ -597,6 +640,7 @@ export const PARAMETER_RECOMMENDATIONS: ParameterRecommendation[] = [
     manufacturer: "WEG",
     plant: "BMM",
     segment: "Z",
+    circuit: "Electrical",
     mrpType: "VB",
     unitOfMeasure: "EA",
     unitCostZar: 98700,
@@ -627,6 +671,7 @@ export const PARAMETER_RECOMMENDATIONS: ParameterRecommendation[] = [
     manufacturer: "Weir Minerals",
     plant: "Gamsberg",
     segment: "Z",
+    circuit: "Pumping",
     mrpType: "VB",
     unitOfMeasure: "EA",
     unitCostZar: 213500,

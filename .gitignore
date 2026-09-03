@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local reference docs (PDFs) - not meant for the repo
+/docs
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

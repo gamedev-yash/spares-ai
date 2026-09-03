@@ -1,7 +1,7 @@
 "use client"
 
 import { useId, useState } from "react"
-import { Check, Info, ShieldAlert, X } from "lucide-react"
+import { ArrowDown, ArrowUp, Check, Info, ShieldAlert, X } from "lucide-react"
 
 import { ConsumptionForecastChart } from "@/components/inventory-optimization/consumption-forecast-chart"
 import { StatusBadge } from "@/components/shared/status-badge"
@@ -14,6 +14,64 @@ import {
   type RecommendationDecision,
 } from "@/lib/inventory-optimization-data"
 import { formatCount, formatZAR } from "@/lib/utils"
+
+/**
+ * Current vs recommended for one SAP parameter. Colour tracks the direction of
+ * the change, not whether it is "good": down releases working capital, up buys
+ * risk cover, and both are legitimate outcomes.
+ */
+function ParameterStatBox({
+  label,
+  current,
+  recommended,
+  unitOfMeasure,
+}: {
+  label: string
+  current: number
+  recommended: number | undefined
+  unitOfMeasure: string
+}) {
+  if (recommended === undefined) {
+    return (
+      <div className="rounded-lg border border-border bg-background p-3">
+        <div className="text-[11px] font-medium tracking-[0.5px] text-muted-foreground uppercase">
+          {label}
+        </div>
+        <div className="mt-1 text-sm text-muted-foreground">
+          {formatCount(current)} {unitOfMeasure}
+        </div>
+      </div>
+    )
+  }
+
+  const delta = recommended - current
+  const pct = current === 0 ? 0 : Math.round((delta / current) * 100)
+  const DeltaIcon = delta < 0 ? ArrowDown : ArrowUp
+  const tone =
+    delta < 0 ? "text-success" : delta > 0 ? "text-warning" : "text-muted-foreground"
+
+  return (
+    <div className="rounded-lg border border-border bg-background p-3">
+      <div className="text-[11px] font-medium tracking-[0.5px] text-muted-foreground uppercase">
+        {label}
+      </div>
+      <div className="mt-1 text-sm font-medium tabular-nums text-foreground">
+        {formatCount(current)} → {formatCount(recommended)} {unitOfMeasure}
+      </div>
+      {delta === 0 ? (
+        <div className="mt-0.5 text-[11px] text-muted-foreground">no change</div>
+      ) : (
+        <div
+          className={`mt-0.5 flex items-center gap-0.5 text-[11px] font-medium ${tone}`}
+        >
+          <DeltaIcon className="size-3 shrink-0" />
+          {formatCount(Math.abs(delta))} ({pct > 0 ? "+" : ""}
+          {pct}%)
+        </div>
+      )}
+    </div>
+  )
+}
 
 function Fact({
   label,
@@ -121,19 +179,47 @@ export function RecommendationDetail({
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <div>
-        <h4 className="text-xs font-medium tracking-[0.5px] text-muted-foreground uppercase">
-          Consumption history &amp; forecast
-        </h4>
-        <p className="mt-0.5 mb-1 text-[11px] text-muted-foreground">
-          24 months of actuals to Aug 2026, then a six-month seasonal projection.
-        </p>
-        <ConsumptionForecastChart
-          series={series}
-          current={current}
-          recommended={recommended}
-          unitOfMeasure={unitOfMeasure}
-        />
+      <div className="flex flex-col gap-4">
+        <div>
+          <h4 className="text-xs font-medium tracking-[0.5px] text-muted-foreground uppercase">
+            Recommended inventory
+          </h4>
+          <div className="mt-1.5 grid grid-cols-3 gap-2">
+            <ParameterStatBox
+              label="Reorder point"
+              current={current.rop}
+              recommended={recommended?.rop}
+              unitOfMeasure={unitOfMeasure}
+            />
+            <ParameterStatBox
+              label="Safety stock"
+              current={current.safetyStock}
+              recommended={recommended?.safetyStock}
+              unitOfMeasure={unitOfMeasure}
+            />
+            <ParameterStatBox
+              label="Max stock"
+              current={current.maxStock}
+              recommended={recommended?.maxStock}
+              unitOfMeasure={unitOfMeasure}
+            />
+          </div>
+        </div>
+
+        <div>
+          <h4 className="text-xs font-medium tracking-[0.5px] text-muted-foreground uppercase">
+            Consumption history &amp; forecast
+          </h4>
+          <p className="mt-0.5 mb-1 text-[11px] text-muted-foreground">
+            24 months of actuals to Aug 2026, then a six-month seasonal projection.
+          </p>
+          <ConsumptionForecastChart
+            series={series}
+            current={current}
+            recommended={recommended}
+            unitOfMeasure={unitOfMeasure}
+          />
+        </div>
       </div>
 
       <div className="flex flex-col gap-3">
