@@ -1,14 +1,14 @@
 import type { Metadata } from "next"
 
-import { AuditLog } from "@/components/audit/audit-log"
-import { getAuditLog } from "@/lib/mock-data"
+import { GlobalAuditLog } from "@/components/audit/global-audit-log"
+import { getAllAuditEvents } from "@/lib/aggregation"
 
 export const metadata: Metadata = {
   title: "Audit trail — Spares AI",
 }
 
 export default function AuditPage() {
-  const entries = getAuditLog()
+  const events = getAllAuditEvents()
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto p-6">
@@ -18,11 +18,11 @@ export default function AuditPage() {
             Audit trail
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Full traceability log across all sessions — every AI response and
-            user selection.
+            Full cross-initiative traceability log — every AI response, user
+            selection, and workflow action.
           </p>
         </div>
-        <AuditLog entries={entries} />
+        <GlobalAuditLog events={events} />
       </div>
     </div>
   )

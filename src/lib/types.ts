@@ -91,6 +91,11 @@ export type IconKey =
   | "ellipsis-vertical"
   | "check-circle"
   | "layers"
+  | "package"
+  | "rotate-ccw"
+  | "activity"
+  | "layout-dashboard"
+  | "inbox"
 
 export interface ChatOption {
   id: string

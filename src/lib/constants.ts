@@ -27,10 +27,18 @@ import {
   EllipsisVertical,
   CircleCheck,
   Layers,
+  Package,
+  RotateCcw,
+  Activity,
+  LayoutDashboard,
+  Inbox,
   type LucideIcon,
 } from "lucide-react"
 
 import type { Category, IconKey } from "@/lib/types"
+import { initiative7Manifest } from "@/features/initiative-7/manifest"
+import { initiative8Manifest } from "@/features/initiative-8/manifest"
+import { initiative13Manifest } from "@/features/initiative-13/manifest"
 
 export const ICONS: Record<IconKey, LucideIcon> = {
   cpu: Cpu,
@@ -61,6 +69,11 @@ export const ICONS: Record<IconKey, LucideIcon> = {
   "ellipsis-vertical": EllipsisVertical,
   "check-circle": CircleCheck,
   layers: Layers,
+  package: Package,
+  "rotate-ccw": RotateCcw,
+  activity: Activity,
+  "layout-dashboard": LayoutDashboard,
+  inbox: Inbox,
 }
 
 export const CATEGORIES: { label: Category; icon: IconKey }[] = [
@@ -105,13 +118,28 @@ export const DASHBOARD_LINKS: { label: string; icon: IconKey; href: string }[] =
   },
 ]
 
+/** Sidebar nav sections owned by Initiative 7/8/13 — sourced directly from
+ * each initiative's manifest so this file never needs another edit once a
+ * manifest's page list is final. */
+export const INITIATIVE_NAV_SECTIONS = [
+  initiative7Manifest.navSection,
+  initiative8Manifest.navSection,
+  initiative13Manifest.navSection,
+]
+
 export const QUICK_ACTIONS: {
   label: string
   icon: IconKey
   href: string
   badge?: number
 }[] = [
+  {
+    label: "Spares Control Tower",
+    icon: "layout-dashboard",
+    href: "/overview",
+  },
   { label: "Search materials", icon: "search", href: "/materials" },
+  { label: "Action Center", icon: "inbox", href: "/action-center" },
   {
     label: "Pending approvals",
     icon: "clipboard-check",
@@ -119,6 +147,49 @@ export const QUICK_ACTIONS: {
     badge: 4,
   },
   { label: "Audit trail", icon: "history", href: "/audit" },
+]
+
+/** AI Assistant context selector — swaps the chat's suggested-question chips.
+ * Deterministic, UI-only: no change to the chat engine or message model. */
+export const AI_ASSISTANT_CONTEXTS: {
+  id: "all" | "initiative-9" | "initiative-7" | "initiative-8" | "initiative-13"
+  label: string
+  suggestedQuestions: string[]
+}[] = [
+  {
+    id: "all",
+    label: "All Spares",
+    suggestedQuestions: [
+      "What alternates are available for this material?",
+      "Why is the recommended ROP for this material higher?",
+      "Which repairable spares have active repair chains?",
+      "Show OAR materials past their planned consumption date.",
+    ],
+  },
+  {
+    id: "initiative-9",
+    label: "Procurement",
+    suggestedQuestions: [
+      "What alternates are available for this material?",
+      "Show me pending approvals for my sessions.",
+      "Why was this supplier recommended over the original?",
+    ],
+  },
+  {
+    id: "initiative-7",
+    label: initiative7Manifest.name,
+    suggestedQuestions: initiative7Manifest.suggestedQuestions,
+  },
+  {
+    id: "initiative-8",
+    label: initiative8Manifest.name,
+    suggestedQuestions: initiative8Manifest.suggestedQuestions,
+  },
+  {
+    id: "initiative-13",
+    label: initiative13Manifest.name,
+    suggestedQuestions: initiative13Manifest.suggestedQuestions,
+  },
 ]
 
 export const DEFAULT_SESSION_ID = "SPR-2847"

@@ -3,10 +3,14 @@
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
 
+import { AIContextSelector, type AIContextId } from "@/components/chat/ai-context-selector"
 import { ChatBody } from "@/components/chat/chat-body"
 import { ChatHeader } from "@/components/chat/chat-header"
 import { ChatInput } from "@/components/chat/chat-input"
+import { SuggestedQuestions } from "@/components/chat/suggested-questions"
 import { RightPanel } from "@/components/layout/right-panel"
+import { RRExtensionSlot } from "@/components/shared/rr-extension-slot"
+import { AI_ASSISTANT_CONTEXTS } from "@/lib/constants"
 import type {
   ChatMessage as ChatMessageData,
   ChatSession,
@@ -88,6 +92,9 @@ export function ChatWorkspace({ session }: { session: ChatSession }) {
     return seeded
   })
   const [activeTab, setActiveTab] = useState("workflow")
+  const [aiContext, setAiContext] = useState<AIContextId>("all")
+  const suggestedQuestions =
+    AI_ASSISTANT_CONTEXTS.find((c) => c.id === aiContext)?.suggestedQuestions ?? []
 
   const optionGroupsById = useMemo(() => {
     const map = new Map<string, OptionGroupData>()
@@ -220,6 +227,13 @@ export function ChatWorkspace({ session }: { session: ChatSession }) {
     <div className="flex min-h-0 min-w-0 flex-1">
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <ChatHeader title={session.title} sessionId={session.id} />
+        <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2">
+          <span className="text-[11px] font-medium tracking-[0.5px] text-muted-foreground uppercase">
+            Context
+          </span>
+          <AIContextSelector value={aiContext} onChange={setAiContext} />
+          <SuggestedQuestions questions={suggestedQuestions} onSelect={handleSend} />
+        </div>
         <ChatBody
           messages={messages}
           resolvedActions={resolvedActions}
@@ -227,6 +241,7 @@ export function ChatWorkspace({ session }: { session: ChatSession }) {
           resolvedOptions={resolvedOptionIds}
           onOptionSelect={handleOptionSelect}
         />
+        <RRExtensionSlot materialId={session.materialId} requestType="alternate-procurement" />
         <ChatInput onSend={handleSend} />
       </div>
       <RightPanel

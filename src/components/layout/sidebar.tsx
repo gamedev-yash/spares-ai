@@ -10,6 +10,7 @@ import {
   CATEGORIES,
   DASHBOARD_LINKS,
   ICONS,
+  INITIATIVE_NAV_SECTIONS,
   NEW_SESSION_ID,
   QUICK_ACTIONS,
 } from "@/lib/constants"
@@ -55,10 +56,10 @@ export function Sidebar() {
       <div className="border-b border-border p-4">
         <h3 className="flex items-center gap-1.5 text-[15px] font-medium text-foreground">
           <CpuIcon className="size-[18px]" />
-          Spares AI
+          Vedanta Spares AI
         </h3>
         <p className="mt-0.5 text-xs text-muted-foreground">
-          Vedanta procurement platform
+          Spares Control Tower
         </p>
       </div>
 
@@ -169,6 +170,30 @@ export function Sidebar() {
           )
         })}
       </NavSection>
+
+      {INITIATIVE_NAV_SECTIONS.map((section) => (
+        <NavSection key={section.title} title={section.title}>
+          {section.items.map((item) => {
+            const Icon = ICONS[item.icon]
+            const isActive = pathname === item.href
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "mx-2 my-0.5 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] transition-colors",
+                  isActive
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                )}
+              >
+                <Icon className="size-4 shrink-0" />
+                {item.label}
+              </Link>
+            )
+          })}
+        </NavSection>
+      ))}
 
       <NavSection title="Quick actions">
         {QUICK_ACTIONS.map((action) => {
