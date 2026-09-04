@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react"
 import { toast } from "sonner"
 
+import type { AuditEvent } from "@/lib/domain/contracts"
 import { USERS } from "@/lib/shared-data/users"
 import { formatTime12h } from "@/lib/utils"
 import { APPROVAL_ROLES, approverName, type ApprovalRole } from "@/features/initiative-7/data/approval-chain"
@@ -55,7 +56,7 @@ function requesterFor(rec: Recommendation): string {
  * planner has not sent it into the chain yet — that's the Not-submitted
  * bucket the Recommendations page acts on.
  */
-function seedState(rec: Recommendation): WorkflowRecordState {
+export function seedState(rec: Recommendation): WorkflowRecordState {
   const submitted = rec.status !== "Pending Review"
   const activeIndex = rec.workflow.findIndex((s) => s.status === "active")
   const rejectedIndex = rec.workflow.findIndex((s) => s.status === "rejected")
@@ -109,6 +110,40 @@ function seedState(rec: Recommendation): WorkflowRecordState {
 
 function seedAll(): Record<string, WorkflowRecordState> {
   return Object.fromEntries(RECOMMENDATIONS.map((r) => [r.id, seedState(r)]))
+}
+
+const EVENT_TYPE: Record<string, string> = {
+  "sent this for approval": "Sent for approval",
+  approved: "Approved",
+  adjusted: "Adjusted",
+  rejected: "Rejected",
+}
+
+function eventTypeFor(action: string): string {
+  const key = Object.keys(EVENT_TYPE).find((k) => action.startsWith(k) || action.includes(k))
+  return key ? EVENT_TYPE[key] : "Decision recorded"
+}
+
+/**
+ * Audit events for decisions taken THIS session, beyond the authored
+ * baseline `seedState` already contributes to the static audit trail. Diffing
+ * against the seed (rather than tracking a separate live-only log) means a
+ * decision is recorded exactly once, however it was taken — Recommendations
+ * page, Approvals workspace, or Action Center all share this one state.
+ */
+export function liveDecisionEvents(rec: Recommendation, state: WorkflowRecordState): AuditEvent[] {
+  const baseline = seedState(rec).history.length
+  return state.history.slice(baseline).map((entry, index) => ({
+    id: `${rec.id}-live-${baseline + index}`,
+    initiative: "initiative-7" as const,
+    entityId: rec.id,
+    eventType: eventTypeFor(entry.action),
+    description:
+      `${entry.actor} ${entry.action} — ${rec.material.description} (${rec.material.materialId}).` +
+      (entry.comment ? ` "${entry.comment}"` : ""),
+    actor: entry.actor,
+    timestamp: entry.timestamp,
+  }))
 }
 
 interface WorkflowContextValue {

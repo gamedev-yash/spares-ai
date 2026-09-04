@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/table"
 import type { AuditEvent, InitiativeId } from "@/lib/domain/contracts"
 import { downloadCsv } from "@/lib/utils"
+import { RECOMMENDATIONS } from "@/features/initiative-7/data/recommendations"
+import { liveDecisionEvents, useInventoryWorkflow } from "@/features/initiative-7/context/workflow-context"
 
 const ALL_FILTER = "all"
 
@@ -43,9 +45,27 @@ export function GlobalAuditLog({ events }: { events: AuditEvent[] }) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [initiative, setInitiative] = useState<InitiativeId | typeof ALL_FILTER>(ALL_FILTER)
 
+  // Inventory Optimization is the one initiative with live, in-session
+  // decisions (send for approval / approve / adjust / reject — taken from
+  // the Recommendations page, the Approvals workspace, or Action Center, all
+  // sharing the one InventoryWorkflowProvider). Everything else here is the
+  // static authored trail; this merges in what actually happened this session.
+  const { states } = useInventoryWorkflow()
+  const allEvents = useMemo(() => {
+    // Timestamps are display-formatted strings ("18 Aug 2026 · 09:10 AM"),
+    // not sortable ISO values, so this doesn't re-sort the whole list —
+    // it puts this session's live actions first, newest last within that
+    // group, ahead of the (already chronologically-authored) static trail.
+    const live = RECOMMENDATIONS.flatMap((rec) => {
+      const state = states[rec.id]
+      return state ? liveDecisionEvents(rec, state) : []
+    })
+    return live.length === 0 ? events : [...live, ...events]
+  }, [events, states])
+
   const filtered = useMemo(
-    () => (initiative === ALL_FILTER ? events : events.filter((e) => e.initiative === initiative)),
-    [events, initiative]
+    () => (initiative === ALL_FILTER ? allEvents : allEvents.filter((e) => e.initiative === initiative)),
+    [allEvents, initiative]
   )
 
   function handleExport() {
