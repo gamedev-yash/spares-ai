@@ -12,14 +12,14 @@ export const initiative7Manifest: InitiativeManifest = {
   navSection: {
     title: "Inventory Optimization",
     items: [
+      // The Control Tower carries a summary tab for this initiative; this
+      // route is the KPI/chart dashboard for watching portfolio health.
+      { label: "Monitoring", icon: "package", href: "/inventory-optimization" },
       {
         label: "Recommendations",
         icon: "lightbulb",
         href: "/inventory-optimization/recommendations",
       },
-      // The Control Tower carries a summary tab for this initiative; this
-      // route is the KPI/chart dashboard for watching portfolio health.
-      { label: "Monitoring", icon: "package", href: "/inventory-optimization" },
       // Approvals moved into the global Action Center — its Inventory
       // Optimization tab renders this initiative's own ApprovalsWorkspace.
       {
