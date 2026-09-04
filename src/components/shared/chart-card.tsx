@@ -13,9 +13,8 @@ const SPAN_CLASSES = {
 
 /**
  * Business-agnostic bordered section card with a title/subtitle/hint header
- * and an optional footnote — the shared equivalent of Initiative 9's
- * `components/dashboard/dashboard-card.tsx`, for any module's charts/tables
- * outside the VZI dashboard.
+ * and an optional footnote — the shared container every module's
+ * charts/tables sit inside.
  */
 export function ChartCard({
   title,

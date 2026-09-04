@@ -3,7 +3,6 @@ import { EmptyState } from "@/components/shared/empty-state"
 import type { AuditEvent } from "@/lib/domain/contracts"
 
 const INITIATIVE_LABEL: Record<AuditEvent["initiative"], string> = {
-  "initiative-9": "Procurement",
   "initiative-7": "Inventory Optimization",
   "initiative-8": "Refurbishable Spares",
   "initiative-13": "OAR Utilization",

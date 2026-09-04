@@ -46,8 +46,8 @@ const MANDATORY_FIELDS: (keyof FormState)[] = [
 
 /**
  * The real OAR consumption-plan capture form — rendered inline in an active
- * Initiative 9 chat session (via the shared `RRExtensionSlot`) whenever the
- * material on that session is OAR-managed. Purely a UI-only simulation: no
+ * chat session (via the shared `RRExtensionSlot`) whenever the material on
+ * that session is OAR-managed. Purely a UI-only simulation: no
  * SAP write happens here, this is a mockup. On submit it generates a mock
  * Tracking ID and associates it with a mock SAP Reservation Number, both
  * shown back inline plus a toast — nothing is persisted beyond this

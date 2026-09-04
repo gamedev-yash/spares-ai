@@ -19,7 +19,6 @@ const SEVERITY_CLASS = {
 } as const
 
 const INITIATIVE_LABEL: Record<GlobalAction["initiative"], string> = {
-  "initiative-9": "Procurement",
   "initiative-7": "Inventory Optimization",
   "initiative-8": "Refurbishable Spares",
   "initiative-13": "OAR Utilization",

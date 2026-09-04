@@ -12,7 +12,6 @@ import { ApprovalsWorkspace } from "@/features/initiative-7/components/approvals
 
 const TABS: { id: InitiativeId | "all"; label: string }[] = [
   { id: "all", label: "All" },
-  { id: "initiative-9", label: "Procurement" },
   { id: "initiative-7", label: "Inventory Optimization" },
   { id: "initiative-8", label: "Refurbishable Spares" },
   { id: "initiative-13", label: "OAR Utilization" },

@@ -1,14 +1,10 @@
 // Shared cross-initiative domain contracts — the ONLY types Initiative 7, 8
-// and 13 may use to talk to each other, to the global shell, or to Initiative
-// 9. Keep this file small and stable: it is frozen after initial scaffolding.
+// and 13 may use to talk to each other or to the global shell. Keep this
+// file small and stable: it is frozen after initial scaffolding.
 // Initiative-specific fields belong in each initiative's own
 // `features/initiative-N/types/*`, never here.
 
-export type InitiativeId =
-  | "initiative-9"
-  | "initiative-7"
-  | "initiative-8"
-  | "initiative-13"
+export type InitiativeId = "initiative-7" | "initiative-8" | "initiative-13"
 
 export interface MaterialReference {
   materialId: string

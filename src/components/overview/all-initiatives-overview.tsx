@@ -19,7 +19,7 @@ export function AllInitiativesOverview() {
   const actions = getAllGlobalActions()
   const events = getAllAuditEvents()
 
-  const [, , initiative8, initiative13] = summaries
+  const [, initiative8, initiative13] = summaries
   const lowStockMaterials = [...MATERIALS]
     .sort((a, b) => a.stockLevel - b.stockLevel)
     .slice(0, 5)
@@ -27,7 +27,7 @@ export function AllInitiativesOverview() {
   return (
     <div className="min-h-0 flex-1 overflow-y-auto p-6">
       <div className="mx-auto flex max-w-7xl flex-col gap-6">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {summaries.map((summary) => (
             <InitiativeSummaryCard key={summary.id} summary={summary} />
           ))}

@@ -28,18 +28,12 @@ import { liveDecisionEvents, useInventoryWorkflow } from "@/features/initiative-
 const ALL_FILTER = "all"
 
 const INITIATIVE_LABEL: Record<InitiativeId, string> = {
-  "initiative-9": "Procurement",
   "initiative-7": "Inventory Optimization",
   "initiative-8": "Refurbishable Spares",
   "initiative-13": "OAR Utilization",
 }
 
-const INITIATIVES: InitiativeId[] = [
-  "initiative-9",
-  "initiative-7",
-  "initiative-8",
-  "initiative-13",
-]
+const INITIATIVES: InitiativeId[] = ["initiative-7", "initiative-8", "initiative-13"]
 
 export function GlobalAuditLog({ events }: { events: AuditEvent[] }) {
   const [expandedId, setExpandedId] = useState<string | null>(null)

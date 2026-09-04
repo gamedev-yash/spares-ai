@@ -95,29 +95,6 @@ export const CATEGORY_COLORS: Record<Category, string> = {
   Instrumentation: "var(--chart-4)",
 }
 
-/**
- * Seven-step "good -> critical" aging gradient, mixed from our own status
- * tokens (not hardcoded hex) so it stays correct in dark mode too.
- */
-export const VZI_AGING_COLORS = [
-  "var(--success)",
-  "color-mix(in oklch, var(--success) 66%, var(--warning) 34%)",
-  "color-mix(in oklch, var(--success) 33%, var(--warning) 67%)",
-  "var(--warning)",
-  "color-mix(in oklch, var(--warning) 66%, var(--destructive) 34%)",
-  "color-mix(in oklch, var(--warning) 33%, var(--destructive) 67%)",
-  "var(--destructive)",
-] as const
-
-export const DASHBOARD_LINKS: { label: string; icon: IconKey; href: string }[] = [
-  { label: "Overview", icon: "chart-bar", href: "/dashboard" },
-  {
-    label: "Situation Analysis",
-    icon: "layers",
-    href: "/dashboard/situation-analysis",
-  },
-]
-
 /** Sidebar nav sections owned by Initiative 7/8/13 — sourced directly from
  * each initiative's manifest so this file never needs another edit once a
  * manifest's page list is final. */
@@ -139,10 +116,8 @@ export const QUICK_ACTIONS: {
     href: "/overview",
   },
   { label: "Search materials", icon: "search", href: "/materials" },
-  // Pending approvals across every module now surface in the Action Center
-  // (which links straight into each module's own approval page) instead of
-  // a separate "Pending approvals" shortcut — /approvals itself still works,
-  // it's just no longer a top-level nav entry point.
+  // Pending items across every module surface in the Action Center, which
+  // links straight into each module's own approval page.
   { label: "Action Center", icon: "inbox", href: "/action-center" },
   { label: "Audit trail", icon: "history", href: "/audit" },
 ]
@@ -150,7 +125,7 @@ export const QUICK_ACTIONS: {
 /** AI Assistant context selector — swaps the chat's suggested-question chips.
  * Deterministic, UI-only: no change to the chat engine or message model. */
 export const AI_ASSISTANT_CONTEXTS: {
-  id: "all" | "initiative-9" | "initiative-7" | "initiative-8" | "initiative-13"
+  id: "all" | "initiative-7" | "initiative-8" | "initiative-13"
   label: string
   suggestedQuestions: string[]
 }[] = [
@@ -158,19 +133,10 @@ export const AI_ASSISTANT_CONTEXTS: {
     id: "all",
     label: "All Spares",
     suggestedQuestions: [
-      "What alternates are available for this material?",
+      "Is this material OAR or non-OAR?",
       "Why is the recommended ROP for this material higher?",
       "Which repairable spares have active repair chains?",
       "Show OAR materials past their planned consumption date.",
-    ],
-  },
-  {
-    id: "initiative-9",
-    label: "Procurement",
-    suggestedQuestions: [
-      "What alternates are available for this material?",
-      "Show me pending approvals for my sessions.",
-      "Why was this supplier recommended over the original?",
     ],
   },
   {

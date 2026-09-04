@@ -13,7 +13,7 @@ export function SparesControlTower() {
       <div className="shrink-0 border-b border-border px-6 pt-6 pb-4">
         <PageHeader
           title="Spares Control Tower"
-          description="Enterprise view across procurement, inventory optimization, refurbishable spares and OAR utilization."
+          description="Enterprise view across inventory optimization, refurbishable spares and OAR utilization."
         />
       </div>
       <OverviewTabs />

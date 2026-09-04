@@ -1,6 +1,5 @@
 // Small shared list of named people/roles referenced across initiatives
-// (approval chains, requesters, escalation targets). Initiative 9 has no
-// standalone User entity today — this is new, and deliberately minimal.
+// (approval chains, requesters, escalation targets) — deliberately minimal.
 
 export type SharedRole =
   | "End User"

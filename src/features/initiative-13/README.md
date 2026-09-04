@@ -12,7 +12,7 @@ under `src/app/oar-utilization/**` belongs to Initiative 13. No other
 initiative may import from this folder except through the two contracts
 listed under "Integration points" below. This module never imports from
 `@/features/initiative-7/**` or `@/features/initiative-8/**`, and never edits
-any Initiative 9 file.
+the chat workspace directly.
 
 **Files other initiatives must not modify:** the entire `src/features/initiative-13/**`
 tree, including `manifest.ts`, every file under `selectors/`, `components/`,
@@ -51,8 +51,8 @@ that shared file.
 
 ## Mock datasets (`data/`)
 
-- `materials.ts` — `materialRef()`/`unitPriceFor()` resolve real Initiative 9
-  catalog materials by id, falling back to a small synthetic OAR-only
+- `materials.ts` — `materialRef()`/`unitPriceFor()` resolve real shared-catalog
+  materials by id, falling back to a small synthetic OAR-only
   material (`OAR-77002`) not present in the shared catalog.
 - `ledger.ts` — `LEDGER_LINES`, 11 rows covering seed scenarios E (happy
   path, `OAR-LDG-0001`), F (confirmation overdue, `OAR-LDG-0002`), G (no
@@ -84,10 +84,9 @@ that shared file.
   Trail, derived from the ledger's document chain, escalation timelines and
   reclassification flags (seeded/static — UI actions on the Aging
   Exceptions/Redeployment pages simulate a write via toast + local component
-  state, matching how Initiative 9's own Approvals table works, and do not
-  mutate this feed).
-- `selectors/oar-lookup.ts` → `isOARMaterial(materialId)` — gates the RR
-  extension slot in Initiative 9's chat.
+  state, and do not mutate this feed).
+- `selectors/oar-lookup.ts` → `isOARMaterial(materialId)` — drives the
+  material-classification checkpoint in chat.
 - `components/oar-consumption-plan-extension.tsx` → `OARConsumptionPlanExtension`
   — the real consumption-plan capture form rendered inline in chat.
 
@@ -111,15 +110,16 @@ that shared file.
 
 ## Integration contracts
 
-1. **RR extension slot.** Initiative 9's chat workspace unconditionally
-   renders `@/components/shared/rr-extension-slot.tsx` (not owned by this
-   module), which calls `isOARMaterial(materialId)` and, if true, renders
-   `<OARConsumptionPlanExtension materialId requestType />`. This module only
-   ever edits those two files inside its own folder — the render point in
-   Initiative 9 is untouched. Material `500-14892` (the material on chat
-   session `SPR-2847`, Initiative 9's hero demo session) is included in the
-   OAR set, so the extension is visibly demonstrable on an existing session,
-   not just on Initiative 13's own scenario data.
+1. **RR extension slot.** The chat workspace unconditionally renders
+   `@/components/shared/rr-extension-slot.tsx` (not owned by this module),
+   which calls `isOARMaterial(materialId)` and branches: OAR renders
+   `<OARConsumptionPlanExtension materialId requestType />`, non-OAR renders
+   a short "standard flow covers this" note. This module only ever edits
+   those two files inside its own folder — the render point in the chat
+   workspace is untouched. Material `500-14892` (the material on chat
+   session `SPR-2847`, the hero demo session) is included in the OAR set, so
+   the OAR branch is visibly demonstrable on an existing session, not just
+   on Initiative 13's own scenario data.
 2. **Reclassification → Initiative 7.** The "Review in Initiative 7" action
    on the Reclassification page is a plain `<Link href="/inventory-optimization/recommendations?reviewMaterial=<materialId>">`
    — a mock integration event via URL navigation, never an import of an

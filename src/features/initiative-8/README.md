@@ -124,7 +124,7 @@ status→tone maps and aging-bucket logic (`AGING_BUCKETS`,
 
 This entire folder (`src/features/initiative-8/**`) and its route wrappers
 (`src/app/refurbishable-spares/**`) are owned exclusively by Initiative 8.
-Initiative 7 and Initiative 13 (and any change to Initiative 9) must not
-edit, move, or rename anything here — the only sanctioned cross-module
+Initiative 7 and Initiative 13 must not edit, move, or rename anything here
+— the only sanctioned cross-module
 touchpoints are the four selector functions and the manifest listed above,
 called by fixed import path, never by reaching into this folder's internals.
