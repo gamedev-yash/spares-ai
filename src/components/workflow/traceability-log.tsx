@@ -6,7 +6,7 @@ export function TraceabilityLog({ trace }: { trace: TraceInfo }) {
     ["Material", trace.material],
     ["Equipment", trace.equipment],
     ["Requester", trace.requester],
-    ["Spec match", trace.specMatch],
+    ["Classification", trace.specMatch],
     ["Selections", `${trace.selectionsDone} of ${trace.selectionsTotal} steps`],
   ]
 

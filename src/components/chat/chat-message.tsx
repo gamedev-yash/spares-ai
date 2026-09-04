@@ -1,6 +1,6 @@
 import { ActionOptions } from "@/components/chat/action-options"
-import { ComparisonCard } from "@/components/chat/comparison-card"
 import { OptionGroup } from "@/components/chat/option-group"
+import { MaterialClassificationCard } from "@/components/shared/material-classification-card"
 import type { ChatMessage as ChatMessageData } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
@@ -63,7 +63,9 @@ export function ChatMessage({
         </div>
       )}
 
-      {message.comparison && <ComparisonCard data={message.comparison} />}
+      {message.classification && (
+        <MaterialClassificationCard materialId={message.classification} />
+      )}
       {message.options && (
         <OptionGroup
           group={message.options}

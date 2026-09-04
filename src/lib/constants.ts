@@ -32,6 +32,7 @@ import {
   Activity,
   LayoutDashboard,
   Inbox,
+  CircleX,
   type LucideIcon,
 } from "lucide-react"
 
@@ -74,6 +75,7 @@ export const ICONS: Record<IconKey, LucideIcon> = {
   activity: Activity,
   "layout-dashboard": LayoutDashboard,
   inbox: Inbox,
+  cancel: CircleX,
 }
 
 export const CATEGORIES: { label: Category; icon: IconKey }[] = [

@@ -17,9 +17,8 @@ the chat workspace directly.
 **Files other initiatives must not modify:** the entire `src/features/initiative-13/**`
 tree, including `manifest.ts`, every file under `selectors/`, `components/`,
 `pages/`, `data/`, `types/`, `hooks/` and `utils/`, and this README — this
-also covers `selectors/oar-lookup.ts` and `components/oar-consumption-plan-extension.tsx`,
-the two files the shared `RRExtensionSlot` (owned by the global shell) calls
-into.
+also covers `selectors/oar-lookup.ts`, which `lib/material-router.ts` (owned
+by the global shell) calls into for OAR routing precedence.
 
 ## Pages
 
@@ -85,10 +84,9 @@ that shared file.
   reclassification flags (seeded/static — UI actions on the Aging
   Exceptions/Redeployment pages simulate a write via toast + local component
   state, and do not mutate this feed).
-- `selectors/oar-lookup.ts` → `isOARMaterial(materialId)` — drives the
-  material-classification checkpoint in chat.
-- `components/oar-consumption-plan-extension.tsx` → `OARConsumptionPlanExtension`
-  — the real consumption-plan capture form rendered inline in chat.
+- `selectors/oar-lookup.ts` → `isOARMaterial(materialId)` — the top-precedence
+  check in `lib/material-router.ts`'s `routeMaterial()`, which is what
+  triggers the chat's conversational consumption-plan capture.
 
 ## Shared dependencies used
 
@@ -110,16 +108,17 @@ that shared file.
 
 ## Integration contracts
 
-1. **RR extension slot.** The chat workspace unconditionally renders
-   `@/components/shared/rr-extension-slot.tsx` (not owned by this module),
-   which calls `isOARMaterial(materialId)` and branches: OAR renders
-   `<OARConsumptionPlanExtension materialId requestType />`, non-OAR renders
-   a short "standard flow covers this" note. This module only ever edits
-   those two files inside its own folder — the render point in the chat
-   workspace is untouched. Material `500-14892` (the material on chat
-   session `SPR-2847`, the hero demo session) is included in the OAR set, so
-   the OAR branch is visibly demonstrable on an existing session, not just
-   on Initiative 13's own scenario data.
+1. **Material Router.** `@/lib/material-router.ts` (not owned by this
+   module — the global shell's, alongside `lib/aggregation.ts`) calls
+   `isOARMaterial(materialId)` as the first, highest-precedence check in
+   `routeMaterial()`. When it's true, the chat's Material Assistant
+   (`components/chat/chat-workspace.tsx`) conversationally asks for the OAR
+   consumption plan itself (§5) — there is no dedicated Initiative 13 UI
+   component in the chat; this module's only contribution to that
+   conversation is the `isOARMaterial` boolean. Material `500-14892` (the
+   material on chat session `SPR-2847`, the hero demo session) is included
+   in the OAR set, so the OAR branch is visibly demonstrable on an existing
+   session, not just on Initiative 13's own scenario data.
 2. **Reclassification → Initiative 7.** The "Review in Initiative 7" action
    on the Reclassification page is a plain `<Link href="/inventory-optimization/recommendations?reviewMaterial=<materialId>">`
    — a mock integration event via URL navigation, never an import of an
@@ -133,6 +132,7 @@ that shared file.
 
 No action anywhere in this module claims a real SAP write happened.
 `SAPDocumentChip` renders mock document references. "Confirm Consumed",
-"Re-plan", "No Longer Required", "Recommend Transfer" and the consumption
-plan form's submit are all UI-only simulations backed by local component
-state and a `sonner` toast.
+"Re-plan", "No Longer Required", "Recommend Transfer" and the chat's
+consumption-plan confirmation ("Confirm Plan", in `chat-workspace.tsx`) are
+all UI-only simulations backed by local component state and a `sonner`
+toast.

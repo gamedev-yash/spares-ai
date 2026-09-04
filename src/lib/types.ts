@@ -19,44 +19,6 @@ export interface Material {
   leadTimeDays: number
 }
 
-export interface Supplier {
-  id: string
-  name: string
-  region: string
-  categoriesServed: Category[]
-  rating: number // 1-5
-  onTimeDeliveryPct: number
-  avgLeadTimeDays: number
-  certifications: string[]
-}
-
-export type MatchTier =
-  | "Direct equivalent"
-  | "Technical equivalent"
-  | "Functional alternative"
-
-export interface SpecComparisonItem {
-  spec: string
-  original: string
-  alternate: string
-  match: boolean
-}
-
-export interface AlternateRecommendation {
-  id: string
-  materialId: string
-  matchTier: MatchTier
-  matchConfidence: number // 75-99
-  partNumber: string
-  manufacturer: string
-  supplierId: string
-  price: number
-  moq: number
-  leadTimeDays: number
-  specComparison: SpecComparisonItem[]
-  marketBenchmark: { low: number; high: number }
-}
-
 // ---- Chat domain ----
 
 export type MessageRole = "user" | "ai"
@@ -96,6 +58,7 @@ export type IconKey =
   | "activity"
   | "layout-dashboard"
   | "inbox"
+  | "cancel"
 
 export interface ChatOption {
   id: string
@@ -126,30 +89,14 @@ export interface ActionOptionsData {
   resolvedActionId?: string
 }
 
-export interface ComparisonSide {
-  label: string
-  supplierName: string
-  partNumber: string
-  price: number
-  meta: string
-  savingsPct?: number
-}
-
-export interface ComparisonCardData {
-  id: string
-  heading: string
-  current: ComparisonSide
-  alternate: ComparisonSide
-  benchmark: { low: number; high: number; note: string }
-}
-
 export interface ChatMessage {
   id: string
   role: MessageRole
   timestamp: string // pre-formatted "10:23 AM"
   authorLabel: string // "You" | "Spares AI"
   text?: string // supports **bold** lite markdown
-  comparison?: ComparisonCardData
+  /** materialId — renders the Material Assistant's classification card inline, in-transcript. */
+  classification?: string
   options?: OptionGroupData
   actions?: ActionOptionsData
   footerNote?: string

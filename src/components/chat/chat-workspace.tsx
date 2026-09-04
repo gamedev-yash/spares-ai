@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 
 import { AIContextSelector, type AIContextId } from "@/components/chat/ai-context-selector"
@@ -9,8 +9,8 @@ import { ChatHeader } from "@/components/chat/chat-header"
 import { ChatInput } from "@/components/chat/chat-input"
 import { SuggestedQuestions } from "@/components/chat/suggested-questions"
 import { RightPanel } from "@/components/layout/right-panel"
-import { RRExtensionSlot } from "@/components/shared/rr-extension-slot"
-import { AI_ASSISTANT_CONTEXTS } from "@/lib/constants"
+import { AI_ASSISTANT_CONTEXTS, NEW_SESSION_ID } from "@/lib/constants"
+import { classifyMaterial } from "@/lib/material-router"
 import type {
   ChatMessage as ChatMessageData,
   ChatSession,
@@ -72,6 +72,56 @@ function computeVisibleMessages(
   return result
 }
 
+let trackingCounter = 12 // seed past the OAR-TRK-0001..0011 ledger scenarios
+function nextTrackingId(): string {
+  trackingCounter += 1
+  return `OAR-TRK-${String(trackingCounter).padStart(4, "0")}`
+}
+function nextReservationNumber(): string {
+  return `RES-5003${Math.floor(10 + Math.random() * 89)}`
+}
+
+function aiMessage(id: string, text?: string, extra?: Partial<ChatMessageData>): ChatMessageData {
+  return {
+    id,
+    role: "ai",
+    authorLabel: "Spares AI",
+    timestamp: formatTime12h(new Date()),
+    text,
+    ...extra,
+  }
+}
+
+function userMessage(id: string, text: string): ChatMessageData {
+  return {
+    id,
+    role: "user",
+    authorLabel: "You",
+    timestamp: formatTime12h(new Date()),
+    text,
+  }
+}
+
+/** The three-step OAR consumption-plan conversation (§5) — purpose, then
+ * equipment/project/job, then quantity + planned consumption date. */
+const OAR_QUESTIONS = [
+  "This material is classified as OAR. A consumption plan is required before proceeding.\n\nBefore proceeding, please provide the intended purpose.",
+  "Which equipment, project or job is this for?",
+  "How many units do you need, and when do you expect to consume them?",
+]
+
+/** Pulls a material code out of free text typed into a blank session, e.g.
+ * "Show me material 500-14892" -> "500-14892". Mock-only pattern matching —
+ * no real NLU — supporting this app's two id conventions (hyphenated, and
+ * the master-spec's plain-digit examples). */
+function extractMaterialId(text: string): string | null {
+  const hyphenated = text.match(/\b\d{2,4}-\d{4,7}\b/)
+  if (hyphenated) return hyphenated[0]
+  const plain = text.match(/\b\d{6,10}\b/)
+  if (plain) return plain[0]
+  return null
+}
+
 export function ChatWorkspace({ session }: { session: ChatSession }) {
   const [resolvedOptionGroups, setResolvedOptionGroups] = useState<
     Record<string, ResolvedOption>
@@ -96,6 +146,24 @@ export function ChatWorkspace({ session }: { session: ChatSession }) {
   const suggestedQuestions =
     AI_ASSISTANT_CONTEXTS.find((c) => c.id === aiContext)?.suggestedQuestions ?? []
 
+  // Draft sessions (blank "New session", or a fresh /materials row click) have
+  // no authored script — the Material Assistant conversation is driven live
+  // instead. Named demo sessions author their own conversation in full.
+  const isDraftSession =
+    session.id === NEW_SESSION_ID || session.id.startsWith("NEW-")
+  // The blank "New session" starts with no material at all — the user's
+  // first message is parsed for one (§2's "Show me material X" example).
+  const [liveMaterialId, setLiveMaterialId] = useState<string | null>(null)
+  const effectiveMaterialId = liveMaterialId ?? session.materialId
+  const hasMaterial = effectiveMaterialId !== "—"
+
+  const classification = useMemo(
+    () => classifyMaterial(effectiveMaterialId),
+    [effectiveMaterialId]
+  )
+  const [oarStep, setOarStep] = useState(0) // 0 = not started, 1-3 = which question is pending
+  const [oarAnswers, setOarAnswers] = useState<string[]>([]) // raw free-text replies, in question order
+
   const optionGroupsById = useMemo(() => {
     const map = new Map<string, OptionGroupData>()
     for (const message of session.messages) {
@@ -117,6 +185,53 @@ export function ChatWorkspace({ session }: { session: ChatSession }) {
       ),
     [resolvedOptionGroups]
   )
+
+  // Live sessions only: once the classification card has been shown, the
+  // assistant continues the conversation itself — asking for the OAR
+  // consumption plan (§5) or surfacing the Initiative 8 duplicate-repair
+  // check (§24) — rather than a separate form/panel.
+  useEffect(() => {
+    if (!isDraftSession || !hasMaterial || oarStep !== 0) return
+    if (classification.route.reason === "oar") {
+      setOarStep(1)
+      setExtraMessages((prev) => [...prev, aiMessage("oar-q-1", OAR_QUESTIONS[0])])
+    } else if (classification.route.reason === "repairable" && classification.signal) {
+      const lines = classification.signal.lines.map((l) => `${l.label}: ${l.value}`).join(", ")
+      setExtraMessages((prev) => [
+        ...prev,
+        aiMessage(
+          "duplicate-guard",
+          `A repair for this material may already be in progress — ${lines}. Would you still like to proceed with a new procurement request?`,
+          {
+            actions: {
+              id: "duplicate-guard-actions",
+              actions: [
+                {
+                  id: "review-existing",
+                  icon: "eye",
+                  label: "Review Existing Repair",
+                  description: "Open the Repair Register entry for this chain",
+                },
+                {
+                  id: "proceed-anyway",
+                  icon: "send",
+                  label: "Proceed Anyway",
+                  description: "Continue with a new procurement request",
+                },
+                {
+                  id: "cancel-request",
+                  icon: "cancel",
+                  label: "Cancel Request",
+                  description: "Don't raise a new request",
+                },
+              ],
+            },
+          }
+        ),
+      ])
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDraftSession, hasMaterial, classification, oarStep])
 
   // Shared by both interaction paths — an option click and an action click
   // are each, in their own way, the user completing the current workflow
@@ -167,60 +282,147 @@ export function ChatWorkspace({ session }: { session: ChatSession }) {
     if (resolvedActions[messageId]) return
     setResolvedActions((prev) => ({ ...prev, [messageId]: actionId }))
 
-    // "Proceed with alternate" is the one action that advances the workflow —
-    // the chat action IS the approval trigger.
-    if (actionId === "proceed") {
+    if (actionId === "proceed-anyway") {
+      // The advisory duplicate-repair guard (Initiative 8, §24) — proceeding
+      // opens the mandatory condition-to-repair declaration (§25) next.
       advanceWorkflow()
-      toast.success("Approval workflow triggered", {
-        description: "Stakeholders have been notified.",
-      })
-    } else if (actionId === "proceed-original") {
-      const message = session.messages.find((m) => m.id === messageId)
-      const supplierName =
-        message?.comparison?.current.supplierName ?? "the original supplier"
-      const timestamp = formatTime12h(new Date())
       setExtraMessages((prev) => [
         ...prev,
-        {
-          id: `${messageId}-proceed-original-user`,
-          role: "user" as const,
-          authorLabel: "You",
-          timestamp,
-          text: `Proceed with original supplier — ${supplierName}`,
-        },
-        {
-          id: `${messageId}-proceed-original-ai`,
-          role: "ai" as const,
-          authorLabel: "Spares AI",
-          timestamp,
-          text: `Confirmed — purchase requisition raised with **${supplierName}** for the original part. No alternate approval required; procurement will proceed directly to PO generation.`,
-        },
+        aiMessage(
+          `${messageId}-declaration`,
+          "Before this request can proceed, please confirm the condition-to-repair declaration: the existing unit is not economically or technically repairable.",
+          {
+            actions: {
+              id: `${messageId}-declaration-actions`,
+              accentId: "confirm-declaration",
+              actions: [
+                {
+                  id: "confirm-declaration",
+                  icon: "check",
+                  label: "Confirm Declaration",
+                  description: "I confirm the existing unit cannot be repaired",
+                },
+              ],
+            },
+          }
+        ),
       ])
-      toast.success("Purchase requisition confirmed", {
-        description: `Original vendor retained — ${supplierName}.`,
+    } else if (actionId === "confirm-declaration") {
+      advanceWorkflow()
+      setExtraMessages((prev) => [
+        ...prev,
+        aiMessage(
+          `${messageId}-declaration-confirmed`,
+          "Declaration recorded. This request can now proceed to a purchase requisition."
+        ),
+      ])
+      toast.success("Condition-to-repair declaration recorded")
+    } else if (actionId === "review-existing") {
+      toast("Opening the existing repair chain", {
+        description: "See the Repair Register for full status.",
       })
-    } else if (actionId === "export") {
-      toast.success("Comparison report exported", {
-        description: "PDF queued for engineering review.",
-      })
-    } else if (actionId === "view-technical") {
-      toast("Showing technical equivalents", {
-        description: "Filtered to alternates from other manufacturers.",
+    } else if (actionId === "cancel-request") {
+      toast("Request cancelled")
+    } else if (actionId === "confirm-plan") {
+      const trackingId = nextTrackingId()
+      const reservation = nextReservationNumber()
+      advanceWorkflow()
+      setExtraMessages((prev) => [
+        ...prev,
+        aiMessage(
+          `${messageId}-tracking`,
+          `**Utilisation Tracking Created**\n\n${trackingId}\n\nLinked to SAP Reservation **${reservation} / 0010**.\n\nSimulated only — no live SAP write occurred. This mock reservation now feeds the Utilisation Ledger.`
+        ),
+      ])
+      toast.success(`Consumption plan confirmed — Tracking ID ${trackingId}`)
+    } else if (actionId === "edit-plan") {
+      toast("Editing isn't available in this demo session", {
+        description: "Start a new session to capture a different plan.",
       })
     }
   }
 
   function handleSend(text: string) {
-    setExtraMessages((prev) => [
-      ...prev,
-      {
-        id: `local-${prev.length}`,
-        role: "user" as const,
-        authorLabel: "You",
-        timestamp: formatTime12h(new Date()),
-        text,
-      },
-    ])
+    setExtraMessages((prev) => [...prev, userMessage(`local-${prev.length}`, text)])
+
+    // The blank "New session" has no material yet — parse the first message
+    // for one (§2), then let the effect above take the classified material
+    // into the OAR/repairable follow-up conversation.
+    if (isDraftSession && !hasMaterial) {
+      const materialId = extractMaterialId(text)
+      if (materialId) {
+        setLiveMaterialId(materialId)
+        setExtraMessages((prev) => [
+          ...prev,
+          aiMessage(`classify-${materialId}`, undefined, {
+            classification: materialId,
+            footerNote: "Classified via the Material Router",
+          }),
+        ])
+        setWorkflow((prev) =>
+          prev.map((step, index) =>
+            index === 0
+              ? { ...step, status: "done" as const, meta: "Just now" }
+              : index === 1
+                ? { ...step, status: "active" as const, meta: "See conversation below" }
+                : step
+          )
+        )
+      } else {
+        setExtraMessages((prev) => [
+          ...prev,
+          aiMessage(
+            "no-material-found",
+            "I couldn't find a material code in that — try including one, e.g. \"Show me material 500-14892\"."
+          ),
+        ])
+      }
+      return
+    }
+
+    // Live OAR consumption-plan capture (§5) — one question per user reply,
+    // ending in a summary the user confirms themselves (no separate form).
+    if (isDraftSession && oarStep >= 1 && oarStep <= 3) {
+      const answers = [...oarAnswers, text]
+      setOarAnswers(answers)
+      if (oarStep < 3) {
+        setExtraMessages((prev) => [
+          ...prev,
+          aiMessage(`oar-q-${oarStep + 1}`, OAR_QUESTIONS[oarStep]),
+        ])
+        setOarStep((s) => s + 1)
+      } else {
+        const [purpose, equipment, quantityAndDate] = answers
+        setExtraMessages((prev) => [
+          ...prev,
+          aiMessage(
+            "oar-summary",
+            `**Consumption Plan**\n\nMaterial: ${effectiveMaterialId}\nPurpose: ${purpose}\nEquipment / Project / Job: ${equipment}\nQuantity & planned consumption date: ${quantityAndDate}\n\nReady to confirm?`,
+            {
+              actions: {
+                id: "oar-summary-actions",
+                accentId: "confirm-plan",
+                actions: [
+                  {
+                    id: "confirm-plan",
+                    icon: "check-circle",
+                    label: "Confirm Plan",
+                    description: "Creates the Tracking ID and SAP reservation",
+                  },
+                  {
+                    id: "edit-plan",
+                    icon: "rotate-ccw",
+                    label: "Edit Plan",
+                    description: "Go back and change an answer",
+                  },
+                ],
+              },
+            }
+          ),
+        ])
+        setOarStep(0)
+      }
+    }
   }
 
   return (
@@ -241,7 +443,6 @@ export function ChatWorkspace({ session }: { session: ChatSession }) {
           resolvedOptions={resolvedOptionIds}
           onOptionSelect={handleOptionSelect}
         />
-        <RRExtensionSlot materialId={session.materialId} requestType="alternate-procurement" />
         <ChatInput onSend={handleSend} />
       </div>
       <RightPanel
