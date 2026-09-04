@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/shared/empty-state"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { GlobalAction, InitiativeId } from "@/lib/domain/contracts"
 import { cn } from "@/lib/utils"
+import { ApprovalsWorkspace } from "@/features/initiative-7/components/approvals-workspace"
 
 const TABS: { id: InitiativeId | "all"; label: string }[] = [
   { id: "all", label: "All" },
@@ -30,9 +31,12 @@ const SEVERITY_CLASS = {
 } as const
 
 /**
- * The Global Action Center never runs initiative business logic — it only
- * filters/tabs over the `GlobalAction[]` already aggregated by
- * `getAllGlobalActions()` and navigates via each action's `href`.
+ * The Global Action Center is initiative-agnostic for every module except
+ * Inventory Optimization: that tab renders the initiative's own full
+ * ApprovalsWorkspace (queues, filters, sort, the change table, the
+ * per-recommendation approval-chain panel) instead of the generic flat list,
+ * since that workflow needs more than "title + severity + a link" can carry.
+ * Every other tab stays a plain filter over the aggregated `GlobalAction[]`.
  */
 export function ActionCenterTabs({ actions }: { actions: GlobalAction[] }) {
   const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("all")
@@ -59,7 +63,9 @@ export function ActionCenterTabs({ actions }: { actions: GlobalAction[] }) {
         </TabsList>
       </Tabs>
 
-      {filtered.length === 0 ? (
+      {tab === "initiative-7" ? (
+        <ApprovalsWorkspace />
+      ) : filtered.length === 0 ? (
         <EmptyState title="Nothing here" description="No open actions in this module right now." />
       ) : (
         <ul className="flex flex-col divide-y divide-border rounded-xl border border-border bg-card">

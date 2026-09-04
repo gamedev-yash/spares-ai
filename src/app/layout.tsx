@@ -7,6 +7,7 @@ import { AppToaster } from "@/components/shared/app-toaster";
 import { Material360Drawer } from "@/components/shared/material-360-drawer";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Material360Provider } from "@/lib/material-360-context";
+import { InventoryWorkflowProvider } from "@/features/initiative-7/context/workflow-context";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -43,10 +44,15 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Material360Provider>
-            <Sidebar />
-            <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
-            <Material360Drawer />
-            <AppToaster />
+            {/* Global, not just /inventory-optimization/* — Action Center's
+                Inventory Optimization tab renders the same ApprovalsWorkspace
+                and needs the same live state, not a second, desynced copy. */}
+            <InventoryWorkflowProvider>
+              <Sidebar />
+              <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
+              <Material360Drawer />
+              <AppToaster />
+            </InventoryWorkflowProvider>
           </Material360Provider>
         </ThemeProvider>
       </body>

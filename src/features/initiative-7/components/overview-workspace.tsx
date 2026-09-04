@@ -14,7 +14,6 @@ import {
 import { ForecastVsActualChart } from "@/features/initiative-7/components/forecast-vs-actual-chart"
 import { InventoryHealthCard } from "@/features/initiative-7/components/inventory-health-card"
 import { InventoryPortfolioKpis } from "@/features/initiative-7/components/inventory-portfolio-kpis"
-import { RecommendationReviewTable } from "@/features/initiative-7/components/recommendation-review-table"
 import { RecommendationStatusChart } from "@/features/initiative-7/components/recommendation-status-chart"
 import { TrendLineChart } from "@/features/initiative-7/components/trend-line-chart"
 import { RECOMMENDATIONS } from "@/features/initiative-7/data/recommendations"
@@ -59,12 +58,12 @@ export function InventoryOptimizationOverviewWorkspace() {
 
   return (
     <div className="flex flex-col gap-4">
+      <InventoryPortfolioKpis recommendations={filtered} />
+
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[240px_1fr]">
         <DashboardFilters value={filters} onChange={setFilters} />
 
         <div className="flex min-w-0 flex-col gap-4">
-          <InventoryPortfolioKpis recommendations={filtered} />
-
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
             <ChartCard title="Stockout Risk Distribution" span={4}>
               <InventoryHealthCard
@@ -113,14 +112,6 @@ export function InventoryOptimizationOverviewWorkspace() {
           </div>
         </div>
       </div>
-
-      <ChartCard
-        title="Recommended inventory changes"
-        subtitle={`${filtered.length} material(s) matching the filters above. Open a row to see the recommendation.`}
-        span={12}
-      >
-        <RecommendationReviewTable recommendations={filtered} />
-      </ChartCard>
     </div>
   )
 }
