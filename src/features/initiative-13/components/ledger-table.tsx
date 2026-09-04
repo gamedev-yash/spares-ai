@@ -1,7 +1,7 @@
 "use client"
 
 import { Fragment, useMemo, useState } from "react"
-import { ChevronDown, ChevronRight } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 
 import { FilterBar } from "@/components/shared/filter-bar"
 import { MaterialIdentity } from "@/components/shared/material-identity"
@@ -25,7 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useMaterial360 } from "@/lib/material-360-context"
-import { formatCount, formatZAR } from "@/lib/utils"
+import { cn, formatCount, formatZAR } from "@/lib/utils"
 import type { LedgerStage, UtilizationLedgerLine } from "@/features/initiative-13/types/oar"
 
 const ALL_FILTER = "all"
@@ -45,7 +45,13 @@ function chainTone(step: UtilizationLedgerLine["documentChain"][number]): Timeli
   return step.tone ?? "default"
 }
 
-function DocumentChainDetail({ line }: { line: UtilizationLedgerLine }) {
+function DocumentChainDetail({
+  line,
+  revealed,
+}: {
+  line: UtilizationLedgerLine
+  revealed: boolean
+}) {
   const events: TimelineEvent[] = line.documentChain.map((step) => ({
     id: step.id,
     label: step.doc ? `${step.stage}` : step.stage,
@@ -66,7 +72,7 @@ function DocumentChainDetail({ line }: { line: UtilizationLedgerLine }) {
         </div>
       )}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_auto]">
-        <Timeline events={events} />
+        <Timeline events={events} revealed={revealed} />
         <dl className="flex h-fit flex-col gap-1 rounded-lg border border-border p-3 text-[11px] sm:w-56">
           {line.project && (
             <div className="flex justify-between gap-2">
@@ -206,11 +212,12 @@ export function UtilizationLedgerTable({ lines }: { lines: UtilizationLedgerLine
                     aria-expanded={isExpanded}
                   >
                     <TableCell>
-                      {isExpanded ? (
-                        <ChevronDown className="size-4 text-muted-foreground" />
-                      ) : (
-                        <ChevronRight className="size-4 text-muted-foreground" />
-                      )}
+                      <ChevronRight
+                        className={cn(
+                          "size-4 text-muted-foreground transition-transform duration-300 ease-out",
+                          isExpanded && "rotate-90"
+                        )}
+                      />
                     </TableCell>
                     <TableCell className="font-medium text-foreground">{line.trackingId}</TableCell>
                     <TableCell>
@@ -247,14 +254,30 @@ export function UtilizationLedgerTable({ lines }: { lines: UtilizationLedgerLine
                       )}
                     </TableCell>
                   </TableRow>
-                  {isExpanded && (
-                    <TableRow>
-                      <TableCell />
-                      <TableCell colSpan={16} className="bg-muted/30 py-3">
-                        <DocumentChainDetail line={line} />
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow className="hover:bg-transparent">
+                    <TableCell className="p-0" />
+                    <TableCell colSpan={16} className="p-0">
+                      {/* Grid-rows 0fr->1fr is what lets this animate to "auto"
+                          height smoothly — a plain height/max-height transition
+                          can't target an unknown content height without either
+                          a hard snap or a fixed cap. min-h-0 on the row is the
+                          matching fix for the flex/grid-shrink gotcha (same
+                          issue fixed in chat-body.tsx: without it the item
+                          can't shrink below its content size). */}
+                      <div
+                        className={cn(
+                          "grid transition-[grid-template-rows] duration-300 ease-out",
+                          isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                        )}
+                      >
+                        <div className="min-h-0 overflow-hidden">
+                          <div className="bg-muted/30 px-4 py-3">
+                            <DocumentChainDetail line={line} revealed={isExpanded} />
+                          </div>
+                        </div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
                 </Fragment>
               )
             })}
