@@ -114,13 +114,13 @@ export function AgingExceptionsBoard({ lines }: { lines: UtilizationLedgerLine[]
               </div>
               <div className="flex shrink-0 flex-wrap gap-2">
                 <Button size="sm" onClick={() => confirmConsumed(line)}>
-                  Confirm Consumed
+                  Confirm Used
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => openReplan(line.id)}>
-                  Re-plan
+                  Use Later
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => markNoLongerRequired(line)}>
-                  No Longer Required
+                  No Longer Needed
                 </Button>
               </div>
             </div>

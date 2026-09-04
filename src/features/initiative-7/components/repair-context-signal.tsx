@@ -18,10 +18,10 @@ export function RepairContextSignal({ materialId }: { materialId: string }) {
   return (
     <AlertBanner
       tone="info"
-      title="Repair context available — Refurbishable Spares"
+      title="Repair context available — Repairable Spares"
       actions={
         <Link href={signal.href} className="text-xs font-medium text-primary hover:underline">
-          View in Refurbishable Spares →
+          View in Repairable Spares →
         </Link>
       }
     >

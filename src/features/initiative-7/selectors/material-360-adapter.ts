@@ -1,5 +1,6 @@
 import type { Material360Signal } from "@/lib/domain/contracts"
 import { getRecommendationsForMaterial } from "@/features/initiative-7/data/recommendations"
+import { initiative7Manifest } from "@/features/initiative-7/manifest"
 
 const RISK_TO_STATUS = {
   low: "healthy",
@@ -23,8 +24,8 @@ export function getInitiative7Material360Signal(materialId: string): Material360
 
   return {
     initiative: "initiative-7",
-    label: "Inventory Optimization",
-    href: `/inventory-optimization/recommendations/${rec.id}`,
+    label: initiative7Manifest.name,
+    href: `/inventory-planning/recommendations/${rec.id}`,
     status: RISK_TO_STATUS[rec.risk],
     lines: [
       { label: "Recommendation status", value: rec.status },

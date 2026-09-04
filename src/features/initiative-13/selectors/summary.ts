@@ -5,7 +5,7 @@ import { getInitiative13GlobalActions } from "@/features/initiative-13/selectors
 import { formatCount, formatZARCompact } from "@/lib/utils"
 
 /**
- * Feeds the Spares Control Tower Overview page and the global Action Center.
+ * Feeds Home and the global Action Center.
  */
 export function getInitiative13Summary(): InitiativeSummary {
   const kpis = getOverviewKpis()

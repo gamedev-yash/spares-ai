@@ -219,7 +219,7 @@ export function RepairRegisterTable() {
                   </TableCell>
                   <TableCell>
                     <Link
-                      href={`/refurbishable-spares/repair-register/${c.id}`}
+                      href={`/repairable-spares/repair-register/${c.id}`}
                       className={buttonVariants({ variant: "ghost", size: "xs" })}
                     >
                       View

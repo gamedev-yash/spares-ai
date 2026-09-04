@@ -96,12 +96,12 @@ export function DuplicateGuardFlow() {
       {attempted && chain && hasActiveRepair && (
         <AlertBanner
           tone="warning"
-          title="Active repair chain found for this material"
+          title="Another unit is already under repair"
           actions={
             !proceeded ? (
               <>
                 <Link
-                  href={`/refurbishable-spares/repair-register/${chain.id}`}
+                  href={`/repairable-spares/repair-register/${chain.id}`}
                   className={buttonVariants({ variant: "outline", size: "sm" })}
                 >
                   Review Repair

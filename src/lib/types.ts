@@ -93,7 +93,7 @@ export interface ChatMessage {
   id: string
   role: MessageRole
   timestamp: string // pre-formatted "10:23 AM"
-  authorLabel: string // "You" | "Spares AI"
+  authorLabel: string // "You" | "Spares Assistant"
   text?: string // supports **bold** lite markdown
   /** materialId — renders the Material Assistant's classification card inline, in-transcript. */
   classification?: string

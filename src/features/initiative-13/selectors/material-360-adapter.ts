@@ -1,6 +1,7 @@
 import type { Material360Signal } from "@/lib/domain/contracts"
 import { getLedgerLinesByMaterial } from "@/features/initiative-13/data/ledger"
 import { RECLASSIFICATION_CANDIDATES } from "@/features/initiative-13/data/reclassification"
+import { initiative13Manifest } from "@/features/initiative-13/manifest"
 
 /**
  * Returns a utilization/aging status summary for materials with OAR
@@ -20,7 +21,7 @@ export function getInitiative13Material360Signal(materialId: string): Material36
 
   return {
     initiative: "initiative-13",
-    label: "OAR Utilization",
+    label: initiative13Manifest.name,
     href: "/oar-utilization/ledger",
     status,
     lines: [

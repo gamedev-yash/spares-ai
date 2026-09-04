@@ -513,7 +513,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
       {
         id: "seal-2",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "10:23 AM",
         classification: "500-14892",
         footerNote: "Classified via the Material Router",
@@ -521,7 +521,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
       {
         id: "seal-3",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "10:24 AM",
         text: "This material is classified as OAR. A consumption plan is required before proceeding.\n\nBefore proceeding, please provide the intended purpose.",
       },
@@ -535,7 +535,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
       {
         id: "seal-5",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "10:24 AM",
         text: "Which equipment, project or job is this for?",
       },
@@ -549,7 +549,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
       {
         id: "seal-7",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "10:25 AM",
         text: "How many units do you need, and when do you expect to consume them?",
       },
@@ -563,7 +563,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
       {
         id: "seal-9",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "10:26 AM",
         text: "**Consumption Plan**\n\nMaterial: 500-14892\nQuantity: 3\nPurpose: Secondary pump overhaul on Milling unit 3.\nEquipment / Project / Job: PUMP-2204\nPlanned Consumption Date: 20 Sep 2026\n\nReady to confirm?",
         actions: {
@@ -660,7 +660,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
       {
         id: "brg-2",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "8:12 AM",
         classification: "800-45210",
         footerNote: "Classified via the Material Router",
@@ -668,7 +668,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
       {
         id: "brg-3",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "8:13 AM",
         text: "A repair for this material is already in progress — PR-81005 raised with Weir Minerals Service Center, 1 unit under repair, expected return 28 Sep 2026. Would you still like to proceed with a new procurement request?",
         actions: {
@@ -707,7 +707,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
         id: "classified-routed",
         label: "Classified & routed",
         status: "done",
-        meta: "Routed to Refurbishable Spares",
+        meta: "Routed to Repairable Spares",
       },
       {
         id: "duplicate-guard",
@@ -770,7 +770,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
       {
         id: "pt-2",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "7:41 AM",
         classification: "500-31005",
         footerNote: "Classified via the Material Router",
@@ -778,21 +778,21 @@ export const CHAT_SESSIONS: ChatSession[] = [
       {
         id: "pt-3",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "7:42 AM",
-        text: "This OAR material has repeated utilisation this year — see the Reclassification review to check whether it should move to Inventory Optimization instead.",
+        text: "This OAR material has repeated utilisation this year — see the Reclassification review to check whether it should move to Inventory Planning instead.",
       },
       {
         id: "pt-4",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "7:43 AM",
         text: "This material is classified as OAR. A consumption plan is required before proceeding.\n\nBefore proceeding, please provide the intended purpose.",
       },
       {
         id: "pt-5",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "Next day · 8:10 AM",
         text: "It's been over 24 hours since this consumption plan was requested with no response. A reminder has been sent to **S. van Wyk**; this will escalate to the HOD queue if there's still no response.",
       },
@@ -875,7 +875,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
       {
         id: "imp-2",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "9:03 AM",
         classification: "500-08841",
         footerNote: "Classified via the Material Router",
@@ -883,7 +883,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
       {
         id: "imp-3",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "9:05 AM",
         text: "I've reviewed the planning parameters for this material — demand variability has increased and it's rated high risk. The recommendation was returned by the Commercial Manager for revision; the Engineering Manager has been asked to re-submit with updated lead-time assumptions.",
       },
@@ -899,7 +899,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
         id: "classified-routed",
         label: "Classified & routed",
         status: "done",
-        meta: "Routed to Inventory Optimization",
+        meta: "Routed to Inventory Planning",
       },
       {
         id: "planning-review",
@@ -962,7 +962,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
       {
         id: "valve-2",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "2:03 PM",
         classification: "500-19560",
         footerNote: "Classified via the Material Router",
@@ -970,21 +970,21 @@ export const CHAT_SESSIONS: ChatSession[] = [
       {
         id: "valve-3",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "2:04 PM",
         text: "This material is classified as OAR. A consumption plan is required before proceeding.\n\nBefore proceeding, please provide the intended purpose.",
       },
       {
         id: "valve-4",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "Next day · 2:10 PM",
         text: "We haven't received a response for this consumption plan in 24 hours. A reminder has been sent to **R. Abrahams**.",
       },
       {
         id: "valve-5",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "2 days later · 9:00 AM",
         text: "Still no response after a second reminder. This has now **escalated to the HOD queue** for review.",
       },
@@ -1126,7 +1126,7 @@ export function createDraftSession(material: Material): ChatSession {
       {
         id: "draft-2",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "Just now",
         classification: material.id,
         footerNote: "Classified via the Material Router",

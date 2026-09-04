@@ -1,7 +1,7 @@
 // Global aggregation of per-initiative summaries/actions/audit events. This
 // is the ONLY place that imports every initiative's `selectors/summary.ts`,
 // `selectors/global-actions.ts` and `selectors/audit-events.ts` together —
-// used by the Spares Control Tower Overview, the Action Center, and the
+// used by Home, the Action Center, and the
 // Audit Trail. No business logic here, only composition.
 
 import { getInitiative7Summary } from "@/features/initiative-7/selectors/summary"

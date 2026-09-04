@@ -30,7 +30,7 @@ export function ChatInput({ onSend }: { onSend: (text: string) => void }) {
         ref={inputRef}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder={'Ask about a material, e.g. "Show me material 500-14892"...'}
+        placeholder={'Ask about a material by name or code, e.g. "Show me the pump seal" or "500-14892"...'}
         className="h-9 flex-1"
       />
       <Button

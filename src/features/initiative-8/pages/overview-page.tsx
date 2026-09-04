@@ -24,7 +24,7 @@ export function RefurbishableSparesOverviewPage() {
     <div className="min-h-0 flex-1 overflow-y-auto p-6">
       <div className="mx-auto flex max-w-7xl flex-col gap-4">
         <PageHeader
-          title="Refurbishable Spares"
+          title="Repairable Spares"
           description="Repair-chain visibility and duplicate-procurement guarding for repairable spares."
         />
 

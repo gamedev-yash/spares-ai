@@ -221,7 +221,7 @@ export function PipelineWorkspace() {
                   <TableRow key={rec.id}>
                     <TableCell>
                       <Link
-                        href={`/inventory-optimization/recommendations/${rec.id}`}
+                        href={`/inventory-planning/recommendations/${rec.id}`}
                         className="hover:underline"
                       >
                         <MaterialIdentity material={rec.material} onOpen={openMaterial360} />

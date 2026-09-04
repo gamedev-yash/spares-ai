@@ -10,7 +10,7 @@ export function ActionCenterPage() {
       <div className="mx-auto flex max-w-7xl flex-col gap-4">
         <PageHeader
           title="Action Center"
-          description="Every open item across inventory optimization, refurbishable spares and OAR utilization."
+          description="Every open item across inventory planning, repairable spares and OAR utilization."
         />
         <ActionCenterTabs actions={actions} />
       </div>

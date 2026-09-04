@@ -24,13 +24,19 @@ import type { AuditEvent, InitiativeId } from "@/lib/domain/contracts"
 import { downloadCsv } from "@/lib/utils"
 import { RECOMMENDATIONS } from "@/features/initiative-7/data/recommendations"
 import { liveDecisionEvents, useInventoryWorkflow } from "@/features/initiative-7/context/workflow-context"
+import { initiative7Manifest } from "@/features/initiative-7/manifest"
+import { initiative8Manifest } from "@/features/initiative-8/manifest"
+import { initiative13Manifest } from "@/features/initiative-13/manifest"
 
 const ALL_FILTER = "all"
 
+// Product-facing names only, sourced from each module's manifest — never a
+// hardcoded "Initiative N" label (see lib/material-router.ts for the same
+// pattern).
 const INITIATIVE_LABEL: Record<InitiativeId, string> = {
-  "initiative-7": "Inventory Optimization",
-  "initiative-8": "Refurbishable Spares",
-  "initiative-13": "OAR Utilization",
+  "initiative-7": initiative7Manifest.name,
+  "initiative-8": initiative8Manifest.name,
+  "initiative-13": initiative13Manifest.name,
 }
 
 const INITIATIVES: InitiativeId[] = ["initiative-7", "initiative-8", "initiative-13"]
@@ -39,7 +45,7 @@ export function GlobalAuditLog({ events }: { events: AuditEvent[] }) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [initiative, setInitiative] = useState<InitiativeId | typeof ALL_FILTER>(ALL_FILTER)
 
-  // Inventory Optimization is the one initiative with live, in-session
+  // Inventory Planning is the one module with live, in-session
   // decisions (send for approval / approve / adjust / reject — taken from
   // the Recommendations page, the Approvals workspace, or Action Center, all
   // sharing the one InventoryWorkflowProvider). Everything else here is the

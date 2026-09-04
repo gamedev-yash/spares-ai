@@ -19,7 +19,7 @@ export function getInitiative8GlobalActions(): GlobalAction[] {
         severity: "critical",
         entityId: d.id,
         materialId: d.material.materialId,
-        href: "/refurbishable-spares/declarations",
+        href: "/repairable-spares/declarations",
         createdAt: d.createdAt,
       })
     } else if (d.status === "Required") {
@@ -30,7 +30,7 @@ export function getInitiative8GlobalActions(): GlobalAction[] {
         severity: "warning",
         entityId: d.id,
         materialId: d.material.materialId,
-        href: "/refurbishable-spares/declarations",
+        href: "/repairable-spares/declarations",
         createdAt: d.createdAt,
       })
     }
@@ -48,7 +48,7 @@ export function getInitiative8GlobalActions(): GlobalAction[] {
         entityId: c.id,
         materialId: c.material.materialId,
         plantId: c.plant.plantId,
-        href: `/refurbishable-spares/repair-register/${c.id}`,
+        href: `/repairable-spares/repair-register/${c.id}`,
         createdAt: c.raisedAt,
       })
     }

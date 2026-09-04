@@ -65,7 +65,7 @@ export function ReclassificationTable({ candidates }: { candidates: Reclassifica
                     the internal "Initiative 7" codename.
                   */}
                   <Link
-                    href={`/inventory-optimization/recommendations?reviewMaterial=${c.material.materialId}`}
+                    href={`/inventory-planning/recommendations?reviewMaterial=${c.material.materialId}`}
                     className={buttonVariants({ variant: "outline", size: "xs" })}
                   >
                     Review in {initiative7Manifest.name}

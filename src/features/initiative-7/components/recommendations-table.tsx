@@ -140,7 +140,7 @@ export function RecommendationsTableView({
                   <RiskBadge level={r.risk} />
                 </TableCell>
                 <TableCell>
-                  <Link href={`/inventory-optimization/recommendations/${r.id}`} className="hover:underline">
+                  <Link href={`/inventory-planning/recommendations/${r.id}`} className="hover:underline">
                     <StatusBadge tone={STATUS_TONE[r.status]}>{r.status}</StatusBadge>
                   </Link>
                 </TableCell>

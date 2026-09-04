@@ -2,36 +2,26 @@ import type { InitiativeManifest } from "@/lib/domain/manifest"
 
 export const initiative7Manifest: InitiativeManifest = {
   id: "initiative-7",
-  name: "Inventory Optimization",
+  name: "Inventory Planning",
   description:
     "Criticality-aware ROP, safety-stock and max-stock recommendations",
-  // Overview now lives as a tab on the global Spares Control Tower
-  // (see src/components/overview/overview-tabs.tsx) instead of its own
-  // route — this href is where the summary card / "open" links go.
-  href: "/overview?tab=initiative-7",
+  // The module's own overview/monitoring page — also where Home's summary
+  // card "open" link lands.
+  href: "/inventory-planning",
   navSection: {
-    title: "Inventory Optimization",
+    title: "Inventory Planning",
     items: [
-      // The Control Tower carries a summary tab for this initiative; this
-      // route is the KPI/chart dashboard for watching portfolio health.
-      { label: "Monitoring", icon: "package", href: "/inventory-optimization" },
+      { label: "Overview", icon: "package", href: "/inventory-planning" },
       {
         label: "Recommendations",
         icon: "lightbulb",
-        href: "/inventory-optimization/recommendations",
+        href: "/inventory-planning/recommendations",
       },
-      // Approvals moved into the global Action Center — its Inventory
-      // Optimization tab renders this initiative's own ApprovalsWorkspace.
       {
         label: "Pipeline",
         icon: "gauge",
-        href: "/inventory-optimization/pipeline",
+        href: "/inventory-planning/pipeline",
       },
     ],
   },
-  suggestedQuestions: [
-    "Why is the recommended ROP for this material higher?",
-    "Which materials are at stockout risk this month?",
-    "Show excess inventory candidates I could release working capital from.",
-  ],
 }

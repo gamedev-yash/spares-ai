@@ -28,7 +28,7 @@ export function getInitiative7GlobalActions(): GlobalAction[] {
     entityId: rec.id,
     materialId: rec.material.materialId,
     plantId: rec.plantId,
-    href: `/inventory-optimization/recommendations/${rec.id}`,
+    href: `/inventory-planning/recommendations/${rec.id}`,
     createdAt: rec.generatedAt,
   }))
 }

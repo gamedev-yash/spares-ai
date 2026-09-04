@@ -12,7 +12,7 @@ import {
 import { getInitiative7GlobalActions } from "@/features/initiative-7/selectors/global-actions"
 
 /**
- * Feeds the Spares Control Tower Overview cards and the global Action
+ * Feeds Home's summary cards and the global Action
  * Center. Numbers are derived from the mock RECOMMENDATIONS dataset — see
  * `features/initiative-7/data/recommendations.ts`.
  */

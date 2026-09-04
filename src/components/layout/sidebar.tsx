@@ -55,10 +55,10 @@ export function Sidebar() {
       <div className="border-b border-border p-4">
         <h3 className="flex items-center gap-1.5 text-[15px] font-medium text-foreground">
           <CpuIcon className="size-[18px]" />
-          Vedanta Spares AI
+          Spares AI
         </h3>
         <p className="mt-0.5 text-xs text-muted-foreground">
-          Spares Control Tower
+          Vedanta spares management
         </p>
       </div>
 

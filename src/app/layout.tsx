@@ -20,9 +20,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vedanta Spares AI — Spares Control Tower",
+  title: "Spares AI",
   description:
-    "Unified AI-driven platform for demand/procurement, inventory optimization, refurbishable spares and OAR utilization tracking across Vedanta operations.",
+    "One integrated spares management application — inventory planning, repairable spares and OAR utilization tracking.",
 };
 
 export default function RootLayout({
@@ -44,9 +44,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Material360Provider>
-            {/* Global, not just /inventory-optimization/* — Action Center's
-                Inventory Optimization tab renders the same ApprovalsWorkspace
-                and needs the same live state, not a second, desynced copy. */}
+            {/* Global, not just /inventory-planning/* — both the Approvals
+                page and the Action Center's Inventory Planning tab render
+                the same ApprovalsWorkspace and need the same live state,
+                not a second, desynced copy. */}
             <InventoryWorkflowProvider>
               <Sidebar />
               <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>

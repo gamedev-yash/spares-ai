@@ -24,13 +24,13 @@ function quickActionsFor(materialId: string, route: ReturnType<typeof classifyMa
       ]
     case "initiative-8":
       return [
-        { label: "View Repair Register", href: signalHref ?? "/refurbishable-spares/repair-register" },
-        { label: "Start Condition Declaration", href: "/refurbishable-spares/declarations" },
+        { label: "View Repair Register", href: signalHref ?? "/repairable-spares/repair-register" },
+        { label: "Start Condition Declaration", href: "/repairable-spares/declarations" },
       ]
     case "initiative-7":
       return [
-        { label: "Review Planning Parameters", href: signalHref ?? "/inventory-optimization/recommendations" },
-        { label: "Open Approval Workflow", href: "/inventory-optimization/pipeline" },
+        { label: "Review Planning Parameters", href: signalHref ?? "/inventory-planning/recommendations" },
+        { label: "Open Approval Workflow", href: "/inventory-planning/pipeline" },
       ]
     default:
       return [{ label: "View in Materials", href: `/materials?material=${encodeURIComponent(materialId)}` }]
@@ -51,10 +51,10 @@ export function MaterialClassificationCard({ materialId }: { materialId: string 
 
   return (
     <div className="rounded-xl border border-border bg-card p-3.5 text-xs">
-      <div className="mb-2">
+      <Link href={`/materials/${materialId}`} className="mb-2 block hover:underline">
         <div className="text-sm font-medium text-foreground">{description}</div>
         <div className="text-[11px] text-muted-foreground">{materialId}</div>
-      </div>
+      </Link>
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <div className="rounded-lg bg-muted/40 p-2.5">

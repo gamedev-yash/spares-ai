@@ -18,8 +18,8 @@ export default function MaterialsPage() {
             Material search
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Click a row to start a new alternate-sourcing session for that
-            material.
+            Click a row to open a Spares Assistant conversation about that
+            material — classification, routing and next steps.
           </p>
         </div>
         <Suspense

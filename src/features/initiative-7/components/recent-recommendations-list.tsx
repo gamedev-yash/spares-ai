@@ -41,7 +41,7 @@ export function RecentRecommendationsList({
       {items.map((r) => (
         <li key={r.id}>
           <Link
-            href={`/inventory-optimization/recommendations/${r.id}`}
+            href={`/inventory-planning/recommendations/${r.id}`}
             className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0 hover:bg-muted/40"
           >
             <div className="min-w-0 flex-1">

@@ -168,7 +168,7 @@ const FALLBACK: WorkflowRecordState = {
 }
 
 /**
- * In-memory approval state shared by every Inventory Optimization page, so a
+ * In-memory approval state shared by every Inventory Planning page, so a
  * "Send for approval" on the Recommendations page shows up in the Approval
  * Queue and the Pipeline. Nothing is persisted and no SAP write ever happens —
  * a refresh returns every recommendation to its authored state.

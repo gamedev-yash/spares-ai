@@ -9,12 +9,16 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { GlobalAction, InitiativeId } from "@/lib/domain/contracts"
 import { cn } from "@/lib/utils"
 import { ApprovalsWorkspace } from "@/features/initiative-7/components/approvals-workspace"
+import { initiative7Manifest } from "@/features/initiative-7/manifest"
+import { initiative8Manifest } from "@/features/initiative-8/manifest"
+import { initiative13Manifest } from "@/features/initiative-13/manifest"
 
+// Product-facing names only, sourced from each module's manifest.
 const TABS: { id: InitiativeId | "all"; label: string }[] = [
   { id: "all", label: "All" },
-  { id: "initiative-7", label: "Inventory Optimization" },
-  { id: "initiative-8", label: "Refurbishable Spares" },
-  { id: "initiative-13", label: "OAR Utilization" },
+  { id: "initiative-7", label: initiative7Manifest.name },
+  { id: "initiative-8", label: initiative8Manifest.name },
+  { id: "initiative-13", label: initiative13Manifest.name },
 ]
 
 const SEVERITY_ICON = {
@@ -31,7 +35,7 @@ const SEVERITY_CLASS = {
 
 /**
  * The Global Action Center is initiative-agnostic for every module except
- * Inventory Optimization: that tab renders the initiative's own full
+ * Inventory Planning: that tab renders the module's own full
  * ApprovalsWorkspace (queues, filters, sort, the change table, the
  * per-recommendation approval-chain panel) instead of the generic flat list,
  * since that workflow needs more than "title + severity + a link" can carry.

@@ -48,8 +48,8 @@ export function RecommendationsWorkspace() {
       {reviewMaterial && (
         <AlertBanner tone="info" title={`Reviewing material flagged by OAR Utilization for reclassification review — ${reviewMaterial}`}>
           {matches.length > 0
-            ? "A matching Inventory Optimization recommendation is in the table below."
-            : "No open Inventory Optimization recommendation exists yet for this material."}
+            ? "A matching inventory planning recommendation is in the table below."
+            : "No open inventory planning recommendation exists yet for this material."}
         </AlertBanner>
       )}
 

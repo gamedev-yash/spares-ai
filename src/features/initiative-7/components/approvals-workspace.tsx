@@ -154,7 +154,7 @@ function ApprovalWorkflowSidebar({ rec }: { rec: Recommendation | null }) {
       </ol>
 
       <Link
-        href={`/inventory-optimization/recommendations/${rec.id}`}
+        href={`/inventory-planning/recommendations/${rec.id}`}
         className={buttonVariants({ variant: "outline", size: "sm" })}
       >
         Review this item
@@ -405,7 +405,7 @@ export function ApprovalsWorkspace() {
                         </TableCell>
                         <TableCell>
                           <Link
-                            href={`/inventory-optimization/recommendations/${rec.id}`}
+                            href={`/inventory-planning/recommendations/${rec.id}`}
                             className={cn(
                               buttonVariants({ size: "xs" }),
                               "bg-success text-white hover:bg-success/90"

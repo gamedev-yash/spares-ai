@@ -113,61 +113,39 @@ export const QUICK_ACTIONS: {
   badge?: number
 }[] = [
   {
-    label: "Spares Control Tower",
+    label: "Home",
     icon: "layout-dashboard",
-    href: "/overview",
+    href: "/home",
   },
   { label: "Search materials", icon: "search", href: "/materials" },
   // Pending items across every module surface in the Action Center, which
-  // links straight into each module's own approval page.
-  { label: "Action Center", icon: "inbox", href: "/action-center" },
+  // links straight into each module's own action surface.
+  { label: "Action Center", icon: "inbox", href: "/actions" },
+  // Decisions waiting on someone specifically — a filtered, decision-shaped
+  // view over the same underlying items as the Action Center.
+  { label: "Approvals", icon: "clipboard-check", href: "/approvals" },
   { label: "Audit trail", icon: "history", href: "/audit" },
 ]
 
-/** AI Assistant context selector — swaps the chat's suggested-question chips.
- * Deterministic, UI-only: no change to the chat engine or message model. */
-export const AI_ASSISTANT_CONTEXTS: {
-  id: "all" | "initiative-7" | "initiative-8" | "initiative-13"
-  label: string
-  suggestedQuestions: string[]
-}[] = [
-  {
-    id: "all",
-    label: "All Spares",
-    suggestedQuestions: [
-      "Is this material OAR or non-OAR?",
-      "Why is the recommended ROP for this material higher?",
-      "Which repairable spares have active repair chains?",
-      "Show OAR materials past their planned consumption date.",
-    ],
-  },
-  {
-    id: "initiative-7",
-    label: initiative7Manifest.name,
-    suggestedQuestions: initiative7Manifest.suggestedQuestions,
-  },
-  {
-    id: "initiative-8",
-    label: initiative8Manifest.name,
-    suggestedQuestions: initiative8Manifest.suggestedQuestions,
-  },
-  {
-    id: "initiative-13",
-    label: initiative13Manifest.name,
-    suggestedQuestions: initiative13Manifest.suggestedQuestions,
-  },
+/**
+ * The Spares Assistant's suggested-question chips — one flat list, always
+ * shown. There is deliberately no "pick a module first" selector: the
+ * assistant routes each question to the right area internally (see
+ * `chat-workspace.tsx`'s intent handling in `handleSend`), the same way a
+ * user would never be asked to choose which module to talk to.
+ */
+export const SUGGESTED_QUESTIONS: string[] = [
+  "Which critical spares are at risk?",
+  "What needs my approval?",
+  "Is this material OAR or non-OAR?",
+  "Why is the recommended ROP for this material higher?",
+  "Do we already have this material under repair?",
+  "Which repairs are overdue?",
+  "Which OAR materials are overdue?",
+  "Do we have this material available at another plant?",
 ]
 
 export const DEFAULT_SESSION_ID = "SPR-2847"
 
 /** Hardcoded blank chat opened by the sidebar "New session" button (mock). */
 export const NEW_SESSION_ID = "SPR-2900"
-
-export const WORKFLOW_STEP_LABELS = [
-  "Material identified",
-  "Application confirmed",
-  "Alternate selection",
-  "Procurement approval",
-  "Engineering sign-off",
-  "PO generation",
-] as const

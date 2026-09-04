@@ -1,5 +1,6 @@
 import type { Material360Signal } from "@/lib/domain/contracts"
 import { getRepairChainByMaterialId } from "@/features/initiative-8/data/repair-chains"
+import { initiative8Manifest } from "@/features/initiative-8/manifest"
 
 /**
  * Returns a repair-chain summary for the global Material 360 drawer.
@@ -25,8 +26,8 @@ export function getInitiative8Material360Signal(materialId: string): Material360
 
   return {
     initiative: "initiative-8",
-    label: "Refurbishable Spares",
-    href: `/refurbishable-spares/repair-register/${chain.id}`,
+    label: initiative8Manifest.name,
+    href: `/repairable-spares/repair-register/${chain.id}`,
     status,
     lines: [
       { label: "Repair status", value: `${chain.repairStatus} — ${chain.vendor}` },

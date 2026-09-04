@@ -46,7 +46,7 @@ export function RecommendationDetailPage({ recommendationId }: { recommendationI
             description="It may have been superseded — return to the Recommendation Workspace to find the current one."
             actions={
               <Link
-                href="/inventory-optimization/recommendations"
+                href="/inventory-planning/recommendations"
                 className="text-sm font-medium text-primary hover:underline"
               >
                 Back to Recommendations
@@ -64,7 +64,7 @@ export function RecommendationDetailPage({ recommendationId }: { recommendationI
     <div className="min-h-0 flex-1 overflow-y-auto p-6">
       <div className="mx-auto flex max-w-6xl flex-col gap-4">
         <Link
-          href="/inventory-optimization/recommendations"
+          href="/inventory-planning/recommendations"
           className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="size-3.5" />

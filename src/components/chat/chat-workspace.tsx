@@ -3,13 +3,14 @@
 import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 
-import { AIContextSelector, type AIContextId } from "@/components/chat/ai-context-selector"
 import { ChatBody } from "@/components/chat/chat-body"
 import { ChatHeader } from "@/components/chat/chat-header"
 import { ChatInput } from "@/components/chat/chat-input"
 import { SuggestedQuestions } from "@/components/chat/suggested-questions"
 import { RightPanel } from "@/components/layout/right-panel"
-import { AI_ASSISTANT_CONTEXTS, NEW_SESSION_ID } from "@/lib/constants"
+import { answerForIntent, answerForThisMaterial, classifyIntent } from "@/lib/chat-intents"
+import { NEW_SESSION_ID, SUGGESTED_QUESTIONS } from "@/lib/constants"
+import { findMaterialIdByName, findNameMatchCandidates } from "@/lib/material-name-lookup"
 import { classifyMaterial } from "@/lib/material-router"
 import type {
   ChatMessage as ChatMessageData,
@@ -85,7 +86,7 @@ function aiMessage(id: string, text?: string, extra?: Partial<ChatMessageData>):
   return {
     id,
     role: "ai",
-    authorLabel: "Spares AI",
+    authorLabel: "Spares Assistant",
     timestamp: formatTime12h(new Date()),
     text,
     ...extra,
@@ -113,7 +114,9 @@ const OAR_QUESTIONS = [
 /** Pulls a material code out of free text typed into a blank session, e.g.
  * "Show me material 500-14892" -> "500-14892". Mock-only pattern matching —
  * no real NLU — supporting this app's two id conventions (hyphenated, and
- * the master-spec's plain-digit examples). */
+ * the master-spec's plain-digit examples). A material named instead of
+ * coded (e.g. "the conveyor gearmotor") falls through to
+ * `findMaterialIdByName` at the call site. */
 function extractMaterialId(text: string): string | null {
   const hyphenated = text.match(/\b\d{2,4}-\d{4,7}\b/)
   if (hyphenated) return hyphenated[0]
@@ -142,9 +145,6 @@ export function ChatWorkspace({ session }: { session: ChatSession }) {
     return seeded
   })
   const [activeTab, setActiveTab] = useState("workflow")
-  const [aiContext, setAiContext] = useState<AIContextId>("all")
-  const suggestedQuestions =
-    AI_ASSISTANT_CONTEXTS.find((c) => c.id === aiContext)?.suggestedQuestions ?? []
 
   // Draft sessions (blank "New session", or a fresh /materials row click) have
   // no authored script — the Material Assistant conversation is driven live
@@ -345,11 +345,35 @@ export function ChatWorkspace({ session }: { session: ChatSession }) {
   function handleSend(text: string) {
     setExtraMessages((prev) => [...prev, userMessage(`local-${prev.length}`, text)])
 
+    // Live OAR consumption-plan capture takes priority while it's actually
+    // in progress — a free-text answer to "what's the purpose?" shouldn't
+    // get reinterpreted as a business question.
+    const midOarCapture = isDraftSession && oarStep >= 1 && oarStep <= 3
+    if (!midOarCapture) {
+      // Questions about the material already loaded in this session ("is
+      // this material OAR?", "why is ROP higher for this material?") answer
+      // from that material's own cross-module signals.
+      if (hasMaterial) {
+        const contextual = answerForThisMaterial(text, effectiveMaterialId)
+        if (contextual) {
+          setExtraMessages((prev) => [...prev, aiMessage(`contextual-${prev.length}`, contextual)])
+          return
+        }
+      }
+      // General business questions (§30) — routed internally, never by
+      // asking the user to pick a module (§31).
+      const intent = classifyIntent(text)
+      if (intent) {
+        setExtraMessages((prev) => [...prev, aiMessage(`intent-${prev.length}`, answerForIntent(intent))])
+        return
+      }
+    }
+
     // The blank "New session" has no material yet — parse the first message
     // for one (§2), then let the effect above take the classified material
     // into the OAR/repairable follow-up conversation.
     if (isDraftSession && !hasMaterial) {
-      const materialId = extractMaterialId(text)
+      const materialId = extractMaterialId(text) ?? findMaterialIdByName(text)
       if (materialId) {
         setLiveMaterialId(materialId)
         setExtraMessages((prev) => [
@@ -369,13 +393,25 @@ export function ChatWorkspace({ session }: { session: ChatSession }) {
           )
         )
       } else {
-        setExtraMessages((prev) => [
-          ...prev,
-          aiMessage(
-            "no-material-found",
-            "I couldn't find a material code in that — try including one, e.g. \"Show me material 500-14892\"."
-          ),
-        ])
+        const candidates = findNameMatchCandidates(text)
+        if (candidates.length > 1) {
+          const list = candidates.map((c) => `• ${c.description} (${c.id})`).join("\n")
+          setExtraMessages((prev) => [
+            ...prev,
+            aiMessage(
+              "name-ambiguous",
+              `A few materials could match that:\n\n${list}\n\nWhich one did you mean? Try including the code or a bit more detail.`
+            ),
+          ])
+        } else {
+          setExtraMessages((prev) => [
+            ...prev,
+            aiMessage(
+              "no-material-found",
+              "I couldn't match that to a material or a question I know how to answer. Try a material name or code, e.g. \"Show me the pump seal\" or \"500-14892\", or one of the suggested questions above."
+            ),
+          ])
+        }
       }
       return
     }
@@ -430,11 +466,7 @@ export function ChatWorkspace({ session }: { session: ChatSession }) {
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <ChatHeader title={session.title} sessionId={session.id} />
         <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2">
-          <span className="text-[11px] font-medium tracking-[0.5px] text-muted-foreground uppercase">
-            Context
-          </span>
-          <AIContextSelector value={aiContext} onChange={setAiContext} />
-          <SuggestedQuestions questions={suggestedQuestions} onSelect={handleSend} />
+          <SuggestedQuestions questions={SUGGESTED_QUESTIONS} onSelect={handleSend} />
         </div>
         <ChatBody
           messages={messages}

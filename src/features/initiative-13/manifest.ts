@@ -5,13 +5,13 @@ export const initiative13Manifest: InitiativeManifest = {
   name: "OAR Utilization",
   description:
     "End-to-end tracking of OAR spares demand from reservation through utilization",
-  // Overview now lives as a tab on the global Spares Control Tower
-  // (see src/components/overview/overview-tabs.tsx) instead of its own
-  // route — this href is where the summary card / "open" links go.
-  href: "/overview?tab=initiative-13",
+  // The module's own overview page — also where Home's summary card "open"
+  // link lands.
+  href: "/oar-utilization",
   navSection: {
     title: "OAR Utilization",
     items: [
+      { label: "Overview", icon: "package", href: "/oar-utilization" },
       {
         label: "Utilization Ledger",
         icon: "layers",
@@ -34,9 +34,4 @@ export const initiative13Manifest: InitiativeManifest = {
       },
     ],
   },
-  suggestedQuestions: [
-    "Show OAR materials past their planned consumption date.",
-    "Which OAR materials are candidates for stocked-material reclassification?",
-    "Is there unused stock elsewhere I could redeploy instead of buying new?",
-  ],
 }
