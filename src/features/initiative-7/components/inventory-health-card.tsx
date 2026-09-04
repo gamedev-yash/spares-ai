@@ -19,6 +19,13 @@ const RISK_COLOR_CLASS: Record<RiskLevel, string> = {
   low: "bg-success",
 }
 
+const RISK_TEXT_CLASS: Record<RiskLevel, string> = {
+  critical: "text-destructive",
+  high: "text-[color-mix(in_oklch,var(--warning)_40%,var(--destructive)_60%)]",
+  medium: "text-warning",
+  low: "text-success",
+}
+
 function pct(part: number, whole: number): string {
   return whole === 0 ? "0.0" : ((part / whole) * 100).toFixed(1)
 }
@@ -44,9 +51,10 @@ export function InventoryHealthCard({
   return (
     <div className="flex items-center gap-4">
       {/* One continuous column, most severe tier at the top. Segments are
-          sized by share and butt up against each other; the rounded ends come
-          from the clipping container. */}
-      <div className="flex h-[150px] w-8 shrink-0 flex-col overflow-hidden rounded-full bg-muted">
+          sized by share and butt up against each other; a slight corner
+          radius on the clipping container keeps it cylindrical rather than
+          the fully-rounded capsule shape. */}
+      <div className="flex h-[150px] w-8 shrink-0 flex-col overflow-hidden rounded-md bg-muted">
         {counts.map(({ level, count }) => (
           <button
             key={level}
@@ -77,7 +85,7 @@ export function InventoryHealthCard({
               activeRisk && activeRisk !== level && "opacity-40"
             )}
           >
-            <span className="flex items-center gap-2 text-foreground">
+            <span className={cn("flex items-center gap-2 font-medium", RISK_TEXT_CLASS[level])}>
               <span className={cn("size-2.5 shrink-0 rounded-full", RISK_COLOR_CLASS[level])} />
               {RISK_LABEL[level]}
             </span>
