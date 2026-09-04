@@ -1,15 +1,56 @@
-import { ArrowRight } from "lucide-react"
+import { ArrowDown, ArrowUp } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import type { StockParameters } from "@/features/initiative-7/types/inventory"
 
 const ROWS: { key: keyof StockParameters; label: string }[] = [
-  { key: "rop", label: "Reorder Point (ROP)" },
+  { key: "rop", label: "Reorder Point" },
   { key: "safetyStock", label: "Safety Stock" },
   { key: "maxStock", label: "Maximum Stock" },
 ]
 
-/** Side-by-side "Current parameters" vs "Recommended parameters" panel. */
+/**
+ * One current -> recommended stat box. Colour tracks the direction of the
+ * change, not whether it's "good": down releases working capital, up buys
+ * risk cover, and both are legitimate outcomes.
+ */
+function ParameterStatBox({
+  label,
+  current,
+  recommended,
+}: {
+  label: string
+  current: number
+  recommended: number
+}) {
+  const delta = recommended - current
+  const pct = current === 0 ? 0 : Math.round((delta / current) * 100)
+  const DeltaIcon = delta < 0 ? ArrowDown : ArrowUp
+  const tone =
+    delta < 0 ? "text-success" : delta > 0 ? "text-warning" : "text-muted-foreground"
+
+  return (
+    <div className="rounded-lg border border-border bg-muted/20 p-3">
+      <div className="text-[11px] font-medium tracking-[0.5px] text-muted-foreground uppercase">
+        {label}
+      </div>
+      <div className="mt-1 text-sm font-semibold tabular-nums text-foreground">
+        {current} → {recommended}
+      </div>
+      {delta === 0 ? (
+        <div className="mt-0.5 text-[11px] text-muted-foreground">no change</div>
+      ) : (
+        <div className={cn("mt-0.5 flex items-center gap-0.5 text-[11px] font-medium", tone)}>
+          <DeltaIcon className="size-3 shrink-0" />
+          {Math.abs(delta)} ({pct > 0 ? "+" : ""}
+          {pct}%)
+        </div>
+      )}
+    </div>
+  )
+}
+
+/** "Current -> recommended" parameter comparison, one box per SAP parameter. */
 export function ParameterComparison({
   current,
   recommended,
@@ -18,44 +59,15 @@ export function ParameterComparison({
   recommended: StockParameters
 }) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-      <div className="rounded-lg border border-border bg-muted/20 p-3">
-        <div className="mb-2 text-[11px] font-medium tracking-[0.5px] text-muted-foreground uppercase">
-          Current parameters
-        </div>
-        <dl className="flex flex-col gap-2">
-          {ROWS.map((row) => (
-            <div key={row.key} className="flex items-baseline justify-between">
-              <dt className="text-xs text-muted-foreground">{row.label}</dt>
-              <dd className="text-sm font-medium text-foreground tabular-nums">{current[row.key]}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-      <div className="rounded-lg border border-primary/30 bg-primary/5 p-3">
-        <div className="mb-2 text-[11px] font-medium tracking-[0.5px] text-primary uppercase">
-          Recommended parameters
-        </div>
-        <dl className="flex flex-col gap-2">
-          {ROWS.map((row) => {
-            const changed = current[row.key] !== recommended[row.key]
-            const up = recommended[row.key] > current[row.key]
-            return (
-              <div key={row.key} className="flex items-baseline justify-between">
-                <dt className="text-xs text-muted-foreground">{row.label}</dt>
-                <dd className="flex items-center gap-1 text-sm font-semibold text-foreground tabular-nums">
-                  {recommended[row.key]}
-                  {changed && (
-                    <span className={cn("flex items-center text-[10px]", up ? "text-warning" : "text-success")}>
-                      <ArrowRight className={cn("size-3", up ? "-rotate-45" : "rotate-45")} />
-                    </span>
-                  )}
-                </dd>
-              </div>
-            )
-          })}
-        </dl>
-      </div>
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      {ROWS.map((row) => (
+        <ParameterStatBox
+          key={row.key}
+          label={row.label}
+          current={current[row.key]}
+          recommended={recommended[row.key]}
+        />
+      ))}
     </div>
   )
 }

@@ -17,10 +17,24 @@ const STATUS_TONE: Record<Recommendation["status"], "default" | "success" | "war
 
 /** Most recently generated recommendations, linking straight into the detail
  * explainability workspace. */
-export function RecentRecommendationsList({ limit = 5 }: { limit?: number }) {
-  const items = [...RECOMMENDATIONS]
+export function RecentRecommendationsList({
+  recommendations = RECOMMENDATIONS,
+  limit = 5,
+}: {
+  recommendations?: Recommendation[]
+  limit?: number
+}) {
+  const items = [...recommendations]
     .sort((a, b) => (a.generatedAt < b.generatedAt ? 1 : -1))
     .slice(0, limit)
+
+  if (items.length === 0) {
+    return (
+      <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+        No recommendations match the current filters.
+      </div>
+    )
+  }
 
   return (
     <ul className="flex flex-col divide-y divide-border">

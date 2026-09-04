@@ -8,15 +8,13 @@ import { RiskBadge } from "@/components/shared/risk-badge"
 import { StatusBadge } from "@/components/shared/status-badge"
 import { getPlantById } from "@/lib/shared-data/plants"
 import { formatZAR } from "@/lib/utils"
-import { ApprovalWorkflowPanel } from "@/features/initiative-7/components/approval-workflow-panel"
-import { ChampionChallengerCards } from "@/features/initiative-7/components/champion-challenger-cards"
-import { ConsumptionHistoryChart } from "@/features/initiative-7/components/consumption-history-chart"
+import { DecisionActions, DecisionHistory } from "@/features/initiative-7/components/decision-panel"
+import { RecommendationReviewPanel } from "@/features/initiative-7/components/recommendation-review-panel"
 import { OarColdStartPanel } from "@/features/initiative-7/components/oar-cold-start-panel"
-import { ParameterComparison } from "@/features/initiative-7/components/parameter-comparison"
 import { RepairContextSignal } from "@/features/initiative-7/components/repair-context-signal"
-import { WhyRecommended } from "@/features/initiative-7/components/why-recommended"
 import { getRecommendationById } from "@/features/initiative-7/data/recommendations"
-import type { Recommendation } from "@/features/initiative-7/types/inventory"
+import type { Criticality, Recommendation } from "@/features/initiative-7/types/inventory"
+import { serviceLevelZFactor } from "@/features/initiative-7/utils/inventory-calc"
 
 const STATUS_TONE: Record<Recommendation["status"], "default" | "success" | "warning" | "danger"> = {
   "Pending Review": "default",
@@ -25,6 +23,14 @@ const STATUS_TONE: Record<Recommendation["status"], "default" | "success" | "war
   Rejected: "danger",
   Returned: "warning",
   Implemented: "success",
+}
+
+/** Compact ABC-style code for the criticality tier, most severe first. */
+const CRITICALITY_CODE: Record<Criticality, string> = {
+  Critical: "A",
+  High: "B",
+  Medium: "C",
+  Low: "D",
 }
 
 export function RecommendationDetailPage({ recommendationId }: { recommendationId: string }) {
@@ -77,12 +83,17 @@ export function RecommendationDetailPage({ recommendationId }: { recommendationI
         />
 
         <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-          <span className="rounded-full bg-muted px-2.5 py-1">Criticality: {recommendation.criticality}</span>
+          <span className="rounded-full bg-muted px-2.5 py-1">
+            Category: {CRITICALITY_CODE[recommendation.criticality]} – {recommendation.criticality}
+          </span>
           <span className="rounded-full bg-muted px-2.5 py-1">Demand pattern: {recommendation.demandPattern}</span>
           <span className="rounded-full bg-muted px-2.5 py-1">Lead time: {recommendation.leadTimeDays}d (±{recommendation.leadTimeVarianceDays}d)</span>
           <span className="rounded-full bg-muted px-2.5 py-1">Unit price: {formatZAR(recommendation.unitPrice)}</span>
           <span className="rounded-full bg-muted px-2.5 py-1">
             Service-level target: {Math.round(recommendation.serviceLevelTarget * 100)}%
+          </span>
+          <span className="rounded-full bg-muted px-2.5 py-1">
+            Z-factor: {serviceLevelZFactor(recommendation.serviceLevelTarget).toFixed(2)} (illustrative)
           </span>
         </div>
 
@@ -93,40 +104,15 @@ export function RecommendationDetailPage({ recommendationId }: { recommendationI
         {recommendation.oarColdStart && <OarColdStartPanel guidance={recommendation.oarColdStart} />}
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-          <ChartCard title="Current vs. recommended parameters" span={12}>
-            <ParameterComparison current={recommendation.current} recommended={recommendation.recommended} />
+          <ChartCard title="Recommended inventory changes" span={12}>
+            <RecommendationReviewPanel
+              rec={recommendation}
+              action={<DecisionActions recommendation={recommendation} />}
+            />
           </ChartCard>
 
-          <ChartCard
-            title="Why is this recommended?"
-            subtitle="Expected lead-time demand + safety buffer = recommended ROP"
-            span={7}
-          >
-            <div className="flex flex-col gap-3">
-              <WhyRecommended recommendation={recommendation} />
-              <div>
-                <div className="mb-1 text-[11px] font-medium text-muted-foreground">
-                  Consumption history (last 6 months)
-                </div>
-                <ConsumptionHistoryChart data={recommendation.consumptionHistory} />
-              </div>
-            </div>
-          </ChartCard>
-
-          <ChartCard
-            title="Champion vs. challenger model"
-            subtitle="Which forecasting approach produced this recommendation"
-            span={5}
-          >
-            <ChampionChallengerCards comparison={recommendation.championChallenger} />
-          </ChartCard>
-
-          <ChartCard
-            title="Approval workflow"
-            subtitle="End User → Engineering Manager → Commercial Manager → Warehouse Supervisor"
-            span={12}
-          >
-            <ApprovalWorkflowPanel recommendation={recommendation} />
+          <ChartCard title="Decision history" span={12}>
+            <DecisionHistory recommendation={recommendation} />
           </ChartCard>
         </div>
       </div>
