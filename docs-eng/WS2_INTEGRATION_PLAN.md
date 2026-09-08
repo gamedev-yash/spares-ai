@@ -5,12 +5,18 @@
 **Goal of this phase:** build and test everything that does *not* require the live
 environment, behind seams that are swapped — not rewritten — on the day Azure lands.
 
-> **Status: W2.7 has been run, and the OAR rule has changed.** Discovery re-swept
-> **08-Sep 14:16**; `ZMM_KPI02_SRV` is registered and that gate is **passed**.
-> Separately, the team lead has replaced the OAR identifier: **MRP Type
-> (`MARC.DISMM`), treating `ND` and `PD` as OAR** — *not* `MARA.EXTWG`. `Dismm`
-> is **already live and exposed**, so the EXTWG blocker dissolves. One conflict
-> needs resolving before we build on it — see [§1.6](#16-the-oar-rule-has-changed-mrp-type-replaces-extwg).
+> **Status: W2.7 has been run, and two team-lead rulings have landed.** Discovery
+> re-swept **08-Sep 14:16**; `ZMM_KPI02_SRV` is registered and that gate is
+> **passed**. Separately, the team lead has (1) replaced the OAR identifier —
+> **MRP Type (`MARC.DISMM`), treating `ND` and `PD` as OAR** — *not*
+> `MARA.EXTWG`. `Dismm` is **already live and exposed**, so the EXTWG blocker
+> dissolves; one conflict still needs resolving before we build on it — see
+> [§1.6](#16-the-oar-rule-has-changed-mrp-type-replaces-extwg). And (2) named the
+> reservation-time assistant's session field: **`Bednr`** (requirement tracking
+> number), not the placeholder `Zzaisession` this doc had been carrying. `Bednr`
+> is a real, live field elsewhere in SAP but **not yet exposed on
+> `ReservationItemSet`** — still open, but now a concrete exposure request
+> instead of an unresolved design question. See §1.7.
 
 > **How to read this doc.** Every task has the same five headings:
 > *What it means*, *What we do now*, *What we cannot do*, *Mock or placeholder*,
@@ -56,7 +62,7 @@ Our assumed property names were mostly right. Three were not.
 |---|---|---|
 | `ChangeDocItemSet.ValueOld` / `ValueNew` | **`Value_old` / `Value_new`** — underscored | Our guess was wrong. Any code written against the CamelCase form would have failed. This is exactly what the gate existed to catch |
 | `ChangeDocItemSet` key = 5 fields incl. `Tabname`, `Fname` | Key is **3 fields only**: `Objectclas`, `Objectid`, `Changenr`. `Tabname` and `Fname` are **non-key** | **The OData key is not row-unique.** One change document touching several fields returns several rows sharing one key. Any dedup or upsert keyed on the entity key will collapse real rows — see §1.4 |
-| `ReservationItemSet.Zzaisession` exists | **Absent.** Not designated | Placeholder survives. Candidates still `SGTXT`, `WEMPF`, `ABLAD` or a Z-append. **Unaffected by the MRP-type change** — see §1.7 |
+| `ReservationItemSet.Zzaisession` exists | **Absent, and confirmed by the team lead not to be the plan.** The invented Z-field name is withdrawn — the real target is **`Bednr`** (requirement tracking number), to be added to `ReservationItemSet` | Not a "which field?" question any more, but a "not yet exposed on this set" one — see §1.7 |
 | `Objectclas`, `Tabname` filterable | **Confirmed** — FR-9 filters return real counts | FR-9 (did the recommendation get applied in SAP?) is feasible. Assumption retired |
 | `ReservationItemSet` core fields (`Rsnum`, `Rspos`, `Bdter`, `Bdmng`, `Enmng`, `Banfn`, `Bnfpo`, `Bwart`, `Wempf`…) | **All confirmed**, correct names and types | I08/I13 reservation logic can now be written against real names |
 | `MaterialValuationSet` all 9 fields | **All confirmed** exactly | I07 valuation logic is safe |
@@ -127,15 +133,18 @@ identity* in our own storage, regardless of what OData calls the key.
   for sets no initiative reads. Correct behaviour, not a bug. Leave them.
 - `PENDING_FIELDS` now holds **two** entries — `MaterialSet.Sernp` and
   `ReservationItemSet.Zzaisession`. `Extwg` was removed as withdrawn, not
-  exposed (§1.6(d)).
+  exposed (§1.6(d)). **The `Zzaisession` entry needs renaming to `Bednr`** now
+  that the team lead has named the real target field (§1.7) — not done yet,
+  tracked here so it lands with the rest of the generator changes.
 - The OAR rule is encoded as configuration: `OAR_MRP_TYPES = ("ND", "PD")`,
   with an invariant guard and the pending verification noted inline (§1.6(d)).
 
 **Rule for this phase, revised:** property names on all 21 sets are measured, so
 build against them directly. The remaining assumptions are two *fields*
-(`Sernp`, `Zzaisession`), the *OAR value set* (`ND`/`PD` — §1.6), and three
-*business constants* (`REPAIR_DOC_TYPE`, `REPAIR_ITEM_CATEGORY`, the
-movement-type set). Keep exactly those behind config.
+(`Sernp`, the session-tracking field now identified as `Bednr` — §1.7), the
+*OAR value set* (`ND`/`PD` — §1.6), and three *business constants*
+(`REPAIR_DOC_TYPE`, `REPAIR_ITEM_CATEGORY`, the movement-type set). Keep
+exactly those behind config.
 
 ### 1.6 The OAR rule has changed: MRP Type replaces EXTWG
 
@@ -309,25 +318,65 @@ changed the RNG call sequence — expected, and still deterministic under
 catalogue. The generator now assumes the rule is right; the three counts test
 that assumption against reality.
 
-### 1.7 Does this solve `Sernp` and `Zzaisession`? No — both are unrelated
+### 1.7 Does this solve `Sernp` and the session field? No — but the session field has a name now: `Bednr`, not `Zzaisession`
 
-Short answer: **no, and they were never connected to OAR identification.** The
-MRP-type ruling changes only *which materials are in scope*. Two of the three
-pending fields are untouched, and `PENDING_FIELDS` should now hold exactly two
-entries instead of three.
+Short answer: **no, and neither was ever connected to OAR identification.** The
+MRP-type ruling changes only *which materials are in scope*. Separately, the
+team lead has now answered the session-field question we had marked as an open
+design decision — and the answer retires the placeholder name we had been
+carrying since the FRS stage.
+
+**The team lead's ruling on the session field:** `ReservationItemSet.Zzaisession`
+was never a real field — it does not exist in the currently exposed schema, and
+it was always our own placeholder name for "whichever field ends up carrying
+this." The actual plan is to **use `BEDNR` (the requirement tracking number)
+to carry the session ID**, added to `ReservationItemSet` in future.
+
+This is a materially different situation from a "candidates: `SGTXT`, `WEMPF`,
+`ABLAD`, or a Z-append" open question — `Bednr` is not a guess among several, it
+is a **named, real SAP field already live elsewhere.** Confirmed independently
+from `discovery/properties.csv`: `Bednr` (`Edm.String`) is exposed today on both
+`PurchaseRequisitionSet` and `PurchaseOrderItemSet` — it is EBAN/EKPO's
+requirement-tracking-number field, used conventionally to link requisition and
+PO items to an external tracking reference. `generate.py` already carries it on
+those two sets, currently blank (`"Bednr": ""`).
+
+**What is not yet true: `Bednr` is not exposed on `ReservationItemSet`.**
+`RESB` (the reservation table) has its own `BEDNR` field in SAP, but the
+08-Sep sweep confirmed it is absent from the current `ReservationItemSet`
+projection — same shape of gap as `Extwg` on `MaterialSet`: a real SAP field
+that exists on the underlying table but has not yet been added to *this*
+OData projection. So this is now an **exposure request** to the SAP team
+("add `Bednr` to the `ReservationItemSet` projection"), not a *designation*
+decision waiting on someone to pick a field name.
 
 | Field | What it is | Status | Blocks? |
 |---|---|---|---|
 | `MaterialSet.Extwg` | External material group — the *old* OAR identifier | **No longer needed.** Superseded by `MARC.DISMM`. Remove from `PENDING_FIELDS` | Nothing. Withdrawn |
-| `MaterialSet.Sernp` | Serial number profile (MARA) | **Still not exposed.** Unchanged by this ruling | **Nothing today.** Only needed for a *future* serial-grain repair register; present on ~18% of 80-series PO lines. No current I07/I08/I13 requirement depends on it — safe to leave pending |
-| `ReservationItemSet.Zzaisession` | The reservation field carrying the AI assistant session ID | **Still not designated.** Confirmed absent by the sweep. Candidates `SGTXT`, `WEMPF`, `ABLAD`, or a Z-append | **Yes, for the reservation-time assistant.** It is a SAP/NTT *designation decision* (W2.8), not a data-exposure request — nobody is waiting on a transport, they are waiting on someone to choose a field |
+| `MaterialSet.Sernp` | Serial number profile (MARA) | **Still not exposed.** Unchanged by either ruling | **Nothing today.** Only needed for a *future* serial-grain repair register; present on ~18% of 80-series PO lines. No current I07/I08/I13 requirement depends on it — safe to leave pending |
+| `ReservationItemSet.Bednr` *(was tracked as `Zzaisession`)* | Requirement tracking number — the field that will carry the reservation-time assistant's session ID | **Named, real, live elsewhere — not yet exposed on `ReservationItemSet`.** An exposure request to the SAP team, with a known target field, not an open design question | **Yes, for the reservation-time assistant's deep-link launch.** Same practical blocker as before, but now a concrete, trackable ask instead of an unresolved "which field" question |
 
-**Why `Zzaisession` cannot ride along with this fix.** Exposing a field and
-*designating* one are different asks. `Dismm` was already there — the ruling just
-pointed us at it. `Zzaisession` does not exist under any name yet; someone has to
-decide which reservation field carries the session ID, and that decision belongs
-to the W2.8 BAdI launch contract. Chase it separately, and keep it behind a
-single config key naming the field so the eventual answer is a one-line change.
+**Why this still cannot ride along with the OAR fix.** `Dismm` needed nothing
+from SAP because it was *already exposed* — the ruling just pointed us at an
+existing, populated field. `Bednr` on `ReservationItemSet` needs the opposite:
+SAP has to add it to the projection before it exists there at all, the same as
+`Extwg` did for `MaterialSet`. That is still a SAP-side change with its own
+lead time, so treat it as still open — just no longer ambiguous about *what*
+is open.
+
+**Generator and config follow-up, not yet done:**
+- Rename the `PENDING_FIELDS["ReservationItemSet"]` entry from `Zzaisession` to
+  `Bednr`, and drop the "candidates: `SGTXT`, `WEMPF`, `ABLAD`, or a Z-append"
+  framing — it is resolved.
+- Update `generate.py`'s session-ID row build (`"Zzaisession": session_id`) to
+  `"Bednr": session_id`, matching the column rename.
+- Since `Bednr` already exists as a real column on `PurchaseRequisitionSet` and
+  `PurchaseOrderItemSet` (currently blank), double-check the reservation-side
+  session values do not collide in meaning with the tracking-number usage on
+  those two sets if any future logic reads `Bednr` across sets.
+- Keep the field name behind a single config key regardless — if SAP exposes a
+  *different* field on `ReservationItemSet` than expected, or reuses `Bednr` for
+  something else, the fix stays a one-line change.
 
 Note the assistant is designed to run **on demand without the BAdI**, so this
 blocks the deep-link launch path, not the assistant itself.
@@ -679,7 +728,8 @@ Build it fully from the saved metadata — no live access needed.
   | **`Dismm` on `MaterialPlantSet`** | **expected present, `Edm.String`** — the OAR identifier. A hard failure if it ever disappears |
   | **`Dismm` value domain** | expected ⊆ {`VB`, `ND`, `PD`} — fail on an unseen value, which would mean the OAR rule is incomplete |
   | `Sernp` on `MaterialSet` | expected **absent** |
-  | `Zzaisession` on `ReservationItemSet` | expected **absent** |
+  | `Bednr` on `ReservationItemSet` | expected **absent** — the session-tracking field, confirmed named by the team lead but not yet exposed on this set (§1.7). Renamed from the placeholder `Zzaisession` |
+  | `Bednr` on `PurchaseRequisitionSet` / `PurchaseOrderItemSet` | expected **present, `Edm.String`** — the same field, already live elsewhere, evidence it is a real SAP field rather than a guess |
   | `ChangeDocItemSet` key | expected **3 fields**, `Tabname`/`Fname` non-key |
   | `PurchaseOrderItemSet.Netpr` / `.Netwr` | expected **`Edm.String`** — assert deliberately, so a revert to `Decimal` is also caught |
   | `ChangeDocHeaderSet.Utime` | expected **`Edm.Time`** |
@@ -706,7 +756,7 @@ metadata for all 21 sets, and the drift test covers the live comparison.
 
 ### Mock or placeholder
 None needed for the contract itself. The two still-unexposed fields (`Sernp`,
-`Zzaisession`) are declared pending and asserted absent.
+`Bednr` on `ReservationItemSet`) are declared pending and asserted absent.
 
 ### How we test it
 Meta-test the suite: feed it a deliberately altered metadata XML — renamed
@@ -805,10 +855,11 @@ Placeholders remaining — now a short list, and shorter than yesterday:
   which is live. Remove from `PENDING_FIELDS`; nothing should read it (§1.6).
 - **`MaterialSet.Sernp`** — not exposed, and **not blocking**. Only needed for a
   future serial-grain repair register (§1.7).
-- **`ReservationItemSet.Zzaisession`** — the AI-session field is **still not
-  designated** (candidates `SGTXT`, `WEMPF`, `ABLAD`, or a Z-append). A SAP/NTT
-  *decision*, not an exposure request — see §1.7. Keep it behind a single config
-  key naming the field, so it is a one-line change.
+- **`ReservationItemSet.Bednr`** *(renamed from the placeholder `Zzaisession`)*
+  — the AI-session field is **now named** (requirement tracking number) but
+  **still not exposed** on `ReservationItemSet`. A SAP **exposure request**, not
+  a design decision any more — see §1.7. Keep it behind a single config key
+  naming the field, so a further correction stays a one-line change.
 - **The OAR value set `{ND, PD}`** — stated by the team lead, not yet reconciled
   with our data model (§1.6(c)). Config value, pending three `$count` calls.
 - **`REPAIR_DOC_TYPE = "ZREP"` and `REPAIR_ITEM_CATEGORY = "3"`** — I08 decision
@@ -874,8 +925,10 @@ Full detail in §1.
    before the scope module is written, not after.
 3. **Zero rows on `ReservationItemSet` and `MaterialValuationSet`** (§1.3) —
    raise as a separate question from registration. Largest remaining unknown.
-4. **`Zzaisession` designation** — SAP/NTT decision, tied to W2.8. **Not solved
-   by the MRP-type ruling** (§1.7).
+4. **`Bednr` exposure on `ReservationItemSet`** *(was tracked as the
+   `Zzaisession` designation question)* — the field is now **named** by the
+   team lead, but still needs adding to the SAP projection, tied to W2.8. **Not
+   solved by the MRP-type ruling** (§1.7).
 5. **`ZREP` / item-category 3** — I08 decision D7 confirmation.
 6. **The entity dictionary xlsx** — still absent, so `dictionary_gaps.csv` still
    cannot be produced (§9.4).
@@ -894,12 +947,20 @@ Full detail in §1.
   identity for our own storage.
 - **After the counts land:** apply the generator changes in §1.6, remove `Extwg`
   from `PENDING_FIELDS`, regenerate and re-commit.
+- **Rename `PENDING_FIELDS["ReservationItemSet"]` from `Zzaisession` to
+  `Bednr`** in `generate.py`, and update the row build to match (§1.7). Not
+  gated on anything else — do it whenever the generator is next touched.
+- **Ask the SAP team to add `Bednr` to the `ReservationItemSet` projection.**
+  Since the field already exists on `PurchaseRequisitionSet` and
+  `PurchaseOrderItemSet`, this is a scoped, concrete ask rather than an open
+  design question.
 
 ### Next re-verification
 There is no longer a single scheduled gate. Fold the checks into the W2.2 smoke
-test (step 6) — including the three `Dismm` counts — so the known-conditions set
-is verified on demand, and re-run the full sweep when SAP announces a fix,
-specifically on reservation data or a `Sernp`/`Zzaisession` decision.
+test (step 6) — including the three `Dismm` counts and a check for `Bednr` on
+`ReservationItemSet` — so the known-conditions set is verified on demand, and
+re-run the full sweep when SAP announces a fix, specifically on reservation
+data or the `Bednr` exposure.
 
 ---
 
@@ -1020,7 +1081,7 @@ Import-Csv .\discovery\properties.csv | Where-Object { $_.service -eq "ZMM_KPI02
 # 6. FR-9 feasibility  (expect real counts, not HTTP 500)
 Get-Content .\discovery\fr9_check.txt
 
-# 7. Still-pending fields  (expect Sernp, Zzaisession only - Extwg is withdrawn)
+# 7. Still-pending fields  (expect Sernp, Bednr on ReservationItemSet - Extwg is withdrawn)
 Select-String -Path .\generate.py -Pattern "PENDING_FIELDS" -Context 0,20
 
 # 8. What changed - the single most valuable command here
@@ -1168,10 +1229,11 @@ The WS2 tasks beyond W2.7, and why they are not detailed here:
 
 - **W2.8** Reservation-entry BAdI launch contract — a design/contract note with
   the SAP team and NTT; no ABAP stream exists today. The assistant is designed to
-  run on demand without it. **Now the live blocker for `Zzaisession`:** the sweep
-  confirmed the field is absent, and §1.7 explains why the MRP-type ruling does
-  not help — it needs a *designation decision*, not an exposure request. Chase it
-  as part of W2.8.
+  run on demand without it. **The session-tracking field is now named:** the
+  team lead has confirmed `Bednr` (requirement tracking number) as the field,
+  not the placeholder `Zzaisession` we had been carrying — see §1.7. What
+  remains is a straightforward **exposure request** (add `Bednr` to
+  `ReservationItemSet`), not an open design decision. Chase it as part of W2.8.
 - **W2.9** I11 lead-time source — `MARC.PLIFZ` is live on `MaterialPlantSet`, so
   if the Z-program updates it in place there is no work. If it writes to a
   Z-table, that table must be exposed. Handle behind the provider interface in
