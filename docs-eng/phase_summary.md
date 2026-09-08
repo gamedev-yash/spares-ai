@@ -83,3 +83,64 @@ default rule should be revisited once you have answers.
 `data-generator/README.md`, `.gitignore`.
 
 ---
+
+## Phase 1 — W2.4: "which materials count as OAR?" as a config file (2026-09-08)
+
+**What this is:** Right now, "is this material OAR (on-demand ordered)?" is
+answered in different, hard-coded ways scattered across the app (e.g.
+`src/features/initiative-13/selectors/oar-lookup.ts` just checks a hand-typed
+list). The plan calls this the single highest-value piece of WS2, because the
+identifying SAP field has already changed once (from `Extwg` to `Dismm`)
+without any of our code needing a rewrite — because nothing was hard-coded
+even before this phase. This phase gives it a real home with real behaviour,
+still not wired into the UI yet (that's a later phase).
+
+**What we built:** `src/lib/sap/scope/` — one small library, four files:
+- **`config.ts`** — the actual rule, as data, not code: "OAR = `Dismm` is `ND`
+  or `PD`, AND `Mstae` (obsolete flag) is not `01`." This is the *only* place
+  in the whole app allowed to mention those literal SAP codes.
+- **`predicate.ts`** — runs that rule against one material+plant row and
+  returns one of **three** answers, never just yes/no: `in-scope`,
+  `not-in-scope`, or **`cannot-determine`**. That third answer matters a lot
+  given Phase 0's finding — a material with no `Dismm` set at all must never
+  be silently reported as "not OAR," because we don't actually know.
+- **`odata-filter.ts`** — turns the same rule into a real SAP query filter
+  (`$filter=Dismm eq 'ND' or Dismm eq 'PD'`), so large tables can be filtered
+  *at SAP* instead of downloading everything and filtering here. Also encodes
+  the "and-chained `ne` is silently broken" SAP quirk from Phase 0, so nobody
+  accidentally builds a filter that looks right but quietly returns everything.
+- **`index.ts`** — the three functions anything else in the app is allowed to
+  call: `isInScope` (one material, one plant), `isMaterialInScope` (rolled up
+  across every plant a material sits in — only when that rollup question is
+  even allowed to be asked), and `toODataFilter`.
+
+**The one thing this phase deliberately did NOT decide:** whether a material
+that's OAR in one plant and not in another counts as "OAR" overall. The plan
+is explicit that's the team lead's call, not ours (§1.6(a)). So the module
+defaults to `rollup: "per-plant-only"` — meaning it refuses to answer the
+material-level question at all (it throws a clear error telling the caller to
+ask about a specific plant instead) until someone decides. Changing that
+decision later is a one-line config edit, not a rewrite.
+
+**How we know it's right:** Ran it against the same synthetic data
+`generate.py` already produces, and it reproduced the plan's own documented
+numbers exactly — 492 rows under the naive rule, 383 under the refined one.
+No test framework exists yet (that's next), so this was checked by hand this
+time; Phase 2 turns this into a real, permanent automated test.
+
+**Known gap, not fixed here:** the synthetic (fake) data always has *some*
+`Dismm` value set — it never leaves it blank. Real SAP leaves it blank 47% of
+the time (Phase 0). So today, nothing in our test data exercises the
+"cannot-determine" answer at all. Worth teaching `generate.py` to produce some
+blank rows later so that case gets exercised too — flagged for whoever picks
+up the fake-gateway phase (W2.6a).
+
+**Your action item:** none yet — this phase needed no decision from you. The
+Phase 0 questions (what do the blank/unexpected `Dismm` values mean) are still
+open and should still go to the team lead when you get the chance; this
+module is built so that answer slots in as a config change whenever it lands.
+
+**Files touched:** `src/lib/sap/scope/config.ts`, `predicate.ts`,
+`odata-filter.ts`, `index.ts`, `types.ts` (all new).
+
+---
