@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # Includes the SAP contract and scope-leakage guards. A failure here on a
+      # green-looking branch usually means SAP changed under us, not that the
+      # test is wrong — read the failure before editing it.
+      - run: npm test
+
+      # `npm run lint` is deliberately not a step yet: it currently reports 3
+      # pre-existing errors in src/components (React setState-in-effect and
+      # memoization), unrelated to WS2. Add this step in the same change that
+      # clears them, so CI starts green and stays meaningful.
