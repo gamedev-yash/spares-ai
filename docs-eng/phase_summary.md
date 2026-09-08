@@ -261,3 +261,64 @@ decisions.
 (`fast-xml-parser`, `npm run contract:generate`).
 
 ---
+
+## Phase 4 — W2.1: one front door to SAP (2026-09-08)
+
+**What this is:** every conversation with SAP now goes through a single
+library (`src/lib/sap/client/`). No screen, no feature, no report builds a URL
+or handles a password itself. If SAP's address, login method, or response
+format changes, exactly one folder changes.
+
+**Why it's built this way:** talking to SAP here means going through a
+middleman (CPI) that wraps the real request inside another request — a URL
+inside a URL. It's fiddly and easy to get subtly wrong. Now nobody has to know
+it exists: you ask for `"MaterialPlantSet"` and the library works out which
+SAP service owns it, builds the nested request, logs in, handles the reply,
+and retries sensibly.
+
+**What it handles for you:**
+- **Logging in.** Gets a token, remembers it until just before it expires, and
+  if SAP rejects it early, quietly gets a new one and retries — once.
+- **Knowing when to try again.** Server errors get retried with increasing
+  waits (1s, 2s, 4s). A "not found" or a bad request does **not** get retried,
+  because asking the same wrong question again cannot make it right.
+- **Telling four kinds of bad news apart** — "login failed", "SAP is
+  struggling, try later", "that doesn't exist", and "SAP sent something that
+  contradicts what it promised". Those need different reactions, so they're
+  different error types rather than one generic failure.
+- **Saying "empty" out loud.** Three live SAP tables currently return zero
+  rows. The library reports that as its own distinct outcome rather than an
+  ordinary empty list, so a screen can honestly say "SAP has no data here"
+  instead of confidently showing nothing and looking fine.
+
+**We tested it against the real SAP system, not just against our own
+pretend one — and that immediately caught two things a self-made mock never
+would have:**
+
+1. **A genuine bug.** Fetching SAP's schema failed outright, because the
+   library was asking for JSON on a request that returns XML. SAP refused it.
+   Fixed.
+2. **A data trap worth knowing about.** The purchase-order price field comes
+   back from SAP as `"                       376.68"` — the number padded with
+   23 spaces. Any comparison, display, or lookup using that raw value would be
+   wrong. Worse, the same padding on a *blank* field would arrive as `"   "`
+   instead of empty, which would have quietly defeated the "we don't know"
+   handling built in Phase 1 and mislabelled those materials as "not OAR".
+   The library now strips that padding in one place. It cannot harm material
+   numbers, because their padding is zeros, not spaces.
+
+That second one is the kind of thing that surfaces six months later as
+"why does this report show nothing?", so it was a good catch.
+
+**Verified live, end to end:** the OAR filter runs *at SAP* and returns real
+rows; the empty table reports "empty"; the broken row-counter reports
+"can't count" while a genuinely-zero table reports 0 (three different
+outcomes, correctly distinguished); dates and times decode properly; and
+SAP's schema comes back at exactly the expected size.
+
+**Your action item:** none.
+
+**Files touched:** 6 new files in `src/lib/sap/client/`, plus the padding fix
+in `src/lib/sap/contract/edm-types.ts`.
+
+---

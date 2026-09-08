@@ -71,6 +71,18 @@ describe("decodeEdmValue — decoding is driven by the declared type, never by t
     expect(decodeEdmValue("Edm.Time", "PT14H16M00S")).toEqual({ hours: 14, minutes: 16, seconds: 0 })
   })
 
+  it("strips SAP's fixed-width padding — live Netpr arrives space-padded", () => {
+    expect(decodeEdmValue("Edm.String", "                       376.68")).toBe("376.68")
+  })
+
+  it("padding-stripping cannot damage a zero-padded identifier", () => {
+    expect(decodeEdmValue("Edm.String", " 000000000012345 ")).toBe("000000000012345")
+  })
+
+  it("an all-spaces value becomes blank, so the scope rule sees 'not maintained' not a real value", () => {
+    expect(decodeEdmValue("Edm.String", "   ")).toBe("")
+  })
+
   it("an empty string stays an empty string — blank is a real, meaningful SAP value", () => {
     // 47% of live Dismm values are exactly this. Coercing it to null would
     // erase the difference between "not maintained" and "not returned".
