@@ -9,6 +9,7 @@
 import type { LedgerStage, UtilizationLedgerLine } from "@/features/initiative-13/types/oar"
 import type { SapRow } from "../client/decode-row"
 import { loadPlatform, type PlatformRow } from "./platform-source"
+import { personRef, plantRef } from "./reference-data"
 import type { FieldSourceMap } from "./field-source"
 
 export const LEDGER_LINE_SOURCES: FieldSourceMap<UtilizationLedgerLine> = {
@@ -26,7 +27,12 @@ export const LEDGER_LINE_SOURCES: FieldSourceMap<UtilizationLedgerLine> = {
     property: "Matnr",
     note: "description joined from MaterialDescriptionSet.Maktx",
   },
-  plant: { from: "sap", entitySet: "MaterialPlantSet", property: "Werks" },
+  plant: {
+    from: "sap",
+    entitySet: "MaterialPlantSet",
+    property: "Werks",
+    note: "the CODE is real; the site NAME is not - no exposed SAP field maps Werks to a mine site, and SAP has 5 plant codes against the app's 3 named plants. See reference-data.ts",
+  },
   qtyRequested: {
     from: "blocked",
     entitySet: "ReservationItemSet",
@@ -51,7 +57,7 @@ export const LEDGER_LINE_SOURCES: FieldSourceMap<UtilizationLedgerLine> = {
     from: "platform",
     file: "consumption_plans",
     column: "requester",
-    note: "resolved to a name and role via lib/shared-data/users",
+    note: "the requester ID is real; mapping it to a named user is not - platform data carries VZIREQ01..05 with no link to the app's user catalogue. See reference-data.ts",
   },
   purpose: { from: "platform", file: "consumption_plans", column: "purpose" },
   stage: { from: "derived", note: "from the utilisation status plus which SAP documents exist in the chain" },
@@ -166,8 +172,8 @@ export function mapLedgerLine(
       materialCode: plan.Matnr,
       description: input.descriptions.get(plan.Matnr) ?? "",
     },
-    plant: { plantId: plan.Werks, name: plan.Werks },
-    requester: { userId: plan.requester, name: plan.requester, role: "" },
+    plant: plantRef(plan.Werks),
+    requester: personRef(plan.requester),
     purpose: plan.purpose,
     plannedConsumptionDate: plannedDate,
     qtyRequested: reservation ? numberOf(reservation.Bdmng) : numberOf(plan.planned_quantity),

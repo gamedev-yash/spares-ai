@@ -1,4 +1,6 @@
 import type { RepairChain } from "@/features/initiative-8/types/repair"
+import { USING_GENERATED_DATA } from "@/lib/sap/dataset-mode"
+import generatedRepairChains from "@/features/initiative-8/data/generated/repair-chains.json"
 
 // Deterministic mock data — no live SAP connection. "Today" for aging/days-
 // remaining math throughout this module is anchored at 3 Sep 2026.
@@ -11,7 +13,7 @@ import type { RepairChain } from "@/features/initiative-8/types/repair"
 // shared-catalog material 500-14892 ("Seal Assy, Mech Type XR-200",
 // Flowserve) — read directly by `selectors/material-360-adapter.ts`.
 
-export const REPAIR_CHAINS: RepairChain[] = [
+const SCENARIO_REPAIR_CHAINS: RepairChain[] = [
   {
     id: "RC-8001",
     material: {
@@ -239,6 +241,11 @@ export const REPAIR_CHAINS: RepairChain[] = [
     notes: "Flagged — a new-unit PR was raised against this material while its repair PO was already open.",
   },
 ]
+
+/** Mapped from SAP + platform rows by `npm run dataset:build`. See lib/sap/dataset-mode. */
+export const REPAIR_CHAINS: RepairChain[] = USING_GENERATED_DATA
+  ? (generatedRepairChains as unknown as RepairChain[])
+  : SCENARIO_REPAIR_CHAINS
 
 export function getRepairChainById(id: string): RepairChain | undefined {
   return REPAIR_CHAINS.find((rc) => rc.id === id)

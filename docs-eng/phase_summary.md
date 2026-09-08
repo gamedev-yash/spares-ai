@@ -499,11 +499,88 @@ every material as "Crushing"), materials now carry `Unassigned`. It's
 deliberately not offered as a filter option, because it's a missing value, not
 a category.
 
-**Your action item — a decision is needed before the next step.** See the
-note at the end of this file.
+**Your action item — a decision was needed here, and you made it:** bake the
+data at build time (see Phase 8).
 
 **Files touched:** 7 new files in `src/lib/sap/mapping/`,
 `scripts/gap-report.mts`, `docs-eng/FIELD_SOURCE_GAPS.md`, and one line in
 `src/features/initiative-7/types/inventory.ts`.
+
+---
+
+## Phase 8 — W2.6b (part 2): the app now runs on SAP-shaped data (2026-09-08)
+
+**What you can do now that you couldn't before:**
+
+```
+npm run dataset:build                        # build the data from SAP-shaped rows
+NEXT_PUBLIC_DATASET=generated npm run dev    # run the app on it
+```
+
+The app renders 200 recommendations, 321 repair chains and 742 consumption-plan
+lines that were **read out of SAP-shaped data through the real client** — the
+same token handling, the same nested request format, the same OData parsing,
+the same paging — then run through the mappers. Not hand-typed. Every page
+loads, with no errors.
+
+**What we found doing it — and why the hand-written fixtures are still there.**
+
+The plan's goal was to delete the hand-written example data outright. We
+didn't, and the reason is a genuine finding rather than unfinished work:
+
+> **The app and SAP do not share identities.**
+>
+> | | The app says | SAP says |
+> |---|---|---|
+> | Material | `500-14892` | `000000000080000000` |
+> | Plant | `PLANT-GBG` (Gamsberg) | `3000` — and SAP has 5 plant codes to the app's 3 named sites |
+> | User | `U-007` | `VZIREQ01` |
+>
+> Nothing maps between those vocabularies, and **no SAP field supplies the
+> mapping.** VZI has to provide it.
+
+That matters more than it sounds. The hand-written data isn't just sample
+rows — it encodes designed demo scenarios that other screens look up **by
+ID** (the Material 360 panel, the material router, the chat sessions all
+search for specific materials like `500-14892`). Swap the data underneath
+them without reconciling identities first and those cross-screen links
+silently stop resolving. You'd have a demo that looks fine on one page and
+mysteriously empty on the next.
+
+So instead of deleting the fixtures and breaking the demo, both datasets now
+live side by side behind one switch (`src/lib/sap/dataset-mode.ts`), with the
+scenario data still the default. **Deleting the hand-written data is now
+blocked on one specific input from VZI — the material/plant/user mapping —
+rather than on any code.** That's a much better place to be than a broken app.
+
+We deliberately did **not** invent that mapping. A guessed plant mapping would
+put a confident, wrong mine site on every screen; instead, generated mode
+honestly shows `Plant 3000`, and materials show their SAP number. The gap is
+visible rather than disguised.
+
+**What the generated mode makes visible, which is the point:** switch it on
+and the recommendation screens show empty model-comparison panels, no
+"why this recommendation" bullets, and every material in an `Unassigned`
+circuit — because, as Phase 7 found, nothing produces that data. That's not a
+bug to fix; it's the 14-field gap made real on screen, which is far more
+persuasive than a table in a document.
+
+**Something that did work nicely:** repair vendor names resolve properly —
+the repair PO number leads to the purchase order, which gives a vendor number,
+which resolves through SAP's vendor list to "Springbok Rewind Services (Pty)
+Ltd". That's a real four-table SAP join running through the whole stack.
+
+**Your action items:**
+1. **Ask VZI for the material / plant / user identity mapping.** This is now
+   the single thing blocking the hand-written data from being deleted. The
+   plant one is probably a short conversation — someone knows which mine site
+   plant code 3000 is.
+2. Have a look at `NEXT_PUBLIC_DATASET=generated npm run dev` before any
+   stakeholder demo, so the difference between "what the prototype shows" and
+   "what SAP can currently back" is something you've seen yourself.
+
+**Files touched:** `scripts/build-dataset.mts`,
+`src/lib/sap/dataset-mode.ts`, `src/lib/sap/mapping/reference-data.ts`, three
+generated JSON datasets, and the three data modules now switching between them.
 
 ---
