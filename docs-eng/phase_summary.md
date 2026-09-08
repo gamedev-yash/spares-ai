@@ -438,3 +438,72 @@ was the first thing to hammer it with a realistic number of requests.
 `paginate.test.ts`, plus a caching fix in `src/lib/sap/gateway/csv-source.ts`.
 
 ---
+
+## Phase 7 — W2.6b (part 1): the mapping layer and what it revealed (2026-09-08)
+
+**The problem the plan calls "the actual integration":** the data generator
+produces 14 MB of SAP-shaped data. The app is fed by hand-written example data
+typed out by a developer. **These two have never met.** Every screen you can
+click today is showing invented numbers. On the day real SAP data arrives,
+every mismatch between those two worlds surfaces at once.
+
+This phase builds the translator between them — and, more importantly,
+**produces an honest inventory of what the screens are actually made of.**
+
+**The headline finding.** We went through all 74 fields across the three
+initiatives' main screens and traced each to its source:
+
+| Where it comes from | Fields |
+|---|---|
+| Real SAP data | 12 |
+| Data this platform owns | 25 |
+| Calculated from the above | 10 |
+| **A real SAP field that currently has no data** | **13** |
+| **Nothing produces it at all** | **14** |
+
+**So 27 of 74 fields — more than a third of what the screens display — have no
+live source today.** That's not a criticism of the UI; it was built as a
+prototype to show what's possible. But it's exactly the number worth knowing
+*before* someone demos it as a working system.
+
+The full breakdown is in [FIELD_SOURCE_GAPS.md](FIELD_SOURCE_GAPS.md),
+regenerated with `npm run gap-report`.
+
+**Examples of the 14 with no source:**
+- **Champion/challenger model accuracy** on the recommendations screen — this
+  is machine-learning metadata. There is no model-serving layer yet, so
+  nothing can produce it.
+- **"Why this recommendation" bullet points** — the generated data has one
+  sentence of reasoning, not the structured points the screen shows.
+- **Plant "circuit"** (Crushing, Milling, Pumping...) — no SAP field carries
+  it. Someone at VZI would have to supply a material-to-circuit mapping.
+- **Service level target** and **lead-time variability** — SAP holds a single
+  planned lead time with no variance, and no service-level policy is recorded
+  anywhere.
+- **Requester's department, project, equipment** on the consumption ledger.
+
+**And 13 more that are blocked rather than missing** — real SAP fields that
+exist but return nothing today. Almost all trace back to the same two known
+blockers: reservations and stock valuation both return zero rows.
+
+**How we made sure this stays honest.** The source of every field is declared
+in code, and **TypeScript refuses to compile if any field is left undeclared.**
+So nobody can add a new field to a screen without stating where its data comes
+from — or admitting there's nowhere. Tests further check that every field we
+*claim* comes from SAP actually exists in SAP, and every platform column
+actually exists in the data files.
+
+**One small honesty fix to the UI's own types:** rather than defaulting mapped
+materials into a real circuit (which would have made the circuit chart show
+every material as "Crushing"), materials now carry `Unassigned`. It's
+deliberately not offered as a filter option, because it's a missing value, not
+a category.
+
+**Your action item — a decision is needed before the next step.** See the
+note at the end of this file.
+
+**Files touched:** 7 new files in `src/lib/sap/mapping/`,
+`scripts/gap-report.mts`, `docs-eng/FIELD_SOURCE_GAPS.md`, and one line in
+`src/features/initiative-7/types/inventory.ts`.
+
+---
