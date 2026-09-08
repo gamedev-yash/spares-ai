@@ -42,3 +42,20 @@ next-env.d.ts
 
 # local reference docs (initiative PDFs) - not meant for the repo
 /docs
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# python virtual environments
+.venv/
+venv/
+
+# ad-hoc CSVs written by cpi_client runs into the data-generator root.
+# Deliberately scoped to that folder only - the tracked CSVs under
+# data-generator/discovery/ and data-generator/generated/ are unaffected.
+/data-generator/*.csv
