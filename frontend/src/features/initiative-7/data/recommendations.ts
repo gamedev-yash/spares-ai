@@ -16,6 +16,8 @@ import {
   type RecommendationFactor,
 } from "@/features/initiative-7/types/inventory"
 import type { RiskLevel } from "@/components/shared/risk-badge"
+import { USING_GENERATED_DATA } from "@/lib/sap/dataset-mode"
+import generatedRecommendations from "@/features/initiative-7/data/generated/recommendations.json"
 
 function materialRef(materialId: string): MaterialReference {
   const mat = getMaterialById(materialId)
@@ -62,7 +64,7 @@ function buildFactors(input: {
   ]
 }
 
-export const RECOMMENDATIONS: Recommendation[] = [
+const SCENARIO_RECOMMENDATIONS: Recommendation[] = [
   // Scenario A — critical material, long/variable lead time, low current ROP,
   // high criticality: recommendation significantly increases safety stock.
   {
@@ -670,6 +672,11 @@ export const RECOMMENDATIONS: Recommendation[] = [
     generatedAt: "19 Aug 2026 · 04:45 PM",
   },
 ]
+
+/** Mapped from SAP + platform rows by `npm run dataset:build`. See lib/sap/dataset-mode. */
+export const RECOMMENDATIONS: Recommendation[] = USING_GENERATED_DATA
+  ? (generatedRecommendations as unknown as Recommendation[])
+  : SCENARIO_RECOMMENDATIONS
 
 export function getRecommendationById(id: string): Recommendation | undefined {
   return RECOMMENDATIONS.find((r) => r.id === id)

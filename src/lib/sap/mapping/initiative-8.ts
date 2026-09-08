@@ -3,6 +3,7 @@
 import type { RepairChain } from "@/features/initiative-8/types/repair"
 import type { SapRow } from "../client/decode-row"
 import { loadPlatform, type PlatformRow } from "./platform-source"
+import { plantRef } from "./reference-data"
 import type { FieldSourceMap } from "./field-source"
 
 export const REPAIR_CHAIN_SOURCES: FieldSourceMap<RepairChain> = {
@@ -13,7 +14,12 @@ export const REPAIR_CHAIN_SOURCES: FieldSourceMap<RepairChain> = {
     property: "Matnr",
     note: "description joined from MaterialDescriptionSet.Maktx",
   },
-  plant: { from: "sap", entitySet: "MaterialPlantSet", property: "Werks" },
+  plant: {
+    from: "sap",
+    entitySet: "MaterialPlantSet",
+    property: "Werks",
+    note: "the CODE is real; the site NAME is not - see reference-data.ts",
+  },
   repairPR: { from: "platform", file: "repair_cases", column: "repair_pr" },
   repairPO: { from: "platform", file: "repair_cases", column: "repair_po/repair_po_item" },
   repairStatus: { from: "platform", file: "repair_cases", column: "stage" },
@@ -155,7 +161,7 @@ export function mapRepairChain(row: PlatformRow, input: Initiative8Input, asOf =
       materialCode: row.Matnr,
       description: input.descriptions.get(row.Matnr) ?? "",
     },
-    plant: { plantId: row.Werks, name: row.Werks },
+    plant: plantRef(row.Werks),
     repairPR: { type: "PR", documentNumber: row.repair_pr },
     repairPO: row.repair_po
       ? { type: "PO", documentNumber: row.repair_po, line: row.repair_po_item }

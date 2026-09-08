@@ -15,6 +15,8 @@ import { getUserById } from "@/lib/shared-data/users"
 import { getPlantById } from "@/lib/shared-data/plants"
 import type { OARPersonRef, UtilizationLedgerLine } from "@/features/initiative-13/types/oar"
 import { materialRef, unitPriceFor } from "@/features/initiative-13/data/materials"
+import { USING_GENERATED_DATA } from "@/lib/sap/dataset-mode"
+import generatedLedger from "@/features/initiative-13/data/generated/ledger.json"
 
 function person(userId: string): OARPersonRef {
   const user = getUserById(userId)
@@ -31,7 +33,7 @@ function plant(plantId: string) {
 const RIAAN = person("U-007") // Requester — Maintenance
 const AMANDA = person("U-008") // Requester — Projects
 
-export const LEDGER_LINES: UtilizationLedgerLine[] = [
+const SCENARIO_LEDGER_LINES: UtilizationLedgerLine[] = [
   // ---- Scenario E: full happy path, no exceptions --------------------------
   {
     id: "OAR-LDG-0001",
@@ -380,6 +382,11 @@ export const LEDGER_LINES: UtilizationLedgerLine[] = [
     ],
   },
 ]
+
+/** Mapped from SAP + platform rows by `npm run dataset:build`. See lib/sap/dataset-mode. */
+export const LEDGER_LINES: UtilizationLedgerLine[] = USING_GENERATED_DATA
+  ? (generatedLedger as unknown as UtilizationLedgerLine[])
+  : SCENARIO_LEDGER_LINES
 
 export function getLedgerLineById(id: string): UtilizationLedgerLine | undefined {
   return LEDGER_LINES.find((line) => line.id === id)
