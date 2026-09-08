@@ -41,7 +41,26 @@ function parseCsvLine(line: string): string[] {
   return cells
 }
 
+// Parsed once per process. The gateway is long-lived and the generated files
+// do not change underneath it; without this, paging a 26,000-row set re-reads
+// and re-parses a 4MB file on every single page request.
+const cache = new Map<string, RawRow[] | null>()
+
 export function loadEntitySet(entitySet: string): RawRow[] | null {
+  const cached = cache.get(entitySet)
+  if (cached !== undefined) return cached
+
+  const parsed = parseEntitySet(entitySet)
+  cache.set(entitySet, parsed)
+  return parsed
+}
+
+/** Drop the parsed-CSV cache — call after regenerating the synthetic data. */
+export function clearEntitySetCache(): void {
+  cache.clear()
+}
+
+function parseEntitySet(entitySet: string): RawRow[] | null {
   const path = `${GENERATED_SAP}/${entitySet}.csv`
   if (!existsSync(path)) return null
 
