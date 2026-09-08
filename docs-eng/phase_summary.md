@@ -144,3 +144,56 @@ module is built so that answer slots in as a config change whenever it lands.
 `odata-filter.ts`, `index.ts`, `types.ts` (all new).
 
 ---
+
+## Phase 2 — A test runner, and CI that runs it (2026-09-08)
+
+**Why this mattered:** Until now this repo had **no way to run a test at all**
+— no test framework, no CI. The plan's argument for fixing that is a real
+incident: SAP silently changed two field types (`Netpr`/`Netwr`) from number
+to text between two checks four hours apart, and the only reason anyone
+noticed was a human eyeballing a file diff. Tests are how that becomes a red
+build instead of a bug discovered in UAT.
+
+**What we did:**
+- Installed **Vitest** and wired up `npm test` (single run, CI-friendly) and
+  `npm run test:watch` (re-runs while you edit).
+- Added **GitHub Actions CI** (`.github/workflows/ci.yml`) — runs the test
+  suite on every push to `main` and every pull request.
+- Wrote **55 real tests** for the Phase 1 scope module, turning the by-hand
+  check from Phase 1 into something permanent. They cover: each rule operator,
+  the three-way in/out/unknown answers, all three roll-up policies, the exact
+  SAP filter strings we generate, and the behaviour of the module against the
+  real synthetic data files.
+- Added a **leakage guard** the plan specifically asked for: an automated
+  check that scans the entire `src/` folder and fails if any file outside the
+  scope module mentions the OAR field names or hard-codes their values, or if
+  *any* file still references the withdrawn `Extwg` rule. We deliberately
+  tested the guard itself by planting a fake violation and confirming it
+  caught it — a guard that silently passes is worse than none.
+
+**A deliberate choice about the fixture tests:** the plan warned not to write
+tests that assert fixed row counts, because the synthetic data gets
+regenerated and those tests would break for no real reason. So instead of
+"expect 383 rows", they assert *behaviour* — "everything selected genuinely
+satisfies both halves of the rule", "the refined rule is always a subset of
+the loose one", "the rows removed are exactly the obsolete ones". Those stay
+true after any regeneration.
+
+**One thing left deliberately out:** CI runs the tests but does **not** run
+the linter yet, because the linter currently reports 3 pre-existing errors in
+the app's React components (unrelated to any of this work — they're about
+`setState` inside effects). Turning it on today would mean CI is red from day
+one, which trains everyone to ignore it. The workflow file has a note saying
+to add the lint step in whatever change clears those 3 errors.
+
+**Your action item:** two small ones, neither urgent:
+1. Those 3 lint errors in `src/components/materials/materials-explorer.tsx`
+   and related files — someone who knows that UI should fix them, then the
+   lint step gets switched on in CI.
+2. Nothing about CI works until this branch is pushed to GitHub. The workflow
+   will start running automatically once it is.
+
+**Files touched:** `package.json`, `vitest.config.mts`,
+`.github/workflows/ci.yml`, and four new test files in `src/lib/sap/scope/`.
+
+---
