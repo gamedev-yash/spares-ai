@@ -322,3 +322,68 @@ SAP's schema comes back at exactly the expected size.
 in `src/lib/sap/contract/edm-types.ts`.
 
 ---
+
+## Phase 5 — W2.6a: a fake SAP you can run on your laptop (2026-09-08)
+
+**What this is:** a small pretend-SAP server (`npm run gateway`) that serves
+all 21 tables from the generated test data and behaves *exactly* like the real
+thing — same nested request format, same awkward reply formats, same current
+faults. The whole app can now run with no SAP connection at all, and tests can
+run in CI where SAP is unreachable.
+
+**The important design decision — it pretends to be broken in the same ways
+SAP currently is:**
+- The two tables where SAP's row-counter genuinely returns an error? The fake
+  returns the same error.
+- The three tables that currently return zero rows? The fake returns zero
+  rows too.
+
+A mock that's healthier than production is worse than no mock, because it
+hides precisely the problems you need to design around. You can switch the
+pretending off with `npm run gateway -- --honest` to see how things will
+behave once SAP is fixed.
+
+It also refuses to be sloppy on purpose: dates come back in SAP's clunky
+`/Date(1757280000000)/` form, times as `PT14H16M00S`, and decimals as text —
+because code that only works against clean JSON will break on the real thing.
+
+**We had to build a real query engine.** The fake has to actually *understand*
+the queries we send it — filtering, sorting, paging, field selection. So this
+phase includes a proper parser for SAP's filter language. Crucially, when it
+sees a filter it doesn't understand it **refuses loudly** rather than quietly
+returning everything — which is exactly the failure mode we caught the *real*
+SAP gateway doing back in Phase 0.
+
+**Two things the plan deferred to this phase, now delivered:**
+1. **Every one of the 21 tables now reads end-to-end** through the real client
+   into properly-typed data. That was the stated finish line for Phase 4's
+   work, and it couldn't be proven until the fake existed.
+2. **The equivalence check.** We can finally prove that filtering *at SAP*
+   returns exactly the same rows as filtering *in our own code* — for both
+   halves of the OAR rule, joined across two tables, over the whole dataset.
+   If those two ever disagree, screens would silently show different numbers
+   depending on which path they took.
+
+**The per-set switch — the plan calls this the most valuable single piece of
+WS2.** Every table is independently set to either "use fake data" or "use real
+SAP". Going live stops being one big scary cutover and becomes a dial you turn
+one notch at a time. Proven in a test: pointing one table at a dead SAP
+endpoint breaks *only that table*; everything else keeps working. And anything
+served from fake data is stamped as synthetic all the way through, so the UI
+can show an honest banner instead of someone demoing invented numbers as real.
+
+**A gap we found in the test data (not fixed here):** the synthetic
+change-document file contains *only* material/MARC records, so a filter that
+cuts 929,151 real rows down to 7,220 doesn't narrow anything at all in the
+fixture. The fixture can prove the filter *works*, but not that it *cuts
+hard*. Same family of gap as the missing blank-`Dismm` rows from Phase 1 —
+both are things `generate.py` should eventually produce.
+
+**Your action item:** none. Optionally, try `npm run gateway` and browse it —
+it's the first time this project can run against SAP-shaped data end to end.
+
+**Files touched:** 7 new files in `src/lib/sap/gateway/`,
+`src/lib/sap/routing.ts`, `scripts/fake-cpi.mts`, `package.json` (`tsx`,
+`npm run gateway`).
+
+---
