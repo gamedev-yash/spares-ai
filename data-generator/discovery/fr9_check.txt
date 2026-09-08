@@ -1,0 +1,4 @@
+Objectclas eq 'MATERIAL'                                -> HTTP 500 
+Objectclas eq 'MATERIAL' and Tabname eq 'MARC'          -> HTTP 500 
+Objectclas eq 'BANF'                                    -> HTTP 500 
+(Property names in the filter assume Objectclas/Tabname; adjust to the real names from properties.csv if the call fails.)
