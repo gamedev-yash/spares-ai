@@ -84,7 +84,9 @@ describe("isMaterialInScope — roll-up policy", () => {
 })
 
 describe("against the generated synthetic fixture", () => {
-  function parseCsv(path: string): FieldRow[] {
+  // Every CSV cell is a string, so this is narrower than FieldRow on purpose —
+  // it lets the keys below be used as Map keys without casting.
+  function parseCsv(path: string): Record<string, string>[] {
     const lines = readFileSync(path, "utf-8").trim().split(/\r?\n/)
     const header = lines[0].split(",")
     return lines.slice(1).map((line) => {

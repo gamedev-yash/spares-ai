@@ -9,8 +9,10 @@ import type { FieldRow, ScopeCondition, ScopeRule } from "./types"
 type Trilean = true | false | "unknown"
 
 function evaluateCondition(condition: ScopeCondition, row: FieldRow): Trilean {
-  const raw = row[condition.field]
-  if (raw === undefined) return "unknown"
+  const value = row[condition.field]
+  // Absent and null both mean "SAP told us nothing here" — never false.
+  if (value === undefined || value === null) return "unknown"
+  const raw = String(value)
   if (condition.unknownValues?.includes(raw)) return "unknown"
 
   switch (condition.op) {

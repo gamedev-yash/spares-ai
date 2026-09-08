@@ -48,8 +48,13 @@ export interface ScopeDefinition {
  */
 export type ScopeVerdict = "in-scope" | "not-in-scope" | "cannot-determine"
 
-/** Row shape the predicate evaluates against — a plain field bag from one SAP entity set. */
-export type FieldRow = Record<string, string | undefined>
+/**
+ * Row shape the predicate evaluates against — a field bag from one SAP entity
+ * set. Values are `unknown` because rows arrive both raw (strings, from CSV)
+ * and decoded (numbers, Dates, booleans, from the client). The predicate
+ * compares as text and treats null/undefined as "cannot determine".
+ */
+export type FieldRow = Record<string, unknown>
 
 /** Which entity set a field's row data comes from (spans MaterialSet + MaterialPlantSet). */
 export type ScopeEntitySet = "MaterialSet" | "MaterialPlantSet"
