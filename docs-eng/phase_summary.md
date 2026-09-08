@@ -643,3 +643,83 @@ The plan flags that a late answer to this single question costs a day.
 **Files touched:** `scripts/smoke-cpi.mts`, `package.json`.
 
 ---
+## Where things stand
+
+Everything in the plan's order of work that does not need Azure is done.
+
+| # | Task | Status |
+|---|---|---|
+| 0 | Three `Dismm` counts + the OAR questions | Done — and the answer was not what anyone expected |
+| 1 | W2.4 scope config | Done |
+| 2 | Test runner + CI | Done |
+| 3 | W2.5 contract tests | Done |
+| 4 | W2.1 CPI client | Done, verified against live SAP |
+| 5 | W2.6a fake gateway | Done |
+| 6 | W2.3 paging | Done |
+| 7 | W2.6b mapping layer | Done — gap report produced |
+| 8 | W2.6b fixtures replaced | Data flows end to end; **deleting the fixtures is blocked on identity mapping** |
+| 9 | W2.2 smoke test | Done, passes against live SAP and the fake gateway |
+| 10 | Per-set flip to live | **Needs Azure.** Checklist ready in [SET_READINESS.md](SET_READINESS.md) |
+
+261 automated tests, all passing. `npm run smoke:cpi` passes against live SAP.
+
+---
+
+## Everything waiting on you, in one place
+
+Nothing here blocks further engineering — these are answers only VZI can give.
+
+**1. Take the MRP-type numbers to the team lead** (from Phase 0). The ruling
+was "OAR = MRP type `ND` or `PD`". Measured against live SAP:
+- 47% of material/plant records have **no MRP type at all** — currently
+  treated as "we don't know", never as "not OAR"
+- `ND` + `PD` together are 46.4% of the catalogue — not the clear minority
+  the plan expected
+- Six MRP types nobody has mentioned exist: `V1`, `M0`, `RP`, `VI`, `VH`, `V2`
+
+Three questions: do the blanks count? Is 46.4% an acceptable OAR population?
+What are those six codes?
+
+**2. Ask whether OAR is decided per plant or per material** (§1.6a). A
+material can be OAR in one plant and not in another — 7 such cases exist in
+the test data. The code currently refuses to guess and will not answer the
+material-level question at all until someone rules.
+
+**3. Ask SAP why three tables return zero rows** — reservations, stock
+valuation, monthly movements. Registered, responding, empty. This is the
+largest single blocker in WS2, and it's a different question from
+"is the service switched on". Likely causes need different fixes: an empty dev
+client, an authorisation filter on the CPI user, or a projection that needs a
+mandatory filter.
+
+**4. Ask for the material / plant / user identity mapping** (from Phase 8).
+The app says `PLANT-GBG`; SAP says `3000`. Nothing connects them. This is what
+blocks deleting the hand-written demo data.
+
+**5. Ask VZI IT whether CPI restricts inbound traffic by IP.** If it does,
+Azure's outbound address must be allow-listed *before* anyone tries to connect.
+Asked late, this costs a day of Azure time.
+
+**6. Ask SAP to add `Bednr` to `ReservationItemSet`.** It's a real field,
+already live on two other tables. It blocks the reservation assistant's
+deep-link launch (not the assistant itself).
+
+**7. Two things for the team, not for VZI:**
+- Three pre-existing lint errors in the app's React components need fixing
+  before lint can be switched on in CI.
+- Push this branch, so the CI workflow starts running.
+
+---
+
+## Handy commands
+
+| Command | What it does |
+|---|---|
+| `npm test` | 261 tests — contract, scope, client, gateway, paging, mapping |
+| `npm run smoke:cpi` | **The Azure-day command.** Can we reach SAP, and is everything still as we believe? |
+| `npm run gateway` | Fake SAP on `localhost:4010`, quirks and all |
+| `npm run dataset:build` | Rebuild the app's data from SAP-shaped rows |
+| `NEXT_PUBLIC_DATASET=generated npm run dev` | Run the app on that data |
+| `npm run contract:generate` | Refresh the SAP schema baseline after a discovery sweep |
+| `npm run gap-report` | Which screen fields have no source |
+| `npm run readiness` | Per-set status and the go-live checklist |
