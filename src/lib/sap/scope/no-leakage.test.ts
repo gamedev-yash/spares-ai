@@ -2,18 +2,25 @@ import { readdirSync, readFileSync, statSync } from "node:fs"
 import { join, relative, sep } from "node:path"
 import { describe, expect, it } from "vitest"
 
-// W2.4's CI guard: the OAR identifiers must exist in exactly one place. When
-// the rule changes again — and it already changed once, from Extwg to Dismm —
-// the blast radius has to stay one config file. A stray reference anywhere
-// else is the bug this test exists to catch.
+// W2.4's CI guard: the OAR identifiers must not escape the SAP integration
+// layer. When the rule changes again — and it already changed once, from
+// Extwg to Dismm — the blast radius has to stay in one place rather than
+// spreading across every I07 and I13 selector.
+//
+// Two tiers, deliberately:
+//   - `src/lib/sap/**` may NAME these fields. The contract layer's whole job
+//     is asserting what SAP exposes, and the scope module's job is deciding
+//     with it.
+//   - Everything else — features, components, app routes, the rest of lib —
+//     may not reference them at all, and must go through lib/sap/scope.
 
 const SRC = "./src"
-const SCOPE_MODULE = join("src", "lib", "sap", "scope")
+const SAP_LAYER = join("src", "lib", "sap")
 
-/** Field names that identify scope. Allowed only inside the scope module. */
+/** Field names that identify scope. Allowed only inside the SAP layer. */
 const SCOPED_TOKENS = [/\bDismm\b/i, /\bMstae\b/i]
 
-/** String literals carrying scope values. Allowed only inside the scope module. */
+/** String literals carrying scope values. Allowed only inside the SAP layer. */
 const SCOPED_LITERALS = [/(['"])ND\1/, /(['"])PD\1/, /(['"])01\1/]
 
 /**
@@ -39,7 +46,7 @@ function sourceFiles(dir: string): string[] {
 
 // This file necessarily contains every banned token, since it defines them.
 const files = sourceFiles(SRC).filter((f) => !f.endsWith("no-leakage.test.ts"))
-const isInScopeModule = (file: string) => relative(".", file).startsWith(SCOPE_MODULE + sep)
+const isInSapLayer = (file: string) => relative(".", file).startsWith(SAP_LAYER + sep)
 
 function offenders(patterns: RegExp[], candidates: string[]): string[] {
   return candidates.filter((file) => {
@@ -51,15 +58,15 @@ function offenders(patterns: RegExp[], candidates: string[]): string[] {
 describe("scope identifier leakage", () => {
   it("finds source files to scan at all (guards against the walker silently matching nothing)", () => {
     expect(files.length).toBeGreaterThan(50)
-    expect(files.some(isInScopeModule)).toBe(true)
+    expect(files.some(isInSapLayer)).toBe(true)
   })
 
-  it("no file outside the scope module names Dismm or Mstae", () => {
-    expect(offenders(SCOPED_TOKENS, files.filter((f) => !isInScopeModule(f)))).toEqual([])
+  it("no file outside lib/sap names Dismm or Mstae", () => {
+    expect(offenders(SCOPED_TOKENS, files.filter((f) => !isInSapLayer(f)))).toEqual([])
   })
 
-  it("no file outside the scope module hard-codes the 'ND' / 'PD' / '01' literals", () => {
-    expect(offenders(SCOPED_LITERALS, files.filter((f) => !isInScopeModule(f)))).toEqual([])
+  it("no file outside lib/sap hard-codes the 'ND' / 'PD' / '01' literals", () => {
+    expect(offenders(SCOPED_LITERALS, files.filter((f) => !isInSapLayer(f)))).toEqual([])
   })
 
   it("no file anywhere references the withdrawn Extwg identifier", () => {

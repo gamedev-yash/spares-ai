@@ -197,3 +197,67 @@ to add the lint step in whatever change clears those 3 errors.
 `.github/workflows/ci.yml`, and four new test files in `src/lib/sap/scope/`.
 
 ---
+
+## Phase 3 — W2.5: locking down what SAP actually gives us (2026-09-08)
+
+**The problem in one sentence:** SAP can change a field's name, type, or key
+at any time, without telling anyone, and today we'd find out when a screen
+breaks in front of a user. This phase makes SAP changes fail a build instead.
+
+**The concrete incident behind it:** between two checks four hours apart, SAP
+changed two purchase-order price fields from *number* to *text*. Nothing
+announced it. It was caught only because a human happened to compare two
+files by eye. Any code doing arithmetic on those fields would have silently
+produced garbage.
+
+**What we built** (`src/lib/sap/contract/`):
+- **A written-down contract of all 21 SAP tables and all 229 fields**
+  (`generated-contract.ts`), produced automatically from the discovery sweep
+  by `npm run contract:generate` and committed to git on purpose — it's the
+  reference copy that everything else gets compared against.
+- **A drift detector.** It re-reads SAP's raw schema files and compares them
+  to that reference copy, reporting differences in plain language:
+  `PurchaseOrderItemSet.Netpr: type changed Edm.Decimal -> Edm.String`. Not
+  "expected 229, got 228" — the actual field, and what actually changed.
+- **Proof the detector works.** We deliberately corrupted the schema four
+  different ways (changed a type, renamed a field, changed a key, deleted a
+  table) and confirmed each produces the right, specifically-worded failure.
+  A drift detector nobody has tried to fool is just decoration.
+- **A "known conditions" list** — every quirk of the current live system
+  written down as a test: which tables are broken, which return zero rows,
+  which fields exist, which don't yet. These fail **in both directions**: if
+  a table that returns zero rows suddenly returns 40,000, that's just as much
+  of a signal as the reverse, and someone needs to know.
+- **Safe value decoding.** SAP sends dates as `/Date(1757280000000)/`, times
+  as `PT14H16M00S`, and decimals as text. We decode strictly by the *declared*
+  type, never by guessing from the value's shape — which is precisely what
+  keeps a text field holding "1234.56" from being silently turned into a
+  number, and keeps material number `000000000012345` from losing its leading
+  zeros and never matching anything again.
+- **A per-initiative needs list** — what I07, I08 and I13 each require from
+  SAP, checked against reality. This is the check that catches the
+  `Value_old` vs `ValueOld` class of mistake, which was a *real* wrong
+  assumption held until the last sweep corrected it.
+
+**One correction we made to the plan itself:** the plan expected `Dismm` to
+only ever hold `VB`, `ND` or `PD`, and said to fail the build on anything
+else. That expectation was written *before* anyone measured it. Phase 0
+measured it, and reality has ten values including blanks. So the check now
+records **measured reality** and fails when a genuinely *new* value shows up.
+There's a comment in the file warning the next person not to "fix" it back to
+the plan's three values.
+
+**A nice moment worth recording:** the leakage guard from Phase 2 caught two
+mistakes *in this phase's own code* — including one where the plan says the
+old `Extwg` rule should be retired entirely, and I had written a check that
+kept tracking it. The guard was right and the new code was wrong, twice. That
+is exactly what it's for.
+
+**Your action item:** none. This phase is self-contained and needed no
+decisions.
+
+**Files touched:** 11 new files in `src/lib/sap/contract/`,
+`scripts/generate-sap-contract.mts`, `package.json`
+(`fast-xml-parser`, `npm run contract:generate`).
+
+---
