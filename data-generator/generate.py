@@ -119,54 +119,28 @@ rng = random.Random(SEED)
 # ===========================================================================
 # SAP SCHEMA
 #
-# The 14 live entity sets are read from discovery/properties.csv: column
+# All 21 live entity sets are read from discovery/properties.csv: column
 # names, column order and key fields all come from there, so a fresh
 # discovery run changes the generated CSVs without touching this script.
 #
 # The rest is what CPI does not expose, declared here with the reason.
 # ===========================================================================
 
-# Entity sets on service ZMM_KPI02_SRV, which was unreachable during
-# discovery (metadata_ZMM_KPI02_SRV.xml came back empty). Columns follow the
-# VZI Entity Dictionary and the CamelCase convention the live service uses.
-# When the service is registered, delete the entry here and the discovered
+# Fallback definitions for entity sets discovery cannot see, because the
+# service carrying them is unregistered or unreachable. Columns follow the VZI
+# Entity Dictionary and the CamelCase convention the live services use. Once a
+# set appears in discovery, delete its entry here and the discovered
 # definition takes over automatically.
-NOT_EXPOSED_SETS: dict[str, list[str]] = {
-    # RESB - reservations. I13 captures the consumption plan against these,
-    # and I08 hangs the repair session off them.
-    "ReservationItemSet": [
-        "Rsnum", "Rspos", "Xloek", "Kzear", "Matnr", "Werks", "Lgort",
-        "Bdter", "Bdmng", "Meins", "Enmng", "Enwrt", "Aufnr", "Bwart",
-        "Wempf", "Banfn", "Bnfpo",
-        # Pending SAP exposure - required by FRS. The reservation field that
-        # carries the AI assistant session identifier has not been designated
-        # yet (candidates: SGTXT, WEMPF, ABLAD or a Z-append).
-        "Zzaisession",
-    ],
-    # MBEW - valuation, for stock value and the value of avoided purchases.
-    "MaterialValuationSet": [
-        "Matnr", "Bwkey", "Lbkum", "Salk3", "Vprsv", "Verpr", "Stprs",
-        "Peinh", "Bklas",
-    ],
-    # CDHDR / CDPOS - change documents. I07 uses them to see whether a
-    # recommendation was actually applied in SAP, read-only.
-    "ChangeDocHeaderSet": [
-        "Objectclas", "Objectid", "Changenr", "Username", "Udate", "Utime",
-        "Tcode",
-    ],
-    "ChangeDocItemSet": [
-        "Objectclas", "Objectid", "Changenr", "Tabname", "Tabkey", "Fname",
-        "Chngind", "ValueOld", "ValueNew",
-    ],
-}
+#
+# Empty since the 08-Sep 14:16 sweep: ZMM_KPI02_SRV is registered, so all
+# seven of its sets - ReservationItemSet, MaterialValuationSet,
+# ChangeDocHeaderSet, ChangeDocItemSet, BatchStockSet,
+# MonthlyMovementStatisticSet, StockMovementStatisticSet - now come from
+# properties.csv with real names, types and keys.
+NOT_EXPOSED_SETS: dict[str, list[str]] = {}
 
 # Keys for the sets above, since discovery cannot tell us.
-NOT_EXPOSED_KEYS: dict[str, list[str]] = {
-    "ReservationItemSet": ["Rsnum", "Rspos"],
-    "MaterialValuationSet": ["Matnr", "Bwkey"],
-    "ChangeDocHeaderSet": ["Objectclas", "Objectid", "Changenr"],
-    "ChangeDocItemSet": ["Objectclas", "Objectid", "Changenr", "Tabname", "Fname"],
-}
+NOT_EXPOSED_KEYS: dict[str, list[str]] = {}
 
 # Extra columns appended to a set that IS live, because the FRS needs a field
 # the current projection leaves out. Delete an entry once SAP exposes it and
@@ -180,6 +154,12 @@ PENDING_FIELDS: dict[str, list[str]] = {
         # Pending SAP exposure - relevant to a future serial-grain repair
         # register. Present on about 18% of 80-series purchase order lines.
         "Sernp",
+    ],
+    "ReservationItemSet": [
+        # Pending SAP exposure - required by I08/I13. The reservation field that
+        # carries the AI assistant session identifier has not been designated
+        # yet (candidates: SGTXT, WEMPF, ABLAD or a Z-append).
+        "Zzaisession",
     ],
 }
 
@@ -1748,8 +1728,8 @@ def record_marc_change(
             "Tabkey": f"{matnr_out(material.matnr)}{entry.werks}",
             "Fname": fname,
             "Chngind": "U",
-            "ValueOld": qty(old),
-            "ValueNew": qty(new),
+            "Value_old": qty(old),
+            "Value_new": qty(new),
         })
 
 
@@ -1848,6 +1828,11 @@ def check() -> None:
         # business key is used where it is wider than the declared one.
         if entity == "PurchaseRequisitionSet":
             key_fields = ["Banfn", "Bnfpo"]
+        # CDPOS's OData key omits Tabname/Tabkey/Fname even though a single
+        # change document (Changenr) covers multiple fields/tables, so the
+        # business key is used where it is wider than the declared one.
+        if entity == "ChangeDocItemSet":
+            key_fields = ["Objectclas", "Objectid", "Changenr", "Tabname", "Tabkey", "Fname"]
         seen: set = set()
         for row in rows[entity]:
             key = tuple(row[c] for c in key_fields)
