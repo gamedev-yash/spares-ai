@@ -18,6 +18,7 @@ Outputs in --out:
   properties.csv                   service, set, property, type, nullable, is_key
   counts.csv                       service, set, $count (or error)
   fr9_check.txt                    ChangeDocItemSet count for OBJECTCLAS MATERIAL / TABNAME MARC
+  value_domains.csv                per-value $count for low-cardinality business-rule fields (see VALUE_DOMAIN_PROBES)
   dictionary_gaps.csv              dictionary field vs actual property, per SAP object
 """
 import argparse, csv, os, sys, time, json
@@ -37,6 +38,16 @@ SERVICES = {
     "ZMM_KPI02_SRV": ["BatchStockSet", "ChangeDocHeaderSet", "ChangeDocItemSet", "MaterialValuationSet",
                       "MonthlyMovementStatisticSet", "ReservationItemSet", "StockMovementStatisticSet"],
 }
+
+# Low-cardinality fields that drive business rules: full-scan tally (not a guessed
+# candidate list — a filtered $count per guessed value silently misses unexpected
+# values, including blanks; this walked into exactly that on Dismm, see §1.6(c))
+# written to value_domains.csv. Add entries here as new rules need a standing check.
+VALUE_DOMAIN_PROBES = [
+    # (service, entity_set, field)
+    ("ZVZI_KPI02_SHARED_SRV", "MaterialPlantSet", "Dismm"),
+    ("ZVZI_KPI02_SHARED_SRV", "MaterialSet", "Mstae"),
+]
 
 # Map SAP table -> (service, set) so dictionary rows can be compared to real properties
 TABLE_TO_SET = {
@@ -200,6 +211,38 @@ def main():
         fr9.append(f"{flt:55s} -> {rc.text.strip() if rc.status_code == 200 else 'HTTP ' + str(rc.status_code) + ' ' + rc.text[:120]}")
     (out / "fr9_check.txt").write_text("\n".join(fr9) + "\n(Property names in the filter assume Objectclas/Tabname; adjust to the real names from properties.csv if the call fails.)\n")
     print("\nFR-9 check:\n  " + "\n  ".join(fr9))
+
+    # Value-distribution probes: full-scan tally, not a guessed candidate list. A
+    # filtered $count per guessed value silently misses anything unexpected,
+    # including blanks — exactly what happened on Dismm the first time (§1.6(c)).
+    domain_rows = []
+    if not args.skip_counts:
+        from collections import Counter
+        for svc, set_name, field in VALUE_DOMAIN_PROBES:
+            keys = sorted(actual.get((svc, set_name), {}).get("keys", []))
+            order_by = f"&$orderby={','.join(keys)}" if keys else ""
+            select = ",".join(dict.fromkeys([field, *keys]))  # dedup, field first
+            tally, skip, top = Counter(), 0, 1000
+            while True:
+                rc, token = cpi_get(s, token, f"sap/opu/odata/sap/{svc}/{set_name}",
+                                     f"$select={select}&$top={top}&$skip={skip}{order_by}&$format=json")
+                if rc.status_code != 200:
+                    print(f"   [{set_name}.{field}] page skip={skip} HTTP {rc.status_code}")
+                    break
+                rows = json.loads(rc.text)["d"]["results"]
+                for row in rows:
+                    tally[row.get(field) or "(blank)"] += 1
+                if len(rows) < top:
+                    break
+                skip += top
+            total = sum(tally.values())
+            print(f"\n[{set_name}.{field}] value distribution ({total} rows scanned):")
+            for v, c in tally.most_common():
+                pct = f"{c / total * 100:.1f}%" if total else ""
+                domain_rows.append([svc, set_name, field, v, c, pct])
+                print(f"   {v:12s} -> {c:>6d} {pct}")
+    with open(out / "value_domains.csv", "w", newline="") as f:
+        w = csv.writer(f); w.writerow(["service", "entity_set", "field", "value", "count", "pct_of_scanned_total"]); w.writerows(domain_rows)
 
     # Dictionary gap report
     if args.dictionary:
