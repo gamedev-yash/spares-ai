@@ -1,0 +1,48 @@
+loaded env from C:\Users\varad\OneDrive\Desktop\spares-ai\data-generator\.env
+token OK
+[ZVZI_KPI02_SHARED_SRV] 14 entity sets in $metadata; expected 14 from technical list
+   PurchaseRequisitionSet           count = HTTP 500
+   GoodsMovementItemSet             count = HTTP 500
+   InfoRecordSet                    count = 550
+   InfoRecordOrgSet                 count = 585
+   PurchaseOrderSet                 count = 3120
+   PurchaseOrderItemSet             count = 11074
+   VendorSet                        count = 227
+   MaterialDescriptionSet           count = 2036
+   MaterialSet                      count = 2034
+   MaterialPlantSet                 count = 2177
+   StorageLocationStockSet          count = 2303
+   MaterialDocumentHeaderSet        count = 40649
+   POScheduleLineSet                count = 3608
+   POHistorySet                     count = 3878
+[ZMM_KPI02_SRV] 7 entity sets in $metadata; expected 7 from technical list
+   ReservationItemSet               count = 0
+   MaterialValuationSet             count = 0
+   ChangeDocHeaderSet               count = 241685
+   ChangeDocItemSet                 count = 929151
+   BatchStockSet                    count = 26889
+   MonthlyMovementStatisticSet      count = 0
+   StockMovementStatisticSet        count = 1484
+
+FR-9 check:
+  Objectclas eq 'MATERIAL'                                -> 26405
+  Objectclas eq 'MATERIAL' and Tabname eq 'MARC'          -> 7220
+  Objectclas eq 'BANF'                                    -> 2912
+
+[MaterialPlantSet.Dismm] value distribution (2177 rows scanned):
+   (blank)      ->   1023 47.0%
+   PD           ->    827 38.0%
+   ND           ->    184 8.5%
+   V1           ->     79 3.6%
+   VB           ->     45 2.1%
+   M0           ->     13 0.6%
+   RP           ->      3 0.1%
+   VI           ->      1 0.0%
+   VH           ->      1 0.0%
+   V2           ->      1 0.0%
+
+[MaterialSet.Mstae] value distribution (2034 rows scanned):
+   (blank)      ->   2031 99.9%
+   01           ->      3 0.1%
+
+Done. Outputs in C:\Users\varad\OneDrive\Desktop\spares-ai\data-generator\discovery
