@@ -77,11 +77,20 @@ export function decodeEdmValue(type: EdmType, raw: unknown): DecodedValue {
       return typeof raw === "number" ? raw : parseEdmDecimal(String(raw))
     case "Edm.Boolean":
       return typeof raw === "boolean" ? raw : String(raw) === "true"
-    // Everything else stays exactly as SAP sent it. This is the Netpr case and
-    // the zero-padded-Matnr case, and it is deliberate in both.
+    // Strings keep their declared type — this is the Netpr case and the
+    // zero-padded-Matnr case, and staying a string is deliberate in both.
+    //
+    // The only normalisation is trimming surrounding whitespace, because SAP
+    // pads fixed-width CHAR fields: live PurchaseOrderItemSet.Netpr arrives as
+    // "                       376.68". That padding is a transport artefact,
+    // never data. It is safe for identifiers (zeros are not whitespace, so
+    // "000000000012345" is untouched) and it is load-bearing for the scope
+    // rule, where a blank MRP Type arriving as "   " rather than "" would
+    // otherwise read as a real value and be judged "not OAR" instead of
+    // "cannot-determine".
     case "Edm.String":
     case "Edm.Guid":
     case "Edm.Binary":
-      return String(raw)
+      return String(raw).trim()
   }
 }
