@@ -12,7 +12,8 @@
     "contract:generate": "node scripts/generate-sap-contract.mts",
     "gateway": "tsx scripts/fake-cpi.mts",
     "gap-report": "tsx scripts/gap-report.mts",
-    "dataset:build": "tsx scripts/build-dataset.mts"
+    "dataset:build": "tsx scripts/build-dataset.mts",
+    "smoke:cpi": "tsx scripts/smoke-cpi.mts"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

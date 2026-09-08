@@ -584,3 +584,62 @@ Ltd". That's a real four-table SAP join running through the whole stack.
 generated JSON datasets, and the three data modules now switching between them.
 
 ---
+
+## Phase 9 — W2.2: the one command to run on Azure day (2026-09-08)
+
+```
+npm run smoke:cpi
+```
+
+**What it's for.** On the day the Azure environment appears, someone needs to
+answer one question fast: *can our code, running inside Azure, actually reach
+SAP?* Without a purpose-built check, that becomes half a day of guessing
+between firewalls, private endpoints, TLS inspection and IP allow-lists. This
+answers it in about a minute and **names the exact step that failed.**
+
+**What it checks, in order:**
+1. Can we log in? (prints when the token expires — never the token itself)
+2. Can we fetch SAP's schema for both services? (byte counts, since a big
+   deviation is itself a signal)
+3. Can we read actual data?
+4. Does paging work — two pages, no overlapping rows?
+5. What did we really connect to, and who issued its certificate?
+6. **Is everything we believe about SAP still true?** Every known quirk is
+   re-checked: the two broken row-counters, the three empty tables, the MRP
+   type distribution, the two fields SAP hasn't exposed yet.
+7. Has SAP's schema changed behind our backs?
+
+**The part that makes it more than a connectivity test:** step 6 means the
+whole "what do we know about SAP" investigation — which until now was a
+manual exercise someone had to remember to repeat — is a command anyone can
+run any time. And it reports changes **in both directions**. If SAP fixes the
+broken row-counter, it doesn't quietly pass; it says:
+
+> `CHANGED  $count on PurchaseRequisitionSet — NOW WORKS, returned 8861.
+> Set this set's countMode to "counted" in lib/sap/paging/config.ts.`
+
+Good news gets reported as loudly as bad news, with the exact next action.
+
+**Verified four ways, not just the happy one:**
+
+| Scenario | Result |
+|---|---|
+| Against **live SAP** | All 15 checks pass; certificate issued by DigiCert; zero schema drift |
+| Against the **fake gateway** | All pass, and it correctly says "no TLS — fake gateway" rather than failing |
+| **Wrong password** | Exits with an error naming step 1, and stops rather than burying the cause under a dozen knock-on failures |
+| **Unreachable address** | Same — one clear failure, not a cascade |
+| **SAP "fixed"** (simulated) | Correctly reports all 4 changed conditions with the config change each one needs |
+
+Testing the failure modes caught two real bugs in the test itself: changed
+conditions were being reported twice (and misleadingly as "ok"), and a login
+failure was cascading into a phantom "SAP deleted 21 tables" alarm. Both
+fixed. A check you've only ever seen pass is not a check you can trust.
+
+**Your action item — one question for VZI IT, worth asking now rather than on
+Azure day:** does CPI restrict inbound connections by IP address? If it does,
+Azure's outbound IP needs to be allow-listed **before** anyone tries this.
+The plan flags that a late answer to this single question costs a day.
+
+**Files touched:** `scripts/smoke-cpi.mts`, `package.json`.
+
+---
