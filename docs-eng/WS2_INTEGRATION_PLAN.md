@@ -5,11 +5,12 @@
 **Goal of this phase:** build and test everything that does *not* require the live
 environment, behind seams that are swapped — not rewritten — on the day Azure lands.
 
-> **Status: W2.7 has been run.** Discovery re-swept **08-Sep 14:16** after the SAP
-> team's fixes. `ZMM_KPI02_SRV` is now registered and the gate is **passed**. Six
-> of the seven facts in the previous version of this doc are obsolete; §1 and §8
-> are rewritten against measured results, and §9 is now a repeat-run runbook
-> rather than a first-run one.
+> **Status: W2.7 has been run, and the OAR rule has changed.** Discovery re-swept
+> **08-Sep 14:16**; `ZMM_KPI02_SRV` is registered and that gate is **passed**.
+> Separately, the team lead has replaced the OAR identifier: **MRP Type
+> (`MARC.DISMM`), treating `ND` and `PD` as OAR** — *not* `MARA.EXTWG`. `Dismm`
+> is **already live and exposed**, so the EXTWG blocker dissolves. One conflict
+> needs resolving before we build on it — see [§1.6](#16-the-oar-rule-has-changed-mrp-type-replaces-extwg).
 
 > **How to read this doc.** Every task has the same five headings:
 > *What it means*, *What we do now*, *What we cannot do*, *Mock or placeholder*,
@@ -22,26 +23,30 @@ environment, behind seams that are swapped — not rewritten — on the day Azur
 
 Measured facts from `data-generator/discovery/`, swept **08-Sep 14:16**.
 
-| Fact | Evidence | Change since 12:08 |
+| Fact | Evidence | Change |
 |---|---|---|
 | **All 21 entity sets are exposed** | `entity_sets.csv` — 14 on `ZVZI_KPI02_SHARED_SRV` + 7 on `ZMM_KPI02_SRV`, 229 properties total | **was 14 of 21** |
 | **`ZMM_KPI02_SRV` is registered** | `metadata_ZMM_KPI02_SRV.xml` now **19,129 bytes**, 7 sets, 75 properties | **was 0 bytes** |
-| **3 sets return zero rows** | `counts.csv` — `ReservationItemSet` **0**, `MaterialValuationSet` **0**, `MonthlyMovementStatisticSet` **0** | **new blocker** |
+| **OAR is identified by MRP Type, and it is live** | `MaterialPlantSet.Dismm`, `Edm.String`, non-key — exposed and populated | **new: unblocks scope** |
+| **3 sets return zero rows** | `counts.csv` — `ReservationItemSet` **0**, `MaterialValuationSet` **0**, `MonthlyMovementStatisticSet` **0** | top blocker |
 | **2 sets cannot report `$count`** | `PurchaseRequisitionSet`, `GoodsMovementItemSet` — HTTP 500 | **was 3** |
 | **`PurchaseOrderItemSet` `$count` is fixed** | now returns **11,074** | **was HTTP 500** |
 | **FR-9 is feasible** | `fr9_check.txt` — `MATERIAL` **26,405** · `MATERIAL`+`MARC` **7,220** · `BANF` **2,912** | **was 3× HTTP 500** |
-| **Change documents are large** | `ChangeDocItemSet` **929,151** · `ChangeDocHeaderSet` **241,685** | newly visible |
-| **`MARA.EXTWG` is still not exposed** | `MaterialSet` still 7 properties: `Matnr`, `Lvorm`, `Mtart`, `Matkl`, `Bismt`, `Meins`, `Mstae` | **unchanged** |
+| **Change documents are large** | `ChangeDocItemSet` **929,151** · `ChangeDocHeaderSet` **241,685** | filter-only |
+| **`MARA.EXTWG` is still not exposed** | `MaterialSet` still 7 properties | **no longer blocking** — see §1.6 |
 
 ### 1.1 The gates
 
 1. **ZMM_KPI02_SRV registration — CLOSED.** Service responds, all 7 sets present
    with real keys and types. Every property name we had guessed is now measured.
-2. **EXTWG exposure — STILL OPEN.** `MARA.EXTWG` is absent from the
-   `MaterialSet` projection. This remains the single blocking dependency for the
-   I13 material scope and the I07 OAR flag. **W2.4's bet paid off** — because
-   scope was never hard-coded, this is still a config change when it lands.
-3. **Empty reservations — NEW, and now the top blocker.** See §1.3.
+2. **EXTWG exposure — WITHDRAWN, not closed.** The dependency is gone because the
+   rule changed, not because SAP exposed the field. OAR now comes from
+   `MARC.DISMM`, which is already live. **W2.4's bet paid off in the strongest
+   possible way** — the identifying field changed *entirely*, and because scope
+   was never hard-coded that is still a config change.
+3. **Empty reservations — the remaining top blocker.** See §1.3.
+4. **The ND/PD overlap question — new.** See §1.6. Needs one answer from VZI
+   before the scope config is trusted, and three `$count` calls can settle it.
 
 ### 1.2 What the sweep confirmed, and what it corrected
 
@@ -51,7 +56,7 @@ Our assumed property names were mostly right. Three were not.
 |---|---|---|
 | `ChangeDocItemSet.ValueOld` / `ValueNew` | **`Value_old` / `Value_new`** — underscored | Our guess was wrong. Any code written against the CamelCase form would have failed. This is exactly what the gate existed to catch |
 | `ChangeDocItemSet` key = 5 fields incl. `Tabname`, `Fname` | Key is **3 fields only**: `Objectclas`, `Objectid`, `Changenr`. `Tabname` and `Fname` are **non-key** | **The OData key is not row-unique.** One change document touching several fields returns several rows sharing one key. Any dedup or upsert keyed on the entity key will collapse real rows — see §1.4 |
-| `ReservationItemSet.Zzaisession` exists | **Absent.** Not designated | Placeholder survives. Candidates still `SGTXT`, `WEMPF`, `ABLAD` or a Z-append |
+| `ReservationItemSet.Zzaisession` exists | **Absent.** Not designated | Placeholder survives. Candidates still `SGTXT`, `WEMPF`, `ABLAD` or a Z-append. **Unaffected by the MRP-type change** — see §1.7 |
 | `Objectclas`, `Tabname` filterable | **Confirmed** — FR-9 filters return real counts | FR-9 (did the recommendation get applied in SAP?) is feasible. Assumption retired |
 | `ReservationItemSet` core fields (`Rsnum`, `Rspos`, `Bdter`, `Bdmng`, `Enmng`, `Banfn`, `Bnfpo`, `Bwart`, `Wempf`…) | **All confirmed**, correct names and types | I08/I13 reservation logic can now be written against real names |
 | `MaterialValuationSet` all 9 fields | **All confirmed** exactly | I07 valuation logic is safe |
@@ -68,7 +73,7 @@ now arrive as strings. Nothing else on the 14 shared sets changed. This is a
 silent-corruption risk if anything does arithmetic without parsing, and it is
 the single best argument for the W2.5 contract tests.
 
-### 1.3 The new blocker: registered but empty
+### 1.3 Registered but empty
 
 `ReservationItemSet` and `MaterialValuationSet` respond correctly and return
 **zero rows**. `MonthlyMovementStatisticSet` likewise.
@@ -92,7 +97,7 @@ Note the contrast: `ChangeDocHeaderSet` (241,685) and `BatchStockSet` (26,889)
 return plenty on the same service, so the service and its auth are fine. The
 emptiness is per-set.
 
-### 1.4 Volume, newly visible
+### 1.4 Volume
 
 `ChangeDocItemSet` holds **929,151** rows and `ChangeDocHeaderSet` **241,685**.
 At 1,000 rows per page that is 930 requests for a full extract of one set.
@@ -112,28 +117,220 @@ identity* in our own storage, regardless of what OData calls the key.
 `generate.py` was updated correctly alongside the sweep:
 
 - `NOT_EXPOSED_SETS` and `NOT_EXPOSED_KEYS` are now **`{}`** — all four
-  previously-mocked sets now take their definitions from discovery
-  automatically, as designed.
-- `PENDING_FIELDS` correctly retains the three fields SAP still does not
-  expose: `MaterialSet.Extwg`, `MaterialSet.Sernp`, `ReservationItemSet.Zzaisession`.
+  previously-mocked sets take their definitions from discovery automatically.
 - Generated CSVs picked up the corrections without hand-editing:
   `ChangeDocItemSet.csv` now has `Value_new,Value_old`; `ReservationItemSet.csv`
   gained `Umwrk,Umlgo`.
 - Three new files appeared — `BatchStockSet.csv`,
   `MonthlyMovementStatisticSet.csv`, `StockMovementStatisticSet.csv` — with
   **correct headers and 0 rows**, because the generator has no fabrication logic
-  for sets no initiative reads. That is correct behaviour, not a bug. Leave them.
+  for sets no initiative reads. Correct behaviour, not a bug. Leave them.
+- `PENDING_FIELDS` now holds **two** entries — `MaterialSet.Sernp` and
+  `ReservationItemSet.Zzaisession`. `Extwg` was removed as withdrawn, not
+  exposed (§1.6(d)).
+- The OAR rule is encoded as configuration: `OAR_MRP_TYPES = ("ND", "PD")`,
+  with an invariant guard and the pending verification noted inline (§1.6(d)).
 
-**One stale comment to clean up.** The block above `NOT_EXPOSED_SETS` in
-`generate.py` still reads *"service ZMM_KPI02_SRV, which was unreachable during
-discovery (metadata came back empty)"*. That is no longer true and will mislead
-the next reader. Reword to describe the mechanism, not the outage.
+**Rule for this phase, revised:** property names on all 21 sets are measured, so
+build against them directly. The remaining assumptions are two *fields*
+(`Sernp`, `Zzaisession`), the *OAR value set* (`ND`/`PD` — §1.6), and three
+*business constants* (`REPAIR_DOC_TYPE`, `REPAIR_ITEM_CATEGORY`, the
+movement-type set). Keep exactly those behind config.
 
-**Rule for this phase, revised:** property names on all 21 sets are now
-measured, so build against them directly. The remaining assumptions are three
-*fields* (`Extwg`, `Sernp`, `Zzaisession`) and four *business constants*
-(`OAR_EXTWG`, `REPAIR_DOC_TYPE`, `REPAIR_ITEM_CATEGORY`, and the movement-type
-set). Keep exactly those behind config.
+### 1.6 The OAR rule has changed: MRP Type replaces EXTWG
+
+**The team lead's ruling (08-Sep):** OAR is identified by the **MRP Type** field,
+and **both `ND` and `PD`** are to be treated as OAR stock items. `MARA.EXTWG` is
+no longer the mechanism.
+
+**This is good news, and it unblocks the largest open dependency in WS2.**
+
+| | Before (EXTWG) | Now (MRP Type) |
+|---|---|---|
+| SAP field | `MARA.EXTWG` | **`MARC.DISMM`** |
+| Entity set | `MaterialSet` | **`MaterialPlantSet`** |
+| Exposed? | **No** — blocked on SAP | **Yes — live now**, `Edm.String`, non-key |
+| Value(s) | `100`, unconfirmed | **`ND`, `PD`** (of `VB`/`ND`/`PD`) |
+| Grain | one value per material | **one value per material *per plant*** |
+| Server-side `$filter`? | impossible (field absent) | **possible today** |
+
+Three consequences, in order of importance.
+
+**(a) Scope becomes plant-dependent.** This is the real design change and it is
+easy to miss. `EXTWG` lives on MARA — one value per material, globally. `DISMM`
+lives on MARC — **one value per material per plant.** A material can be `ND` in
+one plant and `VB` in another, so "is this material OAR?" is no longer a
+well-formed question; "is this material OAR *in this plant*?" is.
+
+This is real, not hypothetical: live `MaterialPlantSet` holds **2,177** rows
+against **2,034** materials, so ~143 materials already carry more than one
+plant row. In the synthetic data 466 of 2,000 materials span two plants, and 7
+of those differ in OAR scope between plants.
+
+So the scope module's signature changes from `isInScope(material)` to
+**`isInScope(material, plant)`**, and every I07/I13 screen that lists "OAR
+materials" has to decide whether it means a material-plant row or a material
+rolled up across plants. **Settle that before building the scope module**, since
+it propagates into every selector. W2.4 absorbs it cleanly *if* it is decided
+now; retrofitting a plant dimension later is exactly the rework W2.4 exists to
+avoid.
+
+**(b) Server-side filtering is available immediately.** Because `Dismm` is live,
+the scope predicate can be pushed to SAP today:
+
+```
+APIPath  = sap/opu/odata/sap/ZVZI_KPI02_SHARED_SRV/MaterialPlantSet
+APIQuery = $filter=Dismm eq 'ND' or Dismm eq 'PD'
+```
+
+No interim "unavailable" state is needed for scope any more. Build the pushdown
+path as the primary one, and keep the in-memory predicate only for tests and for
+rows already in hand.
+
+**(c) ⚠️ The ND/PD set conflicts with our data model, and one of the two is
+wrong.** This needs an answer before the rule is trusted.
+
+`generate.py:705-709` states the opposite of the new rule, explicitly:
+
+> *"OAR materials carry no maintained ROP or maximum, and the same MRP type (PD)
+> as the general population — which is why EXTWG, not the MRP type, is what
+> identifies them."*
+
+And the generator acts on that: OAR → `PD`; **`OBSOLETE` → `ND`**
+(`generate.py:716-718`); everything else → `VB` (60%) or `PD` (40%). Measured
+against the current synthetic data:
+
+| `Dismm` | rows | truly OAR | not OAR |
+|---|---|---|---|
+| `ND` | 95 | **0** | 95 — *all `OBSOLETE`* |
+| `PD` | 1,200 | 390 | **810** |
+| `VB` | 1,225 | 0 | 1,225 |
+
+Applying "ND + PD = OAR" to this data selects **1,295** rows of which only
+**390** are OAR — a **70% false-positive rate** — and it classifies **every
+obsolete material as OAR**, which is precisely backwards.
+
+**Read that correctly:** it was evidence about *our model*, not about SAP. The
+synthetic data had been fabricated on the EXTWG assumption, so of course it
+disagreed. The team lead's statement is about the real system and supersedes our
+guess — so **the generator has been corrected to the new rule** (§1.6(d)). What
+remains unverified is the rule's fit against *live* data, which is what the three
+counts below settle.
+
+**Settle it with three calls.** `Dismm` is live and `MaterialPlantSet.$count`
+works (2,177), so the real distribution is one filtered count per value:
+
+```powershell
+# From the workstation that has CPI access. Expect three numbers summing to ~2,177.
+# APIQuery=$filter=Dismm eq 'ND'   -> ?
+# APIQuery=$filter=Dismm eq 'PD'   -> ?
+# APIQuery=$filter=Dismm eq 'VB'   -> ?
+```
+
+Interpretation, decided in advance:
+
+- **`ND`+`PD` is a clear minority** (say under ~40% of 2,177) → the rule is
+  plausible. Adopt it, and fix the generator (below).
+- **`ND`+`PD` is most of the catalogue** → the rule as stated would put nearly
+  everything in scope. Go back to the team lead: either OAR is narrower than
+  MRP Type alone, or "OAR" here means something broader than the I13 scope we
+  have been building. **Do not silently widen I13's scope to most of the
+  catalogue** — that is the failure mode this check exists to prevent.
+
+Two questions to ask alongside it:
+1. **Is `ND` really in scope?** `ND` is conventionally "no planning", which sits
+   naturally with on-demand ordering — but our data uses it for obsolete stock.
+   Ask how obsolete materials are excluded from OAR, or whether they are.
+2. **Is the rule plant-level or material-level?** i.e. does one `ND`/`PD` plant
+   row make the material OAR everywhere? This is question (a) above, and it is
+   the team lead's to answer, not ours to assume.
+
+### 1.6(d) Generator — corrected and regenerated
+
+`generate.py` now encodes the MRP-type rule. Done:
+
+- **`OAR_EXTWG = "100"` replaced** by `OAR_MRP_TYPES = ("ND", "PD")`,
+  `PLANNED_MRP_TYPE = "VB"`, `OBSOLETE_MRP_TYPE = "ND"` and
+  `OBSOLETE_MATERIAL_STATUS = "01"` — one config block, with the pending
+  verification recorded against it.
+- **`Dismm` is now derived *from* `is_oar`**, not the reverse. The configured
+  value set is the single place the OAR definition lives, mirroring what W2.4
+  does in the app.
+- **The obsolete collision is resolved by a second field, not by MRP type.**
+  `MARA.MSTAE` (`'01'` for obsolete) is **already live on `MaterialSet`** and is
+  the orthogonal signal. Obsolete materials keep `ND`, because in SAP they
+  genuinely have no planning maintained — so the overlap is retained *on
+  purpose* to make the second predicate testable.
+  **The scope rule is therefore `Dismm in (ND, PD) AND Mstae ne '01'`.**
+- **`Extwg` removed** from `PENDING_FIELDS` and from the `MaterialSet` row
+  build. The header is now `Matnr,Lvorm,Mtart,Matkl,Bismt,Meins,Mstae,Sernp`.
+  Note it is *withdrawn*, not exposed — so `generate.py`'s
+  "no longer pending" warning could never have caught this. Rule changes come
+  from people, not `$metadata`.
+- **OAR scope is now decided per plant, not per material.** Because `DISMM` sits
+  on MARC, a material can be planned on demand in one plant and reorder-point
+  planned in another. `OAR_SINGLE_PLANT_SHARE = 0.15` gives that shape to a
+  slice of the multi-plant OAR materials, and `MaterialPlantRow.is_oar` carries
+  the plant-level truth. Two plant-grain consumers were branching on the
+  *material*-level flag and are now corrected: the stock simulation and the OAR
+  reservation-chain builder. Without this the fixture could not express the
+  case at all — see below.
+- **An invariant guard** refuses to run if `PLANNED_MRP_TYPE` is ever put inside
+  `OAR_MRP_TYPES`, which would silently select every planned material as OAR.
+- Superseded comments rewritten; regenerated and committed.
+
+The synthetic data now exercises both the naive rule and the refined one:
+
+| `Dismm` | rows | in OAR scope | obsolete (`Mstae='01'`) |
+|---|---|---|---|
+| `VB` | 1,975 | no | **0** |
+| `ND` | 294 | yes | **109** |
+| `PD` | 198 | yes | 0 |
+
+- Naive `Dismm in (ND, PD)` → **492** rows
+- Refined `… AND Mstae ne '01'` → **383** rows — the true OAR population
+- The second predicate excludes exactly the **109** obsolete rows, and `VB`
+  contains **no** obsolete material at all, so there are no false positives from
+  the general population
+- **7 materials are now OAR in one plant and `VB` in another** — the roll-up
+  test case from §1.6(a), which the fixture previously could not produce at all.
+  Verified end to end on `000000000030000014`: plant 4000 is `VB` with a
+  maintained reorder point and stock, plant 1000 is `PD` with no ROP and all
+  three of the material's reservations
+
+That is a deliberately useful fixture: the naive rule over-selects by a knowable
+amount, the refinement removes exactly the right rows, and the plant-grain edge
+case is present rather than hypothetical. Row counts shifted slightly overall
+(`MaterialPlantSet` 2,520 → 2,467) because dropping the `Extwg` random draw
+changed the RNG call sequence — expected, and still deterministic under
+`SEED = 42`.
+
+**What is still not settled:** whether `ND`+`PD` is a minority of the *live*
+catalogue. The generator now assumes the rule is right; the three counts test
+that assumption against reality.
+
+### 1.7 Does this solve `Sernp` and `Zzaisession`? No — both are unrelated
+
+Short answer: **no, and they were never connected to OAR identification.** The
+MRP-type ruling changes only *which materials are in scope*. Two of the three
+pending fields are untouched, and `PENDING_FIELDS` should now hold exactly two
+entries instead of three.
+
+| Field | What it is | Status | Blocks? |
+|---|---|---|---|
+| `MaterialSet.Extwg` | External material group — the *old* OAR identifier | **No longer needed.** Superseded by `MARC.DISMM`. Remove from `PENDING_FIELDS` | Nothing. Withdrawn |
+| `MaterialSet.Sernp` | Serial number profile (MARA) | **Still not exposed.** Unchanged by this ruling | **Nothing today.** Only needed for a *future* serial-grain repair register; present on ~18% of 80-series PO lines. No current I07/I08/I13 requirement depends on it — safe to leave pending |
+| `ReservationItemSet.Zzaisession` | The reservation field carrying the AI assistant session ID | **Still not designated.** Confirmed absent by the sweep. Candidates `SGTXT`, `WEMPF`, `ABLAD`, or a Z-append | **Yes, for the reservation-time assistant.** It is a SAP/NTT *designation decision* (W2.8), not a data-exposure request — nobody is waiting on a transport, they are waiting on someone to choose a field |
+
+**Why `Zzaisession` cannot ride along with this fix.** Exposing a field and
+*designating* one are different asks. `Dismm` was already there — the ruling just
+pointed us at it. `Zzaisession` does not exist under any name yet; someone has to
+decide which reservation field carries the session ID, and that decision belongs
+to the W2.8 BAdI launch contract. Chase it separately, and keep it behind a
+single config key naming the field so the eventual answer is a one-line change.
+
+Note the assistant is designed to run **on demand without the BAdI**, so this
+blocks the deep-link launch path, not the assistant itself.
 
 ---
 
@@ -195,7 +392,8 @@ testable in CI. One environment variable chooses fake or real.
 
 ### How we test it
 - Token cache reused within expiry; refreshed after; re-fetched once on `401`.
-- `APIPath`/`APIQuery` encoding for filters containing spaces and quotes.
+- `APIPath`/`APIQuery` encoding for filters containing spaces and quotes —
+  including the `or`-joined scope filter from §1.6(b).
 - `/Date(...)/` → date; `PT14H16M00S` → time; `"1234.56"` → number; `null` → null.
 - A field declared `Edm.String` that holds a numeric value is **not** silently
   turned into a number (the `Netpr` case).
@@ -230,11 +428,14 @@ The smoke test should:
 4. Read two pages to prove paging works.
 5. Print the resolved endpoint hostname and TLS certificate issuer.
 6. **Assert the known-conditions set** from §1 — 2 `$count` failures, 3 zero-row
-   sets, `Extwg` absent. Report each as *still true* or *changed*.
+   sets, and the **`Dismm` value distribution** from §1.6(c). Report each as
+   *still true* or *changed*.
 7. Exit non-zero on any failure, with the failing step named.
 
 Step 6 turns the smoke test into a live re-verification, so W2.7 becomes a
-command anyone can run rather than a scheduled event.
+command anyone can run rather than a scheduled event. **Add the three `Dismm`
+counts to it now** — that makes §1.6(c) a standing check rather than a one-off
+question, and catches the day someone re-maintains MRP types in bulk.
 
 ### What we cannot do
 Anything about the network itself: private endpoints, DNS resolution inside the
@@ -334,80 +535,103 @@ fallback, with zero key duplication and the change-document sets filter-gated.
 > **CRITICAL SEQUENCING ITEM** — built before EXTWG is exposed so the fix is a
 > configuration change rather than rework across I07 and I13.
 
-**This section is unchanged by the sweep, and that is the point.** `MARA.EXTWG`
-is still absent and `OAR_EXTWG = "100"` is still unconfirmed. Everything below
-stands. Meanwhile the `PurchaseOrderItemSet` `$count` fix and the four
-newly-confirmed ZMM sets demonstrate the same principle working in the small:
-config-driven behaviour absorbed a SAP-side change with no code edit.
+**The task just proved its worth, and its target field changed.** The plan
+anticipated a *value* change on `EXTWG`. What actually happened is bigger: the
+**entire identifying field** moved from `MARA.EXTWG` to `MARC.DISMM`, with a
+different value set and a different grain. Had scope been written inline, that
+would be rework across every I07 and I13 selector. Because it was deferred to
+config, it is a config rewrite plus one signature change.
+
+Still the highest-leverage task in WS2. Still has **no dependencies**. Do it
+first — and now it is *better* positioned, because the field it needs is live.
 
 ### What it means
 "Which materials are in scope?" is asked in dozens of places across I07 and
-I13. The answer depends on `MARA.EXTWG`, which **is still not exposed**, and on
-a candidate value of `100` that **VZI has still not confirmed** (see
-`generate.py:111`, `OAR_EXTWG = "100"`).
+I13. As of the 08-Sep ruling the answer is **`MARC.DISMM` ∈ {`ND`, `PD`}**,
+read from `MaterialPlantSet` — a field that is **already exposed and populated**.
 
-If that question is answered inline — `if (material.extwg === "100")` — then
-when SAP exposes the field and confirms the real value, we edit dozens of
-files. If it is answered by one configured predicate, we edit one line.
-
-This is still the highest-leverage task in WS2 and it still has **no
-dependencies.** Do it first.
+Two things still need settling before the config is trusted, both in §1.6:
+the **ND/PD overlap question** (c), and whether scope is **plant-level or
+material-level** (a). Build the module so either answer is configuration.
 
 ### What we do now
-Build it completely — it is pure configuration design.
+Build it completely — it is pure configuration design, and the field is live.
 
-- **One scope module** exposing something like `isInScope(material, scope)`.
-  Nothing outside it may reference `Extwg` or the literal `"100"`.
-- **Config-driven, declarative.** A scope is data, not code:
-  `{ field: "Extwg", op: "in", values: ["100"] }`. Support `in`, `notIn`,
-  `startsWith` and `and`/`or` — VZI may well answer "it's a range" or
-  "it's these four groups".
+- **One scope module** exposing `isInScope(material, plant)`. Nothing outside it
+  may reference `Dismm`, `"ND"` or `"PD"`.
+  **Take the plant argument even if the rule turns out to be material-level** —
+  it is trivial to ignore an argument and expensive to add a dimension later.
+- **Config-driven, declarative.** A scope is data, not code — and the rule is
+  already a two-predicate `and`, so support that from the first commit:
+  ```
+  { and: [ { field: "Dismm", op: "in",  values: ["ND", "PD"] },
+           { field: "Mstae", op: "ne",  value:  "01"         } ] }
+  ```
+  `Dismm` lives on `MaterialPlantSet` and `Mstae` on `MaterialSet`, so the
+  predicate spans **two entity sets** — the scope module needs both rows, and
+  the pushdown path needs two filtered reads joined on `Matnr`, not one.
+  Support `in`, `notIn`, `ne`, `startsWith`, `and` and `or`.
+- **A roll-up policy, explicit in config.** When a material is `ND` in one plant
+  and `VB` in another, is it OAR? Express this as
+  `rollup: "any-plant" | "all-plants" | "per-plant-only"` rather than deciding it
+  inside a selector. This is §1.6(a), and it is the one thing most likely to be
+  got wrong silently.
 - **Named scopes**, because the three initiatives do not share one definition:
   `oar` (I13 whole scope, I07 OAR flag), `repairable` (I08 — 80-series
   materials, a different rule entirely), and `all`.
-- **Pushdown where possible.** The same config should generate an OData
-  `$filter` for server-side filtering *and* an in-memory predicate for
-  post-filtering. When EXTWG is exposed we filter at SAP and move far less data.
-  The same pushdown machinery is what §1.4's change-document filters need — build
-  it once, use it for both.
-- **An explicit unavailable state.** `Extwg` still does not exist on live
-  `MaterialSet`. The module must distinguish "not in scope" from
-  **"cannot determine scope — field unavailable"**, and the app must show that
-  honestly rather than rendering an empty list that looks like real zero.
-  §1.3 makes this urgent rather than theoretical: three live sets return zero
-  rows *right now*, so "empty" and "unavailable" will both occur in the same
-  screens and must not look alike.
-- **A documented fallback rule** for the interim. `generate.py:726` notes OAR
-  materials share the same MRP type as the general population, so MRP type
-  cannot substitute. Record explicitly that there is *no* usable proxy, and that
-  interim behaviour is "unavailable", not "guess".
+- **Pushdown as the primary path.** `Dismm` is live, so generate the OData
+  `$filter` and filter at SAP:
+  `$filter=Dismm eq 'ND' or Dismm eq 'PD'` on `MaterialPlantSet`. Keep the
+  in-memory predicate for tests and for rows already in hand. The same pushdown
+  machinery is what §1.4's change-document filters need — build it once.
+- **Keep the unavailable state anyway.** Scope no longer needs it — `Dismm` is
+  there — but §1.3 means "empty" and "unavailable" will still both occur in I13
+  and I08 screens via reservations. Keep the three-way distinction
+  (in-scope / not-in-scope / cannot-determine) so a data outage never renders as
+  a confident empty list.
 
 ### What we cannot do
-Confirm the field name is `Extwg` on the projection, or that `100` is the right
-value, or whether OAR is one value or several. All three are still open VZI
-questions — the one substantive item the sweep did **not** resolve.
+Confirm the ND/PD set is right until the three `$count` calls in §1.6(c) come
+back, or decide the roll-up policy — that is the team lead's call. Both are
+config values, so neither blocks building the module. **Do not regenerate
+synthetic data against the new rule until the counts land** (§1.6).
 
 ### Mock or placeholder
-`generated/sap/MaterialSet.csv` **still carries the `Extwg` column** (header:
-`Matnr,Lvorm,Mtart,Matkl,Bismt,Meins,Mstae,Extwg,Sernp`), appended by
-`generate.py` under `PENDING_FIELDS` precisely for this. The full scope path is
-testable today against synthetic data. Keep `100` in config, clearly marked
-unconfirmed.
+**None — the scope path needs no stub at all.** `Dismm` is live on real
+`MaterialPlantSet`, and `generated/sap/MaterialPlantSet.csv` carries it
+populated under the **corrected** rule (§1.6(d)), with `Mstae` on
+`MaterialSet` as the obsolete signal. Both predicates and the pushdown path are
+testable today, against a fixture where the naive rule selects 492 rows and the
+refined one 383.
+
+`Extwg` is **gone** from the synthetic `MaterialSet.csv` header. Nothing should
+reference it.
+
+Still assert *behaviour* rather than hard-coded counts — "the filter selects
+exactly the rows matching the configured predicate" — so the tests survive the
+next regeneration, and survive the `ND`/`PD` value set changing if §1.6(c) comes
+back unfavourable.
 
 ### How we test it
-- Config with one value, several values, and a `startsWith` rule.
-- Generated `$filter` string is correct OData v2 and URL-encodes properly.
-- In-memory predicate and pushdown filter select the **same** material set —
-  this equivalence test is what makes the eventual switch to server-side
-  filtering safe.
+- Config with one value, several values, a `notIn`, and an `and` combination.
+- Generated `$filter` string is correct OData v2, URL-encodes properly, and
+  handles the `or`-joined multi-value case.
+- In-memory predicate and pushdown filter select the **same** rows — this
+  equivalence test is what makes server-side filtering safe.
+- Each `rollup` mode over a material that is OAR in one plant and `VB` in
+  another gives the documented answer. The synthetic data now contains **7**
+  such materials plus 466 two-plant materials overall, so this is directly
+  testable (§1.6(d)).
 - Field absent → `unavailable`, not `false`.
-- `grep` test in CI: the literal `"100"` and the token `Extwg` appear **only**
-  in the config file and the scope module. This test is what actually enforces
-  the whole point of W2.4.
+- `grep` test in CI: the literals `"ND"`, `"PD"`, `"01"` and the tokens
+  `Dismm`/`Mstae` appear **only** in the config file and the scope module. Add `Extwg` and `"100"` to
+  the same test as *forbidden everywhere* — they are withdrawn, and a stray
+  reference is now a bug rather than a placeholder.
 
 ### Done when
-Changing one config value re-scopes I07 and I13 end to end, and the grep test
-proves no leakage.
+Changing one config value re-scopes I07 and I13 end to end, the roll-up policy
+is explicit, and the grep test proves no leakage of either the new or the
+withdrawn identifiers.
 
 ---
 
@@ -452,7 +676,8 @@ Build it fully from the saved metadata — no live access needed.
   | `ReservationItemSet` count | expected **0** — flip to a hard failure once SAP answers §1.3 |
   | `MaterialValuationSet` count | expected **0** — same |
   | `MonthlyMovementStatisticSet` count | expected **0**, unused |
-  | `Extwg` on `MaterialSet` | expected **absent** |
+  | **`Dismm` on `MaterialPlantSet`** | **expected present, `Edm.String`** — the OAR identifier. A hard failure if it ever disappears |
+  | **`Dismm` value domain** | expected ⊆ {`VB`, `ND`, `PD`} — fail on an unseen value, which would mean the OAR rule is incomplete |
   | `Sernp` on `MaterialSet` | expected **absent** |
   | `Zzaisession` on `ReservationItemSet` | expected **absent** |
   | `ChangeDocItemSet` key | expected **3 fields**, `Tabname`/`Fname` non-key |
@@ -460,9 +685,10 @@ Build it fully from the saved metadata — no live access needed.
   | `ChangeDocHeaderSet.Utime` | expected **`Edm.Time`** |
   | `ChangeDocItemSet` / `ChangeDocHeaderSet` volume | expected > 100,000 — filter-only sets |
 
-  *Retired conditions* (no longer applicable): `ZMM_KPI02_SRV` unreachable;
-  `Bnfpo` not a key — it is a plain non-key property on `ReservationItemSet`,
-  which matches the dictionary note; the `NOT_EXPOSED_SETS` assumed-property set.
+  *Retired conditions:* `ZMM_KPI02_SRV` unreachable; `Bnfpo` not a key (it is a
+  plain non-key property on `ReservationItemSet`, matching the dictionary note);
+  the `NOT_EXPOSED_SETS` assumed-property set; and **`Extwg` on `MaterialSet`** —
+  no longer pending, because the field is no longer wanted (§1.6).
 - **Type-mapping tests.** `Edm.DateTime` → date, `Edm.Time` → time-of-day,
   `Edm.Decimal` → number-from-string, `Edm.String` with leading zeros stays a
   string (SAP material numbers are zero-padded — parsing `000000000012345` as a
@@ -479,9 +705,8 @@ Nothing significant any more. The suite runs against a snapshot of *real*
 metadata for all 21 sets, and the drift test covers the live comparison.
 
 ### Mock or placeholder
-None needed for the contract itself — that is the sweep's biggest gift to this
-task. The three still-unexposed *fields* (`Extwg`, `Sernp`, `Zzaisession`) are
-declared as pending and asserted absent.
+None needed for the contract itself. The two still-unexposed fields (`Sernp`,
+`Zzaisession`) are declared pending and asserted absent.
 
 ### How we test it
 Meta-test the suite: feed it a deliberately altered metadata XML — renamed
@@ -506,19 +731,20 @@ specific failures.
 ### What it means
 A local server that pretends to be CPI, so the whole app runs with no SAP at all.
 
-**The sweep shrank this task's mocking scope to almost nothing.** The plan's
-"eight items" were 7 ZMM sets + EXTWG. All 7 sets are now real, so the true gap
-is **three fields**: `Extwg`, `Sernp`, `Zzaisession`. What remains is a *volume*
-gap rather than a *schema* gap — three live sets return zero rows (§1.3), so
-synthetic data is still how I07, I08 and I13 get exercised end to end.
+**The sweep and the MRP-type ruling between them reduced this task's mocking
+scope to almost nothing.** The plan's "eight items" were 7 ZMM sets + EXTWG. All
+7 sets are now real, and EXTWG is **withdrawn rather than pending** — so the
+schema gap is down to **two fields**, neither of which blocks current work
+(§1.7). What remains is a *volume* gap: three live sets return zero rows (§1.3),
+so synthetic data is still how I07, I08 and I13 get exercised end to end.
 
 So the gateway is still needed, and still serves all 21 sets — but as a
 **test-and-development fixture**, no longer as a stand-in for missing schema.
 
 ### The problem this task must actually solve
 
-This remains the most important finding in this document, and the sweep did not
-touch it.
+This remains the most important finding in this document, and neither the sweep
+nor the ruling touched it.
 
 The data generator produces **14 MB of SAP-shaped CSVs across 28 files** (21 SAP
 + 7 platform). The app is fed by **hand-written TypeScript fixtures** in
@@ -530,7 +756,7 @@ Azure day that gap surfaces all at once.
 
 **Closing it is the real deliverable of W2.6.** Everything else in WS2 is
 insurance; this is the integration itself. It is now also the *largest*
-remaining task, since the mocking half just got much smaller.
+remaining task, since the mocking half keeps shrinking.
 
 ### What we do now
 1. **Fake CPI server.** Reads `generated/sap/*.csv`, serves the CPI
@@ -540,8 +766,9 @@ remaining task, since the mocking half just got much smaller.
    clean JSON tests nothing. Type each field from the generated contract, so
    `Netpr` comes back as a string exactly as live CPI now does.
 2. **Support the query surface we actually use:** `$top`, `$skip`, `$filter`
-   (eq, and, or), `$orderby`, `$select`, `$count`. `$filter` on `Objectclas` and
-   `Tabname` is now a first-class requirement, not a nice-to-have — §1.4.
+   (eq, and, **or**), `$orderby`, `$select`, `$count`. Two `$filter` cases are
+   now first-class requirements, not nice-to-haves: `Objectclas`/`Tabname` for
+   §1.4, and the **`or`-joined `Dismm` scope filter** for §1.6(b).
 3. **Reproduce the current known state on purpose.** `$count` → HTTP 500 on the
    two broken sets, working on the rest. And a mode that makes
    `ReservationItemSet` and `MaterialValuationSet` return **zero rows**, so we
@@ -558,7 +785,8 @@ remaining task, since the mocking half just got much smaller.
    hand-written fixtures with mapper output.** Where a fixture holds data no SAP
    field can produce, that is a finding: log it as a gap, do not invent a source.
    Write the mappers against the **real** property names now available for all
-   21 sets; there is no longer any excuse for guessing.
+   21 sets; there is no longer any excuse for guessing. **Route every
+   scope decision through the W2.4 module** — no mapper should read `Dismm`.
 6. **Mark synthetic data visibly.** Every response from a mocked set carries a
    flag, and the UI shows a persistent "synthetic data" banner. With schema now
    real but reservation data empty, the risk of demoing synthetic numbers as real
@@ -572,15 +800,17 @@ And the calibration gap stands: ~2,034 dev materials against **>45,000 in
 production**, so synthetic volumes prove function, not performance.
 
 ### Mock or placeholder
-Placeholders remaining, now a short list:
-- **`MaterialSet.Extwg`** — not exposed. Behind the W2.4 scope config.
-- **`MaterialSet.Sernp`** — not exposed. Only needed for a future serial-grain
-  repair register; no current initiative blocks on it.
+Placeholders remaining — now a short list, and shorter than yesterday:
+- ~~**`MaterialSet.Extwg`**~~ — **withdrawn.** Superseded by `MARC.DISMM`,
+  which is live. Remove from `PENDING_FIELDS`; nothing should read it (§1.6).
+- **`MaterialSet.Sernp`** — not exposed, and **not blocking**. Only needed for a
+  future serial-grain repair register (§1.7).
 - **`ReservationItemSet.Zzaisession`** — the AI-session field is **still not
-  designated** (candidates `SGTXT`, `WEMPF`, `ABLAD`, or a Z-append). Keep it
-  behind a single config key naming the field, so it is a one-line change.
-  Confirmed absent by the sweep, so this is now a known-open item rather than a
-  guess.
+  designated** (candidates `SGTXT`, `WEMPF`, `ABLAD`, or a Z-append). A SAP/NTT
+  *decision*, not an exposure request — see §1.7. Keep it behind a single config
+  key naming the field, so it is a one-line change.
+- **The OAR value set `{ND, PD}`** — stated by the team lead, not yet reconciled
+  with our data model (§1.6(c)). Config value, pending three `$count` calls.
 - **`REPAIR_DOC_TYPE = "ZREP"` and `REPAIR_ITEM_CATEGORY = "3"`** — I08 decision
   D7, **still pending SAP confirmation**. Move both to config alongside the
   scope rules.
@@ -598,6 +828,8 @@ Placeholders remaining, now a short list:
 - Mapper round-trip: SAP-shaped row → view model → the fields the UI renders.
 - A filtered `ChangeDocItemSet` read returns the expected subset; an unfiltered
   one is refused.
+- The `Dismm` scope filter returns the same rows through the gateway as the
+  in-memory predicate does.
 
 ### Done when
 The app runs entirely off the fake gateway with the hand-written fixtures
@@ -611,13 +843,13 @@ deleted, and one config file switches any set between mock and live.
 > `ZMM_KPI02_SRV` responds, capture the real property names on `ChangeDocItem`
 > and `ReservationItem`.
 
-### Result: passed on two of three objectives
+### Result: two of three objectives, and the third was withdrawn
 
 | Objective | Result |
 |---|---|
 | `ZMM_KPI02_SRV` responds | ✅ **Yes.** 19,129 bytes, 7 sets, 75 properties |
 | Real property names on `ChangeDocItem` and `ReservationItem` | ✅ **Captured.** One assumption corrected (`Value_old`/`Value_new`), one key structure corrected, two new fields found (`Umwrk`, `Umlgo`) |
-| `EXTWG` exposed | ❌ **No.** `MaterialSet` unchanged at 7 properties |
+| `EXTWG` exposed | ⊘ **Withdrawn.** Still absent — but no longer needed. The team lead replaced the OAR identifier with **MRP Type (`MARC.DISMM`)**, which is already live (§1.6) |
 
 **Bonus findings the sweep was not looking for:** `PurchaseOrderItemSet.$count`
 fixed; FR-9 proven feasible; `Netpr`/`Netwr` type regression; change-document
@@ -627,6 +859,8 @@ Full detail in §1.
 ### What this unblocks, immediately
 - **Write against real names.** All 229 properties on all 21 sets are measured.
   No mapper needs to guess.
+- **Scope is buildable end to end, today.** `Dismm` is live, so W2.4 can be
+  built *and* pushdown-tested against real metadata rather than a stub (§1.6(b)).
 - **FR-9 is buildable.** `Objectclas` and `Tabname` filter correctly and cut
   929,151 rows to 7,220. I07 can verify whether a recommendation was applied.
 - **`NOT_EXPOSED_SETS` is empty.** The generator's schema is fully
@@ -634,17 +868,23 @@ Full detail in §1.
 - **W2.5 has a real contract for every set** — no assumed-source tagging.
 
 ### What is still open
-1. **EXTWG exposure and the confirmed OAR value** — chase VZI. Blocks the I13
-   material scope and the I07 OAR flag. W2.4 keeps it to a config change.
-2. **Zero rows on `ReservationItemSet` and `MaterialValuationSet`** (§1.3) —
-   **raise this now, as a separate question from registration.** It is the
-   largest remaining unknown in WS2.
-3. **`Zzaisession` designation** — SAP/NTT decision, tied to W2.8.
-4. **`ZREP` / item-category 3** — I08 decision D7 confirmation.
-5. **The entity dictionary xlsx** — still absent, so `dictionary_gaps.csv` still
+1. **The ND/PD overlap question** (§1.6(c)) — three `$count` calls settle it.
+   Highest-value open item because it is cheap and it gates the scope config.
+2. **Plant-level vs material-level scope** (§1.6(a)) — team lead's call. Decide
+   before the scope module is written, not after.
+3. **Zero rows on `ReservationItemSet` and `MaterialValuationSet`** (§1.3) —
+   raise as a separate question from registration. Largest remaining unknown.
+4. **`Zzaisession` designation** — SAP/NTT decision, tied to W2.8. **Not solved
+   by the MRP-type ruling** (§1.7).
+5. **`ZREP` / item-category 3** — I08 decision D7 confirmation.
+6. **The entity dictionary xlsx** — still absent, so `dictionary_gaps.csv` still
    cannot be produced (§9.4).
 
 ### Follow-up actions
+- **Run the three `Dismm` `$count` calls** and record the distribution (§1.6(c)).
+- Ask whether `ND` (obsolete in our model) is genuinely in OAR scope, and how
+  obsolete materials are excluded — or whether they are.
+- Ask whether the OAR rule is plant-level or material-level.
 - Ask the SAP team **why** the three sets are empty: no dev data, an auth filter,
   or a projection needing a mandatory filter? Different fixes.
 - Ask whether the `Netpr`/`Netwr` type change to `Edm.String` was intentional,
@@ -652,15 +892,14 @@ Full detail in §1.
 - Confirm the `ChangeDocItemSet` key is intentionally 3 fields, and that
   `(Objectclas, Objectid, Changenr, Tabname, Fname)` is the right composite
   identity for our own storage.
-- Reword the stale `NOT_EXPOSED_SETS` comment in `generate.py` (§1.5).
-- Commit the discovery outputs, the regenerated CSVs and `generate.py` as one
-  commit, so the schema baseline is traceable to this sweep.
+- **After the counts land:** apply the generator changes in §1.6, remove `Extwg`
+  from `PENDING_FIELDS`, regenerate and re-commit.
 
 ### Next re-verification
 There is no longer a single scheduled gate. Fold the checks into the W2.2 smoke
-test (step 6) so the known-conditions set is verified on demand, and re-run the
-full sweep when SAP announces a fix — specifically on EXTWG exposure or a
-reservation-data answer.
+test (step 6) — including the three `Dismm` counts — so the known-conditions set
+is verified on demand, and re-run the full sweep when SAP announces a fix,
+specifically on reservation data or a `Sernp`/`Zzaisession` decision.
 
 ---
 
@@ -695,23 +934,23 @@ python cpi_discovery.py --env-file ..\.env --out .\discovery
 
 **Never print or commit the secret.** `.gitignore:34` covers `.env*`.
 
-### 9.2 Before the next run — archive, do not delete
+### 9.2 Before the next run — commit, then overwrite
 
-**Do not delete `discovery/`.** `generate.py` reads
-`discovery/properties.csv` as its schema source, and the value of a re-run is
-the **diff** — which is exactly how the `Netpr` type change was caught.
+`discovery/` is now **committed** (`8220af6`), so `git diff` alone answers "what
+changed" and no archive copy is needed. That is the workflow from here: commit
+the current state, re-run, diff.
+
+**Do not delete `discovery/`.** `generate.py` reads `discovery/properties.csv`
+as its schema source, and the value of a re-run is the diff — which is exactly
+how the `Netpr` type change was caught.
+
+If you want a belt-and-braces copy anyway:
 
 ```powershell
 cd c:\Users\varad\OneDrive\Desktop\spares-ai\data-generator
 $stamp = Get-Date -Format "yyyyMMdd-HHmm"
 Copy-Item -Recurse .\discovery ".\discovery-baseline-$stamp"
-Write-Host "baseline saved to discovery-baseline-$stamp"
 ```
-
-**Better still: commit the current `discovery/` first.** With the outputs in git,
-`git diff` alone answers "what changed" and no archive copy is needed. That is
-the recommended workflow from here — this sweep's results are uncommitted right
-now, and committing them is the cheapest way to make the next diff trivial.
 
 The script uses `mkdir(exist_ok=True)` and overwrites each output, so no cleanup
 is needed. One caveat: **stale files are not removed.** If a set disappears from
@@ -756,6 +995,7 @@ python cpi_discovery.py --env-file ..\.env --out .\discovery --dictionary ..\doc
 `dictionary_gaps.csv` is the field-by-field FRS-vs-SAP comparison. It matters
 more now, not less: with all 229 properties measured, it would tell us in one
 pass which FRS fields have no SAP home — a question we currently answer by hand.
+It would also have flagged the EXTWG-vs-MRP-type divergence months earlier.
 
 ### 9.5 Reading the results
 
@@ -765,8 +1005,8 @@ cd c:\Users\varad\OneDrive\Desktop\spares-ai\data-generator
 # 1. Both services present, with set counts
 Import-Csv .\discovery\entity_sets.csv | Group-Object service | Select-Object Count, Name
 
-# 2. Is EXTWG exposed yet?  (expect 7 rows, no Extwg)
-Import-Csv .\discovery\properties.csv | Where-Object { $_.entity_set -eq "MaterialSet" } | Select-Object property, type
+# 2. The OAR identifier - is Dismm still on MaterialPlantSet?
+Import-Csv .\discovery\properties.csv | Where-Object { $_.entity_set -eq "MaterialPlantSet" } | Select-Object property, type
 
 # 3. $count failures  (expect PurchaseRequisitionSet, GoodsMovementItemSet)
 Import-Csv .\discovery\counts.csv | Where-Object { $_.count -like "HTTP*" }
@@ -780,29 +1020,34 @@ Import-Csv .\discovery\properties.csv | Where-Object { $_.service -eq "ZMM_KPI02
 # 6. FR-9 feasibility  (expect real counts, not HTTP 500)
 Get-Content .\discovery\fr9_check.txt
 
-# 7. What changed - the single most valuable command here
+# 7. Still-pending fields  (expect Sernp, Zzaisession only - Extwg is withdrawn)
+Select-String -Path .\generate.py -Pattern "PENDING_FIELDS" -Context 0,20
+
+# 8. What changed - the single most valuable command here
 git diff data-generator/discovery/
 ```
 
-Query 7 is what caught the `Netpr` type change. Run it every time.
+Query 8 is what caught the `Netpr` type change. Run it every time.
 
 ### 9.6 Improve the script — still worth doing
 
-Three small changes, all still outstanding:
+Four small changes, all outstanding:
 
 1. **Write metadata only on success, and always record the failure.** The
    response body is written before the status is checked — which is how a
    0-byte file ended up on disk this morning with no error recorded anywhere.
    Write a `run_summary.json` with timestamp, per-service HTTP status, set counts
-   and the missing/extra lists. Then "what happened at 12:08?" has an answer
-   other than a file size.
+   and the missing/extra lists.
 2. **Distinguish zero from failed in `counts.csv`.** Right now `0` and a real
    count look alike, and a dead service is *absent* rather than reported dead.
-   Given §1.3 is now our top blocker, this column needs three states: a count,
+   Given §1.3 is a top blocker, this column needs three states: a count,
    `EMPTY`, or an error.
-3. **Add a `--baseline <dir>` diff mode** printing added, removed and changed
-   properties per set. `git diff` covers this once `discovery/` is committed, so
-   this is the lower-priority of the three.
+3. **Add a value-distribution probe** for low-cardinality fields that drive
+   business rules — `Dismm` above all. One filtered `$count` per distinct value,
+   written to a `value_domains.csv`. This is exactly the §1.6(c) question, and it
+   should be a standing output rather than a one-off investigation.
+4. **Add a `--baseline <dir>` diff mode.** `git diff` covers this now that
+   `discovery/` is committed, so this is the lowest priority of the four.
 
 ### 9.7 After a sweep
 
@@ -822,7 +1067,12 @@ Then **check `PENDING_FIELDS` and `NOT_EXPOSED_SETS`.** `generate.py` warns when
 a `PENDING_FIELDS` entry is no longer pending, or when a `NOT_EXPOSED_SETS`
 entry is now discovered — read those warnings, they are the handover from SAP's
 fix to our config. This sweep's handover was done correctly:
-`NOT_EXPOSED_SETS` went to `{}` and three fields remain pending.
+`NOT_EXPOSED_SETS` went to `{}`.
+
+Note the warning mechanism only catches *exposure* changes. It cannot catch a
+**rule** change like §1.6 — `Extwg` is still legitimately absent, so nothing
+warns that it is no longer wanted. Rule changes arrive from people, not from
+`$metadata`; that is why §1.6 is written down.
 
 Commit the discovery outputs, the regenerated CSVs, `generate.py` and the run
 log as **one commit**, so the schema baseline is traceable. `docs/` is gitignored
@@ -832,41 +1082,46 @@ log as **one commit**, so the schema baseline is traceable. `docs/` is gitignore
 
 ## 10. Things not in the plan that I would add
 
-1. **Wire the app to the generated CSVs.** Covered in W2.6, restated because it
-   is the largest real risk and the sweep did not touch it: 14 MB of SAP-shaped
-   data and 1,161 lines of hand-written fixtures that have never met. Everything
-   else in WS2 is preparation; this is the integration.
-2. **Chase the zero-row answer** (§1.3). Now the top open question. Registration
-   without data is not a fixed dependency, and it is easy to mistake for one.
-3. **Add a test runner and CI.** Still no Vitest/Jest and no `.github/`. The
+1. **Run the three `Dismm` counts before writing the scope config** (§1.6(c)).
+   Cheapest high-value action available: three calls, and it either confirms the
+   new OAR rule or catches a 70%-false-positive scope definition before any code
+   depends on it.
+2. **Get the plant-vs-material roll-up decided** (§1.6(a)). A silent wrong
+   answer here propagates into every I07 and I13 selector.
+3. **Wire the app to the generated CSVs.** Covered in W2.6, restated because it
+   is the largest real risk and nothing this week touched it: 14 MB of SAP-shaped
+   data and 1,161 lines of hand-written fixtures that have never met.
+4. **Chase the zero-row answer** (§1.3). Registration without data is not a
+   satisfied dependency, and it is easy to mistake for one.
+5. **Add a test runner and CI.** Still no Vitest/Jest and no `.github/`. The
    `Netpr` type change is the concrete argument: a silent contract change slipped
    through in four hours and only a manual diff caught it.
-4. **Commit `discovery/` on every sweep.** Makes `git diff` the drift detector
-   and removes the need for archive copies.
-5. **Ask about CPI inbound IP restrictions now** (see W2.2). A late answer costs
+6. **Commit `discovery/` on every sweep.** Done for this one (`8220af6`); keep it
+   up, and `git diff` stays the drift detector.
+7. **Ask about CPI inbound IP restrictions now** (see W2.2). A late answer costs
    a day of Azure time.
-6. **Chase the entity dictionary xlsx** (§9.4). Worth more now that all 229
-   properties are known.
-7. **Put every unconfirmed business constant in one config file.** `OAR_EXTWG`,
-   `REPAIR_DOC_TYPE`, `REPAIR_ITEM_CATEGORY`, `SCRAPPING`, `OVERDUE_GRACE_DAYS`,
-   `PLAN_GRACE_DAYS` and the movement types are constants in `generate.py` and
-   will be re-declared in the app. One shared `sap-contract.config.ts` with a
-   `confirmed: true|false` flag per value makes the assumption surface visible in
-   one screen — and reviewable by VZI.
-8. **Zero-padding discipline.** SAP material numbers are zero-padded strings
-   (`000000000012345`). Decide once whether the app stores padded or unpadded,
-   normalise at the client boundary, and test it. Getting this wrong late causes
-   joins that silently match nothing. Note `Matnr` is `Edm.String` on every set
-   that carries it — confirmed across all 21.
-9. **Treat calibration as a known limitation, not a task.** ~2,034 dev materials
-   vs >45,000 production. Synthetic volumes prove correctness, never performance.
-   Add one load test against 45,000 synthetic materials so the first encounter
-   with production scale is not in UAT. The 929k-row `ChangeDocItemSet` is a
-   second, already-real scale case.
-10. **Reset the dates.** The plan runs 08-Sep to 25-Sep 2026 with W2.7 gated on
+8. **Chase the entity dictionary xlsx** (§9.4).
+9. **Put every unconfirmed business constant in one config file.** The OAR MRP-type
+   set, `REPAIR_DOC_TYPE`, `REPAIR_ITEM_CATEGORY`, `SCRAPPING`,
+   `OVERDUE_GRACE_DAYS`, `PLAN_GRACE_DAYS` and the movement types are constants
+   in `generate.py` and will be re-declared in the app. One shared
+   `sap-contract.config.ts` with a `confirmed: true|false` flag per value makes
+   the assumption surface visible in one screen — and reviewable by VZI.
+   **§1.6 is the argument for this:** the OAR identifier changed field, value set
+   *and* grain in a single Slack message. Assume the rest will too.
+10. **Zero-padding discipline.** SAP material numbers are zero-padded strings
+    (`000000000012345`). Decide once whether the app stores padded or unpadded,
+    normalise at the client boundary, and test it. Getting this wrong late causes
+    joins that silently match nothing. `Matnr` is `Edm.String` on every set that
+    carries it — confirmed across all 21.
+11. **Treat calibration as a known limitation, not a task.** ~2,034 dev materials
+    vs >45,000 production. Synthetic volumes prove correctness, never performance.
+    Add one load test against 45,000 synthetic materials. The 929k-row
+    `ChangeDocItemSet` is a second, already-real scale case.
+12. **Reset the dates.** The plan runs 08-Sep to 25-Sep 2026 with W2.7 gated on
     11-Sep. W2.7 in fact ran on **08-Sep**, three days early — so re-baseline
     against the actual Azure date rather than carrying dead dates either way.
-11. **Keep a per-set readiness table in the repo** — set, live/mock, `$count`
+13. **Keep a per-set readiness table in the repo** — set, live/mock, `$count`
     mode, row count, pending fields, blocking dependency. One page answering
     "what works today?" without reading code. With 21 sets in three distinct
     states (working / count-broken / empty) this is now genuinely needed, and it
@@ -881,9 +1136,10 @@ Sequenced by dependency and by how much risk each item removes.
 | # | Task | Why here | Needs Azure? |
 |---|---|---|---|
 | — | ~~**W2.7** discovery sweep~~ | ✅ **Done 08-Sep 14:16.** Gate passed; see §8 | — |
-| 1 | **W2.4** scope config | No dependencies. EXTWG is still the one unresolved dependency, so this is still the highest-leverage task | No |
+| 0 | **Three `Dismm` `$count` calls** + the two OAR questions | Three calls and two answers, and they gate item 1. Do this first — it is minutes of work | CPI only |
+| 1 | **W2.4** scope config | No dependencies, and its field is now **live**, so it can be built *and* pushdown-tested for real. Still the highest-leverage task | No |
 | 2 | Test runner + CI | Everything after this is testable. The `Netpr` change is the argument | No |
-| 3 | **W2.5** contract tests | **Moved up.** All 21 sets are now real, so this is fully buildable — and it locks the schema before mappers are written against it | No |
+| 3 | **W2.5** contract tests | All 21 sets are real, so fully buildable — and it locks the schema before mappers are written against it | No |
 | 4 | **W2.1** CPI client | Foundation for W2.2, W2.3, W2.6. Parses from the W2.5 contract | No |
 | 5 | **W2.6a** fake gateway | Makes W2.1 and W2.3 verifiable; simulates the §1.3 zero-row state | No |
 | 6 | **W2.3** paging | Needs client + gateway to test both modes and the filter-only gate | No |
@@ -891,14 +1147,18 @@ Sequenced by dependency and by how much risk each item removes.
 | 8 | **W2.2** smoke test | Write it, pass it against the gateway **and against live CPI from the workstation** | No |
 | 9 | Per-set flip to live | Config dial, set by set | **Yes** |
 
-**Why W2.5 moved ahead of W2.1.** Before the sweep, seven sets had no real
-metadata, so a contract built then would have been part guesswork. Now all 229
-properties are measured — so generating the contract first means the client and
-every mapper parse from measured truth rather than from a developer's reading of
-a CSV.
+**Why item 0 exists.** It was not in the plan because the OAR rule was not
+expected to change. Three filtered counts either confirm the new rule or reveal
+that "ND + PD" selects most of the catalogue — and that answer changes what W2.4's
+config says on day one. Doing it after item 1 means writing the config twice.
 
-Items 1–8 need no Azure. Only the per-set flip to live does, and by then it is a
-config change plus a smoke test.
+**Generator correction fits between 0 and 1** — once the counts land, apply the
+§1.6 changes to `generate.py`, regenerate, re-commit. The scope module's tests
+should assert behaviour rather than row counts so they survive that regeneration.
+
+Items 1–8 need no Azure; item 0 needs CPI from a workstation, which we have.
+Only the per-set flip to live needs Azure, and by then it is a config change plus
+a smoke test.
 
 ---
 
@@ -908,12 +1168,14 @@ The WS2 tasks beyond W2.7, and why they are not detailed here:
 
 - **W2.8** Reservation-entry BAdI launch contract — a design/contract note with
   the SAP team and NTT; no ABAP stream exists today. The assistant is designed to
-  run on demand without it. **Now partly urgent:** the sweep confirmed
-  `Zzaisession` is absent, so the session-field designation is a live open item
-  rather than a future one.
+  run on demand without it. **Now the live blocker for `Zzaisession`:** the sweep
+  confirmed the field is absent, and §1.7 explains why the MRP-type ruling does
+  not help — it needs a *designation decision*, not an exposure request. Chase it
+  as part of W2.8.
 - **W2.9** I11 lead-time source — `MARC.PLIFZ` is live on `MaterialPlantSet`, so
   if the Z-program updates it in place there is no work. If it writes to a
   Z-table, that table must be exposed. Handle behind the provider interface in
-  W2.6.
+  W2.6. Note `MaterialPlantSet` is now doing double duty as both the lead-time
+  and the OAR-scope source, so it is the most load-bearing set in the system.
 - **W2.10** PR event listener — off the critical path, blocked on a Stream 2
   payload schema that has not been shared.

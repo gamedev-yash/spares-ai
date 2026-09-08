@@ -106,9 +106,43 @@ REPAIR_ITEM_CATEGORY = "3"
 REPAIR_DOC_TYPE = "ZREP"
 REPAIR_ACCOUNT_ASSIGNMENT = "F"
 
-# OAR (Planned on Demand) is identified by MARA.EXTWG. Candidate value 100 is
-# not yet confirmed by VZI.
-OAR_EXTWG = "100"
+# OAR (Planned on Demand) is identified by MRP type - MARC.DISMM - per the
+# team lead's ruling of 08-Sep 2026, which supersedes MARA.EXTWG. Both ND and
+# PD count as OAR. DISMM is live on MaterialPlantSet, so unlike EXTWG this
+# needs nothing from the SAP team.
+#
+# PENDING VERIFICATION: three filtered $count calls against live
+# MaterialPlantSet (Dismm eq 'ND' / 'PD' / 'VB', ~2,177 rows total) will show
+# whether ND+PD is a minority of the catalogue. If it is most of it, the rule
+# over-selects and the scope needs narrowing - raise with the team lead before
+# trusting these values. See docs-eng/WS2_INTEGRATION_PLAN.md section 1.6.
+OAR_MRP_TYPES = ("ND", "PD")
+
+# MRP type for materials outside OAR scope: reorder-point planned.
+PLANNED_MRP_TYPE = "VB"
+
+# Obsolete stock carries ND in SAP - no planning is maintained for it - which
+# overlaps OAR_MRP_TYPES on purpose. MRP type alone therefore cannot separate
+# "ordered on demand" from "no longer used"; MARA.MSTAE ('01' here) is the
+# orthogonal signal, and it is already live on MaterialSet. The scope config
+# needs both predicates: Dismm in (ND, PD) AND Mstae ne '01'. Keeping the
+# overlap in the synthetic data is what makes that second predicate testable.
+OBSOLETE_MRP_TYPE = "ND"
+OBSOLETE_MATERIAL_STATUS = "01"
+
+# Because DISMM sits on MARC rather than MARA, OAR scope is decided per plant:
+# a material can be planned on demand in one plant and reorder-point planned in
+# another. This is the share of multi-plant OAR materials given exactly that
+# split, so the scope roll-up policy (any-plant / all-plants / per-plant-only)
+# has something to be tested against. Set to 0.0 for uniform behaviour.
+OAR_SINGLE_PLANT_SHARE = 0.15
+
+if PLANNED_MRP_TYPE in OAR_MRP_TYPES:
+    raise SystemExit(
+        f"PLANNED_MRP_TYPE {PLANNED_MRP_TYPE!r} is in OAR_MRP_TYPES "
+        f"{OAR_MRP_TYPES!r}: every planned material would be selected as OAR. "
+        f"Pick an MRP type outside the OAR set."
+    )
 
 OVERDUE_GRACE_DAYS = 7   # after EKET.EINDT, before a repair counts as overdue
 PLAN_GRACE_DAYS = 14     # after the planned use date, before use counts overdue
@@ -145,14 +179,15 @@ NOT_EXPOSED_KEYS: dict[str, list[str]] = {}
 # Extra columns appended to a set that IS live, because the FRS needs a field
 # the current projection leaves out. Delete an entry once SAP exposes it and
 # discovery starts reporting it.
+#
+# MARA.EXTWG was here until 08-Sep 2026. It is gone rather than exposed: the
+# team lead replaced the OAR identifier with MRP type (MARC.DISMM), which is
+# already live, so the field is no longer wanted. Nothing should read Extwg.
 PENDING_FIELDS: dict[str, list[str]] = {
     "MaterialSet": [
-        # Pending SAP exposure - required by FRS. MARA.EXTWG is the OAR
-        # identifier for I07 and the whole I13 material scope, and is not in
-        # the live MaterialSet projection.
-        "Extwg",
         # Pending SAP exposure - relevant to a future serial-grain repair
         # register. Present on about 18% of 80-series purchase order lines.
+        # Not blocking: no current I07/I08/I13 requirement depends on it.
         "Sernp",
     ],
     "ReservationItemSet": [
@@ -529,6 +564,10 @@ class MaterialPlantRow:
     mabst: float          # maximum stock
     dismm: str
     on_hand: float
+    # OAR scope for THIS plant, which is what DISMM on MARC actually says.
+    # Material.is_oar is the material-level story; this can differ from it for
+    # the OAR_SINGLE_PLANT_SHARE slice. Plant-grain logic must use this one.
+    is_oar: bool = False
     quality_stock: float = 0.0
     monthly_demand: list[float] = field(default_factory=list)
     issue_dates: list[date] = field(default_factory=list)
@@ -672,8 +711,9 @@ def build_materials() -> None:
             "Matkl": matkl,
             "Bismt": f"ELL{rng.randint(100000, 999999)}" if rng.random() < 0.3 else "",
             "Meins": BASE_UOM,
-            "Mstae": "01" if story == "OBSOLETE" else "",
-            "Extwg": OAR_EXTWG if is_oar else rng.choice(["200", "300", "400", ""]),
+            # MSTAE is how obsolescence is signalled, and the second predicate
+            # the OAR scope needs alongside MRP type - see OBSOLETE_MRP_TYPE.
+            "Mstae": OBSOLETE_MATERIAL_STATUS if story == "OBSOLETE" else "",
             "Sernp": material.serial_profile,
         })
         add("MaterialDescriptionSet", {
@@ -682,13 +722,30 @@ def build_materials() -> None:
             "Maktx": description,
         })
 
-        for plant in rng.sample(PLANTS, 2 if rng.random() < 0.25 else 1):
-            material.plants.append(build_material_plant(material, plant, story))
+        chosen = rng.sample(PLANTS, 2 if rng.random() < 0.25 else 1)
+        # Decide OAR scope per plant, not per material - see
+        # OAR_SINGLE_PLANT_SHARE. A slice of the multi-plant OAR materials is
+        # OAR in one plant only, which is the case the scope roll-up policy
+        # has to answer for.
+        if is_oar and len(chosen) > 1 and rng.random() < OAR_SINGLE_PLANT_SHARE:
+            oar_werks = {rng.choice(chosen)["werks"]}
+        elif is_oar:
+            oar_werks = {p["werks"] for p in chosen}
+        else:
+            oar_werks = set()
+        for plant in chosen:
+            material.plants.append(
+                build_material_plant(
+                    material, plant, story, plant["werks"] in oar_werks
+                )
+            )
 
         materials.append(material)
 
 
-def build_material_plant(material: Material, plant: dict, story: str) -> MaterialPlantRow:
+def build_material_plant(
+    material: Material, plant: dict, story: str, oar_in_plant: bool
+) -> MaterialPlantRow:
     """MARC planning parameters, MARD stock, and the demand series."""
     demand = monthly_demand(story)
     mean = sum(demand) / len(demand) if demand else 0.0
@@ -701,28 +758,37 @@ def build_material_plant(material: Material, plant: dict, story: str) -> Materia
     sound_rop = mean * months_of_lead + sound_safety
     sound_max = sound_rop + mean * 3
 
-    if material.is_oar:
-        # OAR materials carry no maintained ROP or maximum, and the same MRP
-        # type (PD) as the general population - which is why EXTWG, not the
-        # MRP type, is what identifies them.
+    if oar_in_plant:
+        # OAR rows carry no maintained ROP or maximum, and the MRP type is what
+        # identifies them: one of OAR_MRP_TYPES. This is the 08-Sep 2026 rule.
+        # Note the generator now derives DISMM from OAR scope rather than the
+        # other way round, so the configured value set is the single place the
+        # OAR definition lives.
         eisbe = minbe = mabst = 0.0
-        dismm = "PD"
+        dismm = rng.choice(OAR_MRP_TYPES)
     elif story == "OBSOLETE":
+        # ND here overlaps OAR_MRP_TYPES deliberately - obsolete stock has no
+        # planning maintained either. MSTAE is what separates the two.
         eisbe = minbe = 0.0
         mabst = round(max(1.0, sound_max * 0.4), 3)
-        dismm = "ND"
+        dismm = OBSOLETE_MRP_TYPE
     else:
+        # Outside OAR scope, so this must NOT be one of OAR_MRP_TYPES, or the
+        # configured rule would select it.
         drift = rng.uniform(0.4, 1.8)
         eisbe = round(max(0.0, sound_safety * drift), 3)
         minbe = round(max(eisbe, sound_rop * drift), 3)
         mabst = round(max(minbe, sound_max * rng.uniform(0.7, 1.8)), 3)
-        dismm = "VB" if rng.random() < 0.6 else "PD"
+        dismm = PLANNED_MRP_TYPE
 
     if story == "UNDERSTOCKED_CRITICAL":
         on_hand = round(max(0.0, minbe * rng.uniform(0.1, 0.5)))
     elif story == "OVERSTOCKED":
         on_hand = round(max(1.0, mabst * rng.uniform(1.4, 3.0)))
-    elif material.is_oar:
+    elif oar_in_plant:
+        # No standing stock where the material is ordered on demand. A plant
+        # outside OAR scope falls through and stocks normally, even for an
+        # OAR-story material.
         on_hand = 0.0
     elif story == "OBSOLETE":
         on_hand = round(rng.uniform(5, 40))
@@ -739,6 +805,7 @@ def build_material_plant(material: Material, plant: dict, story: str) -> Materia
         mabst=mabst,
         dismm=dismm,
         on_hand=float(on_hand),
+        is_oar=oar_in_plant,
         monthly_demand=demand,
     )
 
@@ -1104,8 +1171,10 @@ def build_history() -> None:
     """
     for material in materials:
         for entry in material.plants:
-            if material.is_oar:
-                continue      # OAR demand runs through reservation chains
+            if entry.is_oar:
+                # OAR demand runs through reservation chains. Plant-grain, so a
+                # material outside OAR scope in THIS plant still simulates.
+                continue
             simulate(material, entry)
 
 
@@ -1208,7 +1277,8 @@ def build_oar_chains() -> None:
     for material in materials:
         if not material.is_oar:
             continue
-        for entry in material.plants:
+        # Plant-grain: only the plants actually in OAR scope get chains.
+        for entry in (p for p in material.plants if p.is_oar):
             for _ in range(rng.randint(1, 3)):
                 build_oar_chain(material, entry)
 
