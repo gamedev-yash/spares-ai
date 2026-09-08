@@ -387,3 +387,54 @@ it's the first time this project can run against SAP-shaped data end to end.
 `npm run gateway`).
 
 ---
+
+## Phase 6 — W2.3: reading big tables safely (2026-09-08)
+
+**The problem:** SAP hands back data in pages, like search results. Normally
+you ask "how many rows are there?" and then fetch that many. But on two
+important tables — purchase requisitions and goods movements — **that question
+currently returns an error**. Both matter: requisitions drive I07's ordering
+view, goods movements drive consumption everywhere. So we need a second
+strategy, and it needs to be a proper supported path, not a hack.
+
+**What we built** (`src/lib/sap/paging/`): a reader that works either way.
+- **Counted:** ask how many, fetch that many.
+- **Fallback:** just keep asking for the next page until a page comes back
+  short — that means you've reached the end. No row count needed.
+- **Automatic:** try to count; if SAP errors, quietly switch to the fallback
+  *and say so in the log*, rather than failing the whole job.
+
+That last mode isn't theoretical. One table's counter was broken, SAP fixed
+it, and a table set to "automatic" picks that up with **no code change at
+all**.
+
+**Four safety features, each for a specific way this goes wrong:**
+
+1. **Two tables are now impossible to download whole.** The change-history
+   tables hold 929,151 and 241,685 rows. I07 only ever asks them a narrow
+   question ("was this recommendation actually applied?"). Asking for one of
+   those tables without a filter now throws an error explaining why, rather
+   than politely starting a 930-request download.
+2. **Hard ceilings** on pages and rows. If something goes wrong, the extract
+   stops and reports itself as incomplete instead of running away.
+3. **Always sorted before paging.** Fetching "rows 1000-2000" of an *unsorted*
+   result can silently skip or duplicate rows. This isn't hypothetical — it
+   bit us in Phase 0, where two identical scans of the same table disagreed
+   until sorting was added.
+4. **The subtle one:** on the change-history table, SAP's own declared row
+   identifier is *not actually unique* — one change touching three fields
+   comes back as three rows sharing an identifier. Sorting by that alone
+   isn't stable, so we sort by the wider combination that *is* unique. There's
+   a test that proves the declared identifier repeats while ours doesn't.
+
+**Also fixed here:** the fake gateway was re-reading and re-parsing a 4 MB
+file from disk *for every page request* — 88 times for one table — which made
+tests time out. It now parses each file once. Found only because this phase
+was the first thing to hammer it with a realistic number of requests.
+
+**Your action item:** none.
+
+**Files touched:** `src/lib/sap/paging/config.ts`, `paginate.ts`,
+`paginate.test.ts`, plus a caching fix in `src/lib/sap/gateway/csv-source.ts`.
+
+---
