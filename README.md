@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Spares AI
 
-## Getting Started
+**One product, one Git repository, two independently deployable applications.**
 
-First, run the development server:
+Spares AI covers three business initiatives — they are modules of a single product,
+not separate applications:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+| Module | Scope |
+| --- | --- |
+| **Initiative 07** | Predictive Inventory & Safety Stock Optimization |
+| **Initiative 08** | Refurbishable Spares Tracking |
+| **Initiative 13** | OAR Utilisation Tracking |
+
+## Architecture
+
+```
+                    Git repository (one .git/)
+                              │
+              ┌───────────────┴───────────────┐
+              │                               │
+          frontend/                        backend/
+      Next.js + React + TS               FastAPI + Python
+              │                               │
+      Frontend hosting                 Azure App Service
+              │                               │
+              └────────── HTTPS API ──────────┘
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The two applications share a repository and nothing else: separate dependency
+manifests, separate processes, separate ports, separate deployments. They are never
+packaged into one process.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Repository layout
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+spares-ai/
+├── frontend/          Next.js application (UI, mock data, dashboards)
+├── backend/           FastAPI application (API foundation)
+├── docs/              Architecture notes, product spec, mockup reference
+├── .gitignore         Single ignore file for the whole repo
+└── README.md
+```
 
-## Learn More
+## Running locally
 
-To learn more about Next.js, take a look at the following resources:
+Two processes, two terminals.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Frontend — http://localhost:3000
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-## Deploy on Vercel
+### Backend — http://localhost:8000
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+cd backend
+python -m venv .venv
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Windows
+.venv\Scripts\activate
+# Linux / macOS
+source .venv/bin/activate
+
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
+
+| What | URL |
+| --- | --- |
+| Frontend | http://localhost:3000 |
+| Backend (service index) | http://localhost:8000/ |
+| Swagger UI | http://localhost:8000/docs |
+| Health check | http://localhost:8000/api/health |
+
+## Frontend ↔ backend
+
+```
+Frontend  ->  NEXT_PUBLIC_API_BASE_URL  ->  FastAPI
+```
+
+Set in `frontend/.env.local` (copy `frontend/.env.example`):
+
+```
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
+```
+
+All backend calls go through `frontend/src/lib/api/client.ts` so the base URL is never
+hardcoded in components.
+
+## Status
+
+The backend is a **foundation only**. The frontend is unchanged and still runs entirely
+on its own mock data — nothing has been migrated to the backend.
+
+Intentionally not implemented yet: I07/I08/I13 business logic, SAP OData, Azure SQL,
+Entra ID authentication, RBAC, workflows, notifications, LLM orchestration, and the
+deployment pipeline.
+
+See [docs/](docs/) for details, and each application's README:
+[frontend/README.md](frontend/README.md) · [backend/README.md](backend/README.md).
