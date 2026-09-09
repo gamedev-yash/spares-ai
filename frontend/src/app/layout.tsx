@@ -4,7 +4,10 @@ import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
 import { AppToaster } from "@/components/shared/app-toaster";
+import { Material360Drawer } from "@/components/shared/material-360-drawer";
 import { Sidebar } from "@/components/layout/sidebar";
+import { Material360Provider } from "@/lib/material-360-context";
+import { InventoryWorkflowProvider } from "@/features/initiative-7/context/workflow-context";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -17,9 +20,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Spares AI — Vedanta procurement platform",
+  title: "Spares AI",
   description:
-    "AI-driven procurement platform for alternate part and supplier recommendation in mining and heavy-industry operations.",
+    "One integrated spares management application — inventory planning, repairable spares and OAR utilization tracking.",
 };
 
 export default function RootLayout({
@@ -40,9 +43,18 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Sidebar />
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
-          <AppToaster />
+          <Material360Provider>
+            {/* Global, not just /inventory-planning/* — both the Approvals
+                page and the Action Center's Inventory Planning tab render
+                the same ApprovalsWorkspace and need the same live state,
+                not a second, desynced copy. */}
+            <InventoryWorkflowProvider>
+              <Sidebar />
+              <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
+              <Material360Drawer />
+              <AppToaster />
+            </InventoryWorkflowProvider>
+          </Material360Provider>
         </ThemeProvider>
       </body>
     </html>

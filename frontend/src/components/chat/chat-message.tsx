@@ -1,26 +1,40 @@
 import { ActionOptions } from "@/components/chat/action-options"
-import { ComparisonCard } from "@/components/chat/comparison-card"
 import { OptionGroup } from "@/components/chat/option-group"
+import { MaterialClassificationCard } from "@/components/shared/material-classification-card"
 import type { ChatMessage as ChatMessageData } from "@/lib/types"
 import { cn } from "@/lib/utils"
+
+function FormattedLine({ line }: { line: string }) {
+  const parts = line.split(/(\*\*[^*]+\*\*)/g).filter(Boolean)
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.startsWith("**") && part.endsWith("**") ? (
+          <strong key={i} className="font-semibold">
+            {part.slice(2, -2)}
+          </strong>
+        ) : (
+          part
+        )
+      )}
+    </>
+  )
+}
 
 function FormattedText({ text }: { text: string }) {
   const paragraphs = text.split("\n\n")
   return (
     <div className="space-y-2">
       {paragraphs.map((paragraph, pIndex) => {
-        const parts = paragraph.split(/(\*\*[^*]+\*\*)/g).filter(Boolean)
+        const lines = paragraph.split("\n")
         return (
           <p key={pIndex}>
-            {parts.map((part, i) =>
-              part.startsWith("**") && part.endsWith("**") ? (
-                <strong key={i} className="font-semibold">
-                  {part.slice(2, -2)}
-                </strong>
-              ) : (
-                part
-              )
-            )}
+            {lines.map((line, lIndex) => (
+              <span key={lIndex}>
+                {lIndex > 0 && <br />}
+                <FormattedLine line={line} />
+              </span>
+            ))}
           </p>
         )
       })}
@@ -63,7 +77,9 @@ export function ChatMessage({
         </div>
       )}
 
-      {message.comparison && <ComparisonCard data={message.comparison} />}
+      {message.classification && (
+        <MaterialClassificationCard materialId={message.classification} />
+      )}
       {message.options && (
         <OptionGroup
           group={message.options}

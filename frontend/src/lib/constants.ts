@@ -27,10 +27,19 @@ import {
   EllipsisVertical,
   CircleCheck,
   Layers,
+  Package,
+  RotateCcw,
+  Activity,
+  LayoutDashboard,
+  Inbox,
+  CircleX,
   type LucideIcon,
 } from "lucide-react"
 
 import type { Category, IconKey } from "@/lib/types"
+import { initiative7Manifest } from "@/features/initiative-7/manifest"
+import { initiative8Manifest } from "@/features/initiative-8/manifest"
+import { initiative13Manifest } from "@/features/initiative-13/manifest"
 
 export const ICONS: Record<IconKey, LucideIcon> = {
   cpu: Cpu,
@@ -61,6 +70,12 @@ export const ICONS: Record<IconKey, LucideIcon> = {
   "ellipsis-vertical": EllipsisVertical,
   "check-circle": CircleCheck,
   layers: Layers,
+  package: Package,
+  "rotate-ccw": RotateCcw,
+  activity: Activity,
+  "layout-dashboard": LayoutDashboard,
+  inbox: Inbox,
+  cancel: CircleX,
 }
 
 export const CATEGORIES: { label: Category; icon: IconKey }[] = [
@@ -82,27 +97,13 @@ export const CATEGORY_COLORS: Record<Category, string> = {
   Instrumentation: "var(--chart-4)",
 }
 
-/**
- * Seven-step "good -> critical" aging gradient, mixed from our own status
- * tokens (not hardcoded hex) so it stays correct in dark mode too.
- */
-export const VZI_AGING_COLORS = [
-  "var(--success)",
-  "color-mix(in oklch, var(--success) 66%, var(--warning) 34%)",
-  "color-mix(in oklch, var(--success) 33%, var(--warning) 67%)",
-  "var(--warning)",
-  "color-mix(in oklch, var(--warning) 66%, var(--destructive) 34%)",
-  "color-mix(in oklch, var(--warning) 33%, var(--destructive) 67%)",
-  "var(--destructive)",
-] as const
-
-export const DASHBOARD_LINKS: { label: string; icon: IconKey; href: string }[] = [
-  { label: "Overview", icon: "chart-bar", href: "/dashboard" },
-  {
-    label: "Situation Analysis",
-    icon: "layers",
-    href: "/dashboard/situation-analysis",
-  },
+/** Sidebar nav sections owned by Initiative 7/8/13 — sourced directly from
+ * each initiative's manifest so this file never needs another edit once a
+ * manifest's page list is final. */
+export const INITIATIVE_NAV_SECTIONS = [
+  initiative7Manifest.navSection,
+  initiative8Manifest.navSection,
+  initiative13Manifest.navSection,
 ]
 
 export const QUICK_ACTIONS: {
@@ -111,26 +112,40 @@ export const QUICK_ACTIONS: {
   href: string
   badge?: number
 }[] = [
-  { label: "Search materials", icon: "search", href: "/materials" },
   {
-    label: "Pending approvals",
-    icon: "clipboard-check",
-    href: "/approvals",
-    badge: 4,
+    label: "Home",
+    icon: "layout-dashboard",
+    href: "/home",
   },
+  { label: "Search materials", icon: "search", href: "/materials" },
+  // Pending items across every module surface in the Action Center, which
+  // links straight into each module's own action surface.
+  { label: "Action Center", icon: "inbox", href: "/actions" },
+  // Decisions waiting on someone specifically — a filtered, decision-shaped
+  // view over the same underlying items as the Action Center.
+  { label: "Approvals", icon: "clipboard-check", href: "/approvals" },
   { label: "Audit trail", icon: "history", href: "/audit" },
+]
+
+/**
+ * The Spares Assistant's suggested-question chips — one flat list, always
+ * shown. There is deliberately no "pick a module first" selector: the
+ * assistant routes each question to the right area internally (see
+ * `chat-workspace.tsx`'s intent handling in `handleSend`), the same way a
+ * user would never be asked to choose which module to talk to.
+ */
+export const SUGGESTED_QUESTIONS: string[] = [
+  "Which critical spares are at risk?",
+  "What needs my approval?",
+  "Is this material OAR or non-OAR?",
+  "Why is the recommended ROP for this material higher?",
+  "Do we already have this material under repair?",
+  "Which repairs are overdue?",
+  "Which OAR materials are overdue?",
+  "Do we have this material available at another plant?",
 ]
 
 export const DEFAULT_SESSION_ID = "SPR-2847"
 
 /** Hardcoded blank chat opened by the sidebar "New session" button (mock). */
 export const NEW_SESSION_ID = "SPR-2900"
-
-export const WORKFLOW_STEP_LABELS = [
-  "Material identified",
-  "Application confirmed",
-  "Alternate selection",
-  "Procurement approval",
-  "Engineering sign-off",
-  "PO generation",
-] as const

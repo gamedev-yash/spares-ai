@@ -1,156 +1,5 @@
-import type {
-  AlternateRecommendation,
-  AuditEntry,
-  ChatSession,
-  Material,
-  PendingApproval,
-  Supplier,
-  VziAgingBucket,
-  VziCategoryPivotRow,
-  VziCategoryRow,
-  VziFlag,
-  VziKpiSummary,
-  VziOarVbAggregate,
-  VziOarVbRow,
-  VziPoAreaRow,
-  VziPoDetailRow,
-  VziPrSummaryRow,
-  VziTotals,
-  VziUnitAggregate,
-} from "@/lib/types"
+import type { ChatSession, Material } from "@/lib/types"
 import { NEW_SESSION_ID } from "@/lib/constants"
-import { formatZAR } from "@/lib/utils"
-
-// ---------------------------------------------------------------------------
-// Suppliers
-// ---------------------------------------------------------------------------
-
-export const SUPPLIERS: Supplier[] = [
-  {
-    id: "sup-bearings-intl",
-    name: "Bearings International (Pty) Ltd",
-    region: "Gauteng, South Africa",
-    categoriesServed: ["Milling", "Conveyance"],
-    rating: 4.6,
-    onTimeDeliveryPct: 94,
-    avgLeadTimeDays: 5,
-    certifications: ["ISO 9001", "ISO 14001", "BBBEE Level 2"],
-  },
-  {
-    id: "sup-bmg",
-    name: "BMG (Bearing Man Group)",
-    region: "KwaZulu-Natal, South Africa",
-    categoriesServed: ["Conveyance", "Milling"],
-    rating: 4.4,
-    onTimeDeliveryPct: 91,
-    avgLeadTimeDays: 6,
-    certifications: ["ISO 9001", "BBBEE Level 4"],
-  },
-  {
-    id: "sup-becker",
-    name: "Becker Mining South Africa",
-    region: "Gauteng, South Africa",
-    categoriesServed: ["Instrumentation", "Milling"],
-    rating: 4.3,
-    onTimeDeliveryPct: 89,
-    avgLeadTimeDays: 9,
-    certifications: ["ISO 9001", "ISO 14001"],
-  },
-  {
-    id: "sup-hytec",
-    name: "Hytec Group",
-    region: "Gauteng, South Africa",
-    categoriesServed: ["Flotation", "Conveyance"],
-    rating: 4.1,
-    onTimeDeliveryPct: 87,
-    avgLeadTimeDays: 10,
-    certifications: ["ISO 9001", "BBBEE Level 2"],
-  },
-  {
-    id: "sup-sew",
-    name: "SEW-Eurodrive SA",
-    region: "Western Cape, South Africa",
-    categoriesServed: ["Milling", "Conveyance"],
-    rating: 4.7,
-    onTimeDeliveryPct: 96,
-    avgLeadTimeDays: 7,
-    certifications: ["ISO 9001", "ISO 14001", "BBBEE Level 1"],
-  },
-  {
-    id: "sup-zestweg",
-    name: "Zest WEG Group",
-    region: "Gauteng, South Africa",
-    categoriesServed: ["Milling", "Flotation"],
-    rating: 4.5,
-    onTimeDeliveryPct: 93,
-    avgLeadTimeDays: 8,
-    certifications: ["ISO 9001", "ISO 14001", "BBBEE Level 2"],
-  },
-  {
-    id: "sup-invicta",
-    name: "Invicta Holdings",
-    region: "Gauteng, South Africa",
-    categoriesServed: ["Conveyance", "Instrumentation"],
-    rating: 4.2,
-    onTimeDeliveryPct: 88,
-    avgLeadTimeDays: 9,
-    certifications: ["ISO 9001", "BBBEE Level 3"],
-  },
-  {
-    id: "sup-motioncontrol",
-    name: "Motion Control Systems",
-    region: "Gauteng, South Africa",
-    categoriesServed: ["Instrumentation", "Milling"],
-    rating: 4.0,
-    onTimeDeliveryPct: 85,
-    avgLeadTimeDays: 11,
-    certifications: ["ISO 9001"],
-  },
-  {
-    id: "sup-flowserveza",
-    name: "FlowserveZA",
-    region: "Gauteng, South Africa",
-    categoriesServed: ["Milling", "Flotation"],
-    rating: 4.6,
-    onTimeDeliveryPct: 92,
-    avgLeadTimeDays: 14,
-    certifications: ["ISO 9001", "ISO 14001", "BBBEE Level 2"],
-  },
-  {
-    id: "sup-weir",
-    name: "Weir Minerals Africa",
-    region: "Gauteng, South Africa",
-    categoriesServed: ["Milling", "Flotation", "Conveyance"],
-    rating: 4.8,
-    onTimeDeliveryPct: 97,
-    avgLeadTimeDays: 12,
-    certifications: ["ISO 9001", "ISO 14001", "BBBEE Level 1"],
-  },
-  {
-    id: "sup-johncrane",
-    name: "John Crane Southern Africa",
-    region: "Gauteng, South Africa",
-    categoriesServed: ["Milling"],
-    rating: 4.5,
-    onTimeDeliveryPct: 90,
-    avgLeadTimeDays: 15,
-    certifications: ["ISO 9001", "ISO 14001"],
-  },
-  {
-    id: "sup-eagleburgmann",
-    name: "EagleBurgmann Africa",
-    region: "Gauteng, South Africa",
-    categoriesServed: ["Milling", "Flotation"],
-    rating: 4.4,
-    onTimeDeliveryPct: 89,
-    avgLeadTimeDays: 16,
-    certifications: ["ISO 9001"],
-  },
-]
-
-export function getSupplierById(id: string): Supplier | undefined {
-  return SUPPLIERS.find((s) => s.id === id)
-}
 
 // ---------------------------------------------------------------------------
 // Materials
@@ -633,231 +482,21 @@ export function getMaterialById(id: string): Material | undefined {
 }
 
 // ---------------------------------------------------------------------------
-// Alternate recommendations — keyed by material id.
-// Populated for the materials referenced by the demo chat sessions below;
-// the remaining catalog materials are ready for this shape when the
-// /materials search page is built.
-// ---------------------------------------------------------------------------
-
-export const ALTERNATES: Record<string, AlternateRecommendation[]> = {
-  "500-14892": [
-    {
-      id: "alt-14892-1",
-      materialId: "500-14892",
-      matchTier: "Direct equivalent",
-      matchConfidence: 97,
-      partNumber: "FLS-XR200-65V",
-      manufacturer: "Flowserve",
-      supplierId: "sup-bearings-intl",
-      price: 38500,
-      moq: 1,
-      leadTimeDays: 12,
-      specComparison: [
-        { spec: "Shaft size", original: "65mm", alternate: "65mm", match: true },
-        {
-          spec: "Seal face",
-          original: "SiC/SiC",
-          alternate: "SiC/SiC",
-          match: true,
-        },
-        {
-          spec: "Elastomer",
-          original: "Viton",
-          alternate: "Viton",
-          match: true,
-        },
-        {
-          spec: "Pressure rating",
-          original: "12 bar",
-          alternate: "12 bar",
-          match: true,
-        },
-      ],
-      marketBenchmark: { low: 36800, high: 42100 },
-    },
-    {
-      id: "alt-14892-2",
-      materialId: "500-14892",
-      matchTier: "Technical equivalent",
-      matchConfidence: 89,
-      partNumber: "5610-65-CC",
-      manufacturer: "John Crane",
-      supplierId: "sup-johncrane",
-      price: 41200,
-      moq: 1,
-      leadTimeDays: 18,
-      specComparison: [
-        { spec: "Shaft size", original: "65mm", alternate: "65mm", match: true },
-        {
-          spec: "Seal face",
-          original: "SiC/SiC",
-          alternate: "Carbon/SiC",
-          match: false,
-        },
-        {
-          spec: "Elastomer",
-          original: "Viton",
-          alternate: "EPDM",
-          match: false,
-        },
-        {
-          spec: "Pressure rating",
-          original: "12 bar",
-          alternate: "16 bar",
-          match: true,
-        },
-      ],
-      marketBenchmark: { low: 36800, high: 42100 },
-    },
-    {
-      id: "alt-14892-3",
-      materialId: "500-14892",
-      matchTier: "Technical equivalent",
-      matchConfidence: 82,
-      partNumber: "DS-65-VIT",
-      manufacturer: "EagleBurgmann",
-      supplierId: "sup-eagleburgmann",
-      price: 44000,
-      moq: 1,
-      leadTimeDays: 25,
-      specComparison: [
-        { spec: "Shaft size", original: "65mm", alternate: "65mm", match: true },
-        {
-          spec: "Seal face",
-          original: "SiC/SiC",
-          alternate: "Carbon/SiC",
-          match: false,
-        },
-        {
-          spec: "Elastomer",
-          original: "Viton",
-          alternate: "Viton",
-          match: true,
-        },
-        {
-          spec: "Pressure rating",
-          original: "12 bar",
-          alternate: "14 bar",
-          match: true,
-        },
-      ],
-      marketBenchmark: { low: 36800, high: 42100 },
-    },
-  ],
-  "500-22140": [
-    {
-      id: "alt-22140-1",
-      materialId: "500-22140",
-      matchTier: "Direct equivalent",
-      matchConfidence: 98,
-      partNumber: "SKF-22312-CC",
-      manufacturer: "SKF",
-      supplierId: "sup-bearings-intl",
-      price: 7100,
-      moq: 2,
-      leadTimeDays: 5,
-      specComparison: [
-        { spec: "Bore", original: "60mm", alternate: "60mm", match: true },
-        {
-          spec: "Seal type",
-          original: "Labyrinth",
-          alternate: "Labyrinth",
-          match: true,
-        },
-        {
-          spec: "Load rating",
-          original: "95kN",
-          alternate: "95kN",
-          match: true,
-        },
-      ],
-      marketBenchmark: { low: 6800, high: 8900 },
-    },
-  ],
-  "500-31005": [
-    {
-      id: "alt-31005-1",
-      materialId: "500-31005",
-      matchTier: "Technical equivalent",
-      matchConfidence: 91,
-      partNumber: "EJA430E-EAS4",
-      manufacturer: "Yokogawa",
-      supplierId: "sup-motioncontrol",
-      price: 16200,
-      moq: 1,
-      leadTimeDays: 18,
-      specComparison: [
-        {
-          spec: "Range",
-          original: "0–16 bar",
-          alternate: "0–10 bar",
-          match: false,
-        },
-        {
-          spec: "Output",
-          original: "4-20mA HART",
-          alternate: "4-20mA HART",
-          match: true,
-        },
-        {
-          spec: "Accuracy",
-          original: "0.15%",
-          alternate: "0.1%",
-          match: false,
-        },
-      ],
-      marketBenchmark: { low: 15500, high: 19800 },
-    },
-  ],
-  "500-08823": [
-    {
-      id: "alt-08823-1",
-      materialId: "500-08823",
-      matchTier: "Direct equivalent",
-      matchConfidence: 95,
-      partNumber: "WMA-AH64-XREF",
-      manufacturer: "Warman",
-      supplierId: "sup-zestweg",
-      price: 61800,
-      moq: 1,
-      leadTimeDays: 20,
-      specComparison: [
-        {
-          spec: "Material",
-          original: "High-chrome iron",
-          alternate: "High-chrome iron",
-          match: true,
-        },
-        {
-          spec: "Vane config",
-          original: "5-vane closed",
-          alternate: "5-vane closed",
-          match: true,
-        },
-        { spec: "Bore", original: "60mm", alternate: "60mm", match: true },
-      ],
-      marketBenchmark: { low: 59000, high: 70200 },
-    },
-  ],
-}
-
-export function getAlternatesForMaterial(
-  materialId: string
-): AlternateRecommendation[] {
-  return ALTERNATES[materialId] ?? []
-}
-
-// ---------------------------------------------------------------------------
 // Chat sessions
 // ---------------------------------------------------------------------------
 
+
+
 export const CHAT_SESSIONS: ChatSession[] = [
-  // 1. Pump seal — Milling — the hero demo, in-progress at alternate selection
+  // 1. Pump seal — Milling — the hero demo. OAR-classified; walks the full
+  // conversational consumption-plan capture (§5) through to a confirmable
+  // summary (click "Confirm Plan" to see the Tracking ID + SAP reservation
+  // generated live, §6-7).
   {
     id: "SPR-2847",
     title: "Pump seal — Milling unit 3",
     navLabel: "Pump seal — Milling",
-    navSubtitle: "3 alternates found",
+    navSubtitle: "OAR — plan ready to confirm",
     category: "Milling",
     status: "in_progress",
     materialId: "500-14892",
@@ -869,132 +508,79 @@ export const CHAT_SESSIONS: ChatSession[] = [
         role: "user",
         authorLabel: "You",
         timestamp: "10:23 AM",
-        text: "I need an alternate supplier for material 500-14892 — mechanical seal for the milling pump",
+        text: "Show me material 500-14892 — mechanical seal for the milling pump, it's on back order",
       },
       {
         id: "seal-2",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "10:23 AM",
-        text: 'I found material **500-14892** — currently described as "Seal Assy, Mech Type XR-200, Flowserve". Let me confirm the application context so I can find the right alternates.\n\n**Which equipment is this installed on?**',
-        options: {
-          id: "seal-equipment",
-          defaultSelectedId: "warman",
-          locked: true,
-          resolvedAt: "10:24 AM",
-          options: [
-            {
-              id: "warman",
-              icon: "settings",
-              label: "Warman 8/6 AH slurry pump",
-              description: "Milling circuit — primary grind",
-            },
-            {
-              id: "metso",
-              icon: "settings",
-              label: "Metso HM150 pump",
-              description: "Milling circuit — cyclone feed",
-            },
-            {
-              id: "other",
-              icon: "help",
-              label: "Not sure / other equipment",
-              description: "I'll describe the application manually",
-            },
-          ],
-        },
-        footerNote: "Selection logged for traceability",
+        classification: "500-14892",
+        footerNote: "Classified via the Material Router",
+      },
+      {
+        id: "seal-3",
+        role: "ai",
+        authorLabel: "Spares Assistant",
+        timestamp: "10:24 AM",
+        text: "This material is classified as OAR. A consumption plan is required before proceeding.\n\nBefore proceeding, please provide the intended purpose.",
       },
       {
         id: "seal-4",
-        role: "ai",
-        authorLabel: "Spares AI",
+        role: "user",
+        authorLabel: "You",
         timestamp: "10:24 AM",
-        text: "Got it. Based on the Warman 8/6 AH application, I've matched the specs: **shaft size 65mm, seal face SiC/SiC, elastomer Viton, rated to 12 bar**.\n\nI found **3 alternate options**. What match tier are you looking for?",
-        options: {
-          id: "seal-tier",
-          defaultSelectedId: "direct",
-          options: [
-            {
-              id: "direct",
-              icon: "copy",
-              label: "Direct equivalent",
-              description:
-                "Same OEM part from different distributor — light approval",
-            },
-            {
-              id: "technical",
-              icon: "sliders",
-              label: "Technical equivalent",
-              description:
-                "Different manufacturer, same specs — engineering sign-off",
-            },
-            {
-              id: "all",
-              icon: "lightbulb",
-              label: "Show all tiers",
-              description: "See all 3 options with price comparison",
-            },
-          ],
-        },
-        footerNote: "Tier selection determines approval workflow",
+        text: "Secondary pump overhaul on Milling unit 3.",
       },
       {
         id: "seal-5",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
+        timestamp: "10:24 AM",
+        text: "Which equipment, project or job is this for?",
+      },
+      {
+        id: "seal-6",
+        role: "user",
+        authorLabel: "You",
         timestamp: "10:25 AM",
-        comparison: {
-          id: "seal-comparison",
-          heading: "Direct equivalent found",
-          current: {
-            label: "Current supplier",
-            supplierName: "Flowserve SA",
-            partNumber: "XR-200-65-VV",
-            price: 48200,
-            meta: "Last PO: 14 Mar 2026",
-          },
-          alternate: {
-            label: "Alternate — direct equivalent",
-            supplierName: "Bearings Int'l (Pty)",
-            partNumber: "FLS-XR200-65V",
-            price: 38500,
-            meta: "",
-            savingsPct: 20,
-          },
-          benchmark: {
-            low: 36800,
-            high: 42100,
-            note: "Alternate is within range.",
-          },
-        },
+        text: "PUMP-2204.",
+      },
+      {
+        id: "seal-7",
+        role: "ai",
+        authorLabel: "Spares Assistant",
+        timestamp: "10:25 AM",
+        text: "How many units do you need, and when do you expect to consume them?",
+      },
+      {
+        id: "seal-8",
+        role: "user",
+        authorLabel: "You",
+        timestamp: "10:26 AM",
+        text: "3 units, needed by 20 September 2026.",
+      },
+      {
+        id: "seal-9",
+        role: "ai",
+        authorLabel: "Spares Assistant",
+        timestamp: "10:26 AM",
+        text: "**Consumption Plan**\n\nMaterial: 500-14892\nQuantity: 3\nPurpose: Secondary pump overhaul on Milling unit 3.\nEquipment / Project / Job: PUMP-2204\nPlanned Consumption Date: 20 Sep 2026\n\nReady to confirm?",
         actions: {
-          id: "seal-actions",
-          accentId: "proceed",
+          id: "seal-plan-actions",
+          accentId: "confirm-plan",
           actions: [
             {
-              id: "proceed",
-              icon: "send",
-              label: "Proceed with alternate",
-              description: "Triggers approval workflow and notifies stakeholders",
-            },
-            {
-              id: "proceed-original",
+              id: "confirm-plan",
               icon: "check-circle",
-              label: "Proceed with original supplier (Same part)",
-              description: "Keep current OEM vendor — skip alternate approval workflow",
+              label: "Confirm Plan",
+              description: "Creates the Tracking ID and SAP reservation",
             },
             {
-              id: "view-technical",
-              icon: "eye",
-              label: "View technical equivalents too",
-              description: "See options from other manufacturers",
-            },
-            {
-              id: "export",
-              icon: "file-text",
-              label: "Export comparison report",
-              description: "PDF for offline review with engineering",
+              id: "edit-plan",
+              icon: "rotate-ccw",
+              label: "Edit Plan",
+              description: "Go back and change an answer",
             },
           ],
         },
@@ -1008,66 +594,59 @@ export const CHAT_SESSIONS: ChatSession[] = [
         meta: "Auto · 10:23",
       },
       {
-        id: "application-confirmed",
-        label: "Application confirmed",
+        id: "classified-routed",
+        label: "Classified & routed",
         status: "done",
-        meta: "User · 10:24",
+        meta: "Routed to OAR Utilization",
       },
       {
-        id: "alternate-selection",
-        label: "Alternate selection",
+        id: "consumption-plan",
+        label: "Consumption plan",
         status: "active",
-        meta: "Awaiting user",
+        meta: "Summary ready — awaiting confirmation",
       },
-      { id: "procurement-approval", label: "Procurement approval", status: "pending" },
-      { id: "engineering-signoff", label: "Engineering sign-off", status: "pending" },
-      { id: "po-generation", label: "PO generation", status: "pending" },
+      {
+        id: "reservation",
+        label: "SAP reservation",
+        status: "pending",
+        meta: "Created on plan confirmation",
+      },
     ],
     emails: [
       {
         id: "seal-email-1",
         status: "sent",
-        text: "Session started alert sent to procurement team",
+        text: "Requester notified — consumption plan required before this OAR request can proceed",
         time: "10:23 AM",
-      },
-      {
-        id: "seal-email-2",
-        status: "pending",
-        text: "Approval reminder queued for R. Patel (Procurement head)",
-        time: "Triggers on selection",
-      },
-      {
-        id: "seal-email-3",
-        status: "escalated",
-        text: "Auto-escalation to VP Supply Chain if no response in 24h",
-        time: "Configured",
       },
     ],
     trace: {
       tags: [
         { label: "Milling", kind: "cat" },
-        { label: "Direct equiv.", kind: "tier" },
+        { label: "OAR", kind: "tier" },
         { label: "In progress", kind: "status" },
       ],
       material: "500-14892",
-      equipment: "Warman 8/6 AH",
+      equipment: "PUMP-2204",
       requester: "M. Naidoo",
-      specMatch: "65mm / SiC / Viton",
+      specMatch: "OAR — Order as Required",
       selectionsDone: 2,
-      selectionsTotal: 6,
+      selectionsTotal: 4,
     },
   },
 
-  // 2. Conveyor bearing — Conveyance — awaiting alternate decision
+  // 2. Conveyor gearmotor — Conveyance — repairable (80-series), an active
+  // repair chain already exists (RC-8005). Demonstrates the Initiative 8
+  // advisory duplicate-spend guard (§24) live, in-chat.
   {
     id: "SPR-2851",
-    title: "Conveyor bearing — CV-14 stacker",
-    navLabel: "Conveyor bearing",
-    navSubtitle: "Awaiting decision",
+    title: "Conveyor gearmotor — CV-14 stacker",
+    navLabel: "Conveyor gearmotor",
+    navSubtitle: "Repair chain found",
     navBadge: { type: "count", value: 1 },
     category: "Conveyance",
     status: "in_progress",
-    materialId: "500-22140",
+    materialId: "800-45210",
     requester: "T. Mokoena",
     date: "21 Jul 2026",
     messages: [
@@ -1076,100 +655,42 @@ export const CHAT_SESSIONS: ChatSession[] = [
         role: "user",
         authorLabel: "You",
         timestamp: "8:12 AM",
-        text: "Need alternate for material 500-22140 — troughing idler bearing on the stacker conveyor, current one's on back order",
+        text: "Need a replacement for material 800-45210 — conveyor gearmotor on the CV-14 stacker, current one's underperforming",
       },
       {
         id: "brg-2",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "8:12 AM",
-        text: 'Found material **500-22140** — "Bearing, Spherical Roller, Conveyor Idler", SKF, currently sourced through BMG.\n\n**Which conveyor is this for?**',
-        options: {
-          id: "brg-conveyor",
-          defaultSelectedId: "cv14",
-          locked: true,
-          resolvedAt: "8:14 AM",
-          options: [
-            {
-              id: "cv14",
-              icon: "settings",
-              label: "CV-14 stacker conveyor",
-              description: "Troughing idler — drive end",
-            },
-            {
-              id: "cv09",
-              icon: "settings",
-              label: "CV-09 overland conveyor",
-              description: "Return idler",
-            },
-            {
-              id: "other",
-              icon: "help",
-              label: "Not sure / other equipment",
-              description: "I'll describe the application manually",
-            },
-          ],
-        },
-        footerNote: "Selection logged for traceability",
+        classification: "800-45210",
+        footerNote: "Classified via the Material Router",
       },
       {
-        id: "brg-4",
+        id: "brg-3",
         role: "ai",
-        authorLabel: "Spares AI",
-        timestamp: "8:15 AM",
-        text: "Confirmed — bore 60mm, labyrinth seal, 95kN load rating. I found a direct equivalent already in stock at a nearby distributor.",
-        comparison: {
-          id: "brg-comparison",
-          heading: "Direct equivalent found",
-          current: {
-            label: "Current supplier",
-            supplierName: "BMG (Bearing Man Group)",
-            partNumber: "SKF-22312-CC",
-            price: 8400,
-            meta: "Last PO: 11 Mar 2026",
-          },
-          alternate: {
-            label: "Alternate — direct equivalent",
-            supplierName: "Bearings Int'l (Pty)",
-            partNumber: "SKF-22312-CC",
-            price: 7100,
-            meta: "",
-            savingsPct: 15,
-          },
-          benchmark: {
-            low: 6800,
-            high: 8900,
-            note: "Alternate is within range.",
-          },
-        },
+        authorLabel: "Spares Assistant",
+        timestamp: "8:13 AM",
+        text: "A repair for this material is already in progress — PR-81005 raised with Weir Minerals Service Center, 1 unit under repair, expected return 28 Sep 2026. Would you still like to proceed with a new procurement request?",
         actions: {
           id: "brg-actions",
-          accentId: "proceed",
-          // Left unresolved so the user can still pick an action and Continue.
           actions: [
             {
-              id: "proceed",
-              icon: "send",
-              label: "Proceed with alternate",
-              description: "Triggers approval workflow and notifies stakeholders",
-            },
-            {
-              id: "proceed-original",
-              icon: "check-circle",
-              label: "Proceed with original supplier (Same part)",
-              description: "Keep current OEM vendor — skip alternate approval workflow",
-            },
-            {
-              id: "view-technical",
+              id: "review-existing",
               icon: "eye",
-              label: "View technical equivalents too",
-              description: "See options from other manufacturers",
+              label: "Review Existing Repair",
+              description: "Open the Repair Register entry for this chain",
             },
             {
-              id: "export",
-              icon: "file-text",
-              label: "Export comparison report",
-              description: "PDF for offline review with engineering",
+              id: "proceed-anyway",
+              icon: "send",
+              label: "Proceed Anyway",
+              description: "Continue with a new procurement request",
+            },
+            {
+              id: "cancel-request",
+              icon: "cancel",
+              label: "Cancel Request",
+              description: "Don't raise a new request",
             },
           ],
         },
@@ -1183,67 +704,55 @@ export const CHAT_SESSIONS: ChatSession[] = [
         meta: "Auto · 08:12",
       },
       {
-        id: "application-confirmed",
-        label: "Application confirmed",
+        id: "classified-routed",
+        label: "Classified & routed",
         status: "done",
-        meta: "User · 08:14",
+        meta: "Routed to Repairable Spares",
       },
       {
-        id: "alternate-selection",
-        label: "Alternate selection",
+        id: "duplicate-guard",
+        label: "Duplicate-spend guard",
         status: "active",
-        meta: "Awaiting selection",
+        meta: "Awaiting decision",
       },
       {
-        id: "procurement-approval",
-        label: "Procurement approval",
+        id: "condition-declaration",
+        label: "Condition-to-repair declaration",
         status: "pending",
-        meta: "Awaiting R. Patel",
+        meta: "Required before PO release",
       },
-      { id: "engineering-signoff", label: "Engineering sign-off", status: "pending" },
-      { id: "po-generation", label: "PO generation", status: "pending" },
     ],
     emails: [
       {
         id: "brg-email-1",
         status: "sent",
-        text: "Session started alert sent to procurement team",
-        time: "8:12 AM",
-      },
-      {
-        id: "brg-email-2",
-        status: "pending",
-        text: "Approval reminder queued for R. Patel (Procurement head)",
-        time: "Triggers in 6h",
-      },
-      {
-        id: "brg-email-3",
-        status: "escalated",
-        text: "Auto-escalation to VP Supply Chain if no response in 24h",
-        time: "Configured",
+        text: "Planner notified — active repair chain found for this material",
+        time: "8:13 AM",
       },
     ],
     trace: {
       tags: [
         { label: "Conveyance", kind: "cat" },
-        { label: "Direct equiv.", kind: "tier" },
+        { label: "Repairable", kind: "tier" },
         { label: "In progress", kind: "status" },
       ],
-      material: "500-22140",
+      material: "800-45210",
       equipment: "CV-14 stacker conveyor",
       requester: "T. Mokoena",
-      specMatch: "60mm / Labyrinth / 95kN",
+      specMatch: "Non-OAR · Repairable spare — 80-series",
       selectionsDone: 2,
-      selectionsTotal: 6,
+      selectionsTotal: 4,
     },
   },
 
-  // 3. Pressure transmitter — Instrumentation — escalated, no response in 24h
+  // 3. Pressure transmitter — Instrumentation — OAR with repeated
+  // utilisation this year; demonstrates the OAR-to-Stock reclassification
+  // signal (§21) alongside a single-reminder escalation.
   {
     id: "SPR-2839",
     title: "Pressure transmitter — Flotation bank 2",
     navLabel: "Pressure transmitter",
-    navSubtitle: "Escalated",
+    navSubtitle: "Escalated — plan overdue",
     navBadge: { type: "alert" },
     category: "Instrumentation",
     status: "escalated",
@@ -1256,144 +765,36 @@ export const CHAT_SESSIONS: ChatSession[] = [
         role: "user",
         authorLabel: "You",
         timestamp: "7:40 AM",
-        text: "Endress+Hauser transmitter 500-31005 keeps drifting out of cal — need an alternate for the reagent dosing skid on flotation bank 2",
+        text: "The pressure transmitter 500-31005 on the reagent dosing skid needs replacing again — third time this year",
       },
       {
         id: "pt-2",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "7:41 AM",
-        text: 'Found material **500-31005** — "Pressure Transmitter, Cerabar PMC21", Endress+Hauser.\n\n**Which loop is this installed on?**',
-        options: {
-          id: "pt-loop",
-          defaultSelectedId: "dosing",
-          locked: true,
-          resolvedAt: "7:42 AM",
-          options: [
-            {
-              id: "dosing",
-              icon: "settings",
-              label: "Reagent dosing skid — bank 2",
-              description: "Flotation reagent circuit",
-            },
-            {
-              id: "thickener",
-              icon: "settings",
-              label: "Thickener underflow loop",
-              description: "Flotation tailings circuit",
-            },
-            {
-              id: "other",
-              icon: "help",
-              label: "Not sure / other equipment",
-              description: "I'll describe the application manually",
-            },
-          ],
-        },
-        footerNote: "Selection logged for traceability",
+        classification: "500-31005",
+        footerNote: "Classified via the Material Router",
+      },
+      {
+        id: "pt-3",
+        role: "ai",
+        authorLabel: "Spares Assistant",
+        timestamp: "7:42 AM",
+        text: "This OAR material has repeated utilisation this year — see the Reclassification review to check whether it should move to Inventory Planning instead.",
       },
       {
         id: "pt-4",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "7:43 AM",
-        text: "Matched specs: **range 0–16 bar, 4-20mA HART, 0.15% accuracy**. I found 2 alternate options. What match tier are you looking for?",
-        options: {
-          id: "pt-tier",
-          defaultSelectedId: "technical",
-          locked: true,
-          resolvedAt: "7:44 AM",
-          options: [
-            {
-              id: "direct",
-              icon: "copy",
-              label: "Direct equivalent",
-              description: "Same OEM part from different distributor — light approval",
-            },
-            {
-              id: "technical",
-              icon: "sliders",
-              label: "Technical equivalent",
-              description:
-                "Different manufacturer, tighter accuracy — engineering sign-off",
-            },
-            {
-              id: "all",
-              icon: "lightbulb",
-              label: "Show all tiers",
-              description: "See all options with price comparison",
-            },
-          ],
-        },
-        footerNote: "Tier selection determines approval workflow",
+        text: "This material is classified as OAR. A consumption plan is required before proceeding.\n\nBefore proceeding, please provide the intended purpose.",
       },
       {
         id: "pt-5",
         role: "ai",
-        authorLabel: "Spares AI",
-        timestamp: "7:44 AM",
-        comparison: {
-          id: "pt-comparison",
-          heading: "Technical equivalent found",
-          current: {
-            label: "Current supplier",
-            supplierName: "Becker Mining SA",
-            partNumber: "PMC21-A1F1H",
-            price: 18900,
-            meta: "Last PO: 27 Feb 2026",
-          },
-          alternate: {
-            label: "Alternate — technical equivalent",
-            supplierName: "Motion Control Systems",
-            partNumber: "EJA430E-EAS4",
-            price: 16200,
-            meta: "",
-            savingsPct: 14,
-          },
-          benchmark: {
-            low: 15500,
-            high: 19800,
-            note: "Alternate is within range.",
-          },
-        },
-        actions: {
-          id: "pt-actions",
-          accentId: "proceed",
-          resolvedActionId: "proceed",
-          actions: [
-            {
-              id: "proceed",
-              icon: "send",
-              label: "Proceed with alternate",
-              description: "Triggers approval workflow and notifies stakeholders",
-            },
-            {
-              id: "proceed-original",
-              icon: "check-circle",
-              label: "Proceed with original supplier (Same part)",
-              description: "Keep current OEM vendor — skip alternate approval workflow",
-            },
-            {
-              id: "view-technical",
-              icon: "eye",
-              label: "View technical equivalents too",
-              description: "See options from other manufacturers",
-            },
-            {
-              id: "export",
-              icon: "file-text",
-              label: "Export comparison report",
-              description: "PDF for offline review with engineering",
-            },
-          ],
-        },
-      },
-      {
-        id: "pt-6",
-        role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "Next day · 8:10 AM",
-        text: "This request has not received engineering sign-off within 24 hours. It has been **auto-escalated to L. Naidoo (VP Supply Chain)** for review.",
+        text: "It's been over 24 hours since this consumption plan was requested with no response. A reminder has been sent to **S. van Wyk**; this will escalate to the HOD queue if there's still no response.",
       },
     ],
     workflow: [
@@ -1404,76 +805,63 @@ export const CHAT_SESSIONS: ChatSession[] = [
         meta: "Auto · 07:41",
       },
       {
-        id: "application-confirmed",
-        label: "Application confirmed",
+        id: "classified-routed",
+        label: "Classified & routed",
         status: "done",
-        meta: "User · 07:42",
+        meta: "Routed to OAR Utilization",
       },
       {
-        id: "alternate-selection",
-        label: "Alternate selection",
-        status: "done",
-        meta: "User · 07:44",
-      },
-      {
-        id: "procurement-approval",
-        label: "Procurement approval",
-        status: "done",
-        meta: "Approved · 07:50",
-      },
-      {
-        id: "engineering-signoff",
-        label: "Engineering sign-off",
+        id: "consumption-plan",
+        label: "Consumption plan",
         status: "active",
-        meta: "Overdue — escalated",
+        meta: "Overdue — reminder sent",
         tone: "danger",
       },
-      { id: "po-generation", label: "PO generation", status: "pending" },
+      {
+        id: "reservation",
+        label: "SAP reservation",
+        status: "pending",
+      },
     ],
     emails: [
       {
         id: "pt-email-1",
         status: "sent",
-        text: "Session started alert sent to procurement team",
+        text: "Session started — consumption plan requested from S. van Wyk",
         time: "7:41 AM",
       },
       {
         id: "pt-email-2",
-        status: "sent",
-        text: "Engineering sign-off request sent to P. Govender",
-        time: "7:44 AM",
-      },
-      {
-        id: "pt-email-3",
-        status: "escalated",
-        text: "Escalated to L. Naidoo (VP Supply Chain) — no response in 24h",
-        time: "Next day · 8:10 AM",
+        status: "pending",
+        text: "Escalation to HOD queue queued if no response within 24h",
+        time: "Configured",
       },
     ],
     trace: {
       tags: [
         { label: "Instrumentation", kind: "cat" },
-        { label: "Technical equiv.", kind: "tier" },
+        { label: "OAR", kind: "tier" },
         { label: "Escalated", kind: "status" },
       ],
       material: "500-31005",
       equipment: "Reagent dosing skid — bank 2",
       requester: "S. van Wyk",
-      specMatch: "0–16 bar / HART / 0.15%",
-      selectionsDone: 4,
-      selectionsTotal: 6,
+      specMatch: "OAR — Order as Required",
+      selectionsDone: 3,
+      selectionsTotal: 4,
     },
   },
 
-  // 4. Impeller — Flotation — completed, PO generated
+  // 4. Impeller — Flotation/Pumping — non-OAR, non-repairable, critical:
+  // routes to Initiative 7. Recommendation was returned for revision.
   {
     id: "SPR-2802",
     title: "Impeller — Flotation feed pump FP-2",
     navLabel: "Impeller — Flotation",
-    navSubtitle: "PO generated",
+    navSubtitle: "Returned for revision",
     category: "Flotation",
-    status: "completed",
-    materialId: "500-08823",
+    status: "pending_approval",
+    materialId: "500-08841",
     requester: "K. Dlamini",
     date: "15 Jul 2026",
     messages: [
@@ -1482,143 +870,22 @@ export const CHAT_SESSIONS: ChatSession[] = [
         role: "user",
         authorLabel: "You",
         timestamp: "9:02 AM",
-        text: "Impeller on FP-2 is showing heavy wear, need a replacement or alternate — material 500-08823",
+        text: "Impeller on FP-2 is showing heavy wear — material 500-08841, need to know if we should be holding more stock",
       },
       {
         id: "imp-2",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "9:03 AM",
-        text: 'Found material **500-08823** — "Impeller, Slurry Pump, AH 6/4", Warman, current source Weir Minerals Africa.\n\n**Which pump is this for?**',
-        options: {
-          id: "imp-pump",
-          defaultSelectedId: "fp2",
-          locked: true,
-          resolvedAt: "9:05 AM",
-          options: [
-            {
-              id: "fp2",
-              icon: "settings",
-              label: "FP-2 flotation feed pump",
-              description: "Warman AH 6/4",
-            },
-            {
-              id: "fp1",
-              icon: "settings",
-              label: "FP-1 flotation feed pump",
-              description: "Warman AH 6/4",
-            },
-            {
-              id: "other",
-              icon: "help",
-              label: "Not sure / other equipment",
-              description: "I'll describe the application manually",
-            },
-          ],
-        },
-        footerNote: "Selection logged for traceability",
+        classification: "500-08841",
+        footerNote: "Classified via the Material Router",
       },
       {
-        id: "imp-4",
+        id: "imp-3",
         role: "ai",
-        authorLabel: "Spares AI",
-        timestamp: "9:06 AM",
-        text: "Matched specs: **high-chrome iron, 5-vane closed, 60mm bore, heavy slurry duty**. Found 2 alternate options. What match tier are you looking for?",
-        options: {
-          id: "imp-tier",
-          defaultSelectedId: "direct",
-          locked: true,
-          resolvedAt: "9:07 AM",
-          options: [
-            {
-              id: "direct",
-              icon: "copy",
-              label: "Direct equivalent",
-              description: "Same OEM part from different distributor — light approval",
-            },
-            {
-              id: "technical",
-              icon: "sliders",
-              label: "Technical equivalent",
-              description: "Different manufacturer, same specs — engineering sign-off",
-            },
-            {
-              id: "all",
-              icon: "lightbulb",
-              label: "Show all tiers",
-              description: "See all options with price comparison",
-            },
-          ],
-        },
-        footerNote: "Tier selection determines approval workflow",
-      },
-      {
-        id: "imp-5",
-        role: "ai",
-        authorLabel: "Spares AI",
-        timestamp: "9:07 AM",
-        comparison: {
-          id: "imp-comparison",
-          heading: "Direct equivalent found",
-          current: {
-            label: "Current supplier",
-            supplierName: "Weir Minerals Africa",
-            partNumber: "AH-6-4-IMP-HC",
-            price: 74500,
-            meta: "Last PO: 18 Mar 2026",
-          },
-          alternate: {
-            label: "Alternate — direct equivalent",
-            supplierName: "Zest WEG Group",
-            partNumber: "WMA-AH64-XREF",
-            price: 61800,
-            meta: "",
-            savingsPct: 17,
-          },
-          benchmark: {
-            low: 59000,
-            high: 70200,
-            note: "Alternate is within range.",
-          },
-        },
-        actions: {
-          id: "imp-actions",
-          accentId: "proceed",
-          resolvedActionId: "proceed",
-          actions: [
-            {
-              id: "proceed",
-              icon: "send",
-              label: "Proceed with alternate",
-              description: "Triggers approval workflow and notifies stakeholders",
-            },
-            {
-              id: "proceed-original",
-              icon: "check-circle",
-              label: "Proceed with original supplier (Same part)",
-              description: "Keep current OEM vendor — skip alternate approval workflow",
-            },
-            {
-              id: "view-technical",
-              icon: "eye",
-              label: "View technical equivalents too",
-              description: "See options from other manufacturers",
-            },
-            {
-              id: "export",
-              icon: "file-text",
-              label: "Export comparison report",
-              description: "PDF for offline review with engineering",
-            },
-          ],
-        },
-      },
-      {
-        id: "imp-6",
-        role: "ai",
-        authorLabel: "Spares AI",
-        timestamp: "9:12 AM",
-        text: "**Approved by R. Patel** (procurement) and **signed off by P. Govender** (engineering). Purchase order **PO-48291** has been generated and sent to Zest WEG Group.",
+        authorLabel: "Spares Assistant",
+        timestamp: "9:05 AM",
+        text: "I've reviewed the planning parameters for this material — demand variability has increased and it's rated high risk. The recommendation was returned by the Commercial Manager for revision; the Engineering Manager has been asked to re-submit with updated lead-time assumptions.",
       },
     ],
     workflow: [
@@ -1629,79 +896,55 @@ export const CHAT_SESSIONS: ChatSession[] = [
         meta: "Auto · 09:03",
       },
       {
-        id: "application-confirmed",
-        label: "Application confirmed",
+        id: "classified-routed",
+        label: "Classified & routed",
         status: "done",
-        meta: "User · 09:05",
+        meta: "Routed to Inventory Planning",
       },
       {
-        id: "alternate-selection",
-        label: "Alternate selection",
+        id: "planning-review",
+        label: "Planning parameter review",
         status: "done",
-        meta: "User · 09:07",
+        meta: "Recommendation drafted",
       },
       {
-        id: "procurement-approval",
-        label: "Procurement approval",
-        status: "done",
-        meta: "Approved · 09:09",
-      },
-      {
-        id: "engineering-signoff",
-        label: "Engineering sign-off",
-        status: "done",
-        meta: "Signed off · 09:11",
-      },
-      {
-        id: "po-generation",
-        label: "PO generation",
-        status: "done",
-        meta: "PO-48291 · 09:12",
+        id: "approval-workflow",
+        label: "Approval workflow",
+        status: "active",
+        meta: "Returned for revision — Engineering Manager",
+        tone: "warning",
       },
     ],
     emails: [
       {
         id: "imp-email-1",
         status: "sent",
-        text: "Session started alert sent to procurement team",
-        time: "9:03 AM",
-      },
-      {
-        id: "imp-email-2",
-        status: "sent",
-        text: "Approval granted by R. Patel (Procurement head)",
-        time: "9:09 AM",
-      },
-      {
-        id: "imp-email-3",
-        status: "sent",
-        text: "PO-48291 generated and sent to Zest WEG Group",
-        time: "9:12 AM",
+        text: "Recommendation returned to Engineering Manager for revision",
+        time: "9:05 AM",
       },
     ],
     trace: {
       tags: [
         { label: "Flotation", kind: "cat" },
-        { label: "Direct equiv.", kind: "tier" },
-        { label: "Completed", kind: "status" },
+        { label: "Critical", kind: "tier" },
+        { label: "Pending approval", kind: "status" },
       ],
-      material: "500-08823",
+      material: "500-08841",
       equipment: "FP-2 flotation feed pump",
       requester: "K. Dlamini",
-      specMatch: "60mm / 5-vane / HC iron",
-      selectionsDone: 6,
-      selectionsTotal: 6,
+      specMatch: "Critical — Pumping Circuit",
+      selectionsDone: 3,
+      selectionsTotal: 4,
     },
   },
 
-  // 5. Control valve — Milling — escalated: requester never picked a match
-  // tier, so the request timed out and auto-escalated (a distinct trigger
-  // from SPR-2839, which stalled on an approver instead of the requester).
+  // 5. Control valve — Milling — OAR, consumption plan never submitted;
+  // demonstrates the full requester no-response escalation ladder (§19).
   {
     id: "SPR-2860",
     title: "Control valve — Reagent dosing line",
     navLabel: "Control valve",
-    navSubtitle: "Escalated",
+    navSubtitle: "Escalated — no response",
     navBadge: { type: "alert" },
     category: "Milling",
     status: "escalated",
@@ -1714,81 +957,36 @@ export const CHAT_SESSIONS: ChatSession[] = [
         role: "user",
         authorLabel: "You",
         timestamp: "2:02 PM",
-        text: "The reagent dosing control valve keeps sticking, need an alternate — material 500-19560",
+        text: "The reagent dosing control valve keeps sticking — material 500-19560, need a replacement",
       },
       {
         id: "valve-2",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "2:03 PM",
-        text: 'Found material **500-19560** — "Control Valve, Globe, easy-E", Fisher, currently sourced through Motion Control Systems. Let me confirm the application context.\n\n**Which line is this installed on?**',
-        options: {
-          id: "valve-line",
-          defaultSelectedId: "reagent",
-          locked: true,
-          resolvedAt: "2:04 PM",
-          options: [
-            {
-              id: "reagent",
-              icon: "settings",
-              label: "Reagent dosing line",
-              description: "Milling circuit",
-            },
-            {
-              id: "lime",
-              icon: "settings",
-              label: "Lime slurry line",
-              description: "Milling circuit",
-            },
-            {
-              id: "other",
-              icon: "help",
-              label: "Not sure / other equipment",
-              description: "I'll describe the application manually",
-            },
-          ],
-        },
-        footerNote: "Selection logged for traceability",
+        classification: "500-19560",
+        footerNote: "Classified via the Material Router",
       },
       {
         id: "valve-3",
         role: "ai",
-        authorLabel: "Spares AI",
-        timestamp: "2:05 PM",
-        text: "Got it — reagent dosing line, milling circuit. Matched specs: **3in, equal % trim, 667 spring-diaphragm actuator**. Found 2 alternate options. What match tier are you looking for?",
-        options: {
-          id: "valve-tier",
-          // No defaultSelectedId — this one was asked and never answered.
-          locked: true,
-          options: [
-            {
-              id: "direct",
-              icon: "copy",
-              label: "Direct equivalent",
-              description: "Same OEM part from different distributor — light approval",
-            },
-            {
-              id: "technical",
-              icon: "sliders",
-              label: "Technical equivalent",
-              description: "Different manufacturer, same specs — engineering sign-off",
-            },
-            {
-              id: "all",
-              icon: "lightbulb",
-              label: "Show all tiers",
-              description: "See all options with price comparison",
-            },
-          ],
-        },
-        footerNote: "Tier selection determines approval workflow",
+        authorLabel: "Spares Assistant",
+        timestamp: "2:04 PM",
+        text: "This material is classified as OAR. A consumption plan is required before proceeding.\n\nBefore proceeding, please provide the intended purpose.",
       },
       {
         id: "valve-4",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "Next day · 2:10 PM",
-        text: "We haven't heard back on the match tier for this request in 24 hours. It has been **auto-escalated to L. Naidoo (VP Supply Chain)** for review.",
+        text: "We haven't received a response for this consumption plan in 24 hours. A reminder has been sent to **R. Abrahams**.",
+      },
+      {
+        id: "valve-5",
+        role: "ai",
+        authorLabel: "Spares Assistant",
+        timestamp: "2 days later · 9:00 AM",
+        text: "Still no response after a second reminder. This has now **escalated to the HOD queue** for review.",
       },
     ],
     workflow: [
@@ -1799,57 +997,62 @@ export const CHAT_SESSIONS: ChatSession[] = [
         meta: "Auto · 14:03",
       },
       {
-        id: "application-confirmed",
-        label: "Application confirmed",
+        id: "classified-routed",
+        label: "Classified & routed",
         status: "done",
-        meta: "User · 14:04",
+        meta: "Routed to OAR Utilization",
       },
       {
-        id: "alternate-selection",
-        label: "Alternate selection",
+        id: "consumption-plan",
+        label: "Consumption plan",
         status: "active",
-        meta: "Overdue — no response, escalated",
+        meta: "Overdue — escalated to HOD queue",
         tone: "danger",
       },
-      { id: "procurement-approval", label: "Procurement approval", status: "pending" },
-      { id: "engineering-signoff", label: "Engineering sign-off", status: "pending" },
-      { id: "po-generation", label: "PO generation", status: "pending" },
+      {
+        id: "reservation",
+        label: "SAP reservation",
+        status: "pending",
+      },
     ],
     emails: [
       {
         id: "valve-email-1",
         status: "sent",
-        text: "Session started alert sent to procurement team",
+        text: "Reminder sent to R. Abrahams — consumption plan required",
         time: "2:03 PM",
       },
       {
         id: "valve-email-2",
         status: "sent",
-        text: "Reminder sent to R. Abrahams — match tier decision pending",
-        time: "2:05 PM",
+        text: "Second reminder sent — no response",
+        time: "Next day · 2:10 PM",
       },
       {
         id: "valve-email-3",
         status: "escalated",
-        text: "Escalated to L. Naidoo (VP Supply Chain) — no response from requester in 24h",
-        time: "Next day · 2:10 PM",
+        text: "Escalated to HOD queue — no response from requester in 48h",
+        time: "2 days later · 9:00 AM",
       },
     ],
     trace: {
       tags: [
         { label: "Milling", kind: "cat" },
+        { label: "OAR", kind: "tier" },
         { label: "Escalated", kind: "status" },
       ],
       material: "500-19560",
       equipment: "Reagent dosing line",
       requester: "R. Abrahams",
-      specMatch: "3in / Equal% / 667 actuator",
-      selectionsDone: 2,
-      selectionsTotal: 6,
+      specMatch: "OAR — Order as Required",
+      selectionsDone: 3,
+      selectionsTotal: 4,
     },
   },
 
-  // 6. Blank draft — opened by sidebar "New session" (mock: type freely, no AI replies)
+  // 6. Blank draft — opened by sidebar "New session". Type a material query
+  // (e.g. "Show me material 500-15134") and the Material Assistant
+  // classifies and routes it live, then continues the conversation itself.
   {
     id: NEW_SESSION_ID,
     title: "New session",
@@ -1868,15 +1071,8 @@ export const CHAT_SESSIONS: ChatSession[] = [
         status: "active",
         meta: "Awaiting input",
       },
-      {
-        id: "application-confirmed",
-        label: "Application confirmed",
-        status: "pending",
-      },
-      { id: "alternate-selection", label: "Alternate selection", status: "pending" },
-      { id: "procurement-approval", label: "Procurement approval", status: "pending" },
-      { id: "engineering-signoff", label: "Engineering sign-off", status: "pending" },
-      { id: "po-generation", label: "PO generation", status: "pending" },
+      { id: "classified-routed", label: "Classified & routed", status: "pending" },
+      { id: "next-step", label: "Routed to the right workflow", status: "pending" },
     ],
     emails: [],
     trace: {
@@ -1886,7 +1082,7 @@ export const CHAT_SESSIONS: ChatSession[] = [
       requester: "You",
       specMatch: "—",
       selectionsDone: 0,
-      selectionsTotal: 6,
+      selectionsTotal: 3,
     },
   },
 ]
@@ -1900,10 +1096,15 @@ export function getActiveSessions(): ChatSession[] {
   return CHAT_SESSIONS.filter((s) => s.status !== "completed")
 }
 
-/** Synthesizes a fresh "material identification" session for any catalog material — used by /materials row clicks. */
+/**
+ * Synthesizes a fresh "material identification" session for any catalog
+ * material — used by /materials row clicks. Only seeds the opening
+ * exchange (query + classification card); `ChatWorkspace` takes it from
+ * there live — asking for the OAR consumption plan (§5) or surfacing the
+ * Initiative 8 duplicate-repair check (§24) itself, via
+ * `lib/material-router.ts`.
+ */
 export function createDraftSession(material: Material): ChatSession {
-  const categoryLabel = material.category.toLowerCase()
-
   return {
     id: `NEW-${material.id}`,
     title: `${material.description} — ${material.category}`,
@@ -1920,47 +1121,15 @@ export function createDraftSession(material: Material): ChatSession {
         role: "user",
         authorLabel: "You",
         timestamp: "Just now",
-        text: `I need an alternate supplier for material ${material.id} — ${material.description}`,
+        text: `Show me material ${material.id} — ${material.description}`,
       },
       {
         id: "draft-2",
         role: "ai",
-        authorLabel: "Spares AI",
+        authorLabel: "Spares Assistant",
         timestamp: "Just now",
-        text: `Found material **${material.id}** — currently described as "${material.description}", ${material.manufacturer}, sourced through ${material.lastVendor}. Let me confirm the application context so I can find the right alternates.\n\n**Which equipment is this installed on?**`,
-        options: {
-          id: "draft-equipment",
-          defaultSelectedId: "primary",
-          advancesWorkflow: true,
-          options: [
-            {
-              id: "primary",
-              icon: "settings",
-              label: `Primary ${categoryLabel} application`,
-              description: "Most common installation for this material",
-            },
-            {
-              id: "secondary",
-              icon: "settings",
-              label: "Secondary / standby unit",
-              description: "Redundant or backup equipment",
-            },
-            {
-              id: "other",
-              icon: "help",
-              label: "Not sure / other equipment",
-              description: "I'll describe the application manually",
-            },
-          ],
-        },
-        footerNote: "Selection logged for traceability",
-      },
-      {
-        id: "draft-3",
-        role: "ai",
-        authorLabel: "Spares AI",
-        timestamp: "Just now",
-        text: `Thanks — matching specs for that application now. I'll have alternate options for **${material.id}** ready shortly.`,
+        classification: material.id,
+        footerNote: "Classified via the Material Router",
       },
     ],
     workflow: [
@@ -1971,410 +1140,22 @@ export function createDraftSession(material: Material): ChatSession {
         meta: "Auto · just now",
       },
       {
-        id: "application-confirmed",
-        label: "Application confirmed",
+        id: "classified-routed",
+        label: "Classified & routed",
         status: "active",
-        meta: "Awaiting user",
+        meta: "See conversation below",
       },
-      { id: "alternate-selection", label: "Alternate selection", status: "pending" },
-      { id: "procurement-approval", label: "Procurement approval", status: "pending" },
-      { id: "engineering-signoff", label: "Engineering sign-off", status: "pending" },
-      { id: "po-generation", label: "PO generation", status: "pending" },
+      { id: "next-step", label: "Routed to the right workflow", status: "pending" },
     ],
-    emails: [
-      {
-        id: "draft-email-1",
-        status: "sent",
-        text: "Session started alert sent to procurement team",
-        time: "Just now",
-      },
-      {
-        id: "draft-email-2",
-        status: "pending",
-        text: "Approval reminder queued for R. Patel (Procurement head)",
-        time: "Triggers on selection",
-      },
-      {
-        id: "draft-email-3",
-        status: "escalated",
-        text: "Auto-escalation to VP Supply Chain if no response in 24h",
-        time: "Configured",
-      },
-    ],
+    emails: [],
     trace: {
-      tags: [
-        { label: material.category, kind: "cat" },
-        { label: "New", kind: "status" },
-      ],
+      tags: [{ label: material.category, kind: "cat" }, { label: "New", kind: "status" }],
       material: material.id,
-      equipment: "Pending confirmation",
+      equipment: "—",
       requester: "You",
-      specMatch: "Pending",
+      specMatch: "Pending classification",
       selectionsDone: 1,
-      selectionsTotal: 6,
+      selectionsTotal: 3,
     },
   }
 }
-
-// ---------------------------------------------------------------------------
-// Dashboard — VZI Open PR & PO Position (Gamsberg & Black Mountain Mining).
-//
-// Ported from Anish's Dash app (`data.py`). Figures are transcribed as-is from
-// the VZI review slides workbook — they are not re-derived or "corrected"
-// here either, including the data-quality flags in VZI_FLAGS.
-// ---------------------------------------------------------------------------
-
-const round2 = (n: number) => Math.round(n * 100) / 100
-const round1 = (n: number) => Math.round(n * 10) / 10
-
-export const VZI_PR_SUMMARY: VziPrSummaryRow[] = [
-  { unit: "Gamsberg", material: 307, service: 39 },
-  { unit: "BMM", material: 202, service: 71 },
-]
-
-export const VZI_AGING: VziAgingBucket[] = [
-  { bucket: "0–7 days", count: 49 },
-  { bucket: "7–15 days", count: 56 },
-  { bucket: "15–30 days", count: 96 },
-  { bucket: "30–60 days", count: 150 },
-  { bucket: "60–90 days", count: 85 },
-  { bucket: "90–120 days", count: 90 },
-  { bucket: "More than 120 days", count: 93 },
-]
-
-export const VZI_OAR_VB: VziOarVbRow[] = [
-  { unit: "Gamsberg", area: "Plant", oar: 122, vb: 167 },
-  { unit: "Gamsberg", area: "Mining", oar: 0, vb: 0 },
-  { unit: "Gamsberg", area: "Other", oar: 7, vb: 0 },
-  { unit: "BMM", area: "Plant", oar: 135, vb: 67 },
-  { unit: "BMM", area: "Mining", oar: 0, vb: 0 },
-  { unit: "BMM", area: "Other", oar: 11, vb: 0 },
-]
-
-export const VZI_CATEGORIES: VziCategoryRow[] = [
-  { unit: "BMM", area: "Plant", category: "Repair", count: 76 },
-  { unit: "BMM", area: "Plant", category: "General Consumables", count: 63 },
-  { unit: "BMM", area: "Plant", category: "Dewatering", count: 55 },
-  { unit: "BMM", area: "Plant", category: "Filtration", count: 5 },
-  { unit: "BMM", area: "Plant", category: "Reagent", count: 3 },
-  { unit: "BMM", area: "Other", category: "Township (OAR)", count: 11 },
-  { unit: "Gamsberg", area: "Plant", category: "Repair", count: 99 },
-  { unit: "Gamsberg", area: "Plant", category: "Filtration", count: 55 },
-  { unit: "Gamsberg", area: "Plant", category: "General Consumables", count: 44 },
-  { unit: "Gamsberg", area: "Plant", category: "Milling", count: 38 },
-  { unit: "Gamsberg", area: "Plant", category: "Crushing", count: 20 },
-  { unit: "Gamsberg", area: "Plant", category: "Dewatering", count: 16 },
-  { unit: "Gamsberg", area: "Plant", category: "Electrical Spares", count: 11 },
-  { unit: "Gamsberg", area: "Plant", category: "Phase-2", count: 5 },
-  { unit: "Gamsberg", area: "Plant", category: "Reagent", count: 1 },
-  { unit: "Gamsberg", area: "Other", category: "General Consumables", count: 7 },
-]
-
-export const VZI_PO_SUMMARY: VziPrSummaryRow[] = [
-  { unit: "Gamsberg", material: 115, service: 142 },
-  { unit: "BMM", material: 77, service: 145 },
-]
-
-export const VZI_PO_DETAIL: VziPoDetailRow[] = [
-  { unit: "Gamsberg", area: "Plant", matCount: 106, matValue: 147.02, svcCount: 73, svcValue: 378.8 },
-  { unit: "Gamsberg", area: "Plant Ph2", matCount: 2, matValue: 0.01, svcCount: 1, svcValue: 21.18 },
-  { unit: "Gamsberg", area: "Mining", matCount: 6, matValue: 150.04, svcCount: 38, svcValue: 1501.0 },
-  { unit: "Gamsberg", area: "Other", matCount: 1, matValue: 0.01, svcCount: 30, svcValue: 254.42 },
-  { unit: "BMM", area: "Plant", matCount: 57, matValue: 20.9, svcCount: 30, svcValue: 184.82 },
-  { unit: "BMM", area: "Mining", matCount: 5, matValue: 7.58, svcCount: 20, svcValue: 1037.29 },
-  { unit: "BMM", area: "Swartberg", matCount: 0, matValue: 0.0, svcCount: 2, svcValue: 5.06 },
-  { unit: "BMM", area: "Other", matCount: 15, matValue: 0.33, svcCount: 93, svcValue: 0.0 },
-]
-
-/** Verbatim slide commentary — not re-derived. */
-export const VZI_SLIDE_NOTES: string[] = [
-  "Of the 509 open material PRs, 275 were triggered automatically from Min–Max levels; these Min–Max settings are to be reviewed to avoid duplicate / unnecessary PRs.",
-  "Of the 509 open material PRs, 234 are OAR items requiring critical review.",
-  "Of the 479 open POs, 192 are material POs and 287 are service POs.",
-  "11 mining material and 58 mining service POs relate to care-and-maintenance items.",
-  "'Other' consists of enabling-function services (finance, safety, admin, etc.).",
-]
-
-/** Computed from the authoritative data above — not new numbers, just restated. */
-export const VZI_DERIVED_NOTES: string[] = [
-  "PRs older than 30 days: 418 of 619 (67.5%); older than 90 days: 183 (29.6%).",
-  "Service POs carry 91.2% of open PO value (ZAR 3 382.57 Mn of 3 708.46 Mn).",
-  "Mining areas account for 72.7% of open PO value (ZAR 2 695.91 Mn across Gamsberg and BMM mining).",
-  "Care-and-maintenance items: 69 POs (11 material + 58 service).",
-]
-
-/** From the "care-and-maintenance" slide bullet — 11 mining material + 58 mining service POs. */
-export const VZI_CARE_MAINTENANCE: VziTotals = { material: 11, service: 58, total: 69 }
-
-export const VZI_FLAGS: VziFlag[] = [
-  {
-    title: "OAR vs VB labels",
-    body: "the table shows OAR = 275 and VB = 234, while the narrative bullets attribute 275 to Min–Max (auto) triggers and 234 to OAR. The two counts appear swapped between table and text; worth confirming which label maps to which trigger type before publishing.",
-  },
-  {
-    title: "Unit split of material PRs",
-    body: "the unit summary shows Gamsberg 307 / BMM 202, while the OAR–VB table shows Gamsberg 296 / BMM 213. Both total 509; the difference of 11 each way equals the 11 Township PRs under BMM 'Other', suggesting a classification difference between the two views.",
-  },
-  {
-    title: "BMM 'Other' service PO value",
-    body: "blank on the slide; it back-calculates to 0.00 from the BMM subtotal and is entered as such.",
-  },
-]
-
-export function vziPrTotals(): VziTotals {
-  const material = VZI_PR_SUMMARY.reduce((sum, r) => sum + r.material, 0)
-  const service = VZI_PR_SUMMARY.reduce((sum, r) => sum + r.service, 0)
-  return { material, service, total: material + service }
-}
-
-export function vziPoTotals(): VziTotals {
-  const material = VZI_PO_SUMMARY.reduce((sum, r) => sum + r.material, 0)
-  const service = VZI_PO_SUMMARY.reduce((sum, r) => sum + r.service, 0)
-  return { material, service, total: material + service }
-}
-
-export function vziPoValueTotals(): VziTotals {
-  const material = round2(VZI_PO_DETAIL.reduce((sum, p) => sum + p.matValue, 0))
-  const service = round2(VZI_PO_DETAIL.reduce((sum, p) => sum + p.svcValue, 0))
-  return { material, service, total: round2(material + service) }
-}
-
-export function vziAgingTotal(): number {
-  return VZI_AGING.reduce((sum, a) => sum + a.count, 0)
-}
-
-export function vziAgingOver30(): number {
-  return VZI_AGING.slice(3).reduce((sum, a) => sum + a.count, 0)
-}
-
-export function vziPrSummaryByUnit(): Record<string, number> {
-  const out: Record<string, number> = {}
-  for (const r of VZI_PR_SUMMARY) out[r.unit] = r.material + r.service
-  return out
-}
-
-export function vziOarVbByUnit(): Record<string, VziOarVbAggregate> {
-  const out: Record<string, VziOarVbAggregate> = {}
-  for (const r of VZI_OAR_VB) {
-    const u = (out[r.unit] ??= { oar: 0, vb: 0, total: 0 })
-    u.oar += r.oar
-    u.vb += r.vb
-  }
-  for (const u of Object.values(out)) u.total = u.oar + u.vb
-  return out
-}
-
-export function vziPoByUnit(): Record<string, VziUnitAggregate> {
-  const out: Record<string, VziUnitAggregate> = {}
-  for (const p of VZI_PO_DETAIL) {
-    const u = (out[p.unit] ??= { matCount: 0, matValue: 0, svcCount: 0, svcValue: 0, count: 0, value: 0 })
-    u.matCount += p.matCount
-    u.matValue += p.matValue
-    u.svcCount += p.svcCount
-    u.svcValue += p.svcValue
-  }
-  for (const u of Object.values(out)) {
-    u.matValue = round2(u.matValue)
-    u.svcValue = round2(u.svcValue)
-    u.count = u.matCount + u.svcCount
-    u.value = round2(u.matValue + u.svcValue)
-  }
-  return out
-}
-
-export function vziCategoryPivot(): VziCategoryPivotRow[] {
-  const agg = new Map<string, { category: string; Gamsberg: number; BMM: number }>()
-  const order: string[] = []
-  for (const row of VZI_CATEGORIES) {
-    if (!agg.has(row.category)) {
-      agg.set(row.category, { category: row.category, Gamsberg: 0, BMM: 0 })
-      order.push(row.category)
-    }
-    agg.get(row.category)![row.unit] += row.count
-  }
-  return order
-    .map((c) => {
-      const e = agg.get(c)!
-      return { ...e, total: e.Gamsberg + e.BMM }
-    })
-    .sort((a, b) => b.total - a.total)
-}
-
-export function vziPoAreaSorted(): VziPoAreaRow[] {
-  return VZI_PO_DETAIL.map((p) => ({
-    ...p,
-    label: `${p.unit} — ${p.area}`,
-    total: round2(p.matValue + p.svcValue),
-  })).sort((a, b) => b.total - a.total)
-}
-
-export function getVziKpiSummary(): VziKpiSummary {
-  const openPr = vziPrTotals()
-  const openPo = vziPoTotals()
-  const openPoValue = vziPoValueTotals()
-  const agingTotal = vziAgingTotal()
-  const prOver30 = vziAgingOver30()
-  return {
-    openPr,
-    openPo,
-    openPoValue,
-    servicePct: round1((openPoValue.service / openPoValue.total) * 100),
-    agingTotal,
-    prOver30,
-    prOver30Pct: round1((prOver30 / agingTotal) * 100),
-    careMaintenance: VZI_CARE_MAINTENANCE,
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Approvals queue
-// ---------------------------------------------------------------------------
-
-export const PENDING_APPROVALS: PendingApproval[] = [
-  {
-    id: "appr-1",
-    sessionId: "SPR-2847",
-    rrId: "RR-8841",
-    materialId: "500-14892",
-    materialDescription: "Seal Assy, Mech Type XR-200",
-    requester: "M. Naidoo",
-    matchTier: "Direct Equivalent (Usual)",
-    lastPurchasePrice: 48200,
-    waitingSince: "22 Jul 2026 · 10:25 AM",
-    approver: "R. Patel",
-    category: "Milling",
-    urgency: "Normal",
-  },
-  {
-    id: "appr-2",
-    sessionId: "SPR-2851",
-    rrId: "RR-9023",
-    materialId: "500-22140",
-    materialDescription: "Bearing, Spherical Roller, Conveyor Idler",
-    requester: "T. Mokoena",
-    matchTier: "Direct Equivalent (Usual)",
-    lastPurchasePrice: 8400,
-    waitingSince: "21 Jul 2026 · 08:15 AM",
-    approver: "R. Patel",
-    category: "Conveyance",
-    urgency: "High",
-  },
-  {
-    id: "appr-3",
-    sessionId: "SPR-2839",
-    rrId: "RR-8756",
-    materialId: "500-31005",
-    materialDescription: "Pressure Transmitter, Cerabar PMC21",
-    requester: "S. van Wyk",
-    matchTier: "Technical Equivalent",
-    lastPurchasePrice: 18900,
-    waitingSince: "18 Jul 2026 · 07:44 AM",
-    approver: "P. Govender",
-    category: "Instrumentation",
-    urgency: "Critical",
-  },
-  {
-    id: "appr-4",
-    sessionId: "SPR-2871",
-    rrId: "RR-9104",
-    materialId: "500-19602",
-    materialDescription: "Control Valve, Rotary, Neldisc",
-    requester: "L. Ndlovu",
-    matchTier: "Direct Equivalent (Usual)",
-    lastPurchasePrice: 74500,
-    waitingSince: "20 Jul 2026 · 2:30 PM",
-    approver: "R. Patel",
-    category: "Milling",
-    urgency: "Normal",
-  },
-]
-
-// ---------------------------------------------------------------------------
-// Audit trail — derived from the chat sessions above, so it can never drift
-// from what actually happened in a conversation.
-// ---------------------------------------------------------------------------
-
-export function getAuditLog(): AuditEntry[] {
-  const entries: AuditEntry[] = []
-
-  for (const session of CHAT_SESSIONS) {
-    for (const message of session.messages) {
-      const actor = message.role === "user" ? "User" : "AI"
-      const plainText = (message.text ?? "")
-        .replace(/\*\*/g, "")
-        .replace(/\n+/g, " ")
-        .trim()
-
-      if (message.comparison) {
-        const c = message.comparison
-        entries.push({
-          id: `${message.id}-msg`,
-          timestamp: message.timestamp,
-          sessionId: session.id,
-          action: "Alternate comparison shown",
-          actor: "AI",
-          material: session.materialId,
-          detail: `${c.heading}: ${c.alternate.supplierName} vs ${c.current.supplierName}`,
-          fullDetail: `${c.heading}. Current: ${c.current.supplierName} (${c.current.partNumber}) at ${formatZAR(c.current.price)}. Alternate: ${c.alternate.supplierName} (${c.alternate.partNumber}) at ${formatZAR(c.alternate.price)}${c.alternate.savingsPct !== undefined ? `, ${c.alternate.savingsPct}% below current` : ""}. Market benchmark ${formatZAR(c.benchmark.low)}–${formatZAR(c.benchmark.high)}.`,
-        })
-      } else if (message.options) {
-        entries.push({
-          id: `${message.id}-msg`,
-          timestamp: message.timestamp,
-          sessionId: session.id,
-          action: message.role === "user" ? "User request" : "Options presented",
-          actor,
-          material: session.materialId,
-          detail: plainText.slice(0, 140) || "—",
-          fullDetail: `${plainText} — Options: ${message.options.options.map((o) => o.label).join(", ")}`,
-        })
-
-        if (message.options.locked && message.options.defaultSelectedId) {
-          const chosen = message.options.options.find(
-            (o) => o.id === message.options?.defaultSelectedId
-          )
-          entries.push({
-            id: `${message.id}-selection`,
-            timestamp: message.options.resolvedAt ?? message.timestamp,
-            sessionId: session.id,
-            action: "User selection",
-            actor: "User",
-            material: session.materialId,
-            detail: `Selected: ${chosen?.label ?? message.options.defaultSelectedId}`,
-            fullDetail: `User selected "${chosen?.label ?? message.options.defaultSelectedId}" in response to: ${plainText}`,
-          })
-        }
-      } else {
-        entries.push({
-          id: `${message.id}-msg`,
-          timestamp: message.timestamp,
-          sessionId: session.id,
-          action: message.role === "user" ? "User message" : "AI response",
-          actor,
-          material: session.materialId,
-          detail: plainText.slice(0, 140) || "—",
-          fullDetail: plainText,
-        })
-      }
-
-      if (message.actions?.resolvedActionId) {
-        const chosen = message.actions.actions.find(
-          (a) => a.id === message.actions?.resolvedActionId
-        )
-        entries.push({
-          id: `${message.id}-action`,
-          timestamp: message.timestamp,
-          sessionId: session.id,
-          action: "Action taken",
-          actor: "User",
-          material: session.materialId,
-          detail: `Selected: ${chosen?.label ?? message.actions.resolvedActionId}`,
-          fullDetail: `User selected "${chosen?.label ?? message.actions.resolvedActionId}" — ${chosen?.description ?? "no further detail"}.`,
-        })
-      }
-    }
-  }
-
-  return entries
-}
-

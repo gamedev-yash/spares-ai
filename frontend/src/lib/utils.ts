@@ -39,16 +39,6 @@ export function formatTime12h(date: Date): string {
   return `${hours}:${minutes} ${ampm}`
 }
 
-export type SeverityTone = "default" | "warning" | "danger"
-
-/** Shared "days stuck" severity thresholds for Situation Analysis — keeps the
- * >10-day high-risk definition consistent across the KPI, pipeline tiles, and table. */
-export function daysStuckTone(days: number): SeverityTone {
-  if (days > 10) return "danger"
-  if (days > 5) return "warning"
-  return "default"
-}
-
 /** Formats a number as compact ZAR for chart axes: "R150k", "R1.3M". */
 export function formatZARCompact(amount: number): string {
   const abs = Math.abs(amount)
