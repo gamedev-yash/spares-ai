@@ -859,6 +859,15 @@ question, same person, same list.
 (regenerated), `docs-eng/SET_READINESS.md` (regenerated), the three baked
 dataset JSON files (rebuilt), this file.
 
+**Addendum (2026-09-10, during the `feat/sj/codebase` merge PR):** CI on that
+PR failed on exactly this test, since GitHub Actions has no way to know
+"deliberately failing pending a decision" from "broken." Rather than resolve
+the open question under merge-PR pressure, the test was `it.skip`'d with a
+comment pointing back here — `DISMM_VALUE_DOMAIN` itself was **not** touched,
+so `VM` is still not silently treated as known-good. Un-skip
+`known-conditions.test.ts`'s "Dismm holds only values we have already seen
+and reasoned about" once VM is classified.
+
 ---
 
 ## Where things stand
