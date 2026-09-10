@@ -94,6 +94,10 @@ describe("SAP's awkward wire formats are reproduced, not tidied up", () => {
 })
 
 describe("the current live conditions are reproduced deliberately (§7.3)", () => {
+  // COUNT_BROKEN_SETS is empty as of the 09-Sep 2026 sweep (both sets that
+  // used to be here were fixed), so this runs zero cases right now — that is
+  // expected, not a mistake. See gateway/server.ts's forceCountBroken for
+  // exercising a broken $count in a test regardless of live SAP's state.
   it.each(COUNT_BROKEN_SETS)("$count returns HTTP 500 on %s, as it really does", async (entitySet) => {
     expect(await client.count(entitySet)).toBeNull()
   })

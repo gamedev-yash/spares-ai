@@ -143,7 +143,7 @@ describe("mappers produce the view models the UI already expects", () => {
     expect(mapped.reorderPoint).toBe(12)
   })
 
-  it("maps a ledger line, standing in for the reservation data SAP has none of", () => {
+  it("maps a ledger line, standing in for the plan's own figures when no reservation is joined", () => {
     const platform = {
       plans: loadPlatform("consumption_plans"),
       utilisation: new Map(
@@ -157,7 +157,10 @@ describe("mappers produce the view models the UI already expects", () => {
 
     expect(mapped.id).toBe(plan.plan_id)
     expect(mapped.reservation.documentNumber).toBe(plan.Rsnum)
-    // No reservation row exists live, so the plan's own quantity stands in.
+    // No `reservations` map was passed at all, so the plan's own quantity
+    // stands in — the same fallback used when a specific plan's key just
+    // isn't present in a map that was passed. ReservationItemSet itself has
+    // been live since the 09-Sep 2026 sweep (§1.3).
     expect(mapped.qtyRequested).toBe(Number(plan.planned_quantity))
     expect(mapped.qtyIssued).toBe(0)
   })

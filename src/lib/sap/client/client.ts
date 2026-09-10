@@ -29,9 +29,10 @@ export interface ReadOptions {
 
 /**
  * A successful read. `status` is explicit so a caller cannot mistake "SAP has
- * no rows for this" for "the call failed" — three live sets return zero rows
- * today (§1.3), and the UI has to say so honestly rather than rendering a
- * confident empty list.
+ * no rows for this" for "the call failed" — two live sets still return zero
+ * rows today (§1.3; a third, `ReservationItemSet`, was fixed 09-Sep 2026),
+ * and the UI has to say so honestly rather than rendering a confident empty
+ * list.
  */
 export type ReadResult =
   | { status: "rows"; entitySet: string; query: string; rows: SapRow[]; unknownProperties: string[] }
@@ -101,7 +102,12 @@ export class CpiClient {
     return { status: "rows", entitySet, query, rows, unknownProperties: [...unknown] }
   }
 
-  /** `$count` for an entity set. Returns null when SAP cannot answer (HTTP 500 on two sets — §4). */
+  /**
+   * `$count` for an entity set. Returns null when SAP cannot answer with a
+   * 500 (§4) — currently no set is known to do this (both that used to,
+   * `PurchaseRequisitionSet` and `GoodsMovementItemSet`, were fixed 09-Sep
+   * 2026), but the null path stays live for whichever set breaks next.
+   */
   async count(entitySet: string, options: ReadOptions = {}): Promise<number | null> {
     try {
       const response = await this.request(this.apiPathFor(entitySet, "/$count"), options.query ?? "", entitySet)

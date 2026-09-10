@@ -10,15 +10,27 @@
 // offline in CI. The W2.2 smoke test (later) re-asserts the same set against
 // live CPI.
 
-/** `$count` currently returns HTTP 500 on these. W2.3's fallback paging exists for them. */
-export const COUNT_BROKEN_SETS = ["PurchaseRequisitionSet", "GoodsMovementItemSet"] as const
+/**
+ * `$count` currently returns HTTP 500 on these. Empty as of the 09-Sep 2026
+ * sweep — SAP fixed both sets that used to be here (`PurchaseRequisitionSet`,
+ * `GoodsMovementItemSet`; see COUNT_WORKING_SETS). W2.3's fallback paging
+ * still exists for whichever set lands here next; nothing currently uses it
+ * by static config, but `auto` mode still demotes into it at runtime if a
+ * `$count` call 500s.
+ */
+export const COUNT_BROKEN_SETS = [] as const
 
 /**
- * `$count` works here and must keep working. PurchaseOrderItemSet is in this
- * list specifically because it used to be broken — this guards the regression.
+ * `$count` works here and must keep working. PurchaseOrderItemSet,
+ * PurchaseRequisitionSet and GoodsMovementItemSet are in this list
+ * specifically because each used to be broken — this guards the regression.
+ * The latter two were fixed in the 09-Sep 2026 sweep (previously HTTP 500;
+ * now 1,553 and 68,616 rows respectively).
  */
 export const COUNT_WORKING_SETS = [
   "PurchaseOrderItemSet",
+  "PurchaseRequisitionSet",
+  "GoodsMovementItemSet",
   "MaterialSet",
   "MaterialPlantSet",
   "MaterialDescriptionSet",
@@ -40,8 +52,11 @@ export const COUNT_WORKING_SETS = [
  * Registered, responding, and returning nothing (§1.3). The top blocker in
  * WS2: these look fixed but carry no data, so I07/I08/I13 cannot be validated
  * against live rows. Flip these to a hard failure once SAP answers why.
+ *
+ * `ReservationItemSet` was fixed in the 09-Sep 2026 sweep (now 1,000 rows)
+ * and no longer belongs here — see docs-eng/phase_summary.md.
  */
-export const EMPTY_SETS = ["ReservationItemSet", "MaterialValuationSet", "MonthlyMovementStatisticSet"] as const
+export const EMPTY_SETS = ["MaterialValuationSet", "MonthlyMovementStatisticSet"] as const
 
 /** Properties that must exist, with the type they must have. */
 export const EXPECTED_PROPERTIES = [

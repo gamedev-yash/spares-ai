@@ -45,39 +45,44 @@ describe("counted mode", () => {
   })
 })
 
-describe("fallback mode — the two sets where $count really is broken", () => {
+describe("PurchaseRequisitionSet and GoodsMovementItemSet — SAP fixed $count on 09-Sep 2026", () => {
+  // Both used to be pinned to "fallback" in SET_PAGING because $count really
+  // did 500 on them. The sweep found SAP had fixed it, so the fix here was to
+  // delete those two config lines — both now fall through to the default
+  // "auto" mode and count normally, same as the PurchaseOrderItemSet case
+  // below did when it was fixed earlier.
   it.each(["PurchaseRequisitionSet", "GoodsMovementItemSet"])(
-    "%s extracts to the exact CSV row count without $count",
+    "%s is configured auto (not hard-coded fallback) and counts normally",
     async (entitySet) => {
+      expect(pagingConfigFor(entitySet).countMode).toBe("auto")
       const result = await extract(client, entitySet, { pageSize: 300 })
-      expect(result.countMode).toBe("fallback")
-      expect(result.reportedTotal).toBeNull()
+      expect(result.countMode).toBe("counted")
+      expect(result.demoted).toBe(false)
+      expect(result.reportedTotal).toBe(csvRowCount(entitySet))
       expect(result.rows).toHaveLength(csvRowCount(entitySet))
     }
   )
-
-  it("is configured, not hard-coded — the config is what selects the mode", () => {
-    expect(pagingConfigFor("PurchaseRequisitionSet").countMode).toBe("fallback")
-    expect(pagingConfigFor("MaterialSet").countMode).toBe("auto")
-  })
 })
 
 describe("auto mode demotes itself and says so", () => {
   it("falls back when $count fails, reporting the demotion rather than hiding it", async () => {
-    // A gateway where $count is broken everywhere.
-    const broken = await startGateway({ simulateBrokenCount: true })
+    // forceCountBroken exercises the demotion path directly, rather than
+    // depending on some set currently being broken in real SAP (as of the
+    // 09-Sep 2026 sweep, none is — see known-conditions.ts COUNT_BROKEN_SETS).
+    const broken = await startGateway({ forceCountBroken: ["MaterialSet"] })
     try {
       const brokenClient = new CpiClient({
         config: { ...config, baseUrl: broken.baseUrl, tokenUrl: `${broken.baseUrl}/oauth/token` },
       })
       const demotions: string[] = []
-      const result = await extract(brokenClient, "PurchaseRequisitionSet", {
+      const result = await extract(brokenClient, "MaterialSet", {
         pageSize: 500,
         onDemotion: (entitySet, reason) => demotions.push(`${entitySet}: ${reason}`),
       })
-      // Configured "fallback" already, so no demotion needed — it never asks.
       expect(result.countMode).toBe("fallback")
-      expect(demotions).toEqual([])
+      expect(result.demoted).toBe(true)
+      expect(demotions).toHaveLength(1)
+      expect(result.rows).toHaveLength(csvRowCount("MaterialSet"))
     } finally {
       broken.server.close()
     }
@@ -174,7 +179,9 @@ describe("safety ceilings", () => {
 
 describe("empty is reportable, not ambiguous (§1.3)", () => {
   it("reports empty for a set that genuinely has no rows, after confirming once", async () => {
-    const result = await extract(client, "ReservationItemSet")
+    // MaterialValuationSet is still one of the two live-empty sets as of the
+    // 09-Sep 2026 sweep (ReservationItemSet, the third, was fixed then).
+    const result = await extract(client, "MaterialValuationSet")
     expect(result.status).toBe("empty")
     expect(result.rows).toEqual([])
     // Asked twice before believing it: an empty first page could be a blip.

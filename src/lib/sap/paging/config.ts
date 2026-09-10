@@ -3,7 +3,10 @@
 // Deliberately configuration rather than a hard-coded list of broken sets.
 // PurchaseOrderItemSet is the proof this pays for itself: its `$count` was
 // broken, then SAP fixed it, and a set on "auto" picks that up with no code
-// change at all.
+// change at all. PurchaseRequisitionSet and GoodsMovementItemSet proved it a
+// second time in the 09-Sep 2026 sweep — both were explicitly pinned to
+// "fallback" below, and once SAP's fix was confirmed the fix here was to
+// delete those two lines, not add new ones.
 
 import { SAP_CONTRACT } from "../contract/generated-contract"
 
@@ -35,13 +38,15 @@ export interface SetPagingConfig {
 const DEFAULT_CONFIG: SetPagingConfig = { countMode: "auto", extract: "full" }
 
 export const SET_PAGING: Record<string, SetPagingConfig> = {
-  // $count really is broken on these two today. "auto" would work, but naming
-  // them explicitly documents a known condition rather than rediscovering it
-  // through a failed call on every extraction.
-  PurchaseRequisitionSet: { countMode: "fallback", extract: "full" },
-  GoodsMovementItemSet: { countMode: "fallback", extract: "full" },
+  // PurchaseRequisitionSet and GoodsMovementItemSet used to be pinned here as
+  // `{ countMode: "fallback", extract: "full" }` — $count really did 500 on
+  // both. The 09-Sep 2026 sweep found SAP had fixed it (1,553 and 68,616 rows
+  // respectively), so both were removed and now fall through to
+  // DEFAULT_CONFIG's "auto", which reads them as "counted" — exactly the
+  // self-promotion this module's design was built for. See
+  // docs-eng/phase_summary.md and known-conditions.ts's COUNT_WORKING_SETS.
 
-  // 929,151 and 241,685 rows. A full extract is never the right operation:
+  // 929,151+ and 241,687+ rows. A full extract is never the right operation:
   // I07 asks these a narrow question ("was this recommendation applied?"),
   // which is a filtered lookup (§1.4).
   ChangeDocItemSet: {

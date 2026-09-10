@@ -643,6 +643,224 @@ The plan flags that a late answer to this single question costs a day.
 **Files touched:** `scripts/smoke-cpi.mts`, `package.json`.
 
 ---
+## Phase 10 — SAP fixed two of the three top blockers (2026-09-09)
+
+**What happened:** a follow-up discovery sweep (`python cpi_discovery.py --out
+discovery`, 09-Sep) came back with real changes instead of the usual
+no-op — SAP fixed both `$count` HTTP 500s and one of the three zero-row sets:
+
+| Set | Before (08-Sep) | After (09-Sep) |
+|---|---|---|
+| `PurchaseRequisitionSet` `$count` | HTTP 500 | **1,553** |
+| `GoodsMovementItemSet` `$count` | HTTP 500 | **68,616** |
+| `ReservationItemSet` row count | **0** | **1,000** |
+| `MaterialValuationSet` row count | 0 | still 0 |
+| `MonthlyMovementStatisticSet` row count | 0 | still 0 |
+
+Still broken: `MaterialValuationSet` and `MonthlyMovementStatisticSet` both
+still return zero rows. `Bednr` is still not exposed on `ReservationItemSet`.
+Nothing here answers the Phase 0 MRP-type questions either — those are
+unrelated and still open.
+
+**What this proved, concretely:** W2.3's paging design exists specifically so
+a fix like this needs no code change — `PurchaseOrderItemSet` was the
+original proof (Phase 4), and `PurchaseRequisitionSet` /
+`GoodsMovementItemSet` are now a second one. Both were pinned to
+`{ countMode: "fallback" }` in `src/lib/sap/paging/config.ts` specifically
+*because* `$count` 500'd on them; the actual code fix was deleting those two
+lines so they fall through to the default `"auto"` mode, which reads `$count`
+successfully now and self-promotes to `"counted"` — exactly the mechanism the
+module's own top comment describes.
+
+**Everything that changed to keep this honest, not just the two lines above:**
+- `src/lib/sap/contract/known-conditions.ts` — `COUNT_BROKEN_SETS` is now
+  empty; both sets moved into `COUNT_WORKING_SETS` (alongside
+  `PurchaseOrderItemSet`, same reasoning: guard the regression).
+  `ReservationItemSet` came out of `EMPTY_SETS`.
+- `src/lib/sap/mapping/initiative-13.ts` — the five `ReservationItemSet`-backed
+  I13 fields (`reservation`, `qtyRequested`, `qtyIssued`,
+  `plannedConsumptionDate`, `uom`) reclassified from `blocked` to `sap` in
+  `LEDGER_LINE_SOURCES`. The mapper's own logic already preferred a real
+  reservation row over the platform fallback when one is supplied (that part
+  was written in Phase 7, unchanged) — what was wrong was only the *label*
+  saying that data could never arrive.
+- `src/lib/sap/gateway/server.ts` — gained a `forceCountBroken` option,
+  independent of `COUNT_BROKEN_SETS`, so the fake gateway can still simulate a
+  broken `$count` for testing the auto-demotion path now that nothing in real
+  SAP is currently broken that way. Without it, `npm test` would have no way
+  to exercise that path at all.
+- Regenerated `docs-eng/SET_READINESS.md` (`npm run readiness`) and
+  `docs-eng/FIELD_SOURCE_GAPS.md` (`npm run gap-report`) from the updated
+  config and mappings above — both are generated files, not hand-edited.
+- Updated the tests that hard-coded the old state as example data
+  (`paginate.test.ts`, `client.test.ts`, `gateway.test.ts`,
+  `mapping.test.ts`) — mostly swapping illustrative "still broken" / "still
+  empty" examples from the now-fixed sets over to `MaterialValuationSet`,
+  which is still genuinely empty. One test (`paginate.test.ts`'s
+  auto-demotion case) had been quietly not testing what its name claimed —
+  it asserted behavior on a statically `"fallback"`-configured set, so no
+  demotion ever actually happened. Fixed to use `forceCountBroken` against an
+  ordinary `"auto"` set, so it now genuinely exercises the demotion path.
+
+**A separate, unrelated finding from the same sweep, deliberately NOT acted on
+here:** `properties.csv` and `metadata_ZVZI_KPI02_SHARED_SRV.xml` also show
+~30 fields across 10 entity sets that changed `Edm.Decimal` → `Edm.String`
+(e.g. every quantity/price field on `MaterialPlantSet`,
+`StorageLocationStockSet`, `PurchaseRequisitionSet`,
+`GoodsMovementItemSet`...), plus several `DateTime` fields that became
+nullable. This is exactly the kind of change `src/lib/sap/contract/drift.test.ts`
+exists to catch, and it does: `npm test` currently fails 2 of those tests
+because `generated-contract.ts` (the committed baseline) has not been
+regenerated against this new metadata. That regeneration
+(`npm run contract:generate`) was deliberately left undone here — it is a
+different, larger-blast-radius change than "a couple of fields un-broke," and
+touches `EXPECTED_PROPERTIES` in `known-conditions.ts`, the drift tests
+themselves, and possibly decode assumptions downstream. Flagged for a
+dedicated pass, not folded into this one.
+
+**Your action item:** none for the two fixes above — self-healing by design,
+verified by `npm test`. Two follow-ups did come out of this, though:
+1. The `Edm.Decimal` → `Edm.String` drift above needs its own review before
+   running `npm run contract:generate` for real — someone should confirm this
+   is expected (SAP's team doing the same field-type migration Phase 4 already
+   caught once on `Netpr`/`Netwr`) rather than a data quality problem.
+2. `MaterialValuationSet` and `MonthlyMovementStatisticSet` are still the
+   open item — see "Everything waiting on you" below, now updated to two sets
+   instead of three.
+
+**Files touched:** `src/lib/sap/contract/known-conditions.ts`,
+`src/lib/sap/paging/config.ts`, `src/lib/sap/gateway/server.ts`,
+`src/lib/sap/client/client.ts`, `src/lib/sap/contract/required-fields.ts`,
+`src/lib/sap/mapping/initiative-13.ts`, four `*.test.ts` files,
+`docs-eng/SET_READINESS.md`, `docs-eng/FIELD_SOURCE_GAPS.md` (both
+regenerated), this file.
+
+---
+
+## Phase 11 — regenerated the contract against the `Edm.Decimal` -> `Edm.String` drift (2026-09-10)
+
+**What changed:** picked up the Phase 10 finding. Ran
+`npm run contract:generate` to rebuild `generated-contract.ts` from the
+already-updated `properties.csv`/metadata XML, so the committed baseline now
+agrees with what the 09-Sep sweep actually measured — the ~30 fields across 10
+entity sets that moved from `Edm.Decimal` to `Edm.String`, plus the handful of
+`DateTime` fields that became nullable.
+
+**Why this was safe to do without touching any decoding logic:**
+`src/lib/sap/contract/edm-types.ts` already decodes strictly by *declared*
+type, and already trims incoming `Edm.String` values (the padded-`Netpr`
+fix from Phase 4) — so once the contract says a field is a string, the
+plumbing to handle that correctly already existed. The mapping layer
+(`numberOf()` in each `initiative-*.ts`) already converts either a number or
+a numeric-looking string the same way. So this was a case of trusting
+infrastructure that was already built for exactly this — not new code.
+
+**What it actually found, once the tests ran against the regenerated
+baseline:**
+1. `drift.test.ts`'s "reports no differences" test went green immediately —
+   that was the whole point of regenerating.
+2. Two tests broke, both for real, narrow reasons rather than because
+   anything is actually wrong:
+   - `client.test.ts` had a test proving "a genuine `Edm.Decimal` decodes to a
+     number," using `MaterialPlantSet.Plifz` as the example — which is now one
+     of the fields that changed. Fixed by switching the example to
+     `ReservationItemSet.Bdmng`, which is still genuinely `Edm.Decimal`.
+   - `drift.test.ts`'s own "catches a type change... run backwards" test —
+     the one that simulates SAP reverting `PurchaseOrderItemSet.Netpr` back to
+     a number — mutates the raw XML by a plain text search-and-replace for
+     `Netpr" Type="Edm.String"`. That string used to appear exactly once in
+     the file. It now appears **twice**, because `InfoRecordOrgSet.Netpr` is
+     *also* one of the fields the sweep changed to `Edm.String`. The
+     text-replace was silently mutating the wrong one (`InfoRecordOrgSet`,
+     which appears earlier in the file) and the test was failing on a
+     technicality, not because drift detection itself was broken. Fixed by
+     including `MaxLength="30"` in the matched text, which is unique to
+     `PurchaseOrderItemSet.Netpr`.
+
+   Neither of these was a sign that anything is actually broken in the app —
+   both were tests whose *example data* had gone stale, in one case in a way
+   that was actively pointing at the wrong field without failing loudly about
+   it. Worth noting as a small lesson: a plain-string search-and-replace
+   against a growing SAP schema is exactly the kind of thing that can go
+   silently wrong as the schema drifts further, even in code written to
+   detect drift.
+3. Ran `npm run dataset:build` (rebuilds the app's three baked datasets
+   through the real client/paging/mapping stack, same as Phase 8) to confirm
+   end to end, not just in unit tests, that fields like `MaterialPlantSet.Minbe`
+   still arrive as real numbers (`36.087`, not `"36.087"`) in what the UI
+   actually renders, despite SAP now sending them as text on the wire. They do
+   — spot-checked in the regenerated JSON.
+
+**Result:** all 256 tests pass (up from 254 passing / 2 failing after Phase
+10). `npx tsc --noEmit` shows no new type errors (three pre-existing,
+unrelated `.next/types` route-validator errors remain, from stale build
+output, nothing to do with this change).
+
+**Your action item:** the confirmation question from Phase 10 is still open
+— someone should still check with the SAP side that a jump from 2 known
+Decimal->String fields to ~30 is an intentional, planned change on their end
+and not a sign that something is misconfigured in the environment being
+scanned. The code now handles either answer correctly; this is about knowing
+which one is true.
+
+**Files touched:** `src/lib/sap/contract/generated-contract.ts`
+(regenerated), `src/lib/sap/client/client.test.ts`,
+`src/lib/sap/contract/drift.test.ts`, the three baked dataset JSON files
+(rebuilt, not hand-edited), this file.
+
+---
+
+## Phase 12 — a fresh sweep, checked for changes (2026-09-10)
+
+**What prompted this:** the discovery data was regenerated again, independent
+of any code change. Checked it the same way Phase 10/11 did: diff every
+`discovery/*` file against what the code already assumes, propagate what's
+purely mechanical, and flag anything needing a human decision rather than
+guessing.
+
+**Mechanical, already fixed:**
+- Row counts nudged up everywhere (e.g. `PurchaseOrderItemSet` 11,074 ->
+  11,082, `ChangeDocItemSet` 929,153 -> 929,225) — ordinary data growth in a
+  live system, no category changed (nothing newly broken, nothing newly
+  empty). `generated-contract.ts` and `docs-eng/SET_READINESS.md` regenerated
+  to match; `npm run dataset:build` re-run to confirm the app still reads
+  everything end to end.
+- **`PurchaseRequisitionSet`'s declared key changed** from just `Banfn` (the
+  requisition document number) to `Banfn` + `Bnfpo` (document + line item) —
+  SAP's projection now correctly says a requisition can have more than one
+  line. Safe to absorb mechanically: the synthetic fixture has always given
+  every requisition exactly one line (`Bnfpo` constantly `"00010"`), so
+  nothing was actually relying on the old, looser key, and `required-fields.ts`
+  already required `Bnfpo` for I07 anyway. `generated-contract.ts`
+  regenerated to match; all tests still green.
+
+**Not fixed — needs a person, not code:** the value-domain scan found a
+**7th previously-unseen MRP Type code, `VM`** (1 occurrence out of the scanned
+material/plant records — a rounding error's worth of the catalogue). This is
+the exact same situation as Phase 0's `V1`/`M0`/`RP`/`VI`/`VH`/`V2` — a code
+nobody has defined the meaning of, or ruled in or out of OAR scope. Per this
+codebase's own rule (`known-conditions.ts`'s comment on `DISMM_VALUE_DOMAIN`:
+"a NEW unseen value still fails the check... do not 'correct' this back"),
+this was deliberately **not** added to the known-values list. That test
+(`known-conditions.test.ts` > "Dismm holds only values we have already seen
+and reasoned about") is currently failing, on purpose — it is standing in for
+an open question, not reporting a bug. It'll go green again once someone
+decides what `VM` means and whether it belongs in the known list (with or
+without also ruling on OAR scope for it).
+
+**Result:** 255 of 256 tests pass; the 1 failure is the `VM` flag above,
+expected and deliberate.
+
+**Your action item:** take `VM` to the team lead alongside the still-open
+Phase 0 questions (blanks, the 46.4% overlap, and the other six codes) — same
+question, same person, same list.
+
+**Files touched:** `src/lib/sap/contract/generated-contract.ts`
+(regenerated), `docs-eng/SET_READINESS.md` (regenerated), the three baked
+dataset JSON files (rebuilt), this file.
+
+---
+
 ## Where things stand
 
 Everything in the plan's order of work that does not need Azure is done.
@@ -661,7 +879,10 @@ Everything in the plan's order of work that does not need Azure is done.
 | 9 | W2.2 smoke test | Done, passes against live SAP and the fake gateway |
 | 10 | Per-set flip to live | **Needs Azure.** Checklist ready in [SET_READINESS.md](SET_READINESS.md) |
 
-261 automated tests, all passing. `npm run smoke:cpi` passes against live SAP.
+255 of 256 automated tests pass (Phase 11 closed out the 2 that Phase 10 had
+left failing against the `Edm.Decimal` -> `Edm.String` drift; Phase 12 opened
+a new, deliberate 1 — the unclassified `VM` MRP Type code, an open question
+for the team lead, not a bug). `npm run smoke:cpi` passes against live SAP.
 
 ---
 
@@ -685,9 +906,10 @@ material can be OAR in one plant and not in another — 7 such cases exist in
 the test data. The code currently refuses to guess and will not answer the
 material-level question at all until someone rules.
 
-**3. Ask SAP why three tables return zero rows** — reservations, stock
-valuation, monthly movements. Registered, responding, empty. This is the
-largest single blocker in WS2, and it's a different question from
+**3. Ask SAP why two tables still return zero rows** — stock valuation and
+monthly movements. (Reservations, previously the third, was fixed in the
+09-Sep sweep — see Phase 10.) Registered, responding, empty. This is the
+largest single remaining blocker in WS2, and it's a different question from
 "is the service switched on". Likely causes need different fixes: an empty dev
 client, an authorisation filter on the CPI user, or a projection that needs a
 mandatory filter.

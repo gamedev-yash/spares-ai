@@ -3,10 +3,16 @@
 // It reproduces the CURRENT LIVE STATE on purpose (§7.3), because a mock that
 // is healthier than production hides exactly the problems we need to design
 // for:
-//   - `$count` returns HTTP 500 on the two sets where it really does.
-//   - `ReservationItemSet` / `MaterialValuationSet` can be made to return zero
-//     rows, matching §1.3, so we can prove the app degrades honestly instead
-//     of discovering it on Azure day.
+//   - `$count` returns HTTP 500 on whichever sets known-conditions.ts's
+//     COUNT_BROKEN_SETS currently names — empty as of the 09-Sep 2026 sweep,
+//     since SAP fixed the two that used to be there.
+//   - `MaterialValuationSet` / `MonthlyMovementStatisticSet` can be made to
+//     return zero rows, matching §1.3, so we can prove the app degrades
+//     honestly instead of discovering it on Azure day.
+//
+// `forceCountBroken` exists separately from COUNT_BROKEN_SETS so W2.3's
+// auto-demotion path stays exercisable in tests even when nothing in real SAP
+// is currently broken — it does not claim anything about live SAP.
 //
 // Node-only, dev/test infrastructure. It never ships.
 
@@ -21,10 +27,16 @@ import { FilterParseError } from "./odata-filter-parser"
 
 export interface GatewayOptions {
   port?: number
-  /** Reproduce §1.3: the three live sets that return nothing. On by default. */
+  /** Reproduce §1.3: the live sets that return nothing (currently two). On by default. */
   simulateEmptySets?: boolean
-  /** Reproduce the two sets whose `$count` really is broken. On by default. */
+  /** Reproduce whichever sets COUNT_BROKEN_SETS currently names. On by default. */
   simulateBrokenCount?: boolean
+  /**
+   * Force `$count` to 500 on these sets regardless of COUNT_BROKEN_SETS — for
+   * exercising the "auto" mode's runtime demotion in tests independent of
+   * whatever SAP currently happens to be getting right. Off by default.
+   */
+  forceCountBroken?: string[]
   cpiPath?: string
 }
 
@@ -47,6 +59,7 @@ function parseApiPath(apiPath: string): { service: string; entitySet?: string; i
 export function createGateway(options: GatewayOptions = {}): Server {
   const simulateEmptySets = options.simulateEmptySets ?? true
   const simulateBrokenCount = options.simulateBrokenCount ?? true
+  const forceCountBroken = options.forceCountBroken ?? []
   const cpiPath = options.cpiPath ?? CPI_PATH
 
   const rowsFor = (entitySet: string): RawRow[] => {
@@ -87,8 +100,12 @@ export function createGateway(options: GatewayOptions = {}): Server {
     }
 
     if (target.isCount) {
-      if (simulateBrokenCount && (COUNT_BROKEN_SETS as readonly string[]).includes(entitySet)) {
-        // Exactly what live SAP does today — and the reason W2.3 needs a fallback.
+      const shouldBreakCount =
+        (simulateBrokenCount && (COUNT_BROKEN_SETS as readonly string[]).includes(entitySet)) ||
+        forceCountBroken.includes(entitySet)
+      if (shouldBreakCount) {
+        // Exactly what live SAP does today (or, for forceCountBroken, what it
+        // used to do) — and the reason W2.3's auto mode needs a fallback.
         return text(response, 500, "Internal Server Error")
       }
       try {
