@@ -18,6 +18,25 @@ environment, behind seams that are swapped — not rewritten — on the day Azur
 > `ReservationItemSet`** — still open, but now a concrete exposure request
 > instead of an unresolved design question. See §1.7.
 
+> **Update — 09-Sep 2026 sweep.** A follow-up discovery run found SAP had fixed
+> two of §1's blockers: `$count` on `PurchaseRequisitionSet` (now 1,553) and
+> `GoodsMovementItemSet` (now 68,616) — both previously HTTP 500 — and
+> `ReservationItemSet` no longer returns zero rows (now 1,000). `Bednr` is
+> still not exposed on `ReservationItemSet` (§1.7 unchanged), and
+> `MaterialValuationSet` / `MonthlyMovementStatisticSet` still return zero.
+> The same sweep also showed ~30 fields across 10 entity sets changing
+> `Edm.Decimal` -> `Edm.String` (the same kind of change §1.2/§3 already
+> documents happening to `Netpr`/`Netwr`) — `generated-contract.ts` has since
+> been regenerated to match (Phase 11), with no decoding-logic changes needed:
+> §3's "decode by declared type, never by shape" design was already built to
+> absorb exactly this. The dated tables and numbers below (§1, §4, §7.3, §10)
+> are left as the **08-Sep 14:16 snapshot they're labelled as** — the
+> historical record of what was known when each task was designed. For
+> current numbers, see
+> [`docs-eng/phase_summary.md`](phase_summary.md#phase-10--sap-fixed-two-of-the-three-top-blockers-2026-09-09)
+> (Phases 10–11) and the always-regenerated
+> [`docs-eng/SET_READINESS.md`](SET_READINESS.md).
+
 > **How to read this doc.** Every task has the same five headings:
 > *What it means*, *What we do now*, *What we cannot do*, *Mock or placeholder*,
 > *How we test it*. If you only read one section, read

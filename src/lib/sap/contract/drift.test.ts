@@ -42,9 +42,16 @@ describe("drift detection — a mutated $metadata produces specific, named failu
   it("catches a type change — the real Netpr Edm.Decimal -> Edm.String case, run backwards", () => {
     // Netpr is Edm.String today. Mutate it back to Decimal: the direction SAP
     // could revert at any time, which must fail just as loudly.
+    //
+    // MaxLength="30" disambiguates PurchaseOrderItemSet.Netpr from
+    // InfoRecordOrgSet.Netpr: the 09-Sep 2026 sweep also changed the latter to
+    // Edm.String (part of a much wider Decimal -> String drift), so a bare
+    // '<Property Name="Netpr" Type="Edm.String"' match is no longer unique —
+    // `mutated()`'s plain-string replace would silently hit whichever one
+    // appears first in the file instead of the one this test means to mutate.
     const actual = mutated(
-      '<Property Name="Netpr" Type="Edm.String"',
-      '<Property Name="Netpr" Type="Edm.Decimal"'
+      '<Property Name="Netpr" Type="Edm.String" Nullable="false" MaxLength="30"',
+      '<Property Name="Netpr" Type="Edm.Decimal" Nullable="false" MaxLength="30"'
     )
     const messages = compareContracts(baseline, actual).map(describeDifference)
     expect(messages).toContain("PurchaseOrderItemSet.Netpr: type changed Edm.String -> Edm.Decimal")

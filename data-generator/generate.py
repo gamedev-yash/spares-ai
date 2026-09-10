@@ -198,6 +198,12 @@ PENDING_FIELDS: dict[str, list[str]] = {
     ],
 }
 
+# Entity sets that discovery/counts.csv itself reports as 0 rows live in SAP
+# (as of the 08-Sep 2026 sweep), so an empty CSV here is correct rather than a
+# missed generator. check() treats every other discovered set with zero rows
+# as a bug - see the completeness check below.
+EXPECTED_EMPTY_SETS = {"MonthlyMovementStatisticSet"}
+
 # The order files are written and reported in. Sets not listed follow.
 ENTITY_ORDER = [
     "MaterialSet", "MaterialDescriptionSet", "MaterialPlantSet",
@@ -448,6 +454,7 @@ po_no = Counter(4500000000, 10)
 doc_no = Counter(4900000000, 10)
 invoice_no = Counter(5100000000, 10)
 change_no = Counter(1000000, 10)
+batch_no = Counter(6000000000, 10)
 
 
 def seq(prefix: str, start: int = 1):
@@ -504,6 +511,18 @@ def day_in_month(index: int) -> date:
     end = month_start(index + 1) if index + 1 < HISTORY_MONTHS else AS_OF + timedelta(days=1)
     span = max(1, (end - start).days)
     return min(AS_OF, start + timedelta(days=rng.randrange(span)))
+
+
+def split_quantity(total: float, parts: int) -> list[float]:
+    """Split `total` into `parts` positive-ish shares that sum back to it
+    exactly after rounding, for batch stock spread across several Charg."""
+    if parts <= 1 or total <= 0:
+        return [round(total, 3)]
+    cuts = sorted(rng.uniform(0, total) for _ in range(parts - 1))
+    edges = [0.0, *cuts, total]
+    shares = [round(edges[i + 1] - edges[i], 3) for i in range(parts)]
+    shares[-1] = round(total - sum(shares[:-1]), 3)
+    return shares
 
 
 def pick_weighted(weights: dict[str, float]) -> str:
@@ -568,6 +587,7 @@ class MaterialPlantRow:
     # Material.is_oar is the material-level story; this can differ from it for
     # the OAR_SINGLE_PLANT_SHARE slice. Plant-grain logic must use this one.
     is_oar: bool = False
+    dispo: str = ""
     quality_stock: float = 0.0
     monthly_demand: list[float] = field(default_factory=list)
     issue_dates: list[date] = field(default_factory=list)
@@ -814,12 +834,13 @@ def build_material_plant(
     if story in ("SLOW_MOVING", "OBSOLETE"):
         entry.last_issue_before_window = AS_OF - timedelta(days=rng.randint(400, 1500))
 
+    entry.dispo = f"{rng.randint(1, 10):03d}"
     add("MaterialPlantSet", {
         "Matnr": matnr_out(material.matnr),
         "Werks": plant["werks"],
         "Lvorm": flag(False),
         "Dismm": dismm,
-        "Dispo": f"{rng.randint(1, 10):03d}",
+        "Dispo": entry.dispo,
         # Planned delivery time is populated on about 98% of records.
         "Plifz": qty(material.lead_time if rng.random() < 0.98 else 0),
         "Webaz": qty(rng.randint(0, 3)),
@@ -1858,6 +1879,81 @@ def write_stock_and_valuation() -> None:
             })
 
 
+def build_batch_stock() -> None:
+    """LQUA: split each material/plant's closing stock (Labst, written just
+    above) across one or more batches, so Clabs always reconciles back to it.
+    A separate pass after write_stock_and_valuation so its random batch counts
+    and splits can't shift the rng stream write_stock_and_valuation itself
+    still depends on (e.g. Lgpbe) for entries processed after this one.
+    """
+    for material in materials:
+        for entry in material.plants:
+            on_hand = round(max(0.0, entry.on_hand), 3)
+            if on_hand <= 0:
+                continue
+            batch_count = 1 if on_hand < 5 else rng.choices(
+                [1, 2, 3, 4], weights=[45, 30, 17, 8]
+            )[0]
+            for share in split_quantity(on_hand, batch_count):
+                if share <= 0:
+                    continue
+                add("BatchStockSet", {
+                    "Matnr": matnr_out(material.matnr),
+                    "Werks": entry.werks,
+                    "Lgort": entry.lgort,
+                    "Charg": batch_no.take(),
+                    "Clabs": qty(share),
+                })
+
+
+def build_movement_statistics() -> None:
+    """MVER-style rollup per material/plant, derived from the movements
+    already posted (GoodsMovementItemSet) rather than resimulated, so the
+    dates agree with what build_history/build_oar_chains/build_repairs wrote.
+    """
+    last_receipt: dict[tuple[str, str, str], str] = {}
+    last_issue: dict[tuple[str, str, str], str] = {}
+    for row in rows["GoodsMovementItemSet"]:
+        key = (row["Matnr"], row["Werks"], row["Lgort"])
+        when = row["BudatMkpf"]
+        bucket = last_receipt if row["Shkzg"] == "S" else last_issue
+        if when > bucket.get(key, ""):
+            bucket[key] = when
+
+    for material in materials:
+        for entry in material.plants:
+            key = (matnr_out(material.matnr), entry.werks, entry.lgort)
+            zugang = last_receipt.get(key, "")
+            # SLOW_MOVING/OBSOLETE stock has no in-window movement at all, so
+            # fall back to the pre-window date that gives those stories their
+            # aged look elsewhere (see last_issue_before_window above).
+            abgang = last_issue.get(key) or (
+                odata_date(entry.last_issue_before_window)
+                if entry.last_issue_before_window else ""
+            )
+            # No separate "last consumption" signal exists in this dataset;
+            # for VZI spares, consumption and goods issue are the same event.
+            verbrauch = abgang
+            bewegung = max(zugang, abgang)
+            on_hand = round(max(0.0, entry.on_hand), 3)
+            add("StockMovementStatisticSet", {
+                "Werks": entry.werks,
+                "Lgort": entry.lgort,
+                "Matnr": matnr_out(material.matnr),
+                "Dispo": entry.dispo,
+                "Mtart": material.mtart,
+                "Matkl": material.matkl,
+                "Dismm": entry.dismm,
+                "Mbwbest": qty(on_hand + entry.quality_stock),
+                "Wbwbest": money((on_hand + entry.quality_stock) * material.price),
+                "Letztzug": zugang,
+                "Letztabg": abgang,
+                "Letztver": verbrauch,
+                "Letztbew": bewegung,
+                "Eisbe": qty(entry.eisbe),
+            })
+
+
 def finalise_po_items() -> None:
     """Fill in the delivered quantity and the delivery-completed flag."""
     delivered = {(item.ebeln, item.ebelp): item.received for item in po_items}
@@ -1890,6 +1986,15 @@ def check() -> None:
     document_keys = keys("MaterialDocumentHeaderSet", "Mblnr", "Mjahr")
     reservation_keys = keys("ReservationItemSet", "Rsnum")
     plant_codes = {plant["werks"] for plant in PLANTS}
+
+    # Every discovered entity set must produce at least one row, unless
+    # counts.csv itself reports 0 live rows for it (EXPECTED_EMPTY_SETS). This
+    # is what catches a set whose schema is now live but whose generator was
+    # never written - the exact gap BatchStockSet and StockMovementStatisticSet
+    # sat in silently before.
+    for entity in SAP_COLUMNS:
+        if entity not in EXPECTED_EMPTY_SETS and not rows[entity]:
+            problems.append(f"{entity}: no rows generated")
 
     # Primary keys must be unique. The key fields come from discovery, so a
     # changed key is picked up here rather than silently ignored.
@@ -1926,6 +2031,8 @@ def check() -> None:
         ("GoodsMovementItemSet", ("Matnr",), material_keys, "MaterialSet"),
         ("ChangeDocItemSet", ("Objectclas", "Objectid", "Changenr"),
          keys("ChangeDocHeaderSet", "Objectclas", "Objectid", "Changenr"), "ChangeDocHeaderSet"),
+        ("BatchStockSet", ("Matnr", "Werks"), plant_keys, "MaterialPlantSet"),
+        ("StockMovementStatisticSet", ("Matnr", "Werks"), plant_keys, "MaterialPlantSet"),
     ):
         for row in rows[entity]:
             key = tuple(row[c] for c in columns)
@@ -1947,10 +2054,26 @@ def check() -> None:
 
     # Every plant must be a real plant.
     for entity in ("MaterialPlantSet", "StorageLocationStockSet", "PurchaseOrderItemSet",
-                   "GoodsMovementItemSet", "ReservationItemSet", "PurchaseRequisitionSet"):
+                   "GoodsMovementItemSet", "ReservationItemSet", "PurchaseRequisitionSet",
+                   "BatchStockSet", "StockMovementStatisticSet"):
         for row in rows[entity]:
             if row["Werks"] not in plant_codes:
                 problems.append(f"{entity}: unknown plant {row['Werks']}")
+
+    # Batch stock must add back up to the unrestricted-use stock it was split
+    # from - Clabs is a breakdown of Labst by Charg, not an independent figure.
+    batch_totals: dict[tuple[str, str, str], float] = {}
+    for row in rows["BatchStockSet"]:
+        key = (row["Matnr"], row["Werks"], row["Lgort"])
+        batch_totals[key] = batch_totals.get(key, 0.0) + float(row["Clabs"])
+    for row in rows["StorageLocationStockSet"]:
+        key = (row["Matnr"], row["Werks"], row["Lgort"])
+        labst = float(row["Labst"])
+        total = batch_totals.get(key, 0.0)
+        if abs(total - labst) > 0.01:
+            problems.append(
+                f"BatchStockSet {key}: batches sum to {total:g}, Labst is {labst:g}"
+            )
 
     # Dates: PR date <= PO date <= goods receipt date.
     pr_dates = {row["Banfn"]: row["Badat"] for row in rows["PurchaseRequisitionSet"]}
@@ -2080,6 +2203,8 @@ def main() -> None:
 
     finalise_po_items()
     write_stock_and_valuation()
+    build_batch_stock()
+    build_movement_statistics()
     check()
     write()
 

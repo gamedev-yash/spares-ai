@@ -53,7 +53,7 @@ export const REQUIRED_FIELDS: InitiativeRequirement[] = [
     initiative: "I07",
     entitySet: "PurchaseRequisitionSet",
     fields: ["Banfn", "Bnfpo", "Matnr", "Werks"],
-    why: "The PR-to-PO view. $count is broken here, so reads use fallback paging (W2.3).",
+    why: "The PR-to-PO view. $count was broken here until the 09-Sep 2026 sweep; now reads count normally under auto paging (W2.3).",
   },
 
   // ---- I08 — repairable spares ----
@@ -67,7 +67,7 @@ export const REQUIRED_FIELDS: InitiativeRequirement[] = [
     initiative: "I08",
     entitySet: "GoodsMovementItemSet",
     fields: ["Mblnr", "Mjahr", "Zeile", "Matnr", "Werks", "Bwart"],
-    why: "Movements in and out of repair. $count is broken here too (W2.3).",
+    why: "Movements in and out of repair. $count was broken here too until the 09-Sep 2026 sweep (W2.3).",
   },
 
   // ---- I13 — consumption planning (OAR) ----
@@ -75,7 +75,7 @@ export const REQUIRED_FIELDS: InitiativeRequirement[] = [
     initiative: "I13",
     entitySet: "ReservationItemSet",
     fields: ["Rsnum", "Rspos", "Matnr", "Werks", "Bdter", "Bdmng", "Enmng", "Banfn", "Bnfpo", "Bwart", "Wempf"],
-    why: "Reservations are the backbone of consumption plans. Currently returns zero rows (§1.3).",
+    why: "Reservations are the backbone of consumption plans. Returned zero rows until the 09-Sep 2026 sweep (§1.3); now 1,000.",
   },
   {
     initiative: "I13",

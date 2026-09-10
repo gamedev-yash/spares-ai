@@ -5,10 +5,10 @@ and where its data comes from.
 
 | Source | Meaning | Fields |
 |---|---|---|
-| `sap` | A real, exposed SAP property | 12 |
+| `sap` | A real, exposed SAP property | 17 |
 | `platform` | Data this system owns | 25 |
 | `derived` | Computed from other mapped fields | 10 |
-| `blocked` | Real SAP field, but no usable data yet (§1.3 / §1.7) | 13 |
+| `blocked` | Real SAP field, but no usable data yet (§1.3 / §1.7) | 8 |
 | `gap` | **Nothing upstream produces this** | 14 |
 | | **Total** | **74** |
 
@@ -47,7 +47,7 @@ and where its data comes from.
 |---|---|---|
 | `id` | `platform` | repair_cases:case_id |
 | `material` | `sap` | MaterialSet.Matnr — description joined from MaterialDescriptionSet.Maktx |
-| `plant` | `sap` | MaterialPlantSet.Werks |
+| `plant` | `sap` | MaterialPlantSet.Werks — the CODE is real; the site NAME is not - see reference-data.ts |
 | `repairPR` | `platform` | repair_cases:repair_pr |
 | `repairPO` | `platform` | repair_cases:repair_po/repair_po_item |
 | `repairStatus` | `platform` | repair_cases:stage |
@@ -76,15 +76,15 @@ and where its data comes from.
 |---|---|---|
 | `id` | `platform` | consumption_plans:plan_id |
 | `trackingId` | `platform` | consumption_plans:session_id |
-| `reservation` | `blocked` | ReservationItemSet.Rsnum/Rspos — real property names, confirmed. Zero rows live (§1.3), so plan rows carry the numbers today |
+| `reservation` | `sap` | ReservationItemSet.Rsnum/Rspos — real property names, confirmed, and live since the 09-Sep 2026 sweep fixed §1.3's zero-row blocker (now 1,000 rows) — falls back to the plan's own numbers when a plan's reservation is not (yet) wired in |
 | `material` | `sap` | MaterialSet.Matnr — description joined from MaterialDescriptionSet.Maktx |
-| `plant` | `sap` | MaterialPlantSet.Werks |
-| `qtyRequested` | `blocked` | ReservationItemSet.Bdmng — requirement quantity. Zero rows live; consumption_plans.planned_quantity stands in |
-| `qtyIssued` | `blocked` | ReservationItemSet.Enmng — quantity withdrawn. Zero rows live (§1.3) |
-| `plannedConsumptionDate` | `blocked` | ReservationItemSet.Bdter — requirement date. Zero rows live; consumption_plans.planned_use_date stands in |
-| `uom` | `blocked` | ReservationItemSet.Meins — zero rows live (§1.3) |
+| `plant` | `sap` | MaterialPlantSet.Werks — the CODE is real; the site NAME is not - no exposed SAP field maps Werks to a mine site, and SAP has 5 plant codes against the app's 3 named plants. See reference-data.ts |
+| `qtyRequested` | `sap` | ReservationItemSet.Bdmng — requirement quantity. Live since 09-Sep 2026 (§1.3); consumption_plans.planned_quantity stands in when no reservation is joined |
+| `qtyIssued` | `sap` | ReservationItemSet.Enmng — quantity withdrawn. Live since 09-Sep 2026 (§1.3); 0 when no reservation is joined |
+| `plannedConsumptionDate` | `sap` | ReservationItemSet.Bdter — requirement date. Live since 09-Sep 2026 (§1.3); consumption_plans.planned_use_date stands in when no reservation is joined |
+| `uom` | `sap` | ReservationItemSet.Meins — live since 09-Sep 2026 (§1.3); defaults to EA when no reservation is joined |
 | `qtyConfirmedUsed` | `platform` | utilisation_status:confirmed_used |
-| `requester` | `platform` | consumption_plans:requester — resolved to a name and role via lib/shared-data/users |
+| `requester` | `platform` | consumption_plans:requester — the requester ID is real; mapping it to a named user is not - platform data carries VZIREQ01..05 with no link to the app's user catalogue. See reference-data.ts |
 | `purpose` | `platform` | consumption_plans:purpose |
 | `stage` | `derived` | from the utilisation status plus which SAP documents exist in the chain |
 | `exception` | `platform` | exceptions:exception_type — Consumption Overdue / No Longer Required |
@@ -131,10 +131,5 @@ These map to real SAP fields that exist but return nothing usable today.
 - **I08 `repairCost`** — PurchaseOrderItemSet.Netwr — the repair PO's net value. Live today, but Netwr is Edm.String and must be parsed, never coerced by shape
 - **I08 `newUnitCost`** — MaterialValuationSet.Stprs — standard price of a new unit; MaterialValuationSet returns zero rows live (§1.3)
 - **I08 `poIssuedAt`** — PurchaseOrderSet.Aedat — PO creation date; joinable once repair POs are read live rather than from the fixture
-- **I13 `reservation`** — ReservationItemSet.Rsnum/Rspos — real property names, confirmed. Zero rows live (§1.3), so plan rows carry the numbers today
-- **I13 `qtyRequested`** — ReservationItemSet.Bdmng — requirement quantity. Zero rows live; consumption_plans.planned_quantity stands in
-- **I13 `qtyIssued`** — ReservationItemSet.Enmng — quantity withdrawn. Zero rows live (§1.3)
-- **I13 `plannedConsumptionDate`** — ReservationItemSet.Bdter — requirement date. Zero rows live; consumption_plans.planned_use_date stands in
-- **I13 `uom`** — ReservationItemSet.Meins — zero rows live (§1.3)
 - **I13 `qtyReceived`** — GoodsMovementItemSet — goods-receipt quantity against the PR/PO. Needs the movement-type set confirmed — still a pending business constant
 - **I13 `unitPrice`** — MaterialValuationSet.Verpr — zero rows live (§1.3)

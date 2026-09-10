@@ -115,9 +115,12 @@ describe("response parsing", () => {
   })
 
   it("decodes a genuine Edm.Decimal to a number", async () => {
-    const { client } = harness([odata([{ Matnr: "1", Werks: "1000", Plifz: "58.000" }])])
-    const result = await client.read("MaterialPlantSet")
-    expect(result.rows[0].Plifz).toBe(58)
+    // ReservationItemSet.Bdmng, not MaterialPlantSet.Plifz — the 09-Sep 2026
+    // sweep changed Plifz (and most other MaterialPlantSet quantity fields)
+    // from Edm.Decimal to Edm.String. Bdmng is still a genuine Edm.Decimal.
+    const { client } = harness([odata([{ Rsnum: "1", Rspos: "1", Bdmng: "58.000" }])])
+    const result = await client.read("ReservationItemSet")
+    expect(result.rows[0].Bdmng).toBe(58)
   })
 
   it("keeps zero-padded material numbers intact", async () => {
@@ -152,10 +155,13 @@ describe("response parsing", () => {
 describe("empty is not broken (§1.3)", () => {
   it("a zero-row response is its own reportable status, not a bland empty array", async () => {
     const { client } = harness([odata([])])
-    const result = await client.read("ReservationItemSet")
+    // MaterialValuationSet is one of the two sets still genuinely empty live
+    // as of the 09-Sep 2026 sweep (ReservationItemSet, previously the
+    // textbook example here, was fixed then — see known-conditions.ts).
+    const result = await client.read("MaterialValuationSet")
     expect(result.status).toBe("empty")
     expect(result.rows).toEqual([])
-    expect(result.entitySet).toBe("ReservationItemSet")
+    expect(result.entitySet).toBe("MaterialValuationSet")
   })
 
   it("rows and empty are distinguishable without inspecting array length", async () => {
@@ -229,14 +235,16 @@ describe("$count", () => {
     expect(await client.count("PurchaseOrderItemSet")).toBe(11074)
   })
 
-  it("returns null — not a throw — for the sets whose $count is broken (W2.3 demotes to fallback paging)", async () => {
+  it("returns null — not a throw — when $count 500s (W2.3's auto mode demotes to fallback paging on this)", async () => {
     const { client } = harness([new Response("error", { status: 500 })])
     expect(await client.count("PurchaseRequisitionSet")).toBeNull()
   })
 
   it("distinguishes a real zero from a broken count", async () => {
     const { client } = harness([new Response("0", { status: 200 })])
-    expect(await client.count("ReservationItemSet")).toBe(0)
+    // MaterialValuationSet genuinely counts 0 live (§1.3) — unlike a 500, this
+    // is a real answer and must come back as a number, not null.
+    expect(await client.count("MaterialValuationSet")).toBe(0)
   })
 
   it("raises ContractError when $count returns something that is not a number", async () => {

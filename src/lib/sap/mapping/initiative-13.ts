@@ -1,10 +1,14 @@
 // W2.6b — Initiative 13: SAP reservations + platform plans -> the
 // UtilizationLedgerLine view model.
 //
-// This is the initiative most exposed to §1.3: ReservationItemSet is the
-// backbone of every consumption plan and it returns ZERO rows live. The
-// mapping is written against real, measured property names, but it cannot be
-// validated against real values until SAP answers why that set is empty.
+// This was the initiative most exposed to §1.3: ReservationItemSet is the
+// backbone of every consumption plan, and it returned ZERO rows live until
+// the 09-Sep 2026 sweep (now 1,000 — see docs-eng/phase_summary.md). The
+// mapping is written against real, measured property names and its
+// reservation-backed fields are now sourced from `sap` below. Callers still
+// have to pass a populated `reservations` map (loadInitiative13Platform does
+// not wire one in yet — see Initiative13Input) for a plan to actually pick up
+// a live reservation row instead of falling back to the platform figure.
 
 import type { LedgerStage, UtilizationLedgerLine } from "@/features/initiative-13/types/oar"
 import type { SapRow } from "../client/decode-row"
@@ -16,10 +20,10 @@ export const LEDGER_LINE_SOURCES: FieldSourceMap<UtilizationLedgerLine> = {
   id: { from: "platform", file: "consumption_plans", column: "plan_id" },
   trackingId: { from: "platform", file: "consumption_plans", column: "session_id" },
   reservation: {
-    from: "blocked",
+    from: "sap",
     entitySet: "ReservationItemSet",
     property: "Rsnum/Rspos",
-    note: "real property names, confirmed. Zero rows live (§1.3), so plan rows carry the numbers today",
+    note: "real property names, confirmed, and live since the 09-Sep 2026 sweep fixed §1.3's zero-row blocker (now 1,000 rows) — falls back to the plan's own numbers when a plan's reservation is not (yet) wired in",
   },
   material: {
     from: "sap",
@@ -34,24 +38,29 @@ export const LEDGER_LINE_SOURCES: FieldSourceMap<UtilizationLedgerLine> = {
     note: "the CODE is real; the site NAME is not - no exposed SAP field maps Werks to a mine site, and SAP has 5 plant codes against the app's 3 named plants. See reference-data.ts",
   },
   qtyRequested: {
-    from: "blocked",
+    from: "sap",
     entitySet: "ReservationItemSet",
     property: "Bdmng",
-    note: "requirement quantity. Zero rows live; consumption_plans.planned_quantity stands in",
+    note: "requirement quantity. Live since 09-Sep 2026 (§1.3); consumption_plans.planned_quantity stands in when no reservation is joined",
   },
   qtyIssued: {
-    from: "blocked",
+    from: "sap",
     entitySet: "ReservationItemSet",
     property: "Enmng",
-    note: "quantity withdrawn. Zero rows live (§1.3)",
+    note: "quantity withdrawn. Live since 09-Sep 2026 (§1.3); 0 when no reservation is joined",
   },
   plannedConsumptionDate: {
-    from: "blocked",
+    from: "sap",
     entitySet: "ReservationItemSet",
     property: "Bdter",
-    note: "requirement date. Zero rows live; consumption_plans.planned_use_date stands in",
+    note: "requirement date. Live since 09-Sep 2026 (§1.3); consumption_plans.planned_use_date stands in when no reservation is joined",
   },
-  uom: { from: "blocked", entitySet: "ReservationItemSet", property: "Meins", note: "zero rows live (§1.3)" },
+  uom: {
+    from: "sap",
+    entitySet: "ReservationItemSet",
+    property: "Meins",
+    note: "live since 09-Sep 2026 (§1.3); defaults to EA when no reservation is joined",
+  },
   qtyConfirmedUsed: { from: "platform", file: "utilisation_status", column: "confirmed_used" },
   requester: {
     from: "platform",
@@ -118,7 +127,12 @@ export interface Initiative13Input {
   utilisation: Map<string, PlatformRow>
   exceptions: PlatformRow[]
   descriptions: Map<string, string>
-  /** ReservationItemSet keyed by `Rsnum|Rspos`. Empty against live SAP today (§1.3). */
+  /**
+   * ReservationItemSet keyed by `Rsnum|Rspos`. Was empty against live SAP
+   * (§1.3) until the 09-Sep 2026 sweep; now 1,000 rows. Still optional here —
+   * a plan whose key is not present in the map (or when the caller passes no
+   * map at all) falls back to its own platform figures.
+   */
   reservations?: Map<string, SapRow>
 }
 

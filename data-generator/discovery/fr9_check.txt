@@ -1,4 +1,4 @@
-Objectclas eq 'MATERIAL'                                -> 26405
-Objectclas eq 'MATERIAL' and Tabname eq 'MARC'          -> 7220
-Objectclas eq 'BANF'                                    -> 2912
+Objectclas eq 'MATERIAL'                                -> 26419
+Objectclas eq 'MATERIAL' and Tabname eq 'MARC'          -> 7221
+Objectclas eq 'BANF'                                    -> 2924
 (Property names in the filter assume Objectclas/Tabname; adjust to the real names from properties.csv if the call fails.)
