@@ -8,6 +8,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
     steps:
       - uses: actions/checkout@v4
 
@@ -15,6 +18,7 @@ jobs:
         with:
           node-version: 24
           cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - run: npm ci
 
@@ -24,6 +28,6 @@ jobs:
       - run: npm test
 
       # `npm run lint` is deliberately not a step yet: it currently reports 3
-      # pre-existing errors in src/components (React setState-in-effect and
-      # memoization), unrelated to WS2. Add this step in the same change that
-      # clears them, so CI starts green and stays meaningful.
+      # pre-existing errors in frontend/src/components (React setState-in-effect
+      # and memoization), unrelated to WS2. Add this step in the same change
+      # that clears them, so CI starts green and stays meaningful.
